@@ -1,0 +1,24 @@
+{
+  "name": "authclients",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Authorization clients for the iTwin platform",
+  "scripts": {
+    "build": "pnpm run build --filter ./Clients/",
+    "lint": "pnpm run lint --filter ./Clients/",
+    "test": "pnpm run test --filter ./Clients/",
+    "cover": "pnpm run cover --filter ./Clients/"
+  },
+  "keywords": [
+    "Bentley",
+    "Authorization"
+  ],
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "http://www.bentley.com"
+  },
+  "license": "MIT",
+  "peerDependencies": {},
+  "devDependencies": {},
+  "dependencies": {}
+}

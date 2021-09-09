@@ -1,0 +1,34 @@
+{
+  "name": "@itwin/browser-authorization",
+  "version": "1.0.0",
+  "description": "Browser authorization client for iTwin platform",
+  "main": "index.js",
+  "scripts": {
+    "compile": "npm run build",
+    "build": "tsc 1>&2",
+    "clean": "",
+    "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
+    "test": "",
+    "cover": "nyc npm test"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@bentley/bentleyjs-core": "^2.19.10",
+    "@bentley/itwin-client": "^2.19.10",
+    "@types/node": "^10.14.1",
+    "oidc-client": "^1.11.5"
+  },
+  "devDependencies": {
+    "@bentley/build-tools": "^2.19.10",
+    "@bentley/eslint-plugin": "^2.19.10",
+    "eslint": "^7.11.0",
+    "typescript": "~4.3.0"
+  },
+  "eslintConfig": {
+    "plugins": [
+      "@bentley"
+    ],
+    "extends": "plugin:@bentley/imodeljs-recommended"
+  }
+}
