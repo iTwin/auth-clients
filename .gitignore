@@ -5,3 +5,9 @@ pnpm-lock.yaml
 
 # build output
 /**/lib
+
+# pnpm
+.pnpm-debug.log
+
+# Mac specfic
+.DS_Store
