@@ -9,7 +9,7 @@
     "clean": "",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "test": "",
-    "cover": "nyc npm test"
+    "cover": ""
   },
   "author": "",
   "license": "MIT",

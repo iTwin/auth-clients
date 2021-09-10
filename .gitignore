@@ -6,6 +6,9 @@ pnpm-lock.yaml
 # build output
 /**/lib
 
+# testing
+.nyc_output
+
 # pnpm
 .pnpm-debug.log
 
