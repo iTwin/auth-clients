@@ -1,5 +1,5 @@
 {
-  "name": "authclients",
+  "name": "auth-clients",
   "private": true,
   "version": "1.0.0",
   "description": "Authorization clients for the iTwin platform",

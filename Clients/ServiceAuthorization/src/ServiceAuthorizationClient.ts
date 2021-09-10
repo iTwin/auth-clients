@@ -8,10 +8,8 @@
 
 import { AuthStatus, BentleyError, ClientRequestContext, Logger } from "@bentley/bentleyjs-core";
 import { AuthorizationClient, RequestGlobalOptions } from "@bentley/itwin-client";
-import { GrantBody, TokenSet, ClientMetadata, custom, Issuer, Client as OpenIdClient } from "openid-client";
+import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
 import { BackendITwinClientLoggerCategory } from "./BackendITwinClientLoggerCategory";
-
-
 
 const loggerCategory = BackendITwinClientLoggerCategory.Authorization;
 
@@ -28,7 +26,7 @@ export interface ServiceAuthorizationClientConfiguration {
   /** List of space separated scopes to request access to various resources. */
   scope: string;
 }
- /**
+/**
   * Utility to generate OIDC/OAuth tokens for service or service applications
   * * The application must register a client using the
   * [self service registration page](https://developer.bentley.com/register/).
@@ -41,10 +39,10 @@ export interface ServiceAuthorizationClientConfiguration {
   */
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected searchKey: string = "IMSOpenId";
-   
+
   protected _configuration: ServiceAuthorizationClientConfiguration;
   protected _url?: string;
- 
+
   private _accessToken?: AccessToken;
   private _expiresAt?: Date;
 
@@ -74,14 +72,14 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     return this._issuer;
   }
 
-    /**
+  /**
    * Gets the URL of the service.
    * @returns URL for the service
    */
   public getUrl(): string {
     return this._url;
   }
-  
+
   /**
   * Discover the endpoints of the service
   */
@@ -165,4 +163,3 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     return this.generateAccessToken(requestContext || new ClientRequestContext());
   }
 }
- 

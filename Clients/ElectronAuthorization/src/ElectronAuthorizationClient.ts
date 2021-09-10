@@ -14,7 +14,7 @@
 import { assert, AuthStatus, BentleyError, ClientRequestContext, Logger } from "@bentley/bentleyjs-core";
 import { IModelHost, NativeAppAuthorizationBackend, NativeHost } from "@bentley/imodeljs-backend";
 import { NativeAppAuthorizationConfiguration } from "@bentley/imodeljs-common";
-import { AccessToken, request as httpRequest, RequestOptions } from "@bentley/itwin-client";
+import { AccessToken, AuthorizationClient, request as httpRequest, RequestOptions } from "@bentley/itwin-client";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestJson, AuthorizationResponse, AuthorizationServiceConfiguration,
   BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest, RevokeTokenRequestJson, StringMap,
@@ -32,7 +32,7 @@ const loggerCategory = "electron-auth";
  * Utility to generate OIDC/OAuth tokens for Desktop Applications
  * @beta
  */
-export class ElectronAuthorizationBackend extends NativeAppAuthorizationBackend {
+export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend implements AuthorizationClient {
   public static defaultRedirectUri = "http://localhost:3000/signin-callback";
   private _configuration: AuthorizationServiceConfiguration | undefined;
   private _tokenResponse: TokenResponse | undefined;
@@ -43,7 +43,7 @@ export class ElectronAuthorizationBackend extends NativeAppAuthorizationBackend 
     super(config);
   }
 
-  public get redirectUri() { return this.config?.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri; }
+  public get redirectUri() { return this.config?.redirectUri ?? ElectronAuthorizationClient.defaultRedirectUri; }
 
   /**
    * Used to initialize the client - must be awaited before any other methods are called.

@@ -8,10 +8,9 @@
  */
 
 import { BeEvent, ClientRequestContext, IDisposable } from "@bentley/bentleyjs-core";
-import { AccessToken, ImsAuthorizationClient } from "@bentley/itwin-client";
+import { AccessToken, AuthorizationClient, ImsAuthorizationClient } from "@bentley/itwin-client";
 import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
-import { FrontendAuthorizationClient } from "../FrontendAuthorizationClient";
-import { BrowserAuthorizationBase } from "./BrowserAuthorizationBase";
+import { BrowserAuthorizationLogger } from "./BrowserAuthorizationLogger";
 import { BrowserAuthorizationClientRedirectState } from "./BrowserAuthorizationClientRedirectState";
 
 /**
@@ -52,11 +51,22 @@ export interface BrowserAuthorizationClientRequestOptions {
   prompt?: "none" | "login" | "consent" | "select_account" | string;
 }
 
+/** BrowserAuthorization type guard.
+ * @beta
+ */
+export const isBrowserAuthorizationClient = (client: AuthorizationClient | undefined): client is BrowserAuthorizationClient => {
+  return client !== undefined && (client as BrowserAuthorizationClient).signIn !== undefined && (client as BrowserAuthorizationClient).signOut !== undefined;
+};
+
 /**
  * @beta
  */
-export class BrowserAuthorizationClient extends BrowserAuthorizationBase<BrowserAuthorizationClientConfiguration> implements FrontendAuthorizationClient, IDisposable {
+export class BrowserAuthorizationClient implements IDisposable, AuthorizationClient {
   public readonly onUserStateChanged = new BeEvent<(token?: AccessToken) => void>();
+  protected _userManager?: UserManager;
+
+  protected _basicSettings: BrowserAuthorizationClientConfiguration;
+  protected _advancedSettings?: UserManagerSettings;
 
   protected _accessToken?: AccessToken;
 
@@ -72,8 +82,9 @@ export class BrowserAuthorizationClient extends BrowserAuthorizationBase<Browser
     return !!this._accessToken;
   }
 
-  public constructor(configuration: BrowserAuthorizationClientConfiguration) {
-    super(configuration);
+  protected constructor(configuration: BrowserAuthorizationClientConfiguration) {
+    this._basicSettings = configuration;
+    BrowserAuthorizationLogger.initializeLogger();
   }
 
   protected async getUserManager(requestContext: ClientRequestContext): Promise<UserManager> {
@@ -184,7 +195,7 @@ export class BrowserAuthorizationClient extends BrowserAuthorizationBase<Browser
     const userManager = await this.getUserManager(requestContext);
     user = await userManager.signinPopup(args);
     if (!user || user.expired)
-      throw new Error("Expected userManager.signinPopup to always resolve to an authorized user")
+      throw new Error("Expected userManager.signinPopup to always resolve to an authorized user");
     return;
   }
 
@@ -375,5 +386,20 @@ export class BrowserAuthorizationClient extends BrowserAuthorizationBase<Browser
       this._userManager.events.removeSilentRenewError(this._onSilentRenewError);
       this._userManager.events.removeUserSignedOut(this._onUserSignedOut);
     }
+  }
+
+  /**
+   * @internal
+   * Allows for advanced options to be supplied to the underlying UserManager.
+   * This function should be called directly after object construction.
+   * Any settings supplied via this method will override the corresponding settings supplied via the constructor.
+   * @throws if called after the internal UserManager has already been created.
+   */
+  public setAdvancedSettings(settings: UserManagerSettings): void {
+    if (this._userManager) {
+      throw new Error("Cannot supply advanced settings to BrowserAuthorizationClient after the underlying UserManager has already been created.");
+    }
+
+    this._advancedSettings = settings;
   }
 }

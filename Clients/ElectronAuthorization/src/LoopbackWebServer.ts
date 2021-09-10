@@ -13,7 +13,7 @@ import * as Url from "url";
 import { NativeAppAuthorizationConfiguration } from "@bentley/imodeljs-common";
 import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import { ElectronAuthorizationEvents } from "./ElectronAuthorizationEvents";
-import { ElectronAuthorizationBackend } from "./ElectronAuthorizationBackend";
+import { ElectronAuthorizationClient } from "./ElectronAuthorizationClient";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 
@@ -53,7 +53,7 @@ export class LoopbackWebServer {
       return;
 
     LoopbackWebServer._httpServer = Http.createServer(LoopbackWebServer.onBrowserRequest);
-    const urlParts: Url.UrlWithStringQuery = Url.parse(clientConfiguration.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri);
+    const urlParts: Url.UrlWithStringQuery = Url.parse(clientConfiguration.redirectUri ?? ElectronAuthorizationClient.defaultRedirectUri);
     LoopbackWebServer._httpServer.listen(urlParts.port);
   }
 

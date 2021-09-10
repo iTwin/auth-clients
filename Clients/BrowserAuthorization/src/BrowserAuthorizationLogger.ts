@@ -9,7 +9,16 @@
 
 import { Logger as IOidcClientLogger, Log as OidcClientLog } from "oidc-client";
 import { Logger, LogLevel } from "@bentley/bentleyjs-core";
-import { FrontendAuthorizationClientLoggerCategory } from "../FrontendAuthorizationClientLoggerCategory";
+
+/** Logger categories used by this package
+ * @note All logger categories in this package start with the `frontend-authorization-client` prefix.
+ * @see [Logger]($bentley)
+ * @beta
+ */
+export enum FrontendAuthorizationClientLoggerCategory {
+  /** The logger category used by base clients */
+  Authorization = "frontend-authorization-client.Authorization",
+}
 
 /**
  * Utility to forward oidc-client logs to the Bentley logger

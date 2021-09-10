@@ -2,7 +2,7 @@
   "name": "@itwin/electron-authorization",
   "version": "1.0.0",
   "description": "Electron authorization client for iTwin platform",
-  "main": "index.js",
+  "main": "lib/ElectronBackend.ts",
   "scripts": {
     "compile": "npm run build",
     "build": "tsc 1>&2",

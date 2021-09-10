@@ -2,14 +2,11 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-export * from "./FrontendAuthorizationClient";
-export * from "./FrontendAuthorizationClientLoggerCategory";
-
-export * from "./browser/BrowserAuthorizationBase";
-export * from "./browser/BrowserAuthorizationCallbackHandler";
-export * from "./browser/BrowserAuthorizationClient";
-export * from "./browser/BrowserAuthorizationClientRedirectState";
-export * from "./browser/BrowserAuthorizationLogger";
+export * from "./BrowserAuthorizationBase";
+export * from "./BrowserAuthorizationCallbackHandler";
+export * from "./BrowserAuthorizationClient";
+export * from "./BrowserAuthorizationClientRedirectState";
+export * from "./BrowserAuthorizationLogger";
 
 /** @docs-package-description
  * The frontend-authorization-client package contains classes and structures relevant to user authentication/authorization in frontend applications, with specific implementations for web browser use-cases.
