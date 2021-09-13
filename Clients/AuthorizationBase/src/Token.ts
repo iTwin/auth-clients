@@ -8,7 +8,7 @@
  * @param accessToken Access token string
  * @internal
  */
- export function removeAccessTokenPrefix(accessToken: AccessToken | undefined): AccessToken | undefined {
+export function removeAccessTokenPrefix(accessToken: AccessToken | undefined): AccessToken | undefined {
   return accessToken ? accessToken.substr(accessToken.indexOf(" ") + 1) : undefined;
 }
 

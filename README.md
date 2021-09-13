@@ -7,3 +7,5 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See [LICENSE.md
 If you have questions, or wish to contribute to iTwin.js, see our [Contributing guide](./CONTRIBUTING.md).
 
 ## About this Repository
+
+Monorepo for iTwin authorization clients.
