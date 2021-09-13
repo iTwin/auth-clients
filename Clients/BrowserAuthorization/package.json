@@ -11,7 +11,7 @@
     "test": "",
     "cover": ""
   },
-  "author": "",
+  "author": "Bentley Systems, Inc. (http://www.bentley.com)",
   "license": "MIT",
   "dependencies": {
     "@bentley/bentleyjs-core": "^2.19.10",

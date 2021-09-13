@@ -14,7 +14,7 @@ import * as path from "path";
 import { BeDuration, IModelStatus, ProcessDetector } from "@bentley/bentleyjs-core";
 import { IModelHost, IpcHandler, IpcHost, NativeHost, NativeHostOpts } from "@bentley/imodeljs-backend";
 import { IModelError, InternetConnectivityStatus, IpcListener, IpcSocketBackend, NativeAppAuthorizationConfiguration, RemoveFunction, RpcConfiguration, RpcInterfaceDefinition } from "@bentley/imodeljs-common";
-import { ElectronRpcConfiguration, ElectronRpcManager } from "../common/ElectronRpcManager";
+import { ElectronRpcConfiguration, ElectronRpcManager } from "./common/ElectronRpcManager";
 import { ElectronAuthorizationClient } from "./ElectronAuthorizationClient";
 
 // cSpell:ignore signin devserver webcontents copyfile unmaximize eopt

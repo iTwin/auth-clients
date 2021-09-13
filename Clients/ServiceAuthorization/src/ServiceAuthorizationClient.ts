@@ -77,7 +77,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
    * @returns URL for the service
    */
   public getUrl(): string {
-    return this._url;
+    return this._url ?? "";
   }
 
   /**
