@@ -8,7 +8,8 @@
  */
 
 import { BeEvent, ClientRequestContext, IDisposable } from "@bentley/bentleyjs-core";
-import { AccessToken, AuthorizationClient, ImsAuthorizationClient } from "@bentley/itwin-client";
+import { ImsAuthorizationClient } from "@bentley/itwin-client";
+import { AccessToken, AuthorizationClient } from "authorization-base";
 import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
 import { BrowserAuthorizationLogger } from "./BrowserAuthorizationLogger";
 import { BrowserAuthorizationClientRedirectState } from "./BrowserAuthorizationClientRedirectState";
@@ -300,7 +301,7 @@ export class BrowserAuthorizationClient implements IDisposable, AuthorizationCli
       return this._accessToken;
     if (requestContext)
       requestContext.enter();
-    return; // TODO: Replace
+    return "REPLACE"; // TODO: Replace
     // throw new BentleyError(AuthStatus.Error, "Not signed in.", Logger.logError, FrontendAuthorizationClientLoggerCategory.Authorization);
   }
 

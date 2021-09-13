@@ -6,7 +6,8 @@
  * @module Introspection
  */
 
-import { AuthorizedClientRequestContext, ImsAuthorizationClient, removeAccessTokenPrefix, RequestGlobalOptions } from "@bentley/itwin-client";
+import { AuthorizedClientRequestContext, ImsAuthorizationClient, RequestGlobalOptions } from "@bentley/itwin-client";
+import { removeAccessTokenPrefix } from "authorization-base";
 import { ClientMetadata, custom, Issuer, Client as OpenIdClient } from "openid-client";
 import { IntrospectionResponse } from "./IntrospectionResponse";
 import { IntrospectionResponseCache, MemoryIntrospectionResponseCache } from "./IntrospectionResponseCache";
@@ -64,7 +65,7 @@ export class IntrospectionClient {
   }
 
   public async introspect(requestContext: AuthorizedClientRequestContext): Promise<IntrospectionResponse> {
-    const accessTokenStr = removeAccessTokenPrefix(requestContext.accessToken) ?? ""; // Is there a better solution for this? It needs a string value, will return
+    const accessTokenStr = removeAccessTokenPrefix(requestContext.accessToken.toTokenString()) ?? ""; // Is there a better solution for this? It needs a string value, will return
 
     try {
       const cachedResponse = await this._cache.get(accessTokenStr);

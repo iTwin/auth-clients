@@ -7,7 +7,8 @@
  */
 
 import { AuthStatus, BentleyError, ClientRequestContext, Logger } from "@bentley/bentleyjs-core";
-import { AuthorizationClient, RequestGlobalOptions } from "@bentley/itwin-client";
+import { RequestGlobalOptions } from "@bentley/itwin-client";
+import { AccessToken, AuthorizationClient } from "authorization-base";
 import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
 import { BackendITwinClientLoggerCategory } from "./BackendITwinClientLoggerCategory";
 

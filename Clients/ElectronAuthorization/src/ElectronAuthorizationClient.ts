@@ -230,7 +230,15 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
   }
 
   private async createAccessTokenFromResponse(tokenResponse: TokenResponse): Promise<AccessToken> {
-    return tokenResponse.accessToken;
+    const profile = await this.getUserProfile(tokenResponse);
+
+    const json = {
+      access_token: tokenResponse.accessToken,
+      expires_at: tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0),
+      expires_in: tokenResponse.expiresIn,
+    };
+
+    return AccessToken.fromTokenResponseJson(json, profile);
   }
 
   private async clearTokenResponse() {

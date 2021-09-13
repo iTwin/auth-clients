@@ -53,6 +53,7 @@ export class LoopbackWebServer {
       return;
 
     LoopbackWebServer._httpServer = Http.createServer(LoopbackWebServer.onBrowserRequest);
+    // eslint-disable-next-line deprecation/deprecation
     const urlParts: Url.UrlWithStringQuery = Url.parse(clientConfiguration.redirectUri ?? ElectronAuthorizationClient.defaultRedirectUri);
     LoopbackWebServer._httpServer.listen(urlParts.port);
   }
@@ -76,6 +77,7 @@ export class LoopbackWebServer {
       return;
 
     // Parse the request URL to determine the authorization code, state and errors if any
+    // eslint-disable-next-line deprecation/deprecation
     const urlParts: Url.UrlWithStringQuery = Url.parse(httpRequest.url);
     const searchParams = new Url.URLSearchParams(urlParts.query || "");
 
