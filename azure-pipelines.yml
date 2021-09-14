@@ -11,7 +11,7 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
-- script: npm install pnpm
+- script: npm install -g pnpm
   displayName: 'Install pnpm'
 
 - script: pnpm install
