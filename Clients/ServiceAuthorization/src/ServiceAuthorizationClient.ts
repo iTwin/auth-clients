@@ -21,11 +21,13 @@ const loggerCategory = BackendITwinClientLoggerCategory.Authorization;
 */
 export interface ServiceAuthorizationClientConfiguration {
   /** Client application's identifier as registered with the Bentley IMS OIDC/OAuth2 provider. */
-  clientId: string;
+  readonly clientId: string;
   /** Client application's secret key as registered with the Bentley IMS OIDC/OAuth2 provider. */
-  clientSecret: string;
+  readonly clientSecret: string;
   /** List of space separated scopes to request access to various resources. */
-  scope: string;
+  readonly scope: string;
+  /** The URL of the OIDC/OAuth2 provider. If left undefined, the iTwin Platform authority (`ims.bentley.com`) will be used by default. */
+  readonly authority?: string;
 }
 /**
   * Utility to generate OIDC/OAuth tokens for service or service applications
@@ -125,9 +127,9 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
       throw new BentleyError(AuthStatus.Error, error.message || "Authorization error", Logger.logError, loggerCategory, () => ({ error: error.error, message: error.message }));
     }
 
-    this._accessToken = tokenSet.access_token;
+    this._accessToken = `Bearer ${tokenSet.access_token}`;
     if (tokenSet.expires_at)
-      this._expiresAt = new Date(tokenSet.expires_at); // TODO: Check if this is in proper format
+      this._expiresAt = new Date(tokenSet.expires_at * 1000);
     return this._accessToken;
   }
 

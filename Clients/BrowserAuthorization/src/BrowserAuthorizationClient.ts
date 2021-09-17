@@ -7,7 +7,7 @@
  * @module BrowserAuthorization
  */
 
-import { BeEvent, ClientRequestContext, IDisposable } from "@bentley/bentleyjs-core";
+import { BeEvent, ClientRequestContext } from "@bentley/bentleyjs-core";
 import { ImsAuthorizationClient } from "@bentley/itwin-client";
 import { AccessToken, AuthorizationClient } from "authorization-base";
 import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
@@ -62,7 +62,7 @@ export const isBrowserAuthorizationClient = (client: AuthorizationClient | undef
 /**
  * @beta
  */
-export class BrowserAuthorizationClient implements IDisposable, AuthorizationClient {
+export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onUserStateChanged = new BeEvent<(token?: AccessToken) => void>();
   protected _userManager?: UserManager;
 
@@ -70,12 +70,15 @@ export class BrowserAuthorizationClient implements IDisposable, AuthorizationCli
   protected _advancedSettings?: UserManagerSettings;
 
   protected _accessToken?: AccessToken;
+  protected _expiresAt?: Date;
 
   public get isAuthorized(): boolean {
     return this.hasSignedIn;
   }
 
   public get hasExpired(): boolean {
+    if (this._expiresAt)
+      return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000; // Consider 1 minute before expiry as expired;
     return !this._accessToken;
   }
 
@@ -266,7 +269,8 @@ export class BrowserAuthorizationClient implements IDisposable, AuthorizationCli
       this._accessToken = undefined;
       return;
     }
-    this._accessToken = user.access_token;
+    this._accessToken = `Bearer ${user.access_token}`;
+    this._expiresAt = new Date(user.expires_at * 1000);
   }
 
   /**

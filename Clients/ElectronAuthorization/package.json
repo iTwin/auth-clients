@@ -26,6 +26,7 @@
     "@bentley/build-tools": "^2.19.10",
     "@bentley/electron-manager": "^2.19.10",
     "@bentley/eslint-plugin": "^2.19.10",
+    "authorization-base": "workspace:*",
     "electron": "^14.0.0",
     "eslint": "^7.11.0",
     "nyc": "^15.1.0",
