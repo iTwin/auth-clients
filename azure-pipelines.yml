@@ -1,0 +1,24 @@
+trigger:
+- main
+
+pr:
+  drafts: false
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: npm install -g pnpm
+  displayName: 'Install pnpm'
+
+- script: pnpm install
+  displayName: 'Install dependencies'
+
+- script: pnpm run build
+  displayName: 'Build'
+
+- script: pnpm run lint
+  displayName: 'Lint'
