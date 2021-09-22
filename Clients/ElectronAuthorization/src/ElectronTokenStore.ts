@@ -10,7 +10,7 @@
 
 import * as OperatingSystemUserName from "username";
 import { TokenResponse, TokenResponseJson } from "@openid/appauth";
-import { IModelHost } from "@bentley/imodeljs-backend";
+import { deletePassword, getPassword, setPassword } from "keytar";
 
 /**
  * Utility to store OIDC AppAuth in secure storage
@@ -32,14 +32,11 @@ export class ElectronTokenStore {
 
   /** Load token if available */
   public async load(): Promise<TokenResponse | undefined> {
-    if (undefined === IModelHost.platform.KeyTar) // no keytar on Linux yet
-      return undefined;
-
     const userName = await this.getUserName();
     if (!userName)
       return;
 
-    const tokenResponseStr = await IModelHost.platform.KeyTar.getPassword(this._appStorageKey, userName);
+    const tokenResponseStr = await getPassword(this._appStorageKey, userName);
     if (!tokenResponseStr) {
       return undefined;
     }
@@ -50,9 +47,6 @@ export class ElectronTokenStore {
 
   /** Save token after signin */
   public async save(tokenResponse: TokenResponse): Promise<void> {
-    if (undefined === IModelHost.platform.KeyTar) // no keytar on Linux yet
-      return;
-
     const userName = await this.getUserName();
     if (!userName)
       return;
@@ -62,18 +56,15 @@ export class ElectronTokenStore {
     tokenResponseObj.idToken = "";
 
     const tokenResponseStr = JSON.stringify(tokenResponseObj.toJson());
-    await IModelHost.platform.KeyTar.setPassword(this._appStorageKey, userName, tokenResponseStr);
+    await setPassword(this._appStorageKey, userName, tokenResponseStr);
   }
 
   /** Delete token after signout */
   public async delete(): Promise<void> {
-    if (undefined === IModelHost.platform.KeyTar) // no keytar on Linux yet
-      return;
-
     const userName = await this.getUserName();
     if (!userName)
       return;
 
-    await IModelHost.platform.KeyTar.deletePassword(this._appStorageKey, userName);
+    await deletePassword(this._appStorageKey, userName);
   }
 }
