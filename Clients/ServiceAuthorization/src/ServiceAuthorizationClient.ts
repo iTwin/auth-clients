@@ -6,13 +6,8 @@
  * @module Authentication
  */
 
-import { AuthStatus, BentleyError, ClientRequestContext, Logger } from "@bentley/bentleyjs-core";
-import { RequestGlobalOptions } from "@bentley/itwin-client";
-import { AccessToken, AuthorizationClient } from "authorization-base";
+import { AccessToken, AuthorizationClient } from "@itwin/authorization-base";
 import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
-import { BackendITwinClientLoggerCategory } from "./BackendITwinClientLoggerCategory";
-
-const loggerCategory = BackendITwinClientLoggerCategory.Authorization;
 
 /**
 * Configuration of clients for service or service applications.
@@ -41,60 +36,39 @@ export interface ServiceAuthorizationClientConfiguration {
   * @beta
   */
 export class ServiceAuthorizationClient implements AuthorizationClient {
-  protected searchKey: string = "IMSOpenId";
-
   protected _configuration: ServiceAuthorizationClientConfiguration;
-  protected _url?: string;
 
   private _accessToken?: AccessToken;
   private _expiresAt?: Date;
 
-  constructor(serviceConfiguration: ServiceAuthorizationClientConfiguration) {
-    this._url = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY;
+  private _client?: OpenIdClient;
 
+  constructor(serviceConfiguration: ServiceAuthorizationClientConfiguration) {
     custom.setHttpOptionsDefaults({
-      timeout: RequestGlobalOptions.timeout.response,
-      retry: RequestGlobalOptions.maxRetries,
-      agent: {
-        https: RequestGlobalOptions.httpsProxy,
-      },
+      timeout: 10000,
+      retry: 4,
     });
 
     this._configuration = serviceConfiguration;
   }
 
   private _issuer?: Issuer<OpenIdClient>;
-  private async getIssuer(requestContext: ClientRequestContext): Promise<Issuer<OpenIdClient>> {
-    requestContext.enter();
-
+  private async getIssuer(): Promise<Issuer<OpenIdClient>> {
     if (this._issuer)
       return this._issuer;
 
-    const url = this.getUrl();
-    this._issuer = await Issuer.discover(url);
+    this._issuer = await Issuer.discover(this._configuration.authority ?? "https://ims.bentley.com");
     return this._issuer;
-  }
-
-  /**
-   * Gets the URL of the service.
-   * @returns URL for the service
-   */
-  public getUrl(): string {
-    return this._url ?? "";
   }
 
   /**
   * Discover the endpoints of the service
   */
-  public async discoverEndpoints(requestContext: ClientRequestContext): Promise<Issuer<OpenIdClient>> {
-    requestContext.enter();
-    return this.getIssuer(requestContext);
+  public async discoverEndpoints(): Promise<Issuer<OpenIdClient>> {
+    return this.getIssuer();
   }
 
-  private _client?: OpenIdClient;
-  protected async getClient(requestContext: ClientRequestContext): Promise<OpenIdClient> {
-    requestContext.enter();
-
+  protected async getClient(): Promise<OpenIdClient> {
     if (this._client)
       return this._client;
 
@@ -103,16 +77,16 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
       client_secret: this._configuration.clientSecret, // eslint-disable-line @typescript-eslint/naming-convention
     };
 
-    const issuer = await this.getIssuer(requestContext);
+    const issuer = await this.getIssuer();
     this._client = new issuer.Client(clientConfiguration);
 
     return this._client;
   }
 
-  private async generateAccessToken(requestContext: ClientRequestContext): Promise<AccessToken | undefined> {
+  private async generateAccessToken(): Promise<AccessToken | undefined> {
     const scope = this._configuration.scope;
     if (scope.includes("openid") || scope.includes("email") || scope.includes("profile") || scope.includes("organization"))
-      throw new BentleyError(AuthStatus.Error, "Scopes for an service cannot include 'openid email profile organization'");
+      throw new Error("Authorization error: Scopes for an service cannot include 'openid email profile organization'");
 
     const grantParams: GrantBody = {
       grant_type: "client_credentials", // eslint-disable-line @typescript-eslint/naming-convention
@@ -120,11 +94,11 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     };
 
     let tokenSet: TokenSet;
-    const client = await this.getClient(requestContext);
+    const client = await this.getClient();
     try {
       tokenSet = await client.grant(grantParams);
     } catch (error) {
-      throw new BentleyError(AuthStatus.Error, error.message || "Authorization error", Logger.logError, loggerCategory, () => ({ error: error.error, message: error.message }));
+      throw new Error(`Authorization error: ${error.message}`);
     }
 
     this._accessToken = `Bearer ${tokenSet.access_token}`;
@@ -147,7 +121,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
       return false;
 
     if (!this._expiresAt)
-      throw new BentleyError(AuthStatus.Error, "Invalid JWT");
+      throw new Error("Authorization error: Invalid JWT");
 
     return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000; // Consider 1 minute before expiry as expired
   }
@@ -160,9 +134,9 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
   /** Returns a promise that resolves to the AccessToken of the currently authorized client.
   * The token is refreshed if necessary.
   */
-  public async getAccessToken(requestContext?: ClientRequestContext): Promise<AccessToken | undefined> {
+  public async getAccessToken(): Promise<AccessToken | undefined> {
     if (this.isAuthorized)
       return this._accessToken;
-    return this.generateAccessToken(requestContext || new ClientRequestContext());
+    return this.generateAccessToken();
   }
 }

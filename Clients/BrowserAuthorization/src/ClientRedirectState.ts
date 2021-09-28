@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 /** @packageDocumentation
- * @module BrowserAuthorization
+ * @module Authorization
  */
 
 /**

@@ -4,21 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 /** @packageDocumentation
- * @module BrowserAuthorization
+ * @module Logging
  */
 
 import { Logger as IOidcClientLogger, Log as OidcClientLog } from "oidc-client";
 import { Logger, LogLevel } from "@bentley/bentleyjs-core";
-
-/** Logger categories used by this package
- * @note All logger categories in this package start with the `frontend-authorization-client` prefix.
- * @see [Logger]($bentley)
- * @beta
- */
-export enum FrontendAuthorizationClientLoggerCategory {
-  /** The logger category used by base clients */
-  Authorization = "frontend-authorization-client.Authorization",
-}
+import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 
 /**
  * Utility to forward oidc-client logs to the Bentley logger
@@ -33,19 +24,19 @@ export class BrowserAuthorizationLogger implements IOidcClientLogger {
   }
 
   public debug(message?: any, ...optionalParams: any[]): void {
-    Logger.logTrace(FrontendAuthorizationClientLoggerCategory.Authorization, message, () => optionalParams);
+    Logger.logTrace(BrowserAuthorizationLoggerCategory.Authorization, message, () => optionalParams);
   }
 
   public info(message?: any, ...optionalParams: any[]): void {
-    Logger.logInfo(FrontendAuthorizationClientLoggerCategory.Authorization, message, () => optionalParams);
+    Logger.logInfo(BrowserAuthorizationLoggerCategory.Authorization, message, () => optionalParams);
   }
 
   public warn(message?: any, ...optionalParams: any[]): void {
-    Logger.logWarning(FrontendAuthorizationClientLoggerCategory.Authorization, message, () => optionalParams);
+    Logger.logWarning(BrowserAuthorizationLoggerCategory.Authorization, message, () => optionalParams);
   }
 
   public error(message?: any, ...optionalParams: any[]): void {
-    Logger.logError(FrontendAuthorizationClientLoggerCategory.Authorization, message, () => optionalParams);
+    Logger.logError(BrowserAuthorizationLoggerCategory.Authorization, message, () => optionalParams);
   }
 
   protected static getLogLevel(loggerCategory: string): number {
@@ -68,7 +59,7 @@ export class BrowserAuthorizationLogger implements IOidcClientLogger {
 
   /** Initializes forwarding of OidcClient logs to the Bentley Logger */
   public static initializeLogger() {
-    const logLevel = BrowserAuthorizationLogger.getLogLevel(FrontendAuthorizationClientLoggerCategory.Authorization);
+    const logLevel = BrowserAuthorizationLogger.getLogLevel(BrowserAuthorizationLoggerCategory.Authorization);
     if (!BrowserAuthorizationLogger.initialized) {
       OidcClientLog.logger = new BrowserAuthorizationLogger();
     }
@@ -77,10 +68,5 @@ export class BrowserAuthorizationLogger implements IOidcClientLogger {
       OidcClientLog.level = logLevel;
     }
     BrowserAuthorizationLogger.initialized = true;
-  }
-
-  /** Resets (or clears) forwarding of OidcClient logs to the Bentley Logger */
-  public static reset() {
-    OidcClientLog.reset();
   }
 }

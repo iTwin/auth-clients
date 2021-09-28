@@ -15,7 +15,7 @@ import {
   AuthorizationResponseJson, AuthorizationServiceConfiguration, BasicQueryStringUtils,
 } from "@openid/appauth";
 import { NodeCrypto } from "@openid/appauth/built/node_support";
-import { ElectronAuthorizationEvents } from "./ElectronAuthorizationEvents";
+import { ElectronAuthorizationEvents } from "./Events";
 
 /**
  * Utility to setup a local web server that listens to authorization responses to the browser and make the necessary redirections

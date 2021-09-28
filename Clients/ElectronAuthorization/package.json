@@ -2,7 +2,8 @@
   "name": "@itwin/electron-authorization",
   "version": "1.0.0",
   "description": "Electron authorization client for iTwin platform",
-  "main": "lib/ElectronBackend.ts",
+  "main": "lib/index.js",
+  "typings": "lib/index",
   "scripts": {
     "build": "tsc 1>&2",
     "clean": "",
@@ -13,26 +14,28 @@
   "author": "Bentley Systems, Inc. (http://www.bentley.com)",
   "license": "MIT",
   "dependencies": {
-    "@bentley/bentleyjs-core": "^2.19.10",
-    "@bentley/imodeljs-backend": "^2.19.10",
-    "@bentley/imodeljs-common": "^2.19.10",
-    "@bentley/itwin-client": "^2.19.10",
-    "@bentley/presentation-common": "^2.19.11",
+    "@bentley/bentleyjs-core": "^3.0.0-dev.69",
+    "@bentley/imodeljs-backend": "^3.0.0-dev.69",
+    "@bentley/imodeljs-common": "^3.0.0-dev.69",
+    "@bentley/itwin-client": "^3.0.0-dev.69",
+    "@bentley/presentation-common": "^3.0.0-dev.69",
     "@openid/appauth": "^1.3.1",
+    "deep-assign": "^2.0.0",
     "keytar": "^7.7.0",
     "open": "^8.2.1",
     "username": "^5.1.0"
   },
   "devDependencies": {
-    "@bentley/build-tools": "^2.19.10",
-    "@bentley/electron-manager": "^2.19.10",
-    "@bentley/eslint-plugin": "^2.19.10",
-    "authorization-base": "workspace:*",
-    "electron": "^14.0.0",
-    "eslint": "^7.11.0",
+    "@bentley/build-tools": "^3.0.0-dev.69",
+    "@bentley/electron-manager": "^3.0.0-dev.69",
+    "@bentley/eslint-plugin": "^3.0.0-dev.69",
+    "@itwin/authorization-base": "workspace:*",
+    "@types/deep-assign": "^0.1.1",
+    "electron": "^14.0.1",
+    "eslint": "^7.32.0",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
-    "typescript": "~4.3.0"
+    "typescript": "~4.3.5"
   },
   "eslintConfig": {
     "plugins": [

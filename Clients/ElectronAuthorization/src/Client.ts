@@ -12,45 +12,252 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import { assert, AuthStatus, BentleyError, ClientRequestContext, Logger } from "@bentley/bentleyjs-core";
-import { IModelHost, NativeAppAuthorizationBackend, NativeHost } from "@bentley/imodeljs-backend";
-import { NativeAppAuthorizationConfiguration } from "@bentley/imodeljs-common";
-import { AccessToken, AuthorizationClient, request as httpRequest, RequestOptions } from "@bentley/itwin-client";
+import { IModelHost, NativeHost } from "@bentley/imodeljs-backend";
+import { IModelError, NativeAppAuthorizationConfiguration } from "@bentley/imodeljs-common";
+import * as deepAssign from "deep-assign";
+import { AuthorizedClientRequestContext, request as httpRequest, RequestOptions } from "@bentley/itwin-client";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestJson, AuthorizationResponse, AuthorizationServiceConfiguration,
   BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest, RevokeTokenRequestJson, StringMap,
   TokenRequest, TokenRequestHandler, TokenRequestJson, TokenResponse,
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
-import { ElectronAuthorizationEvents } from "./ElectronAuthorizationEvents";
+import { ElectronAuthorizationEvents } from "./Events";
 import { ElectronAuthorizationRequestHandler } from "./ElectronAuthorizationRequestHandler";
-import { ElectronTokenStore } from "./ElectronTokenStore";
+import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
+import { AccessToken, AuthorizationClient } from "@itwin/authorization-base";
+import * as https from "https";
 
 const loggerCategory = "electron-auth";
+export class DefaultRequestOptionsProvider {
+  protected _defaultOptions: RequestOptions;
+  /** Creates an instance of DefaultRequestOptionsProvider and sets up the default options. */
+  constructor() {
+    this._defaultOptions = {
+      method: "GET",
+      useCorsProxy: false,
+    };
+  }
+
+  /**
+   * Augments options with the provider's default values.
+   * @note The options passed in override any defaults where necessary.
+   * @param options Options that should be augmented.
+   */
+  public async assignOptions(options: RequestOptions): Promise<void> {
+    const clonedOptions: RequestOptions = { ...options };
+    deepAssign(options, this._defaultOptions);
+    deepAssign(options, clonedOptions); // ensure the supplied options override the defaults
+  }
+}
+
+/** @beta */
+export class RequestGlobalOptions {
+  public static httpsProxy?: https.Agent = undefined;
+  /** Creates an agent for any user defined proxy using the supplied additional options. Returns undefined if user hasn't defined a proxy.
+   * @internal
+   */
+  public static createHttpsProxy: (additionalOptions?: https.AgentOptions) => https.Agent | undefined = (_additionalOptions?: https.AgentOptions) => undefined;
+  public static maxRetries: number = 4;
+  public static timeout: RequestTimeoutOptions = {
+    deadline: 25000,
+    response: 10000,
+  };
+  // Assume application is online or offline. This hint skip retry/timeout
+  public static online: boolean = true;
+}
+
+/** @beta */
+export interface RequestTimeoutOptions {
+  /** Sets a deadline (in milliseconds) for the entire request (including all uploads, redirects, server processing time) to complete.
+   * If the response isn't fully downloaded within that time, the request will be aborted
+   */
+  deadline?: number;
+
+  /** Sets maximum time (in milliseconds) to wait for the first byte to arrive from the server, but it does not limit how long the entire
+   * download can take. Response timeout should be at least few seconds longer than just the time it takes the server to respond, because
+   * it also includes time to make DNS lookup, TCP/IP and TLS connections, and time to upload request data.
+   */
+  response?: number;
+}
+
+// Don't expose any of the 'Client' methods
 
 /**
  * Utility to generate OIDC/OAuth tokens for Desktop Applications
  * @beta
  */
-export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend implements AuthorizationClient {
+export class ElectronAuthorizationClient implements AuthorizationClient { // TODO: Make sure to do ImsAuthorizationCLient
   public static defaultRedirectUri = "http://localhost:3000/signin-callback";
   private _configuration: AuthorizationServiceConfiguration | undefined;
   private _tokenResponse: TokenResponse | undefined;
   private _tokenStore?: ElectronTokenStore;
+  private _expiresAt?: Date;
   public get tokenStore() { return this._tokenStore!; }
 
+  protected _accessToken?: AccessToken;
+  public config?: NativeAppAuthorizationConfiguration;
+  public expireSafety = 60 * 10; // refresh token 10 minutes before real expiration time
+  public issuerUrl?: string;
+
+  public static readonly searchKey: string = "IMSOpenID";
+
+  private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
+  protected _url?: string;
+  protected baseUrl?: string;
+
+  public static readonly configResolveUrlUsingRegion = "IMJS_BUDDI_RESOLVE_URL_USING_REGION";
+
   public constructor(config?: NativeAppAuthorizationConfiguration) {
-    super(config);
+    this._url = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY;
+    this.config = config;
   }
 
-  public get redirectUri() { return this.config?.redirectUri ?? ElectronAuthorizationClient.defaultRedirectUri; }
+  // ------  Client.ts ------
+
+  protected async setupOptionDefaults(options: RequestOptions): Promise<void> {
+    if (!ElectronAuthorizationClient._defaultRequestOptionsProvider)
+      ElectronAuthorizationClient._defaultRequestOptionsProvider = new DefaultRequestOptionsProvider();
+    return ElectronAuthorizationClient._defaultRequestOptionsProvider.assignOptions(options);
+  }
+
+  // DELETE
+  /**
+   * Gets name/key to query the service URLs from the URL Discovery Service ("Buddi")
+   * @returns Search key for the URL.
+   */
+  protected getUrlSearchKey(): string {
+    return ElectronAuthorizationClient.searchKey;
+  }
+
+  public async getUrl(requestContext: ClientRequestContext): Promise<string> {
+    if (this._url)
+      return this._url;
+
+    if (this.baseUrl) {
+      let prefix = process.env.IMJS_URL_PREFIX;
+
+      // Need to ensure the usage of the previous IMJS_BUDDI_RESOLVE_URL_USING_REGION to not break any
+      // existing users relying on the behavior.
+      // This needs to be removed...
+      if (undefined === prefix) {
+        const region = process.env.IMJS_BUDDI_RESOLVE_URL_USING_REGION;
+        switch (region) {
+          case "102":
+            prefix = "qa-";
+            break;
+          case "103":
+            prefix = "dev-";
+            break;
+        }
+      }
+
+      if (prefix) {
+        const baseUrl = new URL(this.baseUrl);
+        baseUrl.hostname = prefix + baseUrl.hostname;
+        this._url = baseUrl.href;
+      } else {
+        this._url = this.baseUrl;
+      }
+      return this._url;
+    }
+
+    const searchKey: string = this.getUrlSearchKey();
+    try {
+      const url = await this.discoverUrl(requestContext, searchKey, undefined);
+      this._url = url;
+    } catch (error) {
+      throw new Error(`Failed to discover URL for service identified by "${searchKey}"`);
+    }
+
+    return this._url;
+  }
+
+  // DELETE (and anything with buddi)
+  public async discoverUrl(requestContext: ClientRequestContext, searchKey: string, regionId: number | undefined): Promise<string> {
+
+    const urlBase: string = await this.getUrl(requestContext);
+    const url: string = `${urlBase}/GetUrl/`;
+    // const resolvedRegion = typeof regionId !== "undefined" ? regionId : process.env[UrlDiscoveryClient.configResolveUrlUsingRegion] ? Number(process.env[UrlDiscoveryClient.configResolveUrlUsingRegion]) : 0;
+    const options: RequestOptions = {
+      method: "GET",
+      qs: {
+        url: searchKey,
+        // region: resolvedRegion,
+      },
+    };
+
+    await this.setupOptionDefaults(options);
+
+    // const response: Response = await request(requestContext, url, options);
+
+    // const discoveredUrl: string = response.body.result.url.replace(/\/$/, ""); // strip trailing "/" for consistency
+    // return discoveredUrl;
+    return url + regionId;
+  }
+
+  /** used by clients to send delete requests */
+  protected async delete(requestContext: AuthorizedClientRequestContext, relativeUrlPath: string, httpRequestOptions?: RequestOptions): Promise<void> {
+    const url: string = await this.getUrl(requestContext) + relativeUrlPath;
+    Logger.logInfo(loggerCategory, "Sending DELETE request", () => ({ url }));
+    const options: RequestOptions = {
+      method: "DELETE",
+      headers: { authorization: requestContext.accessToken },
+    };
+    this.applyUserConfiguredHttpRequestOptions(options, httpRequestOptions);
+    await this.setupOptionDefaults(options);
+    await httpRequest(requestContext, url, options);
+    Logger.logTrace(loggerCategory, "Successful DELETE request", () => ({ url }));
+  }
+
+  /** Configures request options based on user defined values in HttpRequestOptions */
+  protected applyUserConfiguredHttpRequestOptions(requestOptions: RequestOptions, userDefinedRequestOptions?: RequestOptions): void {
+    if (!userDefinedRequestOptions)
+      return;
+
+    if (userDefinedRequestOptions.headers) {
+      requestOptions.headers = { ...requestOptions.headers, ...userDefinedRequestOptions.headers };
+    }
+
+    if (userDefinedRequestOptions.timeout) {
+      this.applyUserConfiguredTimeout(requestOptions, userDefinedRequestOptions.timeout);
+    }
+  }
+
+  /** Sets the request timeout based on user defined values */
+  private applyUserConfiguredTimeout(requestOptions: RequestOptions, userDefinedTimeout: RequestTimeoutOptions): void {
+    requestOptions.timeout = { ...requestOptions.timeout };
+
+    if (userDefinedTimeout.response)
+      requestOptions.timeout.response = userDefinedTimeout.response;
+
+    if (userDefinedTimeout.deadline)
+      requestOptions.timeout.deadline = userDefinedTimeout.deadline;
+    else if (userDefinedTimeout.response) {
+      const defaultNetworkOverheadBuffer = (RequestGlobalOptions.timeout.deadline as number) - (RequestGlobalOptions.timeout.response as number);
+      requestOptions.timeout.deadline = userDefinedTimeout.response + defaultNetworkOverheadBuffer;
+    }
+  }
+
+  // ------ END Client.ts ------
+
+  // ------ NativeAppAuthorizationBackend ------
+
+  public getClientRequestContext() { return ClientRequestContext.fromJSON(IModelHost.session); }
 
   /**
    * Used to initialize the client - must be awaited before any other methods are called.
    * The call attempts a silent sign-if possible.
    */
-  public override async initialize(config?: NativeAppAuthorizationConfiguration): Promise<void> {
-    await super.initialize(config);
+  public async initialize(config?: NativeAppAuthorizationConfiguration): Promise<void> {
+    this.config = config ?? this.config;
+    if (!this.config)
+      throw new IModelError(AuthStatus.Error, "Must specify a valid configuration when initializing authorization");
+    if (this.config.expiryBuffer)
+      this.expireSafety = this.config.expiryBuffer;
+    this.issuerUrl = this.config.issuerUrl ?? await this.getUrl(this.getClientRequestContext());
+
     assert(this.config !== undefined && this.issuerUrl !== undefined, "URL of authorization provider was not initialized");
 
     this._tokenStore = new ElectronTokenStore(this.config.clientId);
@@ -63,9 +270,20 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
     await this.loadAccessToken();
   }
 
+  public setAccessToken(token?: AccessToken) {
+    if (token === this._accessToken)
+      return;
+    this._accessToken = token;
+    // NativeHost.onUserStateChanged.raiseEvent(token);
+  }
+
+  // ------ END NativeAppAuthorizationBackend ------
+
+  public get redirectUri() { return this.config?.redirectUri ?? ElectronAuthorizationClient.defaultRedirectUri; }
+
   public async refreshToken(): Promise<AccessToken> {
     if (this._tokenResponse === undefined || this._tokenResponse.refreshToken === undefined)
-      throw new BentleyError(AuthStatus.Error, "Not signed In. First call signIn()", Logger.logError, loggerCategory);
+      throw new BentleyError(AuthStatus.Error, "Not signed In. First call signIn()");
 
     const token = `Bearer ${this._tokenResponse.refreshToken}`; // Is this right? should we append bearer to refresh token?
     return this.refreshAccessToken(token);
@@ -93,14 +311,15 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
    */
   public async signInComplete(): Promise<AccessToken> {
     return new Promise<AccessToken>((resolve, reject) => {
-      NativeHost.onUserStateChanged.addOnce((token) => {
-        if (token !== undefined) {
-          resolve(token);
-        } else {
-          reject(new Error("Failed to sign in"));
-        }
-      });
+      // NativeHost.onUserStateChanged.addOnce((token) => {
+      //   if (token !== undefined) {
+      //     resolve(token);
+      //   } else {
+      //     reject(new Error("Failed to sign in"));
+      //   }
+      // });
       this.signIn().catch((err) => reject(err));
+      resolve("");
     });
   }
 
@@ -114,7 +333,7 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
    */
   public async signIn(): Promise<void> {
     if (!this._configuration)
-      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()", Logger.logError, loggerCategory);
+      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
     assert(this.config !== undefined);
 
     // Attempt to load the access token from store
@@ -231,15 +450,7 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
   }
 
   private async createAccessTokenFromResponse(tokenResponse: TokenResponse): Promise<AccessToken> {
-    const profile = await this.getUserProfile(tokenResponse);
-
-    const json = {
-      access_token: tokenResponse.accessToken,
-      expires_at: tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0),
-      expires_in: tokenResponse.expiresIn,
-    };
-
-    return AccessToken.fromTokenResponseJson(json, profile);
+    return tokenResponse.accessToken;
   }
 
   private async clearTokenResponse() {
@@ -249,11 +460,27 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
   }
 
   private async setTokenResponse(tokenResponse: TokenResponse): Promise<AccessToken> {
-    const accessToken = await this.createAccessTokenFromResponse(tokenResponse);
+    const accessToken = tokenResponse.accessToken;
     this._tokenResponse = tokenResponse;
+    const expiresAtMilliseconds = (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000;
+    this._expiresAt = new Date(expiresAtMilliseconds);
+
     await this.tokenStore.save(this._tokenResponse);
     this.setAccessToken(accessToken);
     return accessToken;
+  }
+
+  private get _hasExpired(): boolean {
+    if (!this._expiresAt)
+      return false;
+
+    return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000; // Consider 1 minute before expiry as expired
+  }
+
+  public async getAccessToken(): Promise<AccessToken | undefined> {
+    if (this._hasExpired || !this._accessToken)
+      this.setAccessToken(await this.refreshToken());
+    return this._accessToken;
   }
 
   private async refreshAccessToken(refreshToken: string): Promise<AccessToken> {
@@ -265,7 +492,7 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
   /** Swap the authorization code for a refresh token and access token */
   private async swapAuthorizationCodeForTokens(authCode: string, codeVerifier: string): Promise<TokenResponse> {
     if (!this._configuration)
-      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()", Logger.logError, loggerCategory);
+      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
     assert(this.config !== undefined);
 
     const nativeConfig = this.config;
@@ -286,7 +513,7 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
 
   private async makeRefreshAccessTokenRequest(refreshToken: string): Promise<TokenResponse> {
     if (!this._configuration)
-      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()", Logger.logError, loggerCategory);
+      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
     assert(this.config !== undefined);
 
     const tokenRequestJson: TokenRequestJson = {
@@ -304,7 +531,7 @@ export class ElectronAuthorizationClient extends NativeAppAuthorizationBackend i
 
   private async makeRevokeTokenRequest(): Promise<void> {
     if (!this._tokenResponse)
-      throw new BentleyError(AuthStatus.Error, "Missing refresh token. First call signIn() and ensure it's successful", Logger.logError, loggerCategory);
+      throw new BentleyError(AuthStatus.Error, "Missing refresh token. First call signIn() and ensure it's successful");
     assert(this.config !== undefined);
 
     const refreshToken = this._tokenResponse.refreshToken!;
