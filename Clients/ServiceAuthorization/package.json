@@ -13,6 +13,7 @@
   "author": "Bentley Systems, Inc. (http://www.bentley.com)",
   "license": "MIT",
   "dependencies": {
+    "@bentley/bentleyjs-core": "^3.0.0-dev.69",
     "@itwin/authorization-base": "workspace:*",
     "openid-client": "^4.9.0"
   },
