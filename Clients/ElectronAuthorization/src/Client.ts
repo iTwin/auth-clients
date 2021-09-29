@@ -11,11 +11,11 @@
 // cSpell:ignore openid appauth signin Pkce Signout
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { assert, AuthStatus, BentleyError, ClientRequestContext, Logger } from "@bentley/bentleyjs-core";
-import { IModelHost, NativeHost } from "@bentley/imodeljs-backend";
+import { AccessToken, assert, AuthStatus, BentleyError, Logger } from "@bentley/bentleyjs-core";
+import { NativeHost } from "@bentley/imodeljs-backend";
 import { IModelError, NativeAppAuthorizationConfiguration } from "@bentley/imodeljs-common";
 import * as deepAssign from "deep-assign";
-import { AuthorizedClientRequestContext, request as httpRequest, RequestOptions } from "@bentley/itwin-client";
+import { AuthorizationClient, request, RequestOptions } from "@bentley/itwin-client";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestJson, AuthorizationResponse, AuthorizationServiceConfiguration,
   BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest, RevokeTokenRequestJson, StringMap,
@@ -26,7 +26,7 @@ import { ElectronAuthorizationEvents } from "./Events";
 import { ElectronAuthorizationRequestHandler } from "./ElectronAuthorizationRequestHandler";
 import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
-import { AccessToken, AuthorizationClient } from "@itwin/authorization-base";
+
 import * as https from "https";
 
 const loggerCategory = "electron-auth";
@@ -131,7 +131,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     return ElectronAuthorizationClient.searchKey;
   }
 
-  public async getUrl(requestContext: ClientRequestContext): Promise<string> {
+  public async getUrl(): Promise<string> {
     if (this._url)
       return this._url;
 
@@ -165,7 +165,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
 
     const searchKey: string = this.getUrlSearchKey();
     try {
-      const url = await this.discoverUrl(requestContext, searchKey, undefined);
+      const url = await this.discoverUrl(searchKey, undefined);
       this._url = url;
     } catch (error) {
       throw new Error(`Failed to discover URL for service identified by "${searchKey}"`);
@@ -175,9 +175,9 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
   }
 
   // DELETE (and anything with buddi)
-  public async discoverUrl(requestContext: ClientRequestContext, searchKey: string, regionId: number | undefined): Promise<string> {
+  public async discoverUrl(searchKey: string, regionId: number | undefined): Promise<string> {
 
-    const urlBase: string = await this.getUrl(requestContext);
+    const urlBase: string = await this.getUrl();
     const url: string = `${urlBase}/GetUrl/`;
     // const resolvedRegion = typeof regionId !== "undefined" ? regionId : process.env[UrlDiscoveryClient.configResolveUrlUsingRegion] ? Number(process.env[UrlDiscoveryClient.configResolveUrlUsingRegion]) : 0;
     const options: RequestOptions = {
@@ -197,17 +197,15 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     return url + regionId;
   }
 
-  /** used by clients to send delete requests */
-  protected async delete(requestContext: AuthorizedClientRequestContext, relativeUrlPath: string, httpRequestOptions?: RequestOptions): Promise<void> {
-    const url: string = await this.getUrl(requestContext) + relativeUrlPath;
+  protected async delete(accessToken: AccessToken, relativeUrlPath: string): Promise<void> {
+    const url: string = await this.getUrl() + relativeUrlPath;
     Logger.logInfo(loggerCategory, "Sending DELETE request", () => ({ url }));
     const options: RequestOptions = {
       method: "DELETE",
-      headers: { authorization: requestContext.accessToken },
+      headers: { authorization: accessToken },
     };
-    this.applyUserConfiguredHttpRequestOptions(options, httpRequestOptions);
     await this.setupOptionDefaults(options);
-    await httpRequest(requestContext, url, options);
+    await request(url, options);
     Logger.logTrace(loggerCategory, "Successful DELETE request", () => ({ url }));
   }
 
@@ -244,8 +242,6 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
 
   // ------ NativeAppAuthorizationBackend ------
 
-  public getClientRequestContext() { return ClientRequestContext.fromJSON(IModelHost.session); }
-
   /**
    * Used to initialize the client - must be awaited before any other methods are called.
    * The call attempts a silent sign-if possible.
@@ -256,7 +252,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
       throw new IModelError(AuthStatus.Error, "Must specify a valid configuration when initializing authorization");
     if (this.config.expiryBuffer)
       this.expireSafety = this.config.expiryBuffer;
-    this.issuerUrl = this.config.issuerUrl ?? await this.getUrl(this.getClientRequestContext());
+    this.issuerUrl = this.config.issuerUrl ?? await this.getUrl();
 
     assert(this.config !== undefined && this.issuerUrl !== undefined, "URL of authorization provider was not initialized");
 
@@ -433,24 +429,6 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
       });
       this.signOut().catch((err) => reject(err));
     });
-  }
-
-  private async getUserProfile(tokenResponse: TokenResponse): Promise<any | undefined> {
-    const options: RequestOptions = {
-      method: "GET",
-      headers: {
-        authorization: `Bearer ${tokenResponse.accessToken}`,
-      },
-      accept: "application/json",
-    };
-
-    const httpContext = ClientRequestContext.fromJSON(IModelHost.session);
-    const response = await httpRequest(httpContext, this._configuration!.userInfoEndpoint!, options);
-    return response?.body;
-  }
-
-  private async createAccessTokenFromResponse(tokenResponse: TokenResponse): Promise<AccessToken> {
-    return tokenResponse.accessToken;
   }
 
   private async clearTokenResponse() {

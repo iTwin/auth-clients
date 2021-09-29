@@ -6,7 +6,8 @@
  * @module Authentication
  */
 
-import { AccessToken, AuthorizationClient } from "@itwin/authorization-base";
+import { AccessToken } from "@bentley/bentleyjs-core";
+import { AuthorizationClient } from "@bentley/itwin-client";
 import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
 
 /**

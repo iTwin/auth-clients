@@ -6,13 +6,13 @@
  * @module Introspection
  */
 
-import { AccessToken, removeAccessTokenPrefix } from "@itwin/authorization-base";
 import { ClientMetadata, custom, Issuer, Client as OpenIdClient } from "openid-client";
 import { IntrospectionResponse } from "./IntrospectionResponse";
 import { MemoryIntrospectionResponseCache } from "./IntrospectionResponseCacheBase";
 import { IntrospectionResponseCache } from "./IntrospectionResponseCache";
 import { BackendITwinClientLoggerCategory } from "../BackendITwinClientLoggerCategory";
-import { getErrorProps, Logger } from "@bentley/bentleyjs-core";
+import { AccessToken, getErrorProps, Logger } from "@bentley/bentleyjs-core";
+import { removeAccessTokenPrefix } from "@bentley/itwin-client";
 
 /**
  * @param _clientId

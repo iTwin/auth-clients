@@ -7,8 +7,8 @@
  * @module Authorization
  */
 
-import { BeEvent } from "@bentley/bentleyjs-core";
-import { AccessToken, AuthorizationClient } from "@itwin/authorization-base";
+import { AccessToken, BeEvent } from "@bentley/bentleyjs-core";
+import { AuthorizationClient } from "@bentley/itwin-client";
 import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
 import { BrowserAuthorizationLogger } from "./Logger";
 import { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
