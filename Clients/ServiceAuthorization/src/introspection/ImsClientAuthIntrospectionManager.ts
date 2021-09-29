@@ -38,12 +38,11 @@ export class ImsClientAuthDetail {
     const properties: { [key: string]: any } = {
       clientAuthClientId: this.clientAuthClientId,
       clientAuthUserId: this.clientAuthUserId,
+      clientAuthOrgId: this.clientAuthOrgId,
+      clientAuthOrgName: this.clientAuthOrgName,
+      clientAuthUltimateSite: this.clientAuthUltimateSite,
+      clientAuthEmail: this.clientAuthEmail,
     };
-
-    properties.clientAuthOrgId = this.clientAuthOrgId;
-    properties.clientAuthOrgName = this.clientAuthOrgName;
-    properties.clientAuthUltimateSite = this.clientAuthUltimateSite;
-    properties.clientAuthEmail = this.clientAuthEmail;
 
     return properties;
   }
