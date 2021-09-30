@@ -14,12 +14,6 @@ resources:
       ref: master
       name: iModelTechnologies/imodeljs-build-pipeline-scripts
 
-parameters:
-  - name: try_publish
-    displayName: Publish packages
-    type: boolean
-    default: false
-
 stages:
 - stage: Build
   displayName: Build
@@ -77,8 +71,10 @@ stages:
             fi
           }
 
-          updateBrowser=$(checkVer $browserAuthVer $browserAuthName)
-          updateService=$(checkVer $ServiceAuthVer $ServiceAuthName)
+          # updateBrowser=$(checkVer $browserAuthVer $browserAuthName)
+          # updateService=$(checkVer $ServiceAuthVer $ServiceAuthName)
+          updateBrowser=true
+          updateService=true
 
           if [ "$updateBrowser" = "true" ] && [ "$updateBrowser" = "$updateService" ] && [ "$browserAuthVer" = "$ServiceAuthVer" ]; then
             echo "package publishing conditions are met."
