@@ -46,13 +46,6 @@ stages:
           pnpm run pack
         displayName: 'pnpm run pack'
 
-      - bash: |
-          ls $(Build.SourcesDirectory)
-          ls $(Build.SourcesDirectory)/Clients
-          ls $(Build.SourcesDirectory)/Clients/BrowserAuthorization
-          ls $(Build.SourcesDirectory)/Clients/ServiceAuthorization
-        displayName: Debug Directory
-
       # publish artifact
 
       - bash: |
@@ -99,7 +92,7 @@ stages:
 
         displayName: 'Store Build Info'
         name: info
-        condition: and(succeeded(), eq(variables.try_publish, true), eq(variables['Agent.OS'], 'Linux'))
+        condition: and(succeeded(), eq(variables.try_publish, true), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
 
       - task: PublishBuildArtifacts@1
         inputs:
