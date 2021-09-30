@@ -103,14 +103,14 @@ stages:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.SourcesDirectory)/Clients/BrowserAuthorization/*.tgz'
+          PathtoPublish: '$(Build.SourcesDirectory)/Clients/BrowserAuthorization/itwin-browser-authorization-$(browserAuthVer).tgz'
           artifactName: BrowserAuthorizationClient
         displayName: 'Publish BrowserAuthorizationClient'
         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.SourcesDirectory)/Clients/ServiceAuthorization/*.tgz'
+          PathtoPublish: '$(Build.SourcesDirectory)/Clients/ServiceAuthorization/itwin-service-authorization-$(ServiceAuthVer).tgz'
           artifactName: ServiceAuthorizationClient
         displayName: 'Publish ServiceAuthorizationClient'
         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
