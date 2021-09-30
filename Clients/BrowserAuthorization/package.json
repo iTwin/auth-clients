@@ -1,6 +1,6 @@
 {
   "name": "@itwin/browser-authorization",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Browser authorization client for iTwin platform",
   "main": "lib/index.js",
   "typings": "lib/index",
@@ -9,7 +9,8 @@
     "clean": "",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "test": "",
-    "cover": ""
+    "cover": "",
+    "pack": "npm pack"
   },
   "author": "Bentley Systems, Inc. (http://www.bentley.com)",
   "license": "MIT",

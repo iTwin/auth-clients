@@ -7,18 +7,116 @@ pr:
     include:
       - main
 
-pool:
-  vmImage: ubuntu-latest
+resources:
+  repositories:
+    - repository: build-pipeline-scripts
+      type: git
+      ref: master
+      name: iModelTechnologies/imodeljs-build-pipeline-scripts
 
-steps:
-- script: npm install -g pnpm
-  displayName: 'Install pnpm'
+stages:
+- stage:
+  displayName: Build
+  jobs:
+    - job: BuildPackages
+      strategy:
+        matrix:
+          linux:
+            imageName: 'ubuntu-latest'
+          mac:
+            imageName: 'macos-latest'
+          windows:
+            imageName: 'windows-latest'
+      pool:
+        vmImage: $(imageName)
+      steps:
+      - script: npm install -g pnpm
+        displayName: 'Install pnpm'
 
-- script: pnpm install
-  displayName: 'Install dependencies'
+      - script: pnpm install
+        displayName: 'Install dependencies'
 
-- script: pnpm run build
-  displayName: 'Build'
+      - script: pnpm run build
+        displayName: 'Build'
 
-- script: pnpm run lint
-  displayName: 'Lint'
+      - script: pnpm run lint
+        displayName: 'Lint'
+
+      - bash: |
+          pnpm run pack
+        displayName: 'pnpm run pack'
+
+      # publish artifact
+
+      - bash: |
+          browserAuthVer=$(node -p "require('./Clients/BrowserAuthorization/package.json').version")
+          browserAuthName=$(node -p "require('./Clients/BrowserAuthorization/package.json').name")
+          ServiceAuthVer=$(node -p "require('./Clients/ServiceAuthorization/package.json').version")
+          ServiceAuthName=$(node -p "require('./Clients/ServiceAuthorization/package.json').name")
+
+          checkVer() {
+            localVer=$1
+            name=$2
+
+            remoteVer=$(npm view $name version)
+            if [ -z "$remoteVer" ]; then
+              remoteVer=0.0.0
+            fi
+
+            olderVer=$(printf '%s\n' "$localVer" "$remoteVer" | sort -V | head -n1)
+            if [ "$localVer" != "$remoteVer" ] && [ "$remoteVer" = "$olderVer" ]; then
+              echo true
+            else
+              echo false
+            fi
+          }
+
+          updateBrowser=$(checkVer $browserAuthVer $browserAuthName)
+          updateService=$(checkVer $ServiceAuthVer $ServiceAuthName)
+
+          if [ "$updateBrowser" = "true" ] && [ "$updateBrowser" = "$updateService" ] && [ "$browserAuthVer" = "$ServiceAuthVer" ]; then
+            echo "package publishing conditions are met."
+            shouldPublish=true
+          else
+            echo "package publishing conditions not met."
+            shouldPublish=false
+          fi
+
+          echo "##vso[task.setvariable variable=shouldPublish;isOutput=true]$shouldPublish"
+          echo "##vso[task.setvariable variable=browserAuthVer;isOutput=true]$browserAuthVer"
+          echo "##vso[task.setvariable variable=browserAuthName;isOutput=true]$browserAuthName"
+          echo "##vso[task.setvariable variable=ServiceAuthVer;isOutput=true]$ServiceAuthVer"
+          echo "##vso[task.setvariable variable=ServiceAuthName;isOutput=true]$ServiceAuthName"
+
+        displayName: 'Store Build Info'
+        name: info
+        condition: and(succeeded(), eq(variables.try_publish, true), eq(variables['Build.SourceBranch'], 'refs/heads/main'), eq(variables['Agent.OS'], 'Linux'))
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/Clients/BrowserAuthorization/*.tgz'
+          artifactName: BrowserAuthorizationClient
+        displayName: 'Publish BrowserAuthorizationClient'
+        condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.ArtifactStagingDirectory)/Clients/ServiceAuthorization/*.tgz'
+          artifactName: ServiceAuthorizationClient
+        displayName: 'Publish ServiceAuthorizationClient'
+        condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
+
+- stage: Publish
+  displayName: Publish
+  condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublish'], 'true'))
+  dependsOn: Build
+
+  jobs:
+    - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
+      parameters:
+        path: '*.tgz'
+        artifactName: BrowserAuthorizationClient
+    - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
+      parameters:
+        path: '*.tgz'
+        artifactName: ServiceAuthorizationClient

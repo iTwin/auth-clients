@@ -1,13 +1,14 @@
 {
   "name": "auth-clients",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Authorization clients for the iTwin platform",
   "scripts": {
     "build": "pnpm run build --filter ./Clients/",
     "lint": "pnpm run lint --filter ./Clients/",
     "test": "pnpm run test --filter ./Clients/",
-    "cover": "pnpm run cover --filter ./Clients/"
+    "cover": "pnpm run cover --filter ./Clients/",
+    "pack": "pnpm run pack --filter ./Clients/"
   },
   "keywords": [
     "Bentley",

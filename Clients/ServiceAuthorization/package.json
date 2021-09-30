@@ -1,6 +1,6 @@
 {
   "name": "@itwin/service-authorization",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Service authorization client for iTwin platform",
   "main": "lib/index.js",
   "typings": "lib/index",
@@ -8,7 +8,8 @@
     "build": "tsc 1>&2",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "test": "betools test --grep=\"#integration\" --invert",
-    "cover": "nyc npm test"
+    "cover": "nyc npm test",
+    "pack": "npm pack"
   },
   "author": "Bentley Systems, Inc. (http://www.bentley.com)",
   "license": "MIT",
