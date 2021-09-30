@@ -8,6 +8,10 @@
 
 import { IntrospectionResponse } from "./IntrospectionResponse";
 
+/** The IntrospectionResponseCache is a simple dictionary of [[IntrospectionResponse]] that are currently in use.
+ * The entries will removed automatically if their tokens expire.
+ * @alpha
+ */
 export interface IntrospectionResponseCache {
   /** Adds the given response to the cache. The response will be added if it has not yet expired.
    * @param key       A unique string to identify the response within the cache.

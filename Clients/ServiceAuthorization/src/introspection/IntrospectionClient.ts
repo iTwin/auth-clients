@@ -18,22 +18,18 @@ import { removeAccessTokenPrefix } from "@bentley/itwin-client";
  * @param _clientId
  * @param _clientSecret
  * @param _issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
- * @param _cache Optional means of caching previously introspected tokens. Defaults to an in-memory cache.
  */
 export interface IntrospectionClientConfiguration {
   readonly clientId: string;
   readonly clientSecret: string;
   issuerUrl?: string;
-  cache?: IntrospectionResponseCache;
 }
 
 /** @alpha */
 export class IntrospectionClient {
   private _client?: OpenIdClient;
 
-  public constructor(protected _config: IntrospectionClientConfiguration){
-    if (_config.cache === undefined)
-      _config.cache = new MemoryIntrospectionResponseCache();
+  public constructor(protected _config: IntrospectionClientConfiguration, protected _cache: IntrospectionResponseCache = new MemoryIntrospectionResponseCache()){
   }
 
   private async getClient(): Promise<OpenIdClient> {
@@ -64,15 +60,13 @@ export class IntrospectionClient {
   public async introspect(accessToken: AccessToken): Promise<IntrospectionResponse> {
     const accessTokenStr = removeAccessTokenPrefix(accessToken) ?? "";
 
-    if (this._config.cache){
-      try {
-        const cachedResponse = await this._config.cache.get(accessTokenStr);
-        if (!!cachedResponse) {
-          return cachedResponse;
-        }
-      } catch (err) {
-        Logger.logInfo(BackendITwinClientLoggerCategory.Introspection, `introspection response not found in cache: ${accessTokenStr}`, () => getErrorProps(err));
+    try {
+      const cachedResponse = await this._cache.get(accessTokenStr);
+      if (!!cachedResponse) {
+        return cachedResponse;
       }
+    } catch (err) {
+      Logger.logInfo(BackendITwinClientLoggerCategory.Introspection, `introspection response not found in cache: ${accessTokenStr}`, () => getErrorProps(err));
     }
 
     let client: OpenIdClient;
@@ -91,8 +85,7 @@ export class IntrospectionClient {
       throw err;
     }
 
-    if (this._config.cache)
-      this._config.cache.add(accessTokenStr, introspectionResponse); // eslint-disable-line @typescript-eslint/no-floating-promises
+    this._cache.add(accessTokenStr, introspectionResponse); // eslint-disable-line @typescript-eslint/no-floating-promises
 
     return introspectionResponse;
   }
