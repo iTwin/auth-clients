@@ -14,12 +14,6 @@ resources:
       ref: master
       name: iModelTechnologies/imodeljs-build-pipeline-scripts
 
-parameters:
-  - name: try_publish
-    displayName: Publish packages
-    type: boolean
-    default: false
-
 stages:
 - stage: Build
   displayName: Build
