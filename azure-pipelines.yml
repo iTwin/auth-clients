@@ -15,7 +15,7 @@ resources:
       name: iModelTechnologies/imodeljs-build-pipeline-scripts
 
 stages:
-- stage:
+- stage: Build
   displayName: Build
   jobs:
     - job: BuildPackages
