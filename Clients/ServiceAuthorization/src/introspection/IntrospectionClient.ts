@@ -6,66 +6,59 @@
  * @module Introspection
  */
 
-import { AuthorizedClientRequestContext, ImsAuthorizationClient, RequestGlobalOptions } from "@bentley/itwin-client";
-import { removeAccessTokenPrefix } from "authorization-base";
 import { ClientMetadata, custom, Issuer, Client as OpenIdClient } from "openid-client";
 import { IntrospectionResponse } from "./IntrospectionResponse";
-import { IntrospectionResponseCache, MemoryIntrospectionResponseCache } from "./IntrospectionResponseCache";
+import { MemoryIntrospectionResponseCache } from "./IntrospectionResponseCacheBase";
+import { IntrospectionResponseCache } from "./IntrospectionResponseCache";
+import { BackendITwinClientLoggerCategory } from "../BackendITwinClientLoggerCategory";
+import { AccessToken, getErrorProps, Logger } from "@bentley/bentleyjs-core";
+import { removeAccessTokenPrefix } from "@bentley/itwin-client";
+
+/**
+ * @param _clientId
+ * @param _clientSecret
+ * @param _issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
+ */
+export interface IntrospectionClientConfiguration {
+  readonly clientId: string;
+  readonly clientSecret: string;
+  issuerUrl?: string;
+}
 
 /** @alpha */
 export class IntrospectionClient {
   private _client?: OpenIdClient;
 
-  /**
-   * @param _clientId
-   * @param _clientSecret
-   * @param _issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
-   * @param _cache Optional means of caching previously introspected tokens. Defaults to an in-memory cache.
-   */
-  public constructor(
-    protected readonly _clientId: string,
-    protected readonly _clientSecret: string,
-    protected _issuerUrl?: string,
-    private readonly _cache: IntrospectionResponseCache = new MemoryIntrospectionResponseCache(),
-  ) {
+  public constructor(protected _config: IntrospectionClientConfiguration, protected _cache: IntrospectionResponseCache = new MemoryIntrospectionResponseCache()){
   }
 
-  private async getClient(requestContext: AuthorizedClientRequestContext): Promise<OpenIdClient> {
+  private async getClient(): Promise<OpenIdClient> {
     if (this._client) {
       return this._client;
     }
 
     custom.setHttpOptionsDefaults({
-      timeout: RequestGlobalOptions.timeout.response,
-      retry: RequestGlobalOptions.maxRetries,
-      agent: {
-        https: RequestGlobalOptions.httpsProxy,
-      },
+      timeout: 10000,
+      retry: 4,
     });
 
-    const issuerUrl = await this.getIssuerUrl(requestContext);
+    const issuerUrl = this.getIssuerUrl();
     const issuer = await Issuer.discover(issuerUrl);
 
     const clientMetadata: ClientMetadata = {
-      client_id: this._clientId, /* eslint-disable-line @typescript-eslint/naming-convention */
-      client_secret: this._clientSecret, /* eslint-disable-line @typescript-eslint/naming-convention */
+      client_id: this._config.clientId, /* eslint-disable-line @typescript-eslint/naming-convention */
+      client_secret: this._config.clientSecret, /* eslint-disable-line @typescript-eslint/naming-convention */
     };
     this._client = new issuer.Client(clientMetadata);
     return this._client;
   }
 
-  protected async getIssuerUrl(requestContext: AuthorizedClientRequestContext): Promise<string> {
-    if (this._issuerUrl) {
-      return this._issuerUrl;
-    }
-
-    const imsAuthorizationClient = new ImsAuthorizationClient();
-    this._issuerUrl = await imsAuthorizationClient.getUrl(requestContext);
-    return this._issuerUrl;
+  protected getIssuerUrl(): string {
+    return this._config.issuerUrl ?? "https://ims.bentley.com";
   }
 
-  public async introspect(requestContext: AuthorizedClientRequestContext): Promise<IntrospectionResponse> {
-    const accessTokenStr = removeAccessTokenPrefix(requestContext.accessToken.toTokenString()) ?? ""; // Is there a better solution for this? It needs a string value, will return
+  public async introspect(accessToken: AccessToken): Promise<IntrospectionResponse> {
+    const accessTokenStr = removeAccessTokenPrefix(accessToken) ?? "";
 
     try {
       const cachedResponse = await this._cache.get(accessTokenStr);
@@ -73,16 +66,14 @@ export class IntrospectionClient {
         return cachedResponse;
       }
     } catch (err) {
-      // TODO: Replace
-      // Logger.logInfo(BackendITwinClientLoggerCategory.Introspection, `introspection response not found in cache: ${accessTokenStr}`, () => err);
+      Logger.logInfo(BackendITwinClientLoggerCategory.Introspection, `introspection response not found in cache: ${accessTokenStr}`, () => getErrorProps(err));
     }
 
     let client: OpenIdClient;
     try {
-      client = await this.getClient(requestContext);
+      client = await this.getClient();
     } catch (err) {
-      // TODO: Replace
-      // Logger.logError(BackendITwinClientLoggerCategory.Introspection, `Unable to create oauth client`, () => err);
+      Logger.logError(BackendITwinClientLoggerCategory.Introspection, `Unable to create oauth client`, () => getErrorProps(err));
       throw err;
     }
 
@@ -90,8 +81,7 @@ export class IntrospectionClient {
     try {
       introspectionResponse = await client.introspect(accessTokenStr) as IntrospectionResponse;
     } catch (err) {
-      // TODO: Replace
-      // Logger.logError(BackendITwinClientLoggerCategory.Introspection, `Unable to introspect client token`, () => err);
+      Logger.logError(BackendITwinClientLoggerCategory.Introspection, `Unable to introspect client token`, () => getErrorProps(err));
       throw err;
     }
 

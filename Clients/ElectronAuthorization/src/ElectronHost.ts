@@ -12,10 +12,10 @@ import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import { BeDuration, IModelStatus, ProcessDetector } from "@bentley/bentleyjs-core";
-import { IModelHost, IpcHandler, IpcHost, NativeHost, NativeHostOpts } from "@bentley/imodeljs-backend";
+import { IpcHandler, IpcHost, NativeHost, NativeHostOpts } from "@bentley/imodeljs-backend";
 import { IModelError, InternetConnectivityStatus, IpcListener, IpcSocketBackend, NativeAppAuthorizationConfiguration, RemoveFunction, RpcConfiguration, RpcInterfaceDefinition } from "@bentley/imodeljs-common";
 import { ElectronRpcConfiguration, ElectronRpcManager } from "./common/ElectronRpcManager";
-import { ElectronAuthorizationClient } from "./ElectronAuthorizationClient";
+import { ElectronAuthorizationClient } from "./Client";
 
 // cSpell:ignore signin devserver webcontents copyfile unmaximize eopt
 
@@ -103,7 +103,7 @@ export class ElectronHost {
   public static get electron() { return this._electron; }
 
   /** @internal */
-  public static get authorization() { return IModelHost.authorizationClient as ElectronAuthorizationClient; }
+  // public static get authorization() { return IModelHost.authorizationClient as ElectronAuthorizationClient; } TODO: Add back
 
   private constructor() { }
 
@@ -285,7 +285,7 @@ export class ElectronHost {
     if (opts.electronHost?.authConfig && true !== opts.electronHost?.noInitializeAuthClient && connectivityStatus === InternetConnectivityStatus.Online)
       await authorizationBackend.initialize(opts.electronHost?.authConfig);
 
-    IModelHost.authorizationClient = authorizationBackend;
+    // IModelHost.authorizationClient = authorizationBackend; TODO: Add back
   }
 }
 

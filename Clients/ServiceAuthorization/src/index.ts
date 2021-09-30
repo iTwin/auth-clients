@@ -7,3 +7,4 @@ export * from "./ServiceAuthorizationClient";
 export * from "./introspection/IntrospectionClient";
 export * from "./introspection/IntrospectionResponse";
 export * from "./introspection/IntrospectionResponseCache";
+export * from "./introspection/ImsIntrospectionResponse";

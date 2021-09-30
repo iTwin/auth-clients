@@ -12,8 +12,8 @@ import * as Http from "http";
 import * as Url from "url";
 import { NativeAppAuthorizationConfiguration } from "@bentley/imodeljs-common";
 import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
-import { ElectronAuthorizationEvents } from "./ElectronAuthorizationEvents";
-import { ElectronAuthorizationClient } from "./ElectronAuthorizationClient";
+import { ElectronAuthorizationEvents } from "./Events";
+import { ElectronAuthorizationClient } from "./Client";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 

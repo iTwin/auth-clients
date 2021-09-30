@@ -4,4 +4,4 @@
 *--------------------------------------------------------------------------------------------*/
 
 export * from "./ElectronHost";
-export * from "./ElectronAuthorizationClient";
+export * from "./Client";

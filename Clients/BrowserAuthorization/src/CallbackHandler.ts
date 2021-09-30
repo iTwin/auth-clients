@@ -4,13 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 /** @packageDocumentation
- * @module BrowserAuthorization
+ * @module Authorization
  */
 
 import { UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
-import { AuthStatus, BentleyError } from "@bentley/bentleyjs-core";
-import { BrowserAuthorizationBase } from "./BrowserAuthorizationBase";
-import { BrowserAuthorizationClientRedirectState } from "./BrowserAuthorizationClientRedirectState";
+import { BrowserAuthorizationLogger } from "./Logger";
+import { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 
 /**
  * @beta
@@ -42,9 +41,15 @@ export enum OidcCallbackResponseMode {
  * To be used in conjunction with [[BrowserAuthorizationClient]], which initiates the auth requests that can be handled by this class.
  * @beta
  */
-export class BrowserAuthorizationCallbackHandler extends BrowserAuthorizationBase<BrowserAuthorizationCallbackHandlerConfiguration> {
+export class BrowserAuthorizationCallbackHandler {
+  protected _userManager?: UserManager;
+
+  protected _basicSettings: BrowserAuthorizationCallbackHandlerConfiguration;
+  protected _advancedSettings?: UserManagerSettings;
+
   private constructor(configuration: BrowserAuthorizationCallbackHandlerConfiguration = {}) {
-    super(configuration);
+    this._basicSettings = configuration;
+    BrowserAuthorizationLogger.initializeLogger();
   }
 
   protected async getUserManager(): Promise<UserManager> {
@@ -92,7 +97,7 @@ export class BrowserAuthorizationCallbackHandler extends BrowserAuthorizationBas
 
     const user = await userManager.signinCallback(url); // For silent or popup callbacks, execution effectively ends here, since the context will be destroyed.
     if (!user || user.expired)
-      throw new BentleyError(AuthStatus.Error, "userManager.signinRedirectCallback does not resolve to authorized user");
+      throw new Error("Authorization error: userManager.signinRedirectCallback does not resolve to authorized user");
 
     if (user.state) {
       const state = user.state as BrowserAuthorizationClientRedirectState;
@@ -136,5 +141,20 @@ export class BrowserAuthorizationCallbackHandler extends BrowserAuthorizationBas
     }
 
     throw new Error(`SigninCallback error - failed to process signin request in callback using all known modes of token delivery: ${errorMessage}`);
+  }
+
+  /**
+   * @internal
+   * Allows for advanced options to be supplied to the underlying UserManager.
+   * This function should be called directly after object construction.
+   * Any settings supplied via this method will override the corresponding settings supplied via the constructor.
+   * @throws if called after the internal UserManager has already been created.
+   */
+  public setAdvancedSettings(settings: UserManagerSettings): void {
+    if (this._userManager) {
+      throw new Error("Cannot supply advanced settings to BrowserAuthorizationClient after the underlying UserManager has already been created.");
+    }
+
+    this._advancedSettings = settings;
   }
 }
