@@ -96,14 +96,14 @@ stages:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)/Clients/BrowserAuthorization/*.tgz'
+          PathtoPublish: '$(Build.DefaultWorkingDirectory)/Clients/BrowserAuthorization/*.tgz'
           artifactName: BrowserAuthorizationClient
         displayName: 'Publish BrowserAuthorizationClient'
         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.ArtifactStagingDirectory)/Clients/ServiceAuthorization/*.tgz'
+          PathtoPublish: '$(Build.DefaultWorkingDirectory)/Clients/ServiceAuthorization/*.tgz'
           artifactName: ServiceAuthorizationClient
         displayName: 'Publish ServiceAuthorizationClient'
         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
