@@ -12,8 +12,15 @@
     "cover": "",
     "pack": "npm pack"
   },
-  "author": "Bentley Systems, Inc. (http://www.bentley.com)",
+  "author": {
+    "name": "Bentley Systems, Inc.",
+    "url": "http://www.bentley.com"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iTwin/auth-clients"
+  },
   "dependencies": {
     "@bentley/bentleyjs-core": "^3.0.0-dev.71",
     "@bentley/itwin-client": "^3.0.0-dev.71",
