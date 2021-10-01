@@ -39,7 +39,7 @@ export interface ServiceAuthorizationClientConfiguration {
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected _configuration: ServiceAuthorizationClientConfiguration;
 
-  private _accessToken?: AccessToken;
+  private _accessToken: AccessToken = "";
   private _expiresAt?: Date;
 
   private _client?: OpenIdClient;
@@ -84,7 +84,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     return this._client;
   }
 
-  private async generateAccessToken(): Promise<AccessToken | undefined> {
+  private async generateAccessToken(): Promise<AccessToken> {
     const scope = this._configuration.scope;
     if (scope.includes("openid") || scope.includes("email") || scope.includes("profile") || scope.includes("organization"))
       throw new Error("Authorization error: Scopes for an service cannot include 'openid email profile organization'");
@@ -135,7 +135,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
   /** Returns a promise that resolves to the AccessToken of the currently authorized client.
   * The token is refreshed if necessary.
   */
-  public async getAccessToken(): Promise<AccessToken | undefined> {
+  public async getAccessToken(): Promise<AccessToken> {
     if (this.isAuthorized)
       return this._accessToken;
     return this.generateAccessToken();
