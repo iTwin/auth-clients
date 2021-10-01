@@ -85,7 +85,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     return !!this._accessToken;
   }
 
-  constructor(configuration: BrowserAuthorizationClientConfiguration) {
+  public constructor(configuration: BrowserAuthorizationClientConfiguration) {
     this._basicSettings = configuration;
     BrowserAuthorizationLogger.initializeLogger();
   }
