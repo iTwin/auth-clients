@@ -420,7 +420,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
    */
   public async signOutComplete(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      NativeHost.onAccessTokenChanged.addOnce((token) => {
+      NativeHost.onUserStateChanged.addOnce((token) => {
         if (token === "") {
           resolve();
         } else {
