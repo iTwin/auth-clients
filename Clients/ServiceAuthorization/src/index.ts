@@ -3,6 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 export * from "./ServiceAuthorizationClient";
+export * from "./ServiceAuthorizationClientConfiguration";
 
 export * from "./introspection/IntrospectionClient";
 export * from "./introspection/IntrospectionResponse";

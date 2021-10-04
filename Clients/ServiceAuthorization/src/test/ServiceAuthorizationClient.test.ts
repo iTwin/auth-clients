@@ -6,7 +6,8 @@
 import * as chai from "chai";
 import { Client, Issuer } from "openid-client";
 import * as path from "path";
-import { ServiceAuthorizationClient, ServiceAuthorizationClientConfiguration } from "../ServiceAuthorizationClient";
+import { ServiceAuthorizationClient } from "../ServiceAuthorizationClient";
+import { ServiceAuthorizationClientConfiguration } from "../ServiceAuthorizationClientConfiguration";
 import * as fs from "fs";
 
 /** Loads the provided `.env` file into process.env */
