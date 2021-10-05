@@ -11,9 +11,9 @@
 // cSpell:ignore openid appauth signin Pkce Signout
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { AccessToken, assert, AuthStatus, BentleyError, Logger } from "@bentley/bentleyjs-core";
-import { NativeHost } from "@bentley/imodeljs-backend";
-import { IModelError, NativeAppAuthorizationConfiguration } from "@bentley/imodeljs-common";
+import { AccessToken, assert, AuthStatus, BentleyError, Logger } from "@itwin/core-bentley";
+import { NativeHost } from "@itwin/core-backend";
+import { IModelError, NativeAppAuthorizationConfiguration } from "@itwin/core-common";
 import * as deepAssign from "deep-assign";
 import { AuthorizationClient, request, RequestOptions } from "@bentley/itwin-client";
 import {
@@ -96,7 +96,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
   private _expiresAt?: Date;
   public get tokenStore() { return this._tokenStore!; }
 
-  protected _accessToken?: AccessToken;
+  protected _accessToken: AccessToken = "";
   public config?: NativeAppAuthorizationConfiguration;
   public expireSafety = 60 * 10; // refresh token 10 minutes before real expiration time
   public issuerUrl?: string;
@@ -266,11 +266,11 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     await this.loadAccessToken();
   }
 
-  public setAccessToken(token?: AccessToken) {
+  public setAccessToken(token: AccessToken) {
     if (token === this._accessToken)
       return;
     this._accessToken = token;
-    // NativeHost.onUserStateChanged.raiseEvent(token);
+    NativeHost.onAccessTokenChanged.raiseEvent(token);
   }
 
   // ------ END NativeAppAuthorizationBackend ------
@@ -279,7 +279,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
 
   public async refreshToken(): Promise<AccessToken> {
     if (this._tokenResponse === undefined || this._tokenResponse.refreshToken === undefined)
-      throw new BentleyError(AuthStatus.Error, "Not signed In. First call signIn()");
+      return "";
 
     const token = `Bearer ${this._tokenResponse.refreshToken}`; // Is this right? should we append bearer to refresh token?
     return this.refreshAccessToken(token);
@@ -288,15 +288,15 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
   /** Loads the access token from the store, and refreshes it if necessary and possible
    * @return AccessToken if it's possible to get a valid access token, and undefined otherwise.
    */
-  private async loadAccessToken(): Promise<AccessToken | undefined> {
+  private async loadAccessToken(): Promise<AccessToken> {
     const tokenResponse = await this.tokenStore.load();
     if (tokenResponse === undefined || tokenResponse.refreshToken === undefined)
-      return undefined;
+      return "";
     try {
       return await this.refreshAccessToken(tokenResponse.refreshToken);
     } catch (err) {
       Logger.logError(loggerCategory, `Error refreshing access token`, () => err);
-      return undefined;
+      return "";
     }
   }
 
@@ -307,8 +307,8 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
    */
   public async signInComplete(): Promise<AccessToken> {
     return new Promise<AccessToken>((resolve, reject) => {
-      // NativeHost.onUserStateChanged.addOnce((token) => {
-      //   if (token !== undefined) {
+      // NativeHost.onAccessTokenChanged.addOnce((token) => {
+      //   if (token !== "") {
       //     resolve(token);
       //   } else {
       //     reject(new Error("Failed to sign in"));
@@ -321,7 +321,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
 
   /**
    * Start the sign-in process
-   * - calls the onUserStateChanged() call back after the authorization completes
+   * - calls the onAccessTokenChanged() call back after the authorization completes
    * or if there is an error.
    * - will attempt in order:
    *   (i) load any existing authorized user from storage,
@@ -404,7 +404,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
 
   /**
    * Start the sign-out process
-   * - calls the onUserStateChanged() call back after the authorization completes
+   * - calls the onAccessTokenChanged() call back after the authorization completes
    *   or if there is an error.
    * - redirects application to the postSignoutRedirectUri specified in the configuration when the sign out is
    *   complete
@@ -420,8 +420,8 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
    */
   public async signOutComplete(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      NativeHost.onUserStateChanged.addOnce((token) => {
-        if (token === undefined) {
+      NativeHost.onAccessTokenChanged.addOnce((token) => {
+        if (token === "") {
           resolve();
         } else {
           reject(new Error("Failed to sign out"));
@@ -434,7 +434,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
   private async clearTokenResponse() {
     this._tokenResponse = undefined;
     await this.tokenStore.delete();
-    this.setAccessToken(undefined);
+    this.setAccessToken("");
   }
 
   private async setTokenResponse(tokenResponse: TokenResponse): Promise<AccessToken> {
@@ -455,7 +455,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000; // Consider 1 minute before expiry as expired
   }
 
-  public async getAccessToken(): Promise<AccessToken | undefined> {
+  public async getAccessToken(): Promise<AccessToken> {
     if (this._hasExpired || !this._accessToken)
       this.setAccessToken(await this.refreshToken());
     return this._accessToken;

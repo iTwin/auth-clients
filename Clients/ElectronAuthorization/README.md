@@ -8,4 +8,4 @@ The __@itwin/electron-authorization__ package contains an electron based client 
 
 ## Documentation
 
-See the [iTwin.js](https://www.itwinjs.org) documentation for more information.
+For information about the electron authorization workflow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizesinglepageapplicationsspaanddesktopmobileapplicationsnative).

@@ -8,4 +8,4 @@ The __@itwin/service-authorization__ package contains a service based client for
 
 ## Documentation
 
-See the [iTwin.js](https://www.itwinjs.org) documentation for more information.
+For information about the service authorization workflow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizingservicemachinetomachine).

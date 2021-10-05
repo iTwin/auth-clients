@@ -11,7 +11,7 @@ import { IntrospectionResponse } from "./IntrospectionResponse";
 import { MemoryIntrospectionResponseCache } from "./IntrospectionResponseCacheBase";
 import { IntrospectionResponseCache } from "./IntrospectionResponseCache";
 import { BackendITwinClientLoggerCategory } from "../BackendITwinClientLoggerCategory";
-import { AccessToken, getErrorProps, Logger } from "@bentley/bentleyjs-core";
+import { AccessToken, BentleyError, Logger } from "@itwin/core-bentley";
 import { removeAccessTokenPrefix } from "@bentley/itwin-client";
 
 /**
@@ -66,14 +66,14 @@ export class IntrospectionClient {
         return cachedResponse;
       }
     } catch (err) {
-      Logger.logInfo(BackendITwinClientLoggerCategory.Introspection, `introspection response not found in cache: ${accessTokenStr}`, () => getErrorProps(err));
+      Logger.logInfo(BackendITwinClientLoggerCategory.Introspection, `introspection response not found in cache: ${accessTokenStr}`, () => BentleyError.getErrorProps(err));
     }
 
     let client: OpenIdClient;
     try {
       client = await this.getClient();
     } catch (err) {
-      Logger.logError(BackendITwinClientLoggerCategory.Introspection, `Unable to create oauth client`, () => getErrorProps(err));
+      Logger.logError(BackendITwinClientLoggerCategory.Introspection, `Unable to create oauth client`, () => BentleyError.getErrorProps(err));
       throw err;
     }
 
@@ -81,7 +81,7 @@ export class IntrospectionClient {
     try {
       introspectionResponse = await client.introspect(accessTokenStr) as IntrospectionResponse;
     } catch (err) {
-      Logger.logError(BackendITwinClientLoggerCategory.Introspection, `Unable to introspect client token`, () => getErrorProps(err));
+      Logger.logError(BackendITwinClientLoggerCategory.Introspection, `Unable to introspect client token`, () => BentleyError.getErrorProps(err));
       throw err;
     }
 

@@ -6,25 +6,11 @@
  * @module Authentication
  */
 
-import { AccessToken } from "@bentley/bentleyjs-core";
+import { AccessToken } from "@itwin/core-bentley";
 import { AuthorizationClient } from "@bentley/itwin-client";
 import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
+import { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
 
-/**
-* Configuration of clients for service or service applications.
-* @see [[ServiceAuthorizationClient]] for notes on registering an application
-* @beta
-*/
-export interface ServiceAuthorizationClientConfiguration {
-  /** Client application's identifier as registered with the Bentley IMS OIDC/OAuth2 provider. */
-  readonly clientId: string;
-  /** Client application's secret key as registered with the Bentley IMS OIDC/OAuth2 provider. */
-  readonly clientSecret: string;
-  /** List of space separated scopes to request access to various resources. */
-  readonly scope: string;
-  /** The URL of the OIDC/OAuth2 provider. If left undefined, the iTwin Platform authority (`ims.bentley.com`) will be used by default. */
-  readonly authority?: string;
-}
 /**
   * Utility to generate OIDC/OAuth tokens for service or service applications
   * * The application must register a client using the
@@ -39,7 +25,7 @@ export interface ServiceAuthorizationClientConfiguration {
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected _configuration: ServiceAuthorizationClientConfiguration;
 
-  private _accessToken?: AccessToken;
+  private _accessToken: AccessToken = "";
   private _expiresAt?: Date;
 
   private _client?: OpenIdClient;
@@ -84,7 +70,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     return this._client;
   }
 
-  private async generateAccessToken(): Promise<AccessToken | undefined> {
+  private async generateAccessToken(): Promise<AccessToken> {
     const scope = this._configuration.scope;
     if (scope.includes("openid") || scope.includes("email") || scope.includes("profile") || scope.includes("organization"))
       throw new Error("Authorization error: Scopes for an service cannot include 'openid email profile organization'");
@@ -135,7 +121,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
   /** Returns a promise that resolves to the AccessToken of the currently authorized client.
   * The token is refreshed if necessary.
   */
-  public async getAccessToken(): Promise<AccessToken | undefined> {
+  public async getAccessToken(): Promise<AccessToken> {
     if (this.isAuthorized)
       return this._accessToken;
     return this.generateAccessToken();
