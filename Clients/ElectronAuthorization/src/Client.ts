@@ -270,7 +270,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     if (token === this._accessToken)
       return;
     this._accessToken = token;
-    // NativeHost.onUserStateChanged.raiseEvent(token);
+    NativeHost.onAccessTokenChanged.raiseEvent(token);
   }
 
   // ------ END NativeAppAuthorizationBackend ------
@@ -404,7 +404,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
 
   /**
    * Start the sign-out process
-   * - calls the onUserStateChanged() call back after the authorization completes
+   * - calls the onAccessTokenChanged() call back after the authorization completes
    *   or if there is an error.
    * - redirects application to the postSignoutRedirectUri specified in the configuration when the sign out is
    *   complete
@@ -420,7 +420,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
    */
   public async signOutComplete(): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      NativeHost.onUserStateChanged.addOnce((token) => {
+      NativeHost.onAccessTokenChanged.addOnce((token) => {
         if (token === "") {
           resolve();
         } else {
