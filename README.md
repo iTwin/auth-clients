@@ -8,4 +8,6 @@ If you have questions, or wish to contribute to iTwin.js, see our [Contributing 
 
 ## About this Repository
 
-Monorepo for iTwin authorization clients.
+This repository contains a few client libraries to assist in authenticating with the iTwin Platform.
+
+It contains clients for [Browser/SPA](./packages/browser/README.md), [Desktop/Electron](./packages/electron/README.md), and [Service](./packages/service/README.md).
