@@ -49,10 +49,10 @@ stages:
       # publish artifact
 
       - bash: |
-          browserAuthVer=$(node -p "require('./Clients/BrowserAuthorization/package.json').version")
-          browserAuthName=$(node -p "require('./Clients/BrowserAuthorization/package.json').name")
-          ServiceAuthVer=$(node -p "require('./Clients/ServiceAuthorization/package.json').version")
-          ServiceAuthName=$(node -p "require('./Clients/ServiceAuthorization/package.json').name")
+          browserAuthVer=$(node -p "require('./packages/browser/package.json').version")
+          browserAuthName=$(node -p "require('./packages/browser/package.json').name")
+          ServiceAuthVer=$(node -p "require('./packages/service/package.json').version")
+          ServiceAuthName=$(node -p "require('./packages/service/package.json').name")
 
           checkVer() {
             localVer=$1
@@ -96,16 +96,16 @@ stages:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.SourcesDirectory)/Clients/BrowserAuthorization/itwin-browser-authorization-$(info.browserAuthVer).tgz'
+          PathtoPublish: '$(Build.SourcesDirectory)/packages/browser/itwin-browser-authorization-$(info.browserAuthVer).tgz'
           artifactName: BrowserAuthorizationClient
-        displayName: 'Publish BrowserAuthorizationClient'
+        displayName: 'Publish Browser Auth'
         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.SourcesDirectory)/Clients/ServiceAuthorization/itwin-service-authorization-$(info.ServiceAuthVer).tgz'
+          PathtoPublish: '$(Build.SourcesDirectory)/packages/service/itwin-service-authorization-$(info.ServiceAuthVer).tgz'
           artifactName: ServiceAuthorizationClient
-        displayName: 'Publish ServiceAuthorizationClient'
+        displayName: 'Publish Service Auth'
         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
 
 - stage: Publish

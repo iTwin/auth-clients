@@ -12,7 +12,10 @@
   },
   "keywords": [
     "Bentley",
-    "Authorization"
+    "Authorization",
+    "iTwin",
+    "digital-twin",
+    "OIDC"
   ],
   "author": {
     "name": "Bentley Systems, Inc.",
