@@ -4,11 +4,11 @@
   "version": "0.2.0",
   "description": "Authorization clients for the iTwin platform",
   "scripts": {
-    "build": "pnpm run build --filter ./Clients/",
-    "lint": "pnpm run lint --filter ./Clients/",
-    "test": "pnpm run test --filter ./Clients/",
-    "cover": "pnpm run cover --filter ./Clients/",
-    "pack": "pnpm run pack --filter ./Clients/"
+    "build": "pnpm run build --filter ./packages/",
+    "lint": "pnpm run lint --filter ./packages/",
+    "test": "pnpm run test --filter ./packages/",
+    "cover": "pnpm run cover --filter ./packages/",
+    "pack": "pnpm run pack --filter ./packages/"
   },
   "keywords": [
     "Bentley",
