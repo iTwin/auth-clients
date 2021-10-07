@@ -14,3 +14,9 @@ pnpm-lock.yaml
 
 # Mac specfic
 .DS_Store
+
+# rush-specific
+/common/temp
+/**/.rush
+*.build.log
+*.build.error.log
