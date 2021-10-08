@@ -49,7 +49,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     if (prefix)
       authority.hostname = prefix + authority.hostname;
 
-    this._issuer = await Issuer.discover(authority.href);
+    this._issuer = await Issuer.discover(authority.href.replace(/\/$/, ""));
     return this._issuer;
   }
 
