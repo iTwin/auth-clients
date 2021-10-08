@@ -124,6 +124,15 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       userManagerSettings = Object.assign(userManagerSettings, advancedSettings);
     }
 
+    if (!userManagerSettings.authority){
+      const prefix = process.env.IMJS_URL_PREFIX;
+      const authority = new URL(process.env.IMJS_ITWIN_PLATFORM_AUTHORITY ?? "https://ims.bentley.com");
+      if (prefix){
+        authority.hostname = prefix + authority.hostname;
+      }
+      userManagerSettings.authority = authority.href;
+    }
+
     return userManagerSettings;
   }
 

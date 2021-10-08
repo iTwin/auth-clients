@@ -44,7 +44,12 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     if (this._issuer)
       return this._issuer;
 
-    this._issuer = await Issuer.discover(this._configuration.authority ?? "https://ims.bentley.com");
+    const prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this._configuration.authority ?? "https://ims.bentley.com");
+    if (prefix)
+      authority.hostname = prefix + authority.hostname;
+
+    this._issuer = await Issuer.discover(authority.href);
     return this._issuer;
   }
 
