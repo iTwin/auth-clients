@@ -28,6 +28,9 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
   private _accessToken: AccessToken = "";
   private _expiresAt?: Date;
 
+  protected _baseUrl = "https://ims.bentley.com";
+  protected _url?: string;
+
   private _client?: OpenIdClient;
 
   constructor(serviceConfiguration: ServiceAuthorizationClientConfiguration) {
@@ -44,12 +47,10 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     if (this._issuer)
       return this._issuer;
 
-    const prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._configuration.authority ?? "https://ims.bentley.com");
-    if (prefix)
-      authority.hostname = prefix + authority.hostname;
+    const authority = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY ?? this._baseUrl;
+    this._url = authority.replace(/\/$/, "");
 
-    this._issuer = await Issuer.discover(authority.href.replace(/\/$/, ""));
+    this._issuer = await Issuer.discover(this._url);
     return this._issuer;
   }
 

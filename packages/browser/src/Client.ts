@@ -64,6 +64,8 @@ export const isBrowserAuthorizationClient = (client: AuthorizationClient | undef
 export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
   protected _userManager?: UserManager;
+  protected _baseUrl = "https://ims.bentley.com";
+  protected _url?: string;
 
   protected _basicSettings: BrowserAuthorizationClientConfiguration;
   protected _advancedSettings?: UserManagerSettings;
@@ -125,15 +127,20 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     }
 
     if (!userManagerSettings.authority) {
-      const prefix = process.env.IMJS_URL_PREFIX;
-      const authority = new URL(process.env.IMJS_ITWIN_PLATFORM_AUTHORITY ?? "https://ims.bentley.com");
-      if (prefix){
-        authority.hostname = prefix + authority.hostname;
-      }
-      userManagerSettings.authority = authority.href.replace(/\/$/, "");
+      userManagerSettings.authority = this.getUrl();
     }
 
     return userManagerSettings;
+  }
+
+  public getUrl(): string{
+    if (this._url)
+      return this._url;
+
+    const authority = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY ?? this._baseUrl;
+    this._url = authority.replace(/\/$/, "");
+
+    return this._url;
   }
 
   /**
