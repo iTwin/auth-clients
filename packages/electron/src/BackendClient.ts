@@ -26,7 +26,7 @@ import { LoopbackWebServer } from "./LoopbackWebServer";
 import { DefaultRequestOptionsProvider, RequestOptions } from "@bentley/itwin-client";
 import { ipcMain } from "electron";
 import { ElectronHost } from "./ElectronHost";
-import { electronIPCChannelName } from "./ElectronAuthorizationPreload";
+import { electronIPCChannelName } from "./ElectronPreload";
 
 const loggerCategory = "electron-auth";
 
@@ -269,7 +269,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
   private async setTokenResponse(tokenResponse: TokenResponse): Promise<AccessToken> {
     const accessToken = tokenResponse.accessToken;
     this._tokenResponse = tokenResponse;
-    const expiresAtMilliseconds = (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000;
+    const expiresAtMilliseconds = (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000; // If there's no 'expiresIn' should we not set 'expiresAt' at all? (Always refresh vs never assume its expired)
     this._expiresAt = new Date(expiresAtMilliseconds);
 
     await this.tokenStore?.save(this._tokenResponse);

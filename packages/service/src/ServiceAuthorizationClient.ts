@@ -27,6 +27,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
 
   private _accessToken: AccessToken = "";
   private _expiresAt?: Date;
+  private _expireSafety = 60; // validate tokens 1 minute before expiry by default
 
   private _client?: OpenIdClient;
 
@@ -37,6 +38,8 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     });
 
     this._configuration = serviceConfiguration;
+    if (serviceConfiguration.expireSafety)
+      this._expireSafety = serviceConfiguration.expireSafety;
   }
 
   private _issuer?: Issuer<OpenIdClient>;
@@ -110,7 +113,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     if (!this._expiresAt)
       throw new Error("Authorization error: Invalid JWT");
 
-    return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000; // Consider 1 minute before expiry as expired
+    return this._expiresAt.getTime() - Date.now() <= this._expireSafety * 1000; // Consider 1 minute before expiry as expired
   }
 
   /** Set to true if signed in - the accessToken may be active or may have expired and require a refresh */
