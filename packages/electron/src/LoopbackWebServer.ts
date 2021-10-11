@@ -13,7 +13,7 @@ import * as Url from "url";
 import { NativeAppAuthorizationConfiguration } from "@itwin/core-common";
 import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronAuthorizationClient } from "./Client";
+import { ElectronAuthorizationBackend } from "./BackendClient";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 
@@ -54,7 +54,7 @@ export class LoopbackWebServer {
 
     LoopbackWebServer._httpServer = Http.createServer(LoopbackWebServer.onBrowserRequest);
     // eslint-disable-next-line deprecation/deprecation
-    const urlParts: Url.UrlWithStringQuery = Url.parse(clientConfiguration.redirectUri ?? ElectronAuthorizationClient.defaultRedirectUri);
+    const urlParts: Url.UrlWithStringQuery = Url.parse(clientConfiguration.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri);
     LoopbackWebServer._httpServer.listen(urlParts.port);
   }
 

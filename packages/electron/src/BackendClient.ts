@@ -11,11 +11,8 @@
 // cSpell:ignore openid appauth signin Pkce Signout
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { AccessToken, assert, AuthStatus, BentleyError, Logger } from "@itwin/core-bentley";
-import { NativeHost } from "@itwin/core-backend";
-import { IModelError, NativeAppAuthorizationConfiguration } from "@itwin/core-common";
-import * as deepAssign from "deep-assign";
-import { AuthorizationClient, request, RequestOptions } from "@bentley/itwin-client";
+import { AccessToken, assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
+import { AuthorizationClient, IModelError, NativeAppAuthorizationConfiguration } from "@itwin/core-common";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestJson, AuthorizationResponse, AuthorizationServiceConfiguration,
   BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest, RevokeTokenRequestJson, StringMap,
@@ -26,221 +23,88 @@ import { ElectronAuthorizationEvents } from "./Events";
 import { ElectronAuthorizationRequestHandler } from "./ElectronAuthorizationRequestHandler";
 import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
-
-import * as https from "https";
+import { DefaultRequestOptionsProvider, RequestOptions } from "@bentley/itwin-client";
+import { ipcMain } from "electron";
+import { ElectronHost } from "./ElectronHost";
+import { electronIPCChannelName } from "./ElectronAuthorizationPreload";
 
 const loggerCategory = "electron-auth";
-export class DefaultRequestOptionsProvider {
-  protected _defaultOptions: RequestOptions;
-  /** Creates an instance of DefaultRequestOptionsProvider and sets up the default options. */
-  constructor() {
-    this._defaultOptions = {
-      method: "GET",
-      useCorsProxy: false,
-    };
-  }
-
-  /**
-   * Augments options with the provider's default values.
-   * @note The options passed in override any defaults where necessary.
-   * @param options Options that should be augmented.
-   */
-  public async assignOptions(options: RequestOptions): Promise<void> {
-    const clonedOptions: RequestOptions = { ...options };
-    deepAssign(options, this._defaultOptions);
-    deepAssign(options, clonedOptions); // ensure the supplied options override the defaults
-  }
-}
-
-/** @beta */
-export class RequestGlobalOptions {
-  public static httpsProxy?: https.Agent = undefined;
-  /** Creates an agent for any user defined proxy using the supplied additional options. Returns undefined if user hasn't defined a proxy.
-   * @internal
-   */
-  public static createHttpsProxy: (additionalOptions?: https.AgentOptions) => https.Agent | undefined = (_additionalOptions?: https.AgentOptions) => undefined;
-  public static maxRetries: number = 4;
-  public static timeout: RequestTimeoutOptions = {
-    deadline: 25000,
-    response: 10000,
-  };
-  // Assume application is online or offline. This hint skip retry/timeout
-  public static online: boolean = true;
-}
-
-/** @beta */
-export interface RequestTimeoutOptions {
-  /** Sets a deadline (in milliseconds) for the entire request (including all uploads, redirects, server processing time) to complete.
-   * If the response isn't fully downloaded within that time, the request will be aborted
-   */
-  deadline?: number;
-
-  /** Sets maximum time (in milliseconds) to wait for the first byte to arrive from the server, but it does not limit how long the entire
-   * download can take. Response timeout should be at least few seconds longer than just the time it takes the server to respond, because
-   * it also includes time to make DNS lookup, TCP/IP and TLS connections, and time to upload request data.
-   */
-  response?: number;
-}
-
-// Don't expose any of the 'Client' methods
 
 /**
  * Utility to generate OIDC/OAuth tokens for Desktop Applications
  * @beta
  */
-export class ElectronAuthorizationClient implements AuthorizationClient { // TODO: Make sure to do ImsAuthorizationCLient
+export class ElectronAuthorizationBackend implements AuthorizationClient {
+  protected _accessToken: AccessToken = "";
+  public config?: NativeAppAuthorizationConfiguration;
+  public expireSafety = 60 * 10; // refresh token 10 minutes before real expiration time
+  public issuerUrl?: string;
   public static defaultRedirectUri = "http://localhost:3000/signin-callback";
   private _configuration: AuthorizationServiceConfiguration | undefined;
   private _tokenResponse: TokenResponse | undefined;
   private _tokenStore?: ElectronTokenStore;
   private _expiresAt?: Date;
-  public get tokenStore() { return this._tokenStore!; }
-
-  protected _accessToken: AccessToken = "";
-  public config?: NativeAppAuthorizationConfiguration;
-  public expireSafety = 60 * 10; // refresh token 10 minutes before real expiration time
-  public issuerUrl?: string;
-
-  public static readonly searchKey: string = "IMSOpenID";
+  public get tokenStore() { return this._tokenStore; }
+  protected baseUrl?: string;
 
   private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
   protected _url?: string;
-  protected baseUrl?: string;
-
-  public static readonly configResolveUrlUsingRegion = "IMJS_BUDDI_RESOLVE_URL_USING_REGION";
 
   public constructor(config?: NativeAppAuthorizationConfiguration) {
-    this._url = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY;
     this.config = config;
+    this.baseUrl = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY ?? "https://ims.bentley.com";
+    this.setupIPCHandlers();
   }
 
-  // ------  Client.ts ------
+  private setupIPCHandlers(): void {
+    // SignIn
+    ipcMain.handle(`${electronIPCChannelName}.signIn`, async () => {
+      await this.signIn();
+    });
 
-  protected async setupOptionDefaults(options: RequestOptions): Promise<void> {
-    if (!ElectronAuthorizationClient._defaultRequestOptionsProvider)
-      ElectronAuthorizationClient._defaultRequestOptionsProvider = new DefaultRequestOptionsProvider();
-    return ElectronAuthorizationClient._defaultRequestOptionsProvider.assignOptions(options);
+    // SignOut
+    ipcMain.handle(`${electronIPCChannelName}.signOut`, async () => {
+      await this.signOut();
+    });
+
+    // GetAccessToken
+    ipcMain.handle(`${electronIPCChannelName}.getAccessToken`, async () => {
+      const accessToken = await this.getAccessToken();
+      return accessToken;
+    });
   }
 
-  // DELETE
   /**
-   * Gets name/key to query the service URLs from the URL Discovery Service ("Buddi")
-   * @returns Search key for the URL.
+   * Notifies ElectronAppAuthorization that the access token has changed so it can raise
+   * an event for anything subscribed to its listener
    */
-  protected getUrlSearchKey(): string {
-    return ElectronAuthorizationClient.searchKey;
+  private notifyFrontendAccessTokenChange(token: AccessToken): void {
+    const window = ElectronHost.mainWindow ?? ElectronHost.electron.BrowserWindow.getAllWindows()[0];
+    window?.webContents.send(`${electronIPCChannelName}.onAccessTokenChanged`, token);
   }
 
-  public async getUrl(): Promise<string> {
-    if (this._url)
-      return this._url;
-
-    if (this.baseUrl) {
-      let prefix = process.env.IMJS_URL_PREFIX;
-
-      // Need to ensure the usage of the previous IMJS_BUDDI_RESOLVE_URL_USING_REGION to not break any
-      // existing users relying on the behavior.
-      // This needs to be removed...
-      if (undefined === prefix) {
-        const region = process.env.IMJS_BUDDI_RESOLVE_URL_USING_REGION;
-        switch (region) {
-          case "102":
-            prefix = "qa-";
-            break;
-          case "103":
-            prefix = "dev-";
-            break;
-        }
-      }
-
-      if (prefix) {
-        const baseUrl = new URL(this.baseUrl);
-        baseUrl.hostname = prefix + baseUrl.hostname;
-        this._url = baseUrl.href;
-      } else {
-        this._url = this.baseUrl;
-      }
-      return this._url;
-    }
-
-    const searchKey: string = this.getUrlSearchKey();
-    try {
-      const url = await this.discoverUrl(searchKey, undefined);
-      this._url = url;
-    } catch (error) {
-      throw new Error(`Failed to discover URL for service identified by "${searchKey}"`);
-    }
-
-    return this._url;
+  /**
+   * Augments request options with defaults returned by the DefaultRequestOptionsProvider.
+   * @note The options passed in by clients override any defaults where necessary.
+   * @param options Options the caller wants to augment with the defaults.
+   * @returns Promise resolves after the defaults are setup.
+   */
+  protected async setupOptionDefaults(options: RequestOptions): Promise<void> {
+    if (!ElectronAuthorizationBackend._defaultRequestOptionsProvider)
+      ElectronAuthorizationBackend._defaultRequestOptionsProvider = new DefaultRequestOptionsProvider();
+    return ElectronAuthorizationBackend._defaultRequestOptionsProvider.assignOptions(options);
   }
 
-  // DELETE (and anything with buddi)
-  public async discoverUrl(searchKey: string, regionId: number | undefined): Promise<string> {
+  public static readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
 
-    const urlBase: string = await this.getUrl();
-    const url: string = `${urlBase}/GetUrl/`;
-    // const resolvedRegion = typeof regionId !== "undefined" ? regionId : process.env[UrlDiscoveryClient.configResolveUrlUsingRegion] ? Number(process.env[UrlDiscoveryClient.configResolveUrlUsingRegion]) : 0;
-    const options: RequestOptions = {
-      method: "GET",
-      qs: {
-        url: searchKey,
-        // region: resolvedRegion,
-      },
-    };
+  public get redirectUri() { return this.config?.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri; }
 
-    await this.setupOptionDefaults(options);
-
-    // const response: Response = await request(requestContext, url, options);
-
-    // const discoveredUrl: string = response.body.result.url.replace(/\/$/, ""); // strip trailing "/" for consistency
-    // return discoveredUrl;
-    return url + regionId;
-  }
-
-  protected async delete(accessToken: AccessToken, relativeUrlPath: string): Promise<void> {
-    const url: string = await this.getUrl() + relativeUrlPath;
-    Logger.logInfo(loggerCategory, "Sending DELETE request", () => ({ url }));
-    const options: RequestOptions = {
-      method: "DELETE",
-      headers: { authorization: accessToken },
-    };
-    await this.setupOptionDefaults(options);
-    await request(url, options);
-    Logger.logTrace(loggerCategory, "Successful DELETE request", () => ({ url }));
-  }
-
-  /** Configures request options based on user defined values in HttpRequestOptions */
-  protected applyUserConfiguredHttpRequestOptions(requestOptions: RequestOptions, userDefinedRequestOptions?: RequestOptions): void {
-    if (!userDefinedRequestOptions)
+  public setAccessToken(token: AccessToken) {
+    if (token === this._accessToken)
       return;
-
-    if (userDefinedRequestOptions.headers) {
-      requestOptions.headers = { ...requestOptions.headers, ...userDefinedRequestOptions.headers };
-    }
-
-    if (userDefinedRequestOptions.timeout) {
-      this.applyUserConfiguredTimeout(requestOptions, userDefinedRequestOptions.timeout);
-    }
+    this._accessToken = token;
+    this.notifyFrontendAccessTokenChange(this._accessToken);
   }
-
-  /** Sets the request timeout based on user defined values */
-  private applyUserConfiguredTimeout(requestOptions: RequestOptions, userDefinedTimeout: RequestTimeoutOptions): void {
-    requestOptions.timeout = { ...requestOptions.timeout };
-
-    if (userDefinedTimeout.response)
-      requestOptions.timeout.response = userDefinedTimeout.response;
-
-    if (userDefinedTimeout.deadline)
-      requestOptions.timeout.deadline = userDefinedTimeout.deadline;
-    else if (userDefinedTimeout.response) {
-      const defaultNetworkOverheadBuffer = (RequestGlobalOptions.timeout.deadline as number) - (RequestGlobalOptions.timeout.response as number);
-      requestOptions.timeout.deadline = userDefinedTimeout.response + defaultNetworkOverheadBuffer;
-    }
-  }
-
-  // ------ END Client.ts ------
-
-  // ------ NativeAppAuthorizationBackend ------
 
   /**
    * Used to initialize the client - must be awaited before any other methods are called.
@@ -252,9 +116,16 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
       throw new IModelError(AuthStatus.Error, "Must specify a valid configuration when initializing authorization");
     if (this.config.expiryBuffer)
       this.expireSafety = this.config.expiryBuffer;
-    this.issuerUrl = this.config.issuerUrl ?? await this.getUrl();
 
-    assert(this.config !== undefined && this.issuerUrl !== undefined, "URL of authorization provider was not initialized");
+    const prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this.config.issuerUrl ?? "https://ims.bentley.com");
+    if (prefix)
+      authority.hostname = prefix + authority.hostname;
+
+    this.issuerUrl = authority.href.replace(/\/$/, "");
+
+    if (!this.issuerUrl)
+      throw new IModelError(AuthStatus.Error, "The URL of the authorization provider was not initialized");
 
     this._tokenStore = new ElectronTokenStore(this.config.clientId);
 
@@ -266,22 +137,12 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     await this.loadAccessToken();
   }
 
-  public setAccessToken(token: AccessToken) {
-    if (token === this._accessToken)
-      return;
-    this._accessToken = token;
-    NativeHost.onAccessTokenChanged.raiseEvent(token);
-  }
-
-  // ------ END NativeAppAuthorizationBackend ------
-
-  public get redirectUri() { return this.config?.redirectUri ?? ElectronAuthorizationClient.defaultRedirectUri; }
-
+  /** Forces a refresh of the user's access token regardless if the current token has expired. */
   public async refreshToken(): Promise<AccessToken> {
     if (this._tokenResponse === undefined || this._tokenResponse.refreshToken === undefined)
-      return "";
+      throw new BentleyError(AuthStatus.Error, "Not signed In. First call signIn()");
 
-    const token = `Bearer ${this._tokenResponse.refreshToken}`; // Is this right? should we append bearer to refresh token?
+    const token = `Bearer ${this._tokenResponse.refreshToken}`;
     return this.refreshAccessToken(token);
   }
 
@@ -289,39 +150,23 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
    * @return AccessToken if it's possible to get a valid access token, and undefined otherwise.
    */
   private async loadAccessToken(): Promise<AccessToken> {
-    const tokenResponse = await this.tokenStore.load();
+    const tokenResponse = await this.tokenStore?.load();
     if (tokenResponse === undefined || tokenResponse.refreshToken === undefined)
       return "";
     try {
       return await this.refreshAccessToken(tokenResponse.refreshToken);
     } catch (err) {
-      Logger.logError(loggerCategory, `Error refreshing access token`, () => err);
+      Logger.logError(loggerCategory, `Error refreshing access token`, () => BentleyError.getErrorProps(err));
       return "";
     }
   }
 
-  /**
-   * Sign-in completely.
-   * This is a wrapper around [[signIn]] - the only difference is that the promise resolves
-   * with the access token after sign in is complete and successful.
-   */
-  public async signInComplete(): Promise<AccessToken> {
-    return new Promise<AccessToken>((resolve, reject) => {
-      // NativeHost.onAccessTokenChanged.addOnce((token) => {
-      //   if (token !== "") {
-      //     resolve(token);
-      //   } else {
-      //     reject(new Error("Failed to sign in"));
-      //   }
-      // });
-      this.signIn().catch((err) => reject(err));
-      resolve("");
-    });
-  }
-
-  /**
-   * Start the sign-in process
-   * - calls the onAccessTokenChanged() call back after the authorization completes
+  /** Initializes and completes the sign-in process for the user.
+   *
+   * Once the promise is returned, use [[ElectronAuthorizationBackend.getAccessToken]] to retrieve the token.
+   *
+   * The following actions happen upon completion of the promise:
+   * - calls the onUserStateChanged() call back after the authorization completes
    * or if there is an error.
    * - will attempt in order:
    *   (i) load any existing authorized user from storage,
@@ -402,9 +247,11 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     return tokenResponse;
   }
 
-  /**
-   * Start the sign-out process
-   * - calls the onAccessTokenChanged() call back after the authorization completes
+  /** Signs out the current user.
+   *
+   * The following actions happen upon completion:
+   *
+   * - calls the onUserStateChanged() call back after the authorization completes
    *   or if there is an error.
    * - redirects application to the postSignoutRedirectUri specified in the configuration when the sign out is
    *   complete
@@ -413,27 +260,9 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     await this.makeRevokeTokenRequest();
   }
 
-  /**
-   * Sign out completely
-   * This is a wrapper around [[signOut]] - the only difference is that the promise resolves
-   * after the sign out is complete.
-   */
-  public async signOutComplete(): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      NativeHost.onAccessTokenChanged.addOnce((token) => {
-        if (token === "") {
-          resolve();
-        } else {
-          reject(new Error("Failed to sign out"));
-        }
-      });
-      this.signOut().catch((err) => reject(err));
-    });
-  }
-
   private async clearTokenResponse() {
     this._tokenResponse = undefined;
-    await this.tokenStore.delete();
+    await this.tokenStore?.delete();
     this.setAccessToken("");
   }
 
@@ -443,9 +272,10 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     const expiresAtMilliseconds = (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000;
     this._expiresAt = new Date(expiresAtMilliseconds);
 
-    await this.tokenStore.save(this._tokenResponse);
-    this.setAccessToken(accessToken);
-    return accessToken;
+    await this.tokenStore?.save(this._tokenResponse);
+    const bearerToken = `${tokenResponse.tokenType} ${accessToken}`;
+    this.setAccessToken(bearerToken);
+    return bearerToken;
   }
 
   private get _hasExpired(): boolean {
@@ -486,7 +316,14 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
     const tokenRequest = new TokenRequest(tokenRequestJson);
     const tokenRequestor = new NodeRequestor();
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(tokenRequestor);
-    return tokenHandler.performTokenRequest(this._configuration, tokenRequest);
+    try {
+      // eslint-disable-next-line @typescript-eslint/return-await
+      return tokenHandler.performTokenRequest(this._configuration, tokenRequest);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log(err);
+      throw err;
+    }
   }
 
   private async makeRefreshAccessTokenRequest(refreshToken: string): Promise<TokenResponse> {

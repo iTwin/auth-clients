@@ -12,10 +12,10 @@ import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 import * as fs from "fs";
 import * as path from "path";
 import { BeDuration, IModelStatus, ProcessDetector } from "@itwin/core-bentley";
-import { IpcHandler, IpcHost, NativeHost, NativeHostOpts } from "@itwin/core-backend";
+import { IModelHost, IpcHandler, IpcHost, NativeHost, NativeHostOpts } from "@itwin/core-backend";
 import { IModelError, InternetConnectivityStatus, IpcListener, IpcSocketBackend, NativeAppAuthorizationConfiguration, RemoveFunction, RpcConfiguration, RpcInterfaceDefinition } from "@itwin/core-common";
 import { ElectronRpcConfiguration, ElectronRpcManager } from "./common/ElectronRpcManager";
-import { ElectronAuthorizationClient } from "./Client";
+import { ElectronAuthorizationBackend } from "./BackendClient";
 
 // cSpell:ignore signin devserver webcontents copyfile unmaximize eopt
 
@@ -103,7 +103,7 @@ export class ElectronHost {
   public static get electron() { return this._electron; }
 
   /** @internal */
-  // public static get authorization() { return IModelHost.authorizationClient as ElectronAuthorizationClient; } TODO: Add back
+  public static get authorization() { return IModelHost.authorizationClient as ElectronAuthorizationBackend; }
 
   private constructor() { }
 
@@ -280,7 +280,7 @@ export class ElectronHost {
       opts.electronHost?.ipcHandlers?.forEach((ipc) => ipc.register());
     }
 
-    const authorizationBackend = new ElectronAuthorizationClient(opts.electronHost?.authConfig);
+    const authorizationBackend = new ElectronAuthorizationBackend(opts.electronHost?.authConfig);
     const connectivityStatus = NativeHost.checkInternetConnectivity();
     if (opts.electronHost?.authConfig && true !== opts.electronHost?.noInitializeAuthClient && connectivityStatus === InternetConnectivityStatus.Online)
       await authorizationBackend.initialize(opts.electronHost?.authConfig);

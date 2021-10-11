@@ -4,4 +4,5 @@
 *--------------------------------------------------------------------------------------------*/
 
 export * from "./ElectronHost";
-export * from "./Client";
+export * from "./BackendClient";
+export * from "./FrontendClient";
