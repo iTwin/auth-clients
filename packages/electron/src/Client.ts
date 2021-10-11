@@ -13,10 +13,9 @@
 
 import { AccessToken, assert, AuthStatus, BentleyError, Logger } from "@itwin/core-bentley";
 import { NativeHost } from "@itwin/core-backend";
-import { IModelError, NativeAppAuthorizationConfiguration } from "@itwin/core-common";
+import { AuthorizationClient, IModelError, NativeAppAuthorizationConfiguration } from "@itwin/core-common";
 import * as deepAssign from "deep-assign";
 import { request, RequestOptions } from "@bentley/itwin-client";
-import { AuthorizationClient } from "@itwin/core-common";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestJson, AuthorizationResponse, AuthorizationServiceConfiguration,
   BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest, RevokeTokenRequestJson, StringMap,
