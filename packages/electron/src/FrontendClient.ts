@@ -7,6 +7,7 @@
 
 import { AccessToken, BeEvent } from "@itwin/core-bentley";
 import { AuthorizationClient } from "@itwin/core-common";
+import { ElectronAuthIPC } from "./ElectronPreload";
 
 /**
  * Object to be set as `IModelApp.authorizationClient` for the frontend of ElectronApps.
@@ -23,7 +24,7 @@ export class ElectronAppAuthorization implements AuthorizationClient {
   public get isAuthorized(): boolean {
     return this.hasSignedIn;
   }
-  private _ipcAuthAPI: any = (window as any).frontendElectronAuthApi;
+  private _ipcAuthAPI: ElectronAuthIPC = (window as any).frontendElectronAuthApi;
 
   // TODO: Need some way of keeping the expiration time
 
