@@ -21,14 +21,15 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "dependencies": {
-    "@bentley/itwin-client": "^3.0.0-dev.77",
-    "@itwin/core-bentley": "^3.0.0-dev.77",
+    "@bentley/itwin-client": "^3.0.0-dev.83",
+    "@itwin/core-common": "^3.0.0-dev.83",
+    "@itwin/core-bentley": "^3.0.0-dev.83",
     "openid-client": "^4.7.4"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^3.0.0-dev.77",
-    "@itwin/eslint-plugin": "^3.0.0-dev.77",
-    "@itwin/oidc-signin-tool": "^3.0.0-dev.77",
+    "@itwin/build-tools": "^3.0.0-dev.83",
+    "@itwin/eslint-plugin": "^3.0.0-dev.83",
+    "@itwin/oidc-signin-tool": "^3.0.0-dev.83",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^8.2.3",
     "@types/sinon": "^9.0.0",

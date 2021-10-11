@@ -7,7 +7,7 @@
  */
 
 import { AccessToken } from "@itwin/core-bentley";
-import { AuthorizationClient } from "@bentley/itwin-client";
+import { AuthorizationClient } from "@itwin/core-common";
 import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
 import { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
 
