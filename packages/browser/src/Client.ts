@@ -138,11 +138,11 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       return this._url;
 
     const prefix = process.env.IMJS_URL_PREFIX;
-    const url = new URL(this._basicSettings.authority ?? this._baseUrl);
+    const authority = new URL(this._basicSettings.authority ?? this._baseUrl);
 
     if (prefix && !this._basicSettings.authority)
-      url.hostname = prefix + url.hostname;
-    this._url = url.href.replace(/\/$/, "");
+      authority.hostname = prefix + authority.hostname;
+    this._url = authority.href.replace(/\/$/, "");
 
     return this._url;
   }
