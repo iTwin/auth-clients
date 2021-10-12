@@ -47,8 +47,12 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     if (this._issuer)
       return this._issuer;
 
-    const authority = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY ?? this._baseUrl;
-    this._url = authority.replace(/\/$/, "");
+    const prefix = process.env.IMJS_URL_PREFIX;
+    const url = new URL(this._configuration.authority ?? this._baseUrl);
+
+    if (prefix && !this._configuration.authority)
+      url.hostname = prefix + url.hostname;
+    this._url = url.href.replace(/\/$/, "");
 
     this._issuer = await Issuer.discover(this._url);
     return this._issuer;

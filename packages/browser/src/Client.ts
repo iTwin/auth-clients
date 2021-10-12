@@ -133,12 +133,16 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     return userManagerSettings;
   }
 
-  public getUrl(): string{
+  public getUrl(): string {
     if (this._url)
       return this._url;
 
-    const authority = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY ?? this._baseUrl;
-    this._url = authority.replace(/\/$/, "");
+    const prefix = process.env.IMJS_URL_PREFIX;
+    const url = new URL(this._basicSettings.authority ?? this._baseUrl);
+
+    if (prefix && !this._basicSettings.authority)
+      url.hostname = prefix + url.hostname;
+    this._url = url.href.replace(/\/$/, "");
 
     return this._url;
   }
