@@ -10,7 +10,7 @@
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "test": "",
     "cover": "nyc npm test",
-    "pack": ""
+    "pack": "npm pack"
   },
   "author": {
     "name": "Bentley Systems, Inc.",
