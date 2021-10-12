@@ -118,7 +118,9 @@ stages:
       parameters:
         path: '*.tgz'
         artifactName: BrowserAuthorizationClient
+        name: BrowserAuthorizationClient
     - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
       parameters:
         path: '*.tgz'
         artifactName: ServiceAuthorizationClient
+        name: ServiceAuthorizationClient
