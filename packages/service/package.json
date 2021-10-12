@@ -23,6 +23,7 @@
   "dependencies": {
     "@bentley/itwin-client": "^3.0.0-dev.83",
     "@itwin/core-bentley": "^3.0.0-dev.83",
+    "@itwin/core-common": "^3.0.0-dev.83",
     "openid-client": "^4.7.4"
   },
   "devDependencies": {

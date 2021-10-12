@@ -23,6 +23,8 @@
   },
   "dependencies": {
     "@itwin/core-bentley": "^3.0.0-dev.83",
+    "@bentley/itwin-client": "^3.0.0-dev.83",
+    "@itwin/core-common": "^3.0.0-dev.83",
     "oidc-client": "^1.11.5"
   },
   "devDependencies": {
