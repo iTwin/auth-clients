@@ -24,8 +24,7 @@ import { ElectronAuthorizationRequestHandler } from "./ElectronAuthorizationRequ
 import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
 import { DefaultRequestOptionsProvider, RequestOptions } from "@bentley/itwin-client";
-import { ipcMain } from "electron";
-import { ElectronHost } from "./ElectronHost";
+import { BrowserWindow, ipcMain } from "electron";
 import { electronIPCChannelName } from "./FrontendClient";
 const loggerCategory = "electron-auth";
 
@@ -75,8 +74,9 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
    * an event for anything subscribed to its listener
    */
   private notifyFrontendAccessTokenChange(token: AccessToken): void {
-    const window = ElectronHost.mainWindow ?? ElectronHost.electron.BrowserWindow.getAllWindows()[0];
+    const window = BrowserWindow.getAllWindows()[0];
     window?.webContents.send(`${electronIPCChannelName}.onAccessTokenChanged`, token);
+    window;
   }
 
   /**
