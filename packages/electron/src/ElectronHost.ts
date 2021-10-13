@@ -57,11 +57,6 @@ export interface ElectronHostOptions {
   rpcInterfaces?: RpcInterfaceDefinition[];
   /** list of [IpcHandler]($common) classes to register */
   ipcHandlers?: (typeof IpcHandler)[];
-  /** if present, [[NativeHost.authorizationClient]] will be set to an instance of NativeAppAuthorizationBackend and will be initialized. */
-  authConfig?: NativeAppAuthorizationConfiguration;
-  /** if true, do not attempt to initialize AuthorizationClient on startup */
-  noInitializeAuthClient?: boolean;
-  applicationName?: never; // this should be supplied in NativeHostOpts
 }
 
 /** @beta */
@@ -72,6 +67,8 @@ export interface ElectronHostOpts extends NativeHostOpts {
 /** @beta */
 export interface ElectronHostWindowOptions extends BrowserWindowConstructorOptions {
   storeWindowName?: string;
+  /** The style of window title bar. Default is `default`. */
+  titleBarStyle?: ("default" | "hidden" | "hiddenInset" | "customButtonsOnHover");
 }
 
 /** the size and position of a window as stored in the settings file.
@@ -147,7 +144,7 @@ export class ElectronHost {
         nodeIntegration: false,
         contextIsolation: true,
         sandbox: true,
-        // enableRemoteModule: false,
+        nativeWindowOpen: true,
         nodeIntegrationInWorker: false,
         nodeIntegrationInSubFrames: false,
       },
@@ -259,7 +256,6 @@ export class ElectronHost {
       this._electron = require("electron");
       this._ipc = new ElectronIpc();
       const app = this.app;
-      // app.allowRendererProcessReuse = true; // see https://www.electronjs.org/docs/api/app#appallowrendererprocessreuse
       if (!app.isReady())
         this.electron.protocol.registerSchemesAsPrivileged([{ scheme: "electron", privileges: { standard: true, secure: true } }]);
       const eopt = opts?.electronHost;
@@ -279,13 +275,6 @@ export class ElectronHost {
       ElectronAppHandler.register();
       opts.electronHost?.ipcHandlers?.forEach((ipc) => ipc.register());
     }
-
-    const authorizationBackend = new ElectronAuthorizationBackend(opts.electronHost?.authConfig);
-    const connectivityStatus = NativeHost.checkInternetConnectivity();
-    if (opts.electronHost?.authConfig && true !== opts.electronHost?.noInitializeAuthClient && connectivityStatus === InternetConnectivityStatus.Online)
-      await authorizationBackend.initialize(opts.electronHost?.authConfig);
-
-    // IModelHost.authorizationClient = authorizationBackend; TODO: Add back
   }
 }
 
