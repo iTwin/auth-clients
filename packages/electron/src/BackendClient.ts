@@ -44,14 +44,11 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
   private _tokenStore?: ElectronTokenStore;
   private _expiresAt?: Date;
   public get tokenStore() { return this._tokenStore; }
-  protected baseUrl?: string;
-
+  protected _baseUrl = "https://ims.bentley.com";
   private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
-  protected _url?: string;
 
   public constructor(config?: NativeAppAuthorizationConfiguration) {
     this.config = config;
-    this.baseUrl = process.env.IMJS_ITWIN_PLATFORM_AUTHORITY ?? "https://ims.bentley.com";
     this.setupIPCHandlers();
   }
 
@@ -117,8 +114,8 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
       this.expireSafety = this.config.expiryBuffer;
 
     const prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this.config.issuerUrl ?? "https://ims.bentley.com");
-    if (prefix)
+    const authority = new URL(this.config.issuerUrl ?? this._baseUrl);
+    if (prefix && !this.config.issuerUrl)
       authority.hostname = prefix + authority.hostname;
 
     this.issuerUrl = authority.href.replace(/\/$/, "");
