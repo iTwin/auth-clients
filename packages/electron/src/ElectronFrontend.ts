@@ -3,5 +3,4 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-export * from "./BackendClient";
-export * from "./FrontendClient";
+export * from "./frontend/FrontendClient";
