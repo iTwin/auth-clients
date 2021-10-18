@@ -36,19 +36,24 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
   protected _accessToken: AccessToken = "";
   public config?: NativeAppAuthorizationConfiguration;
   public expireSafety = 60 * 10; // refresh token 10 minutes before real expiration time
-  public issuerUrl?: string;
+  public url = "https://ims.bentley.com";
   public static defaultRedirectUri = "http://localhost:3000/signin-callback";
   private _configuration: AuthorizationServiceConfiguration | undefined;
   private _tokenResponse: TokenResponse | undefined;
   private _tokenStore?: ElectronTokenStore;
   private _expiresAt?: Date;
   public get tokenStore() { return this._tokenStore; }
-  protected _baseUrl = "https://ims.bentley.com";
   private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
 
   public constructor(config?: NativeAppAuthorizationConfiguration) {
     this.config = config;
     this.setupIPCHandlers();
+
+    const prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this.config?.issuerUrl ?? this.url);
+    if (prefix)
+      authority.hostname = prefix + authority.hostname;
+    this.url = authority.href.replace(/\/$/, "");
   }
 
   private setupIPCHandlers(): void {
@@ -113,20 +118,10 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
     if (this.config.expiryBuffer)
       this.expireSafety = this.config.expiryBuffer;
 
-    const prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this.config.issuerUrl ?? this._baseUrl);
-    if (prefix && !this.config.issuerUrl)
-      authority.hostname = prefix + authority.hostname;
-
-    this.issuerUrl = authority.href.replace(/\/$/, "");
-
-    if (!this.issuerUrl)
-      throw new IModelError(AuthStatus.Error, "The URL of the authorization provider was not initialized");
-
     this._tokenStore = new ElectronTokenStore(this.config.clientId);
 
     const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-    this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.issuerUrl, tokenRequestor);
+    this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.url, tokenRequestor);
     Logger.logTrace(loggerCategory, "Initialized service configuration", () => ({ configuration: this._configuration }));
 
     // Attempt to load the access token from store
