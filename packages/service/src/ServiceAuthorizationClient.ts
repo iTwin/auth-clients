@@ -28,8 +28,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
   private _accessToken: AccessToken = "";
   private _expiresAt?: Date;
 
-  protected _baseUrl = "https://ims.bentley.com";
-  protected _url?: string;
+  protected _url = "https://ims.bentley.com";
 
   private _client?: OpenIdClient;
 
@@ -40,19 +39,18 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     });
 
     this._configuration = serviceConfiguration;
+
+    const prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this._configuration.authority ?? this._url);
+    if (prefix)
+      authority.hostname = prefix + authority.hostname;
+    this._url = authority.href.replace(/\/$/, "");
   }
 
   private _issuer?: Issuer<OpenIdClient>;
   private async getIssuer(): Promise<Issuer<OpenIdClient>> {
     if (this._issuer)
       return this._issuer;
-
-    const prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._configuration.authority ?? this._baseUrl);
-
-    if (prefix && !this._configuration.authority)
-      authority.hostname = prefix + authority.hostname;
-    this._url = authority.href.replace(/\/$/, "");
 
     this._issuer = await Issuer.discover(this._url);
     return this._issuer;

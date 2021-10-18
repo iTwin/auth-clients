@@ -64,14 +64,24 @@ export const isBrowserAuthorizationClient = (client: AuthorizationClient | undef
 export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
   protected _userManager?: UserManager;
-  protected _baseUrl = "https://ims.bentley.com";
-  protected _url?: string;
+  protected _url = "https://ims.bentley.com";
 
   protected _basicSettings: BrowserAuthorizationClientConfiguration;
   protected _advancedSettings?: UserManagerSettings;
 
   protected _accessToken: AccessToken = "";
   protected _expiresAt?: Date;
+
+  public constructor(configuration: BrowserAuthorizationClientConfiguration) {
+    BrowserAuthorizationLogger.initializeLogger();
+    this._basicSettings = configuration;
+
+    const prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this._basicSettings.authority ?? this._url);
+    if (prefix)
+      authority.hostname = prefix + authority.hostname;
+    this._url = authority.href.replace(/\/$/, "");
+  }
 
   public get isAuthorized(): boolean {
     return this.hasSignedIn;
@@ -85,11 +95,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   public get hasSignedIn(): boolean {
     return !!this._accessToken;
-  }
-
-  public constructor(configuration: BrowserAuthorizationClientConfiguration) {
-    this._basicSettings = configuration;
-    BrowserAuthorizationLogger.initializeLogger();
   }
 
   protected async getUserManager(): Promise<UserManager> {
@@ -127,24 +132,10 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     }
 
     if (!userManagerSettings.authority) {
-      userManagerSettings.authority = this.getUrl();
+      userManagerSettings.authority = this._url;
     }
 
     return userManagerSettings;
-  }
-
-  public getUrl(): string {
-    if (this._url)
-      return this._url;
-
-    const prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._basicSettings.authority ?? this._baseUrl);
-
-    if (prefix && !this._basicSettings.authority)
-      authority.hostname = prefix + authority.hostname;
-    this._url = authority.href.replace(/\/$/, "");
-
-    return this._url;
   }
 
   /**
