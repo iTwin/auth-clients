@@ -53,6 +53,8 @@ stages:
           browserAuthName=$(node -p "require('./packages/browser/package.json').name")
           ServiceAuthVer=$(node -p "require('./packages/service/package.json').version")
           ServiceAuthName=$(node -p "require('./packages/service/package.json').name")
+          oidcSignInToolAuthVer=$(node -p "require('./packages/oidc-signin-tool/package.json').version")
+          oidcSignInToolAuthName=$(node -p "require('./packages/oidc-signin-tool/package.json').name")
 
           checkVer() {
             localVer=$1
@@ -75,8 +77,9 @@ stages:
           # updateService=$(checkVer $ServiceAuthVer $ServiceAuthName)
           updateBrowser=true
           updateService=true
+          updateOidcSignInTool=true
 
-          if [ "$updateBrowser" = "true" ] && [ "$updateBrowser" = "$updateService" ] && [ "$browserAuthVer" = "$ServiceAuthVer" ]; then
+          if [ "$updateBrowser" = "true" ] && [ "$updateBrowser" = "$updateService" ] && [ "$updateBrowser" = "$updateOidcSignInTool" ] && [ "$browserAuthVer" = "$ServiceAuthVer" ]; then
             echo "package publishing conditions are met."
             shouldPublish=true
           else
@@ -89,6 +92,8 @@ stages:
           echo "##vso[task.setvariable variable=browserAuthName;isOutput=true]$browserAuthName"
           echo "##vso[task.setvariable variable=ServiceAuthVer;isOutput=true]$ServiceAuthVer"
           echo "##vso[task.setvariable variable=ServiceAuthName;isOutput=true]$ServiceAuthName"
+          echo "##vso[task.setvariable variable=oidcSignInToolAuthVer;isOutput=true]$oidcSignInToolAuthVer"
+          echo "##vso[task.setvariable variable=oidcSignInToolAuthName;isOutput=true]$oidcSignInToolAuthName"
 
         displayName: 'Store Build Info'
         name: info
@@ -108,6 +113,13 @@ stages:
         displayName: 'Publish Service Auth'
         condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
 
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.SourcesDirectory)/packages/service/itwin-oidc-signin-tool-$(info.oidcSignInToolAuthVer).tgz'
+          artifactName: OIDCSignInTool
+        displayName: 'Publish OIDC Sign In Tool'
+        condition: and(succeeded(), eq(variables['info.shouldPublish'], 'true'))
+
 - stage: Publish
   displayName: Publish
   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublish'], 'true'))
@@ -124,3 +136,8 @@ stages:
         path: '*.tgz'
         artifactName: ServiceAuthorizationClient
         name: ServiceAuthorizationClient
+    - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
+      parameters:
+        path: '*.tgz'
+        artifactName: OIDCSignInTool
+        name: OIDCSignInTool

@@ -18,7 +18,8 @@
     "test": "",
     "test:integration": "mocha",
     "docs": "",
-    "cover": ""
+    "cover": "",
+    "pack": "npm pack"
   },
   "keywords": [
     "Bentley",
