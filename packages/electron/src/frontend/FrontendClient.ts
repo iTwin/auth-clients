@@ -6,7 +6,14 @@ import { AccessToken, BeEvent } from "@itwin/core-bentley";
 import { AuthorizationClient } from "@itwin/core-common";
 import { ITwinElectronApi } from "./ElectronPreload";
 
-export const electronIPCChannelName = "itwin.electron.auth";
+/** @internal */
+export enum ElectronAuthIPCChannelNames {
+  signIn = "itwin.electron.auth.signIn",
+  signOut = "itwin.electron.auth.signOut",
+  getAccessToken = "itwin.electron.auth.getAccessToken",
+  onAccessTokenChanged = "itwin.electron.auth.onAccessTokenChanged",
+  onAccessTokenExpirationChanged = "itwin.electron.auth.onAccessTokenExpirationChanged",
+}
 
 /**
  * Frontend Ipc support for Electron apps.
@@ -14,17 +21,20 @@ export const electronIPCChannelName = "itwin.electron.auth";
 class ElectronAuthIPC  {
   private _api: ITwinElectronApi;
   public async signIn(): Promise<void> {
-    await this._api.invoke(`${electronIPCChannelName}.signIn`);
+    await this._api.invoke(ElectronAuthIPCChannelNames.signIn);
   }
   public async signOut(): Promise<void> {
-    await this._api.invoke(`${electronIPCChannelName}.signOut`);
+    await this._api.invoke(ElectronAuthIPCChannelNames.signOut);
   }
   public async getAccessToken(): Promise<AccessToken> {
-    const token = await this._api.invoke(`${electronIPCChannelName}.getAccessToken`);
+    const token = await this._api.invoke(ElectronAuthIPCChannelNames.getAccessToken);
     return token;
   }
   public addAccessTokenChangeListener(callback: (event: any, token: string) => void) {
-    this._api.addListener(`${electronIPCChannelName}.onAccessTokenChanged`, callback);
+    this._api.addListener(ElectronAuthIPCChannelNames.onAccessTokenChanged, callback);
+  }
+  public addAccessTokenExpirationChangeListener(callback: (event: any, token: Date) => void) {
+    this._api.addListener(ElectronAuthIPCChannelNames.onAccessTokenExpirationChanged, callback);
   }
   constructor() {
     // use the methods on window.itwinjs exposed by ElectronPreload.ts, or ipcRenderer directly if running with nodeIntegration=true (**only** for tests).
@@ -42,23 +52,24 @@ class ElectronAuthIPC  {
 export class ElectronAppAuthorization implements AuthorizationClient {
   private _cachedToken: AccessToken = "";
   private _refreshingToken = false;
-  protected _expireSafety = 60 * 10; // seconds before real expiration time so token will be refreshed before it expires
+  private _expiresAt?: Date;
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
   public get hasSignedIn() { return this._cachedToken !== ""; }
   public get isAuthorized(): boolean {
-    return this.hasSignedIn;
+    return this.hasSignedIn && this._hasExpired;
   }
   private _ipcAuthAPI: ElectronAuthIPC = new ElectronAuthIPC();
 
-  // TODO: Need some way of keeping the expiration time - or is this done with the listener? - but means backend would need a timer
-
-  /** Constructor for ElectronAppAuthorization. Sets up listeners for when the access token changes both on teh frontend and the backend. */
+  /** Constructor for ElectronAppAuthorization. Sets up listeners for when the access token changes both on the frontend and the backend. */
   public constructor() {
     this.onAccessTokenChanged.addListener((token: AccessToken) => {
       this._cachedToken = token;
     });
     this._ipcAuthAPI.addAccessTokenChangeListener((_event: any, token: AccessToken) => {
       this.onAccessTokenChanged.raiseEvent(token);
+    });
+    this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date) => {
+      this._expiresAt = expiration;
     });
   }
 
@@ -91,5 +102,12 @@ export class ElectronAppAuthorization implements AuthorizationClient {
     }
 
     return this._cachedToken ?? "";
+  }
+
+  private get _hasExpired(): boolean {
+    if (!this._expiresAt)
+      return false;
+
+    return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000; // Consider 1 minute before expiry as expired
   }
 }

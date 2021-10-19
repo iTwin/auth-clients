@@ -25,7 +25,7 @@ import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
 import { DefaultRequestOptionsProvider, RequestOptions } from "@bentley/itwin-client";
 import { BrowserWindow, ipcMain } from "electron";
-import { electronIPCChannelName } from "../frontend/FrontendClient";
+import { ElectronAuthIPCChannelNames } from "../frontend/FrontendClient";
 const loggerCategory = "electron-auth";
 
 /**
@@ -58,17 +58,17 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
 
   private setupIPCHandlers(): void {
     // SignIn
-    ipcMain.handle(`${electronIPCChannelName}.signIn`, async () => {
+    ipcMain.handle(ElectronAuthIPCChannelNames.signIn, async () => {
       await this.signIn();
     });
 
     // SignOut
-    ipcMain.handle(`${electronIPCChannelName}.signOut`, async () => {
+    ipcMain.handle(ElectronAuthIPCChannelNames.signOut, async () => {
       await this.signOut();
     });
 
     // GetAccessToken
-    ipcMain.handle(`${electronIPCChannelName}.getAccessToken`, async () => {
+    ipcMain.handle(ElectronAuthIPCChannelNames.getAccessToken, async () => {
       const accessToken = await this.getAccessToken();
       return accessToken;
     });
@@ -80,8 +80,12 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
    */
   private notifyFrontendAccessTokenChange(token: AccessToken): void {
     const window = BrowserWindow.getAllWindows()[0];
-    window?.webContents.send(`${electronIPCChannelName}.onAccessTokenChanged`, token);
-    window;
+    window?.webContents.send(ElectronAuthIPCChannelNames.onAccessTokenChanged, token);
+  }
+
+  private notifyFrontendAccessTokenExpirationChange(expiresAt: Date): void {
+    const window = BrowserWindow.getAllWindows()[0];
+    window?.webContents.send(ElectronAuthIPCChannelNames.onAccessTokenExpirationChanged, expiresAt);
   }
 
   /**
@@ -262,6 +266,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
     this._tokenResponse = tokenResponse;
     const expiresAtMilliseconds = (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000;
     this._expiresAt = new Date(expiresAtMilliseconds);
+    this.notifyFrontendAccessTokenExpirationChange(this._expiresAt);
 
     await this.tokenStore?.save(this._tokenResponse);
     const bearerToken = `${tokenResponse.tokenType} ${accessToken}`;
@@ -273,7 +278,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
     if (!this._expiresAt)
       return false;
 
-    return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000; // Consider 1 minute before expiry as expired
+    return this._expiresAt.getTime() - Date.now() <= this.expireSafety * 1000; // Consider this.expireSafety's amount of time early as expired
   }
 
   public async getAccessToken(): Promise<AccessToken> {
