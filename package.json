@@ -1,7 +1,7 @@
 {
   "name": "auth-clients",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.2.0",
   "description": "Authorization clients for the iTwin platform",
   "scripts": {
     "build": "pnpm run build --filter ./packages/",
