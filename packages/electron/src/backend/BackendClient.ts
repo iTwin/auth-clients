@@ -311,8 +311,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
       // eslint-disable-next-line @typescript-eslint/return-await
       return tokenHandler.performTokenRequest(this._configuration, tokenRequest);
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
+      Logger.logError(loggerCategory, `Error performing token request from token handler`, () => BentleyError.getErrorProps(err));
       throw err;
     }
   }

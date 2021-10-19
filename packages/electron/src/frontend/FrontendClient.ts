@@ -52,10 +52,7 @@ export class ElectronAppAuthorization implements AuthorizationClient {
 
   // TODO: Need some way of keeping the expiration time - or is this done with the listener? - but means backend would need a timer
 
-  /** ctor for NativeAppAuthorization
-   * @param config if present, overrides backend supplied configuration. Generally not necessary, should be supplied
-   * in [NativeHostOpts]($backend)
-   */
+  /** Constructor for ElectronAppAuthorization. Sets up listeners for when the access token changes both on teh frontend and the backend. */
   public constructor() {
     this.onAccessTokenChanged.addListener((token: AccessToken) => {
       this._cachedToken = token;
