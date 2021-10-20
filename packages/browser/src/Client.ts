@@ -63,8 +63,8 @@ export const isBrowserAuthorizationClient = (client: AuthorizationClient | undef
  */
 export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
+  public url = "https://ims.bentley.com";
   protected _userManager?: UserManager;
-  protected _url = "https://ims.bentley.com";
 
   protected _basicSettings: BrowserAuthorizationClientConfiguration;
   protected _advancedSettings?: UserManagerSettings;
@@ -77,10 +77,10 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     this._basicSettings = configuration;
 
     const prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._basicSettings.authority ?? this._url);
+    const authority = new URL(this._basicSettings.authority ?? this.url);
     if (prefix)
       authority.hostname = prefix + authority.hostname;
-    this._url = authority.href.replace(/\/$/, "");
+    this.url = authority.href.replace(/\/$/, "");
   }
 
   public get isAuthorized(): boolean {
@@ -132,7 +132,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     }
 
     if (!userManagerSettings.authority) {
-      userManagerSettings.authority = this._url;
+      userManagerSettings.authority = this.url;
     }
 
     return userManagerSettings;
