@@ -6,7 +6,6 @@
  * @module Authentication
  */
 
-import { AccessToken } from "@itwin/core-bentley";
 import { AuthorizationClient } from "@itwin/core-common";
 import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
 import { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
@@ -25,7 +24,7 @@ import { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationC
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected _configuration: ServiceAuthorizationClientConfiguration;
 
-  private _accessToken: AccessToken = "";
+  private _accessToken: string = "";
   private _expiresAt?: Date;
 
   protected _url = "https://ims.bentley.com";
@@ -78,7 +77,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     return this._client;
   }
 
-  private async generateAccessToken(): Promise<AccessToken> {
+  private async generateAccessToken(): Promise<string> {
     const scope = this._configuration.scope;
     if (scope.includes("openid") || scope.includes("email") || scope.includes("profile") || scope.includes("organization"))
       throw new Error("Authorization error: Scopes for an service cannot include 'openid email profile organization'");
@@ -129,7 +128,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
   /** Returns a promise that resolves to the AccessToken of the currently authorized client.
   * The token is refreshed if necessary.
   */
-  public async getAccessToken(): Promise<AccessToken> {
+  public async getAccessToken(): Promise<string> {
     if (this.isAuthorized)
       return this._accessToken;
     return this.generateAccessToken();

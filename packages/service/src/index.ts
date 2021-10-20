@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 export * from "./ServiceAuthorizationClient";
 export * from "./ServiceAuthorizationClientConfiguration";
+export * from "./ServiceClientLoggerCategory";
 
 export * from "./introspection/IntrospectionClient";
 export * from "./introspection/IntrospectionResponse";
