@@ -38,6 +38,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async initialize() {
+    // TODO: Update with browser's url when other PR merges?
     const imsClient = new ImsAuthorizationClient();
     this._imsUrl = await imsClient.getUrl();
 

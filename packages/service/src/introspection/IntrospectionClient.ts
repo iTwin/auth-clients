@@ -12,7 +12,6 @@ import { MemoryIntrospectionResponseCache } from "./IntrospectionResponseCacheBa
 import { IntrospectionResponseCache } from "./IntrospectionResponseCache";
 import { BackendITwinClientLoggerCategory } from "../BackendITwinClientLoggerCategory";
 import { AccessToken, BentleyError, Logger } from "@itwin/core-bentley";
-import { removeAccessTokenPrefix } from "@bentley/itwin-client";
 
 /**
  * @param _clientId
@@ -23,6 +22,10 @@ export interface IntrospectionClientConfiguration {
   readonly clientId: string;
   readonly clientSecret: string;
   issuerUrl?: string;
+}
+
+function removeAccessTokenPrefix(accessToken: AccessToken): AccessToken {
+  return accessToken.substr(accessToken.indexOf(" ") + 1);
 }
 
 /** @alpha */
@@ -58,7 +61,7 @@ export class IntrospectionClient {
   }
 
   public async introspect(accessToken: AccessToken): Promise<IntrospectionResponse> {
-    const accessTokenStr = removeAccessTokenPrefix(accessToken) ?? "";
+    const accessTokenStr = removeAccessTokenPrefix(accessToken);
 
     try {
       const cachedResponse = await this._cache.get(accessTokenStr);
