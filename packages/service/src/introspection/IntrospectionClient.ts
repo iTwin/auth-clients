@@ -13,10 +13,6 @@ import { IntrospectionResponseCache } from "./IntrospectionResponseCache";
 import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
 import { BentleyError, Logger } from "@itwin/core-bentley";
 
-function removeAccessTokenPrefix(accessToken?: string): string | undefined {
-  return accessToken ? accessToken.substr(accessToken.indexOf(" ") + 1) : undefined;
-}
-
 /**
  * @param _clientId
  * @param _clientSecret
@@ -26,6 +22,10 @@ export interface IntrospectionClientConfiguration {
   readonly clientId: string;
   readonly clientSecret: string;
   issuerUrl?: string;
+}
+
+function removeAccessTokenPrefix(accessToken: string): string {
+  return accessToken.substr(accessToken.indexOf(" ") + 1);
 }
 
 /** @alpha */
