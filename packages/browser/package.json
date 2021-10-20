@@ -31,11 +31,12 @@
     "@itwin/eslint-plugin": "^3.0.0-dev.92",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^8.2.3",
+    "@types/node": "^10.17.60",
     "@types/sinon": "^9.0.0",
     "chai": "^4.2.22",
     "mocha": "^8.2.3",
+    "nyc": "^15.1.0",
     "sinon": "^9.0.0",
-    "@types/node": "^10.17.60",
     "eslint": "^7.32.0",
     "typescript": "~4.3.5"
   },
