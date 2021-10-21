@@ -11,6 +11,7 @@ pnpm-lock.yaml
 
 # pnpm
 .pnpm-debug.log
+pnpm-debug.log
 
 # Mac specfic
 .DS_Store
