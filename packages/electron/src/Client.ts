@@ -153,7 +153,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
         }
       }
 
-      if (prefix) {
+      if (prefix && !this._configuration.authority) {
         const baseUrl = new URL(this.baseUrl);
         baseUrl.hostname = prefix + baseUrl.hostname;
         this._url = baseUrl.href;
