@@ -51,7 +51,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
 
     const prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this.config?.issuerUrl ?? this.url);
-    if (prefix)
+    if (prefix && !this.config?.issuerUrl)
       authority.hostname = prefix + authority.hostname;
     this.url = authority.href.replace(/\/$/, "");
   }
