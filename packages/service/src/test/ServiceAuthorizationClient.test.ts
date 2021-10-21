@@ -4,53 +4,46 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as chai from "chai";
-import { Client, Issuer } from "openid-client";
-import * as path from "path";
 import { ServiceAuthorizationClient } from "../ServiceAuthorizationClient";
 import { ServiceAuthorizationClientConfiguration } from "../ServiceAuthorizationClientConfiguration";
-import * as fs from "fs";
+import { Client, Issuer } from "openid-client";
 
-/** Loads the provided `.env` file into process.env */
-function loadEnv(envFile: string) {
-  if (!fs.existsSync(envFile))
-    return;
+describe("ServiceAuthorizationClient", () => {
 
-  const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const envResult = dotenv.config({ path: envFile });
-  if (envResult.error) {
-    throw envResult.error;
-  }
+  const serviceConfiguration: ServiceAuthorizationClientConfiguration = {
+    clientId: "testClientId",
+    clientSecret: "testClientSecret",
+    scope: "testScope",
+  };
+  const testAuthority = "https://test.authority.com";
 
-  dotenvExpand(envResult);
-}
+  it("should use config authority without prefix", async () => {
+    process.env.IMJS_URL_PREFIX = "";
+    const client = new ServiceAuthorizationClient({ ...serviceConfiguration, authority: testAuthority });
+    chai.expect(client.url).equals(testAuthority);
+  });
 
-loadEnv(path.join(__dirname, "..", "..", ".env"));
+  it("should use config authority and ignore prefix", async () => {
+    process.env.IMJS_URL_PREFIX = "prefix-";
+    const client = new ServiceAuthorizationClient({ ...serviceConfiguration, authority: testAuthority });
+    chai.expect(client.url).equals("https://test.authority.com");
+  });
 
-chai.should();
+  it("should use default authority without prefix ", async () => {
+    process.env.IMJS_URL_PREFIX = "";
+    const client = new ServiceAuthorizationClient(serviceConfiguration);
+    chai.expect(client.url).equals("https://ims.bentley.com");
+  });
 
-describe("ServiceAuthorizationClient (#integration)", () => {
-
-  let agentConfiguration: ServiceAuthorizationClientConfiguration;
-
-  before(async () => {
-    if (process.env.IMJS_AGENT_TEST_CLIENT_ID === undefined)
-      throw new Error("Could not find IMJS_AGENT_TEST_CLIENT_ID");
-    if (process.env.IMJS_AGENT_TEST_CLIENT_SECRET === undefined)
-      throw new Error("Could not find IMJS_AGENT_TEST_CLIENT_SECRET");
-    if (process.env.IMJS_AGENT_TEST_CLIENT_SCOPES === undefined)
-      throw new Error("Could not find IMJS_AGENT_TEST_CLIENT_SCOPES");
-
-    agentConfiguration = {
-      clientId: process.env.IMJS_AGENT_TEST_CLIENT_ID ?? "",
-      clientSecret: process.env.IMJS_AGENT_TEST_CLIENT_SECRET ?? "",
-      scope: process.env.IMJS_AGENT_TEST_CLIENT_SCOPES ?? "",
-    };
-
+  it("should use default authority with prefix ", async () => {
+    process.env.IMJS_URL_PREFIX = "prefix-";
+    const client = new ServiceAuthorizationClient(serviceConfiguration);
+    chai.expect(client.url).equals("https://prefix-ims.bentley.com");
   });
 
   it("should discover token end points correctly", async () => {
-    const client = new ServiceAuthorizationClient(agentConfiguration);
+    process.env.IMJS_URL_PREFIX = "";
+    const client = new ServiceAuthorizationClient(serviceConfiguration);
     const url: string = "https://ims.bentley.com";
 
     const issuer: Issuer<Client> = await client.discoverEndpoints();
