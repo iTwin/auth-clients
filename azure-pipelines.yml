@@ -42,6 +42,11 @@ stages:
       - script: pnpm run lint
         displayName: 'Lint'
 
+      - script: pnpm run cover
+        displayName: 'cover'
+
+      ## TODO need to publish test results as part of build.
+
       - bash: |
           pnpm run pack
         displayName: 'pnpm run pack'

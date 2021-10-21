@@ -63,6 +63,7 @@ export const isBrowserAuthorizationClient = (client: AuthorizationClient | undef
  */
 export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
+  public url = "https://ims.bentley.com";
   protected _userManager?: UserManager;
 
   protected _basicSettings: BrowserAuthorizationClientConfiguration;
@@ -70,6 +71,17 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   protected _accessToken: AccessToken = "";
   protected _expiresAt?: Date;
+
+  public constructor(configuration: BrowserAuthorizationClientConfiguration) {
+    BrowserAuthorizationLogger.initializeLogger();
+    this._basicSettings = configuration;
+
+    const prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this._basicSettings.authority ?? this.url);
+    if (prefix)
+      authority.hostname = prefix + authority.hostname;
+    this.url = authority.href.replace(/\/$/, "");
+  }
 
   public get isAuthorized(): boolean {
     return this.hasSignedIn;
@@ -83,11 +95,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   public get hasSignedIn(): boolean {
     return !!this._accessToken;
-  }
-
-  public constructor(configuration: BrowserAuthorizationClientConfiguration) {
-    this._basicSettings = configuration;
-    BrowserAuthorizationLogger.initializeLogger();
   }
 
   protected async getUserManager(): Promise<UserManager> {
@@ -122,6 +129,10 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     if (advancedSettings) {
       userManagerSettings = Object.assign(userManagerSettings, advancedSettings);
+    }
+
+    if (!userManagerSettings.authority) {
+      userManagerSettings.authority = this.url;
     }
 
     return userManagerSettings;

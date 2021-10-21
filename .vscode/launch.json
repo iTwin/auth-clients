@@ -1,0 +1,32 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Service-Authorization Tests",
+      "program": "${workspaceFolder}/packages/service/node_modules/mocha/bin/_mocha",
+      "args": [
+        "${workspaceFolder}/packages/service/lib/test/**/*.test.js",
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "protocol": "inspector"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Browser-Authorization Tests",
+      "program": "${workspaceFolder}/packages/browser/node_modules/mocha/bin/_mocha",
+      "args": [
+        "${workspaceFolder}/packages/browser/lib/test/**/*.test.js",
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "protocol": "inspector"
+    },
+  ]
+}
