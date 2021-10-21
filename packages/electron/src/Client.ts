@@ -153,7 +153,7 @@ export class ElectronAuthorizationClient implements AuthorizationClient { // TOD
         }
       }
 
-      if (prefix) {
+      if (prefix && !process.env.IMJS_ITWIN_PLATFORM_AUTHORITY) {
         const baseUrl = new URL(this.baseUrl);
         baseUrl.hostname = prefix + baseUrl.hostname;
         this._url = baseUrl.href;
