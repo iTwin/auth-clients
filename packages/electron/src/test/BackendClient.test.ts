@@ -11,6 +11,7 @@ import { NativeAppAuthorizationConfiguration } from "@itwin/core-common";
 import { ElectronTokenStore } from "../backend/TokenStore";
 import { AuthorizationListener, AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenRequest, TokenResponse } from "@openid/appauth";
 import { LoopbackWebServer } from "../backend/LoopbackWebServer";
+import { ElectronAuthorizationRequestHandler } from "../backend/ElectronAuthorizationRequestHandler";
 
 describe("ElectronAuthorizationBackend Token Logic", () => {
   beforeEach(()=>{
@@ -83,13 +84,15 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
     await tokenStore.delete();
 
     // Mock auth request
-    const loopbackStartSpy = sinon.fake();
-    sinon.stub(LoopbackWebServer, "start").callsFake(loopbackStartSpy);
-    // sinon.stub(ElectronAuthorizationRequestHandler.prototype, "performAuthorizationRequest").resolves(); // TODO: Figure out why this causes test fail and prevent popup locally
+    const mockLoopbackStart = sinon.fake();
+    sinon.stub(LoopbackWebServer, "start").callsFake(mockLoopbackStart);
+    sinon.stub(ElectronAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
+      await new Promise((resolve) => setImmediate(resolve));
+    });
     sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
       return mockTokenResponse;
     });
-    sinon.stub(AuthorizationNotifier.prototype, "setAuthorizationListener").callsFake(async (listener: AuthorizationListener) => {
+    sinon.stub(AuthorizationNotifier.prototype, "setAuthorizationListener").callsFake((listener: AuthorizationListener) => {
     /* eslint-disable @typescript-eslint/naming-convention */
       const authRequest = new AuthorizationRequest({
         response_type: "testResponseType",
@@ -112,7 +115,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
 
     const token = await client.getAccessToken();
     chai.assert.equal(token,`bearer ${mockTokenResponse.accessToken}`);
-    sinon.assert.called(loopbackStartSpy);
+    sinon.assert.called(mockLoopbackStart);
   });
 
   it("Should refresh old token", async () =>{
