@@ -41,7 +41,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
 
     const prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this._configuration.authority ?? this.url);
-    if (prefix)
+    if (prefix && !this._configuration.authority)
       authority.hostname = prefix + authority.hostname;
     this.url = authority.href.replace(/\/$/, "");
   }
@@ -91,7 +91,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     const client = await this.getClient();
     try {
       tokenSet = await client.grant(grantParams);
-    } catch (error) {
+    } catch (error: any) {
       throw new Error(`Authorization error: ${error.message}`);
     }
 

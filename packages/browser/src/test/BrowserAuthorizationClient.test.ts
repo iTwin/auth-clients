@@ -17,14 +17,14 @@ describe("BrowserAuthorizationClient", () => {
 
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = new BrowserAuthorizationClient({...browserConfiguration, authority: testAuthority});
+    const client = new BrowserAuthorizationClient({ ...browserConfiguration, authority: testAuthority });
     chai.expect(client.url).equals(testAuthority);
   });
 
-  it("should use config authority with prefix", async () => {
+  it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = new BrowserAuthorizationClient({...browserConfiguration, authority: testAuthority});
-    chai.expect(client.url).equals("https://prefix-test.authority.com");
+    const client = new BrowserAuthorizationClient({ ...browserConfiguration, authority: testAuthority });
+    chai.expect(client.url).equals("https://test.authority.com");
   });
 
   it("should use default authority without prefix ", async () => {
