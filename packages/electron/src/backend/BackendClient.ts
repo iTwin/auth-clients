@@ -137,8 +137,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
     if (this._tokenResponse === undefined || this._tokenResponse.refreshToken === undefined)
       throw new BentleyError(AuthStatus.Error, "Not signed In. First call signIn()");
 
-    const token = `Bearer ${this._tokenResponse.refreshToken}`;
-    return this.refreshAccessToken(token);
+    return this.refreshAccessToken(this._tokenResponse.refreshToken);
   }
 
   /** Loads the access token from the store, and refreshes it if necessary and possible
