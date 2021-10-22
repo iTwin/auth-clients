@@ -1,0 +1,14 @@
+// See https://aka.ms/vscode-remote/devcontainer.json for format details.
+{
+  "name": "auth-clients-linux",
+  "dockerFile": "./Dockerfile",
+  "context": ".",
+  "workspaceMount": "",
+  "workspaceFolder": "/workspaces/auth-clients",
+  "extensions": [
+    "streetsidesoftware.code-spell-checker",
+    "dbaeumer.vscode-eslint",
+    "davidanson.vscode-markdownlint",
+    "mike-co.import-sorter"
+  ]
+}
