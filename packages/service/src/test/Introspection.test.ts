@@ -3,10 +3,11 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { assert } from "chai";
+import { assert, expect } from "chai";
 import * as sinon from "sinon";
 import { MemoryIntrospectionResponseCache } from "../introspection/IntrospectionResponseCacheBase";
 import { IntrospectionResponse } from "../introspection/IntrospectionResponse";
+import { IntrospectionClient, IntrospectionClientConfiguration } from "..";
 
 describe("MemoryIntrospectionResponseCache", async () => {
   it("adds the token to the cache with a valid expiration", async () => {
@@ -79,5 +80,36 @@ describe("MemoryIntrospectionResponseCache", async () => {
     assert.isUndefined(res);
 
     clock.restore();
+  });
+});
+
+describe("IntrospectionClient", () => {
+  const introspectionConfig: IntrospectionClientConfiguration = {
+    clientId: "testClientId",
+    clientSecret: "testClientSecret",
+  };
+  const testAuthority = "https://test.authority.com";
+  it("should use config authority without prefix", async () => {
+    process.env.IMJS_URL_PREFIX = "";
+    const client = new IntrospectionClient({ ...introspectionConfig, issuerUrl: testAuthority });
+    expect(client.url).equals(testAuthority);
+  });
+
+  it("should use config authority and ignore prefix", async () => {
+    process.env.IMJS_URL_PREFIX = "prefix-";
+    const client = new IntrospectionClient({ ...introspectionConfig, issuerUrl: testAuthority });
+    expect(client.url).equals("https://test.authority.com");
+  });
+
+  it("should use default authority without prefix", async () => {
+    process.env.IMJS_URL_PREFIX = "";
+    const client = new IntrospectionClient(introspectionConfig);
+    expect(client.url).equals("https://ims.bentley.com");
+  });
+
+  it("should use default authority with prefix", async () => {
+    process.env.IMJS_URL_PREFIX = "prefix-";
+    const client = new IntrospectionClient(introspectionConfig);
+    expect(client.url).equals("https://prefix-ims.bentley.com");
   });
 });
