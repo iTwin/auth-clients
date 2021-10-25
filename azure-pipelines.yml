@@ -132,7 +132,7 @@ stages:
         displayName: 'Publish OIDC Sign In Tool'
         condition: and(succeeded(), eq(variables['info.shouldPublishSignInTool'], 'true'))
 
-- stage: Publish Auth Clients
+- stage: Publish_Auth_Clients
   displayName: Publish Auth Clients
   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublishAuthClients'], 'true'))
   dependsOn: Build
@@ -149,7 +149,7 @@ stages:
         artifactName: ServiceAuthorizationClient
         name: ServiceAuthorizationClient
 
-- stage: Publish Oidc Sign In Tool
+- stage: Publish_Oidc_Sign_In_Tool
   displayName: Publish Oidc Sign In Tool
   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublishSignInTool'], 'true'))
   dependsOn: Build
