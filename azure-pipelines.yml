@@ -44,7 +44,7 @@ stages:
 
       - script: pnpm run cover
         displayName: 'cover'
-        if: ${{ matrix.imageName != 'ubuntu-latest' }}
+        condition: ne(variables['Agent.OS'], 'Linux')
 
       ## TODO need to publish test results as part of build.
 
