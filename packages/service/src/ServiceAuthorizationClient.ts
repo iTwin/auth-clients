@@ -39,10 +39,12 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
 
     this._configuration = serviceConfiguration;
 
-    const prefix = process.env.IMJS_URL_PREFIX;
+    let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this._configuration.authority ?? this.url);
-    if (prefix && !this._configuration.authority)
+    if (prefix && !this._configuration.authority){
+      prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
+    }
     this.url = authority.href.replace(/\/$/, "");
   }
 
