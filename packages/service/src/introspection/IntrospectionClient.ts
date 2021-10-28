@@ -34,10 +34,12 @@ export class IntrospectionClient {
   public url = "https://ims.bentley.com";
 
   public constructor(protected _config: IntrospectionClientConfiguration, protected _cache: IntrospectionResponseCache = new MemoryIntrospectionResponseCache()) {
-    const prefix = process.env.IMJS_URL_PREFIX;
+    let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this._config.issuerUrl ?? this.url);
-    if (prefix && !this._config.issuerUrl)
+    if (prefix && !this._config.issuerUrl){
+      prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
+    }
     this.url = authority.href.replace(/\/$/, "");
   }
 

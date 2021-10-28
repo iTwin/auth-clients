@@ -112,4 +112,10 @@ describe("IntrospectionClient", () => {
     const client = new IntrospectionClient(introspectionConfig);
     expect(client.url).equals("https://prefix-ims.bentley.com");
   });
+
+  it("should reroute dev prefix to qa if on default ", async () => {
+    process.env.IMJS_URL_PREFIX = "dev-";
+    const client = new IntrospectionClient(introspectionConfig);
+    expect(client.url).equals("https://qa-ims.bentley.com");
+  });
 });
