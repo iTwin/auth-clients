@@ -49,10 +49,12 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
     this.config = config;
     this.setupIPCHandlers();
 
-    const prefix = process.env.IMJS_URL_PREFIX;
+    let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this.config?.issuerUrl ?? this.url);
-    if (prefix && !this.config?.issuerUrl)
+    if (prefix && !this.config?.issuerUrl) {
+      prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
+    }
     this.url = authority.href.replace(/\/$/, "");
   }
 
