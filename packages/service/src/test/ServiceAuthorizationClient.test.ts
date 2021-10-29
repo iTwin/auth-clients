@@ -51,4 +51,10 @@ describe("ServiceAuthorizationClient", () => {
     chai.expect(issuer.authorization_endpoint).equals(`${url}/connect/authorize`);
     chai.expect(issuer.introspection_endpoint).equals(`${url}/connect/introspect`);
   });
+
+  it("should reroute dev prefix to qa if on default ", async () => {
+    process.env.IMJS_URL_PREFIX = "dev-";
+    const client = new ServiceAuthorizationClient(serviceConfiguration);
+    chai.expect(client.url).equals("https://qa-ims.bentley.com");
+  });
 });

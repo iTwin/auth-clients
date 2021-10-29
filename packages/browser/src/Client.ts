@@ -76,10 +76,12 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     BrowserAuthorizationLogger.initializeLogger();
     this._basicSettings = configuration;
 
-    const prefix = process.env.IMJS_URL_PREFIX;
+    let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this._basicSettings.authority ?? this.url);
-    if (prefix && !this._basicSettings.authority)
+    if (prefix && !this._basicSettings.authority) {
+      prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
+    }
     this.url = authority.href.replace(/\/$/, "");
   }
 

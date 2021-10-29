@@ -38,4 +38,10 @@ describe("BrowserAuthorizationClient", () => {
     const client = new BrowserAuthorizationClient(browserConfiguration);
     chai.expect(client.url).equals("https://prefix-ims.bentley.com");
   });
+
+  it("should reroute dev prefix to qa if on default ", async () => {
+    process.env.IMJS_URL_PREFIX = "dev-";
+    const client = new BrowserAuthorizationClient(browserConfiguration);
+    chai.expect(client.url).equals("https://qa-ims.bentley.com");
+  });
 });
