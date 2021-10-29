@@ -31,8 +31,16 @@ function removeAccessTokenPrefix(accessToken: string): string {
 /** @alpha */
 export class IntrospectionClient {
   private _client?: OpenIdClient;
+  public url = "https://ims.bentley.com";
 
   public constructor(protected _config: IntrospectionClientConfiguration, protected _cache: IntrospectionResponseCache = new MemoryIntrospectionResponseCache()) {
+    let prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this._config.issuerUrl ?? this.url);
+    if (prefix && !this._config.issuerUrl){
+      prefix = prefix === "dev-" ? "qa-" : prefix;
+      authority.hostname = prefix + authority.hostname;
+    }
+    this.url = authority.href.replace(/\/$/, "");
   }
 
   private async getClient(): Promise<OpenIdClient> {
@@ -45,8 +53,7 @@ export class IntrospectionClient {
       retry: 4,
     });
 
-    const issuerUrl = this.getIssuerUrl();
-    const issuer = await Issuer.discover(issuerUrl);
+    const issuer = await this.getIssuer();
 
     const clientMetadata: ClientMetadata = {
       client_id: this._config.clientId, /* eslint-disable-line @typescript-eslint/naming-convention */
@@ -56,8 +63,13 @@ export class IntrospectionClient {
     return this._client;
   }
 
-  protected getIssuerUrl(): string {
-    return this._config.issuerUrl ?? "https://ims.bentley.com";
+  private _issuer?: Issuer<OpenIdClient>;
+  protected async getIssuer(): Promise<Issuer<OpenIdClient>> {
+    if (this._issuer)
+      return this._issuer;
+
+    this._issuer = await Issuer.discover(this.url);
+    return this._issuer;
   }
 
   public async introspect(accessToken: string): Promise<IntrospectionResponse> {
