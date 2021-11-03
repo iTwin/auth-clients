@@ -6,21 +6,21 @@
  * @module Introspection
  */
 
-import { ClientMetadata, custom, Issuer, Client as OpenIdClient } from "openid-client";
+import { custom, Issuer, Client as OpenIdClient } from "openid-client";
 import { IntrospectionResponse } from "./IntrospectionResponse";
 import { MemoryIntrospectionResponseCache } from "./IntrospectionResponseCacheBase";
 import { IntrospectionResponseCache } from "./IntrospectionResponseCache";
 import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
 import { BentleyError, Logger } from "@itwin/core-bentley";
+import * as jwks from "jwks-rsa";
+import * as jwt from "jsonwebtoken";
 
 /**
- * @param _clientId
- * @param _clientSecret
- * @param _issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
+ * @param clientId
+ * @param clientSecret
+ * @param issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
  */
 export interface IntrospectionClientConfiguration {
-  readonly clientId: string;
-  readonly clientSecret: string;
   issuerUrl?: string;
 }
 
@@ -30,37 +30,16 @@ function removeAccessTokenPrefix(accessToken: string): string {
 
 /** @alpha */
 export class IntrospectionClient {
-  private _client?: OpenIdClient;
   public url = "https://ims.bentley.com";
 
-  public constructor(protected _config: IntrospectionClientConfiguration, protected _cache: IntrospectionResponseCache = new MemoryIntrospectionResponseCache()) {
+  public constructor(protected _config: IntrospectionClientConfiguration = {}, protected _cache: IntrospectionResponseCache = new MemoryIntrospectionResponseCache()) {
     let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this._config.issuerUrl ?? this.url);
-    if (prefix && !this._config.issuerUrl){
+    if (prefix && !this._config.issuerUrl) {
       prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
     }
     this.url = authority.href.replace(/\/$/, "");
-  }
-
-  private async getClient(): Promise<OpenIdClient> {
-    if (this._client) {
-      return this._client;
-    }
-
-    custom.setHttpOptionsDefaults({
-      timeout: 10000,
-      retry: 4,
-    });
-
-    const issuer = await this.getIssuer();
-
-    const clientMetadata: ClientMetadata = {
-      client_id: this._config.clientId, /* eslint-disable-line @typescript-eslint/naming-convention */
-      client_secret: this._config.clientSecret, /* eslint-disable-line @typescript-eslint/naming-convention */
-    };
-    this._client = new issuer.Client(clientMetadata);
-    return this._client;
   }
 
   private _issuer?: Issuer<OpenIdClient>;
@@ -68,8 +47,46 @@ export class IntrospectionClient {
     if (this._issuer)
       return this._issuer;
 
+    custom.setHttpOptionsDefaults({
+      timeout: 10000,
+      retry: 4,
+    });
+
     this._issuer = await Issuer.discover(this.url);
     return this._issuer;
+  }
+
+  private _jwks?: jwks.JwksClient;
+  private getJwks(): jwks.JwksClient {
+    if (this._jwks)
+      return this._jwks;
+
+    const jwksUri = this._issuer?.metadata.jwks_uri;
+    if (!jwksUri) {
+      Logger.logError(ServiceClientLoggerCategory.Introspection, "Issuer does not support JWKS");
+      throw new Error("Issuer does not support JWKS");
+    }
+    this._jwks = jwks({ jwksUri });
+    return this._jwks;
+  }
+
+  private _signingKeyCache = new Map<string, jwks.SigningKey>();
+  private async getSigningKey(header: jwt.JwtHeader): Promise<jwks.SigningKey> {
+    if (header.kid) { // if `kid` is undefined, always get a new signing key
+      if (!this._signingKeyCache.has(header.kid))
+        this._signingKeyCache.set(header.kid, await this.getJwks().getSigningKey(header.kid));
+      return this._signingKeyCache.get(header.kid)!;
+    }
+    return this.getJwks().getSigningKey();
+  }
+
+  private async validateToken(accessToken: string): Promise<jwt.JwtPayload> {
+    const header = jwt.decode(accessToken, { complete: true })?.header;
+    if (!header)
+      throw new Error("Failed to decode JWT");
+    const key = await this.getSigningKey(header);
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- false positive, real type is `string | Jwt`.
+    return (await jwt.verify(accessToken, key.getPublicKey())) as jwt.JwtPayload;
   }
 
   public async introspect(accessToken: string): Promise<IntrospectionResponse> {
@@ -81,20 +98,17 @@ export class IntrospectionClient {
         return cachedResponse;
       }
     } catch (err) {
-      Logger.logInfo(ServiceClientLoggerCategory.Introspection, `introspection response not found in cache: ${accessTokenStr}`, () => BentleyError.getErrorProps(err));
-    }
-
-    let client: OpenIdClient;
-    try {
-      client = await this.getClient();
-    } catch (err) {
-      Logger.logError(ServiceClientLoggerCategory.Introspection, `Unable to create oauth client`, () => BentleyError.getErrorProps(err));
-      throw err;
+      Logger.logInfo(ServiceClientLoggerCategory.Introspection, `introspection response not found in cache:`, () => BentleyError.getErrorProps(err));
     }
 
     let introspectionResponse: IntrospectionResponse;
     try {
-      introspectionResponse = await client.introspect(accessTokenStr) as IntrospectionResponse;
+      const payload = await this.validateToken(accessTokenStr);
+      if (!payload.scope)
+        throw new Error("Missing scope in JWT");
+      if (!Array.isArray(payload.scope) || payload.scope.length === 0 || typeof payload.scope[0] !== "string")
+        throw new Error("Invalid scope");
+      introspectionResponse = { ...payload, scope: payload.scope.join(" "), active: true };
     } catch (err) {
       Logger.logError(ServiceClientLoggerCategory.Introspection, `Unable to introspect client token`, () => BentleyError.getErrorProps(err));
       throw err;

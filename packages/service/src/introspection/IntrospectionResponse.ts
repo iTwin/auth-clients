@@ -6,9 +6,4 @@
  * @module Introspection
  */
 
-import { IntrospectionResponse as OpenIdIntrospectionResponse } from "openid-client";
-
-/** @alpha */
-export interface IntrospectionResponse extends OpenIdIntrospectionResponse {
-  sub?: string; // sub is an official optional parameter of OAuth introspection responses: https://tools.ietf.org/html/rfc7662
-}
+export { IntrospectionResponse } from "openid-client";
