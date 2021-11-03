@@ -46,8 +46,6 @@ stages:
         displayName: 'Cover'
 
       - template: ./publish-test-results.yaml
-        parameters:
-          NodeVersion: ${{ parameters.nodeVersion }}
 
       ## TODO need to publish test results as part of build.
 
