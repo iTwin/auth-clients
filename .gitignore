@@ -21,3 +21,5 @@ pnpm-debug.log
 /**/.rush
 *.build.log
 *.build.error.log
+
+.env

@@ -3,7 +3,6 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 import { AccessToken, assert, BeEvent } from "@itwin/core-bentley";
-import { ImsAuthorizationClient } from "@bentley/itwin-client";
 import { AuthorizationClient } from "@itwin/core-common";
 import { AuthorizationParameters, Client, custom, generators, Issuer, OpenIDCallbackChecks } from "openid-client";
 import * as os from "os";
@@ -21,7 +20,7 @@ import { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from
 export class TestBrowserAuthorizationClient implements AuthorizationClient {
   private _client!: Client;
   private _issuer!: Issuer<Client>;
-  private _imsUrl!: string;
+  private _imsUrl: string = "https://ims.bentley.com";
   private readonly _config: TestBrowserAuthorizationClientConfiguration;
   private readonly _user: TestUserCredentials;
   private _accessToken: AccessToken = "";
@@ -35,13 +34,17 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   public constructor(config: TestBrowserAuthorizationClientConfiguration, user: TestUserCredentials) {
     this._config = config;
     this._user = user;
+
+    let prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this._config.authority ?? this._imsUrl);
+    if (prefix && !this._config.authority) {
+      prefix = prefix === "dev-" ? "qa-" : prefix;
+      authority.hostname = prefix + authority.hostname;
+    }
+    this._imsUrl = authority.href.replace(/\/$/, "");
   }
 
   private async initialize() {
-    // TODO: Update with browser's url when other PR merges?
-    const imsClient = new ImsAuthorizationClient();
-    this._imsUrl = await imsClient.getUrl();
-
     // Due to issues with a timeout or failed request to the authorization service increasing the standard timeout and adding retries.
     // Docs for this option here, https://github.com/panva/node-openid-client/tree/master/docs#customizing-http-requests
     custom.setHttpOptionsDefaults({
@@ -49,8 +52,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       retry: 3,
     });
 
-    const imsUrl = new URL("/.well-known/openid-configuration", this._imsUrl);
-    this._issuer = await Issuer.discover(imsUrl.toString());
+    this._issuer = await Issuer.discover(this._imsUrl);
     this._client = new this._issuer.Client({ client_id: this._config.clientId, token_endpoint_auth_method: "none" }); // eslint-disable-line @typescript-eslint/naming-convention
   }
 

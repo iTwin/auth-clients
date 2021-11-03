@@ -14,7 +14,7 @@
     "clean": "rimraf lib .rush/temp/package-deps*.json",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "test": "",
-    "test:integration": "mocha",
+    "test:integration": "mocha \"./lib/cjs/test/**/*.test.js\"",
     "docs": "",
     "cover": "",
     "pack": "npm pack"
