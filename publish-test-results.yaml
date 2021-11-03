@@ -1,0 +1,43 @@
+parameters:
+  - name: NodeVersion # name of the parameter; required
+    type: string # data type of the parameter; required
+  - name: workingDir
+    type: string
+    default: $(System.DefaultWorkingDirectory)
+
+steps:
+  #-------
+  # Auth Clients
+  #-------
+  - task: PublishTestResults@2
+    displayName: "Publish Browser Test Results"
+    inputs:
+      testResultsFiles: "packages/browser/lib/test/junit_results.xml"
+      testRunTitle: "Auth Clients - Browser Client - $(Agent.OS) - ${{ parameters.NodeVersion }}"
+      searchFolder: ${{ parameters.workingDir }}
+    condition: succeededOrFailed()
+  # - task: PublishTestResults@2
+  #   displayName: "Publish Electron Test Results"
+  #   inputs:
+  #     testResultsFiles: "packages/electron/lib/test/junit_results.xml"
+  #     testRunTitle: "Auth Clients - Electron Client - $(Agent.OS) - ${{ parameters.NodeVersion }}"
+  #     searchFolder: ${{ parameters.workingDir }}
+  #   condition: succeededOrFailed()
+  - task: PublishTestResults@2
+    displayName: "Publish Service Test Results"
+    inputs:
+      testResultsFiles: "packages/service/lib/test/junit_results.xml"
+      testRunTitle: "Auth Clients - Service Client - $(Agent.OS) - ${{ parameters.NodeVersion }}"
+      searchFolder: ${{ parameters.workingDir }}
+    condition: succeededOrFailed()
+
+  #-------
+  # Tools
+  #-------
+  # - task: PublishTestResults@2
+  #   displayName: "Publish OIDC Signin Tool Test Results"
+  #   inputs:
+  #     testResultsFiles: "packages/oidc-signin-tool/lib/test/junit_results.xml"
+  #     testRunTitle: "Tools -  OIDC Signin Tool - $(Agent.OS) - ${{ parameters.NodeVersion }}"
+  #     searchFolder: ${{ parameters.workingDir }}
+  #   condition: succeededOrFailed()
