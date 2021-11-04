@@ -43,7 +43,9 @@ stages:
         displayName: 'Lint'
 
       - script: pnpm run cover
-        displayName: 'cover'
+        displayName: 'Cover'
+
+      - template: ./publish-test-results.yaml
 
       ## TODO need to publish test results as part of build.
 
