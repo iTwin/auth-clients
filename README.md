@@ -10,10 +10,10 @@ If you have questions, or wish to contribute to iTwin.js, see our [Contributing 
 
 This repository contains a few OAuth 2.0 client libraries to assist in authenticating with the iTwin Platform in TypeScript/JavaScript.
 
-There are 3 clients in the repository to the common workflows. Each one covers one of the workflows in the iTwin Platform [authorization documentation](https://developer.bentley.com/apis/overview/authorization/).
+There are 3 clients in the repository; each of them corresponding to one of the application types supported by the iTwin Platform. See the [authorization documentation](https://developer.bentley.com/apis/overview/authorization/) for more details on the Authorization workflows supported.
 
 - [Browser/SPA](./packages/browser/README.md)
 - [Desktop/Electron](./packages/electron/README.md)
-- [Service](./packages/service/README.md) in order to handle the .
+- [Service](./packages/service/README.md)
 
 In addition, the [OIDC Signin Tool](./packages/oidc-signin-tool/README.md) is a test helper package to automate the sign-in workflow to aid writing integration tests.
