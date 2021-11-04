@@ -127,7 +127,7 @@ stages:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.SourcesDirectory)/packages/service/itwin-oidc-signin-tool-$(info.oidcSignInToolVer).tgz'
+          PathtoPublish: '$(Build.SourcesDirectory)/packages/oidc-signin-tool/itwin-oidc-signin-tool-$(info.oidcSignInToolVer).tgz'
           artifactName: OIDCSignInTool
         displayName: 'Publish OIDC Sign In Tool'
         condition: and(succeeded(), eq(variables['info.shouldPublishSignInTool'], 'true'))
