@@ -150,7 +150,7 @@ stages:
         name: ServiceAuthorizationClient
 
 - stage: Publish_Oidc_Sign_In_Tool
-  displayName: Publish Oidc Sign In Tool
+  displayName: Publish OIDC Sign In Tool
   condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublishSignInTool'], 'true'))
   dependsOn: Build
 
