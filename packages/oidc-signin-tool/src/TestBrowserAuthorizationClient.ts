@@ -2,7 +2,7 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import { AccessToken, assert, BeEvent } from "@itwin/core-bentley";
+import { AccessToken, BeEvent } from "@itwin/core-bentley";
 import { AuthorizationClient } from "@itwin/core-common";
 import { AuthorizationParameters, Client, custom, generators, Issuer, OpenIDCallbackChecks } from "openid-client";
 import * as os from "os";
@@ -67,9 +67,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
   /** Returns true if the user has signed in, but the token has expired and requires a refresh */
   public get hasExpired(): boolean {
-    if (!this._accessToken)
+    if (!this._accessToken || !this._expiresAt)
       return false;
-    assert(!!this._expiresAt);
     // show expiry one minute before actual time to refresh
     return ((this._expiresAt.getTime() - Date.now()) <= 1 * 60 * 1000);
   }

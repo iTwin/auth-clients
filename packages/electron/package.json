@@ -37,7 +37,6 @@
     "@itwin/build-tools": "^3.0.0-dev.92",
     "@itwin/core-electron": "^3.0.0-dev.92",
     "@itwin/eslint-plugin": "^3.0.0-dev.92",
-    "@bentley/itwin-client": "^3.0.0-dev.92",
     "@types/deep-assign": "^0.1.1",
     "electron": "^14.0.1",
     "eslint": "^7.32.0",
