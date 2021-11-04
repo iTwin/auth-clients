@@ -47,8 +47,6 @@ stages:
 
       - template: ./publish-test-results.yaml
 
-      ## TODO need to publish test results as part of build.
-
       - bash: |
           pnpm run pack
         displayName: 'pnpm run pack'
