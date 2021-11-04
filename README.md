@@ -10,7 +10,7 @@ If you have questions, or wish to contribute to iTwin.js, see our [Contributing 
 
 This repository contains a few OAuth 2.0 client libraries to assist in authenticating with the iTwin Platform in TypeScript/JavaScript.
 
-There are 3 clients in the repository; each of them corresponding to one of the application types supported by the iTwin Platform. See the [authorization documentation](https://developer.bentley.com/apis/overview/authorization/) for more details on the Authorization workflows supported.
+There are 3 clients in the repository, each of them corresponding to one of the application types supported by the iTwin Platform. See the [authorization documentation](https://developer.bentley.com/apis/overview/authorization/) for more details on the Authorization workflows supported.
 
 - [Browser/SPA](./packages/browser/README.md)
 - [Desktop/Electron](./packages/electron/README.md)
