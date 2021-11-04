@@ -38,6 +38,7 @@
     "@itwin/core-electron": "^3.0.0-dev.92",
     "@itwin/eslint-plugin": "^3.0.0-dev.92",
     "@types/deep-assign": "^0.1.1",
+    "source-map-support": "^0.5.9",
     "electron": "^14.0.1",
     "eslint": "^7.32.0",
     "nyc": "^15.1.0",
