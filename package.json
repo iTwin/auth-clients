@@ -7,6 +7,7 @@
     "build": "pnpm run build --filter ./packages/",
     "lint": "pnpm run lint --filter ./packages/",
     "test": "pnpm run test --filter ./packages/",
+    "test:integration": "pnpm run test:integration --filter ./packages/",
     "cover": "pnpm run cover --filter ./packages/",
     "pack": "pnpm run pack --filter ./packages/"
   },
