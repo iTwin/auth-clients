@@ -33,6 +33,7 @@
     "@types/mocha": "^8.2.3",
     "@types/node": "^10.17.60",
     "@types/sinon": "^9.0.0",
+    "source-map-support": "^0.5.9",
     "chai": "^4.2.22",
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",
