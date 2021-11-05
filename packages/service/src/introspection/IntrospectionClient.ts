@@ -55,11 +55,11 @@ export class IntrospectionClient {
   }
 
   private _jwks?: jwks.JwksClient;
-  private getJwks(): jwks.JwksClient {
+  private async getJwks(): Promise<jwks.JwksClient> {
     if (this._jwks)
       return this._jwks;
 
-    const jwksUri = this._issuer?.metadata.jwks_uri;
+    const jwksUri = (await this.getIssuer()).metadata.jwks_uri;
     if (!jwksUri) {
       Logger.logError(ServiceClientLoggerCategory.Introspection, "Issuer does not support JWKS");
       throw new Error("Issuer does not support JWKS");
@@ -70,12 +70,13 @@ export class IntrospectionClient {
 
   private _signingKeyCache = new Map<string, jwks.SigningKey>();
   private async getSigningKey(header: jwt.JwtHeader): Promise<jwks.SigningKey> {
+    const jwksClient = await this.getJwks();
     if (header.kid) { // if `kid` is undefined, always get a new signing key
       if (!this._signingKeyCache.has(header.kid))
-        this._signingKeyCache.set(header.kid, await this.getJwks().getSigningKey(header.kid));
+        this._signingKeyCache.set(header.kid, await jwksClient.getSigningKey(header.kid));
       return this._signingKeyCache.get(header.kid)!;
     }
-    return this.getJwks().getSigningKey();
+    return jwksClient.getSigningKey();
   }
 
   private async validateToken(accessToken: string): Promise<jwt.JwtPayload> {
@@ -83,12 +84,11 @@ export class IntrospectionClient {
     if (!header)
       throw new Error("Failed to decode JWT");
     const key = await this.getSigningKey(header);
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- false positive, real type is `string | JwtPayload`.
     return jwt.verify(accessToken, key.getPublicKey()) as jwt.JwtPayload;
   }
 
   public async introspect(accessToken: string): Promise<IntrospectionResponse> {
-    const accessTokenStr = removeAccessTokenPrefix(accessToken) ?? "";
+    const accessTokenStr = removeAccessTokenPrefix(accessToken);
 
     let introspectionResponse: IntrospectionResponse;
     try {
@@ -99,7 +99,7 @@ export class IntrospectionClient {
         throw new Error("Invalid scope");
       introspectionResponse = { ...payload, scope: payload.scope.join(" "), active: true };
     } catch (err) {
-      Logger.logError(ServiceClientLoggerCategory.Introspection, `Unable to introspect client token`, () => BentleyError.getErrorProps(err));
+      Logger.logError(ServiceClientLoggerCategory.Introspection, "Unable to introspect client token", () => BentleyError.getErrorProps(err));
       throw err;
     }
 

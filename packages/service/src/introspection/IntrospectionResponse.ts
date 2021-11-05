@@ -5,5 +5,8 @@
 /** @packageDocumentation
  * @module Introspection
  */
+import { IntrospectionResponse as OpenIdIntrospectionResponse } from "openid-client";
 
-export { IntrospectionResponse } from "openid-client";
+export interface IntrospectionResponse extends OpenIdIntrospectionResponse {
+  active: boolean;
+}
