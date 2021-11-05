@@ -30,26 +30,29 @@ stages:
       pool:
         vmImage: $(imageName)
       steps:
-      - script: npm install -g pnpm
-        displayName: 'Install pnpm'
+      - script: node common/scripts/install-run-rush.js install
+        displayName: Rush Install
 
-      - script: pnpm install
-        displayName: 'Install dependencies'
+      - script: node common/scripts/install-run-rush.js build -v -p max
+        displayName: Rush Build
 
-      - script: pnpm run build
-        displayName: 'Build'
+      - script: node common/scripts/install-run-rush.js lint
+        displayName: Rush Lint
 
-      - script: pnpm run lint
-        displayName: 'Lint'
+      # By default linux agents do not have a real display so use the virtual framebuffer
+      - script: xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' node common/scripts/install-run-rush.js cover --verbose
+        displayName: Rush Cover - Linux
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-      - script: pnpm run cover
-        displayName: 'Cover'
+      # MacOS and Windows agents work without any virtual display
+      - script: node common/scripts/install-run-rush.js cover --verbose
+        displayName: Rush Cover - Windows/Mac
+        condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
 
       - template: ./publish-test-results.yaml
 
-      - bash: |
-          pnpm run pack
-        displayName: 'pnpm run pack'
+      - script: rush pack
+        displayName: Rush Pack
 
       # publish artifact
 
