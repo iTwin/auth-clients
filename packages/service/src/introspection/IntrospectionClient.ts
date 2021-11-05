@@ -30,7 +30,7 @@ function removeAccessTokenPrefix(accessToken: string): string {
 export class IntrospectionClient {
   public url = "https://ims.bentley.com";
 
-  public constructor(protected _config: IntrospectionClientConfiguration = {}, protected _cache: IntrospectionResponseCache = new MemoryIntrospectionResponseCache()) {
+  public constructor(protected _config: IntrospectionClientConfiguration = {}) {
     let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this._config.issuerUrl ?? this.url);
     if (prefix && !this._config.issuerUrl) {
@@ -83,8 +83,8 @@ export class IntrospectionClient {
     if (!header)
       throw new Error("Failed to decode JWT");
     const key = await this.getSigningKey(header);
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- false positive, real type is `string | Jwt`.
-    return (await jwt.verify(accessToken, key.getPublicKey())) as jwt.JwtPayload;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion -- false positive, real type is `string | JwtPayload`.
+    return jwt.verify(accessToken, key.getPublicKey()) as jwt.JwtPayload;
   }
 
   public async introspect(accessToken: string): Promise<IntrospectionResponse> {
