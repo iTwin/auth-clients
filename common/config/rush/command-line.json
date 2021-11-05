@@ -1,0 +1,35 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/command-line.schema.json",
+  "commands": [
+    {
+      "name": "cover",
+      "commandKind": "bulk",
+      "summary": "Run cover script for each package",
+      "description": "Iterates through each package in the monorepo and runs the 'cover' script",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
+      "name": "lint",
+      "commandKind": "bulk",
+      "summary": "Run lint rules on each package",
+      "description": "Iterates through each package in the monorepo and runs the 'lint' script",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
+      "name": "clean",
+      "commandKind": "bulk",
+      "summary": "Run lint rules on each package",
+      "description": "Iterates through each package in the monorepo and runs the 'clean' script",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    }
+  ]
+}

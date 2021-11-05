@@ -1,0 +1,49 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/rush.schema.json",
+  "rushVersion": "5.51.1",
+  "pnpmVersion": "6.13.0",
+  "nodeSupportedVersionRange": ">=12.17.0 <17.0.0",
+  "projectFolderMinDepth": 2,
+  "projectFolderMaxDepth": 3,
+  "ensureConsistentVersions": true,
+  "pnpmOptions": {
+    "useWorkspaces": true
+  },
+  "gitPolicy": {
+    "allowedEmailRegExps": [
+      "[^@]+@users\\.noreply\\.github\\.com"
+    ],
+    "sampleEmail": "mrexample@users.noreply.github.com"
+  },
+  "repository": {
+    "url": "https://github.com/iTwin/auth-clients",
+    "defaultBranch": "main",
+    "defaultRemote": "origin"
+  },
+  "projects": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "projectFolder": "packages/browser",
+      "shouldPublish": true,
+      "versionPolicyName": "individual-versioning"
+    },
+    {
+      "packageName": "@itwin/electron-authorization",
+      "projectFolder": "packages/electron",
+      "shouldPublish": true,
+      "versionPolicyName": "individual-versioning"
+    },
+    {
+      "packageName": "@itwin/service-authorization",
+      "projectFolder": "packages/service",
+      "shouldPublish": true,
+      "versionPolicyName": "individual-versioning"
+    },
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "projectFolder": "packages/oidc-signin-tool",
+      "shouldPublish": true,
+      "versionPolicyName": "individual-versioning"
+    }
+  ]
+}
