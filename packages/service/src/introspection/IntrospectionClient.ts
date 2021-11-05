@@ -8,8 +8,6 @@
 
 import { custom, Issuer, Client as OpenIdClient } from "openid-client";
 import { IntrospectionResponse } from "./IntrospectionResponse";
-import { MemoryIntrospectionResponseCache } from "./IntrospectionResponseCacheBase";
-import { IntrospectionResponseCache } from "./IntrospectionResponseCache";
 import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
 import { BentleyError, Logger } from "@itwin/core-bentley";
 import * as jwks from "jwks-rsa";
@@ -92,15 +90,6 @@ export class IntrospectionClient {
   public async introspect(accessToken: string): Promise<IntrospectionResponse> {
     const accessTokenStr = removeAccessTokenPrefix(accessToken) ?? "";
 
-    try {
-      const cachedResponse = await this._cache.get(accessTokenStr);
-      if (!!cachedResponse) {
-        return cachedResponse;
-      }
-    } catch (err) {
-      Logger.logInfo(ServiceClientLoggerCategory.Introspection, `introspection response not found in cache:`, () => BentleyError.getErrorProps(err));
-    }
-
     let introspectionResponse: IntrospectionResponse;
     try {
       const payload = await this.validateToken(accessTokenStr);
@@ -113,8 +102,6 @@ export class IntrospectionClient {
       Logger.logError(ServiceClientLoggerCategory.Introspection, `Unable to introspect client token`, () => BentleyError.getErrorProps(err));
       throw err;
     }
-
-    this._cache.add(accessTokenStr, introspectionResponse); // eslint-disable-line @typescript-eslint/no-floating-promises
 
     return introspectionResponse;
   }
