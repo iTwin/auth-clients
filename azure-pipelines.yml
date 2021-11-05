@@ -56,7 +56,7 @@ stages:
 
       - template: ./publish-test-results.yaml
 
-      - script: rush pack
+      - script: node common/scripts/install-run-rush.js pack
         displayName: Rush Pack
 
       # publish artifact
