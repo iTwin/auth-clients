@@ -86,7 +86,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   }
 
   public get isAuthorized(): boolean {
-    return this.hasSignedIn && !this.hasExpired;
+    return this.hasSignedIn;
   }
 
   public get hasExpired(): boolean {
@@ -295,9 +295,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * @throws [Error] If signIn() was not called, or there was an authorization error.
    */
   public async getAccessToken(): Promise<AccessToken> {
-    if (this.isAuthorized)
+    if (this._accessToken)
       return this._accessToken;
-    throw new Error("Authorization error: Not signed in or token has expired.");
+    throw new Error("Authorization error: Not signed in.");
   }
 
   /**

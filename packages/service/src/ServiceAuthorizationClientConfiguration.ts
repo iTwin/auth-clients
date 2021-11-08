@@ -19,11 +19,4 @@ export interface ServiceAuthorizationClientConfiguration {
   readonly scope: string;
   /** The URL of the OIDC/OAuth2 provider. If left undefined, the iTwin Platform authority (`ims.bentley.com`) will be used by default. */
   readonly authority?: string;
-  /**
-   * Time in seconds that's used as a buffer to check the token for validity/expiry.
-   * The checks for authorization, and refreshing access tokens all use this buffer - i.e., the token is considered expired if the current time is within the specified
-   * time of the actual expiry.
-   * @note If unspecified this defaults to 60 seconds
-   */
-  readonly expireSafety?: number;
 }
