@@ -60,12 +60,12 @@ stages:
         displayName: Rush Cover - Windows/Mac
         condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
 
-      - template: ./publish-test-results.yaml
+      - template: templates/publish-test-results.yaml
 
       - script: node common/scripts/install-run-rush.js pack
         displayName: Rush Pack
 
       # Publish packages
-      - template: ./publish-packages.yaml
+      - template: templates/publish-packages.yaml
         parameters:
           shouldPublish: ${{ parameters.shouldPublish }}
