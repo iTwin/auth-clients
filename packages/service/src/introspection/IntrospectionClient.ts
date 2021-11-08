@@ -79,30 +79,38 @@ export class IntrospectionClient {
     return jwksClient.getSigningKey();
   }
 
-  private async validateToken(accessToken: string): Promise<jwt.JwtPayload> {
-    const header = jwt.decode(accessToken, { complete: true })?.header;
-    if (!header)
+  private async validateToken(accessToken: string): Promise<IntrospectionResponse> {
+    const decoded = jwt.decode(accessToken, { complete: true });
+    if (!decoded)
       throw new Error("Failed to decode JWT");
+    const { payload, header } = decoded;
+
+    if (!payload || !payload.scope)
+      throw new Error("Missing scope in JWT");
+    if (!Array.isArray(payload.scope) || payload.scope.length === 0 || typeof payload.scope[0] !== "string")
+      throw new Error("Invalid scope");
+
     const key = await this.getSigningKey(header);
-    return jwt.verify(accessToken, key.getPublicKey()) as jwt.JwtPayload;
+    let active = true;
+    try {
+      // since we already called decode, we can ignore the result of verify and just check if it throws.
+      jwt.verify(accessToken, key.getPublicKey());
+    } catch (err) {
+      Logger.logInfo(ServiceClientLoggerCategory.Introspection, "Client token marked inactive", () => BentleyError.getErrorProps(err));
+      active = false;
+    }
+
+    return { ...payload, active, scope: payload.scope.join(" ") };
   }
 
   public async introspect(accessToken: string): Promise<IntrospectionResponse> {
     const accessTokenStr = removeAccessTokenPrefix(accessToken);
 
-    let introspectionResponse: IntrospectionResponse;
     try {
-      const payload = await this.validateToken(accessTokenStr);
-      if (!payload.scope)
-        throw new Error("Missing scope in JWT");
-      if (!Array.isArray(payload.scope) || payload.scope.length === 0 || typeof payload.scope[0] !== "string")
-        throw new Error("Invalid scope");
-      introspectionResponse = { ...payload, scope: payload.scope.join(" "), active: true };
+      return await this.validateToken(accessTokenStr);
     } catch (err) {
       Logger.logError(ServiceClientLoggerCategory.Introspection, "Unable to introspect client token", () => BentleyError.getErrorProps(err));
       throw err;
     }
-
-    return introspectionResponse;
   }
 }

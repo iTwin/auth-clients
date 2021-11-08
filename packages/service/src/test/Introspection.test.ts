@@ -54,6 +54,7 @@ describe("IntrospectionClient", () => {
     const logStub = sinon.stub(Logger, "logError");
     sinon.stub(jwt, "decode").returns({
       header: {},
+      payload: { scope: ["scope1", "scope2"] },
     });
 
     const client = new IntrospectionClient();
@@ -88,7 +89,7 @@ describe("IntrospectionClient", () => {
     sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
       getPublicKey: () => "fake key",
     });
-    sinon.stub(jwt, "verify").returns({} as any);
+    sinon.stub(jwt, "verify");
 
     const client = new IntrospectionClient();
     await expect(client.introspect("fake token")).to.be.rejectedWith("Missing scope in JWT");
@@ -107,11 +108,12 @@ describe("IntrospectionClient", () => {
     const logStub = sinon.stub(Logger, "logError");
     sinon.stub(jwt, "decode").returns({
       header: {},
+      payload: { scope: [1, 2, 3] },
     });
     sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
       getPublicKey: () => "fake key",
     });
-    sinon.stub(jwt, "verify").returns({ scope: [1, 2, 3] } as any);
+    sinon.stub(jwt, "verify");
 
     const client = new IntrospectionClient();
     await expect(client.introspect("fake token")).to.be.rejectedWith("Invalid scope");
@@ -122,22 +124,28 @@ describe("IntrospectionClient", () => {
   });
 
   it("should cache signing key", async () => {
+    sinon.stub(Issuer, "discover").resolves({
+      metadata: {
+        jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+      },
+    } as Issuer<OpenIdClient>);
     const fakeKey1 = { getPublicKey: () => "fake key 1" };
     const fakeKey2 = { getPublicKey: () => "fake key 2" };
+    const payload = { scope: ["scope1", "scope2"] };
     sinon.stub(jwt, "decode")
-      .onFirstCall().returns({ header: { kid: "kid1" } })
-      .onSecondCall().returns({ header: { kid: "kid2" } })
-      .onThirdCall().returns({ header: { kid: "kid2" } })
-      .returns({ header: {} });
+      .onFirstCall().returns({ payload, header: { kid: "kid1" } })
+      .onSecondCall().returns({ payload, header: { kid: "kid2" } })
+      .onThirdCall().returns({ payload, header: { kid: "kid2" } })
+      .returns({ payload, header: {} });
 
     const keyStub = sinon.stub(jwks.JwksClient.prototype, "getSigningKey").callsFake(async (kid) => {
       if (kid === "kid1") return fakeKey1;
       if (kid === "kid2") return fakeKey2;
-      if (kid === undefined) return { a: Guid.createValue(), getPublicKey: () => `fake key - ${Guid.createValue()}` };
+      if (kid === undefined) return { getPublicKey: () => "fake key" };
       assert.fail("unexpected key id");
     });
 
-    sinon.stub(jwt, "verify").returns({ scope: ["scope1", "scope2"] } as any);
+    sinon.stub(jwt, "verify");
 
     const client = new IntrospectionClient();
 
@@ -149,7 +157,7 @@ describe("IntrospectionClient", () => {
     expect(keyStub.callCount).to.equal(1);
     expect(keyStub.lastCall.firstArg).to.equal("kid1");
 
-    // this is ugly, but not remotely as ugly as the spaghetti monster that hides inside jwks-rsa.
+    // this is ugly, but not remotely as ugly as the spaghetti monster that hides inside jwks-rsa. I'm fighting fire with fire here.
     client["_jwks"]!.getSigningKey = jwks.JwksClient.prototype.getSigningKey.bind(client["_jwks"]);
 
     // call with kid2 - added to cache
@@ -176,5 +184,39 @@ describe("IntrospectionClient", () => {
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(keyStub.callCount).to.equal(4);
     expect(keyStub.lastCall.firstArg).to.be.undefined;
+  });
+
+  it("should return active:false if token is expired", async () => {
+    // this token expired in 2018
+    const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwic2NvcGUiOlsic2NvcGUxIiwic2NvcGUyIl0sImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQyNjIyfQ.YZAIAcRq6vwTB3jjAMQogxfRzwDv4RoKzqaKlzFucNg";
+    sinon.stub(Issuer, "discover").resolves({
+      metadata: {
+        jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+      },
+    } as Issuer<OpenIdClient>);
+    sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
+      getPublicKey: () => ")H@McQfThWmZq4t7w!z%C*F-JaNdRgUk",
+    });
+    const client = new IntrospectionClient();
+    const response = await client.introspect(token);
+    expect(response.active).to.be.false;
+    expect(response.scope).to.equal("scope1 scope2");
+  });
+
+  it("should return active:true if token is not expired", async () => {
+    // this token will expire on Wed Apr 01 2303 21:30:22 GMT+0300
+    const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwic2NvcGUiOlsic2NvcGUxIiwic2NvcGUyIl0sImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxMDUxNjI0MjYyMn0.yYZvLAlx2zwTufGHsTg4GeOlWe35XTWfHeR8W_gTwzM";
+    sinon.stub(Issuer, "discover").resolves({
+      metadata: {
+        jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+      },
+    } as Issuer<OpenIdClient>);
+    sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
+      getPublicKey: () => ")H@McQfThWmZq4t7w!z%C*F-JaNdRgUk",
+    });
+    const client = new IntrospectionClient();
+    const response = await client.introspect(token);
+    expect(response.active).to.be.true;
+    expect(response.scope).to.equal("scope1 scope2");
   });
 });
