@@ -62,9 +62,6 @@ stages:
 
       - template: templates/publish-test-results.yaml
 
-      - script: node common/scripts/install-run-rush.js pack
-        displayName: Rush Pack
-
       # Publish packages
       - template: templates/publish-packages.yaml
         parameters:
