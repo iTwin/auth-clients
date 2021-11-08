@@ -46,6 +46,10 @@ stages:
         displayName: 'cover'
         condition: ne(variables['Agent.OS'], 'Linux')
 
+      - script: xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm run cover linux
+        displayName: 'cover'
+        condition: eq(variables['Agent.OS'], 'Linux')
+
       - template: ./publish-test-results.yaml
 
       - bash: |
