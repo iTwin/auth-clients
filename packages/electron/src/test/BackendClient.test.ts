@@ -1,10 +1,10 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 /*---------------------------------------------------------------------------------------------
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
 import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import { ElectronAuthorizationBackend } from "../backend/BackendClient";
 import { NativeAppAuthorizationConfiguration } from "@itwin/core-common";
@@ -12,6 +12,11 @@ import { ElectronTokenStore } from "../backend/TokenStore";
 import { AuthorizationListener, AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenRequest, TokenResponse } from "@openid/appauth";
 import { LoopbackWebServer } from "../backend/LoopbackWebServer";
 import { ElectronAuthorizationRequestHandler } from "../backend/ElectronAuthorizationRequestHandler";
+/* eslint-disable @typescript-eslint/naming-convention */
+const assert = chai.assert;
+const expect = chai.expect;
+
+chai.use(chaiAsPromised);
 
 describe("ElectronAuthorizationBackend Token Logic", () => {
   beforeEach(()=>{
@@ -33,7 +38,6 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
       clientId: "testClientId",
       scope: "testScope",
     };
-    /* eslint-disable @typescript-eslint/naming-convention */
     const mockTokenResponse: TokenResponse = new TokenResponse(
       {
         access_token:"testAccessToken",
@@ -41,7 +45,6 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
         issued_at: (new Date()).getTime(),
         expires_in: "60000",
       });
-      /* eslint-enable @typescript-eslint/naming-convention */
 
     // Load tokenResponse into token store - use clientId
     const tokenStore = new ElectronTokenStore(config.clientId);
@@ -60,7 +63,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
 
     // Get access token and assert its response equals what mock
     const returnedToken = await client.getAccessToken();
-    chai.assert.equal(returnedToken, `bearer ${mockTokenResponse.accessToken}`);
+    assert.equal(returnedToken, `bearer ${mockTokenResponse.accessToken}`);
     sinon.assert.notCalled(spy);
   });
 
@@ -69,7 +72,6 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
       clientId: "testClientId",
       scope: "testScope",
     };
-    /* eslint-disable @typescript-eslint/naming-convention */
     const mockTokenResponse: TokenResponse = new TokenResponse(
       {
         access_token:"testAccessTokenSignInTest",
@@ -77,7 +79,6 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
         issued_at: (new Date()).getTime() / 1000,
         expires_in: "60000",
       });
-    /* eslint-enable @typescript-eslint/naming-convention */
 
     // Clear token store
     const tokenStore = new ElectronTokenStore(config.clientId);
@@ -93,7 +94,6 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
       return mockTokenResponse;
     });
     sinon.stub(AuthorizationNotifier.prototype, "setAuthorizationListener").callsFake((listener: AuthorizationListener) => {
-    /* eslint-disable @typescript-eslint/naming-convention */
       const authRequest = new AuthorizationRequest({
         response_type: "testResponseType",
         client_id: "testClient",
@@ -102,7 +102,6 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
         internal: {code_verifier:"testCodeVerifier"},
         state: "testState",
       });
-      /* eslint-enable @typescript-eslint/naming-convention */
 
       const authResponse = new AuthorizationResponse({code:"testCode", state:"testState"});
       listener(authRequest, authResponse, null);
@@ -114,7 +113,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
     await client.signIn();
 
     const token = await client.getAccessToken();
-    chai.assert.equal(token,`bearer ${mockTokenResponse.accessToken}`);
+    assert.equal(token,`bearer ${mockTokenResponse.accessToken}`);
     sinon.assert.called(mockLoopbackStart);
   });
 
@@ -123,7 +122,6 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
       clientId: "testClientId",
       scope: "testScope",
     };
-    /* eslint-disable @typescript-eslint/naming-convention */
     const mockExpiredTokenResponse: TokenResponse = new TokenResponse(
       {
         access_token:"testExpiredAccessToken",
@@ -138,7 +136,6 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
         issued_at: new Date().getTime() / 1000,
         expires_in: "60000",
       });
-    /* eslint-enable @typescript-eslint/naming-convention */
 
     // Load tokenResponse into token store - use clientId
     const tokenStore = new ElectronTokenStore(config.clientId);
@@ -163,7 +160,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
 
     // Get access token and assert its response equals what mock
     const returnedToken = await client.getAccessToken();
-    chai.assert.equal(returnedToken, `bearer ${mockTokenResponse.accessToken}`);
+    assert.equal(returnedToken, `bearer ${mockTokenResponse.accessToken}`);
   });
 });
 
@@ -182,30 +179,30 @@ describe("ElectronAuthorizationBackend Authority URL Logic", () => {
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
     const client = new ElectronAuthorizationBackend({ ...config, issuerUrl: testAuthority });
-    chai.expect(client.url).equals(testAuthority);
+    expect(client.url).equals(testAuthority);
   });
 
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
     const client = new ElectronAuthorizationBackend({ ...config, issuerUrl: testAuthority });
-    chai.expect(client.url).equals("https://test.authority.com");
+    expect(client.url).equals("https://test.authority.com");
   });
 
   it("should use default authority without prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "";
     const client = new ElectronAuthorizationBackend(config);
-    chai.expect(client.url).equals("https://ims.bentley.com");
+    expect(client.url).equals("https://ims.bentley.com");
   });
 
   it("should use default authority with prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
     const client = new ElectronAuthorizationBackend(config);
-    chai.expect(client.url).equals("https://prefix-ims.bentley.com");
+    expect(client.url).equals("https://prefix-ims.bentley.com");
   });
 
   it("should reroute dev prefix to qa if on default ", async () => {
     process.env.IMJS_URL_PREFIX = "dev-";
     const client = new ElectronAuthorizationBackend(config);
-    chai.expect(client.url).equals("https://qa-ims.bentley.com");
+    expect(client.url).equals("https://qa-ims.bentley.com");
   });
 });
