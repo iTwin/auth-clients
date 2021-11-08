@@ -24,7 +24,7 @@
     {
       "name": "clean",
       "commandKind": "bulk",
-      "summary": "Run lint rules on each package",
+      "summary": "Cleans each package's build directory",
       "description": "Iterates through each package in the monorepo and runs the 'clean' script",
       "enableParallelism": true,
       "ignoreMissingScript": false,
