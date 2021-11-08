@@ -96,9 +96,14 @@ export class ElectronAppAuthorization implements AuthorizationClient {
         return Promise.reject(); // short-circuits any recursive use of this function
       }
 
-      this._refreshingToken = true;
-      this._cachedToken = (await this._ipcAuthAPI.getAccessToken()) ?? "";
-      this._refreshingToken = false;
+      try{
+        this._refreshingToken = true;
+        this._cachedToken = (await this._ipcAuthAPI.getAccessToken()) ?? "";
+      } catch (err) {
+        throw err;
+      } finally {
+        this._refreshingToken = false;
+      }
     }
 
     return this._cachedToken ?? "";
