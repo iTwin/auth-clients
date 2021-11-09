@@ -32,7 +32,7 @@ const loggerCategory = "electron-auth";
  * Client configuration to generate OIDC/OAuth tokens for native applications
  * @beta
  */
- export interface ElectronAuthorizationBackendConfiguration {
+export interface ElectronAuthorizationBackendConfiguration {
   /**
    * The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
    */
@@ -58,7 +58,6 @@ const loggerCategory = "electron-auth";
    */
   readonly expiryBuffer?: number;
 }
-
 
 /**
  * Utility to generate OIDC/OAuth tokens for Desktop Applications
