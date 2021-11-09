@@ -7,7 +7,7 @@ import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import { ElectronAuthorizationBackend } from "../backend/BackendClient";
-import { NativeAppAuthorizationConfiguration } from "@itwin/core-common";
+import { ElectronAuthorizationBackendConfiguration } from "../ElectronBackend";
 import { ElectronTokenStore } from "../backend/TokenStore";
 import { AuthorizationListener, AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenRequest, TokenResponse } from "@openid/appauth";
 import { LoopbackWebServer } from "../backend/LoopbackWebServer";
@@ -34,7 +34,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
   });
 
   it("Should load token response from token store", async () =>{
-    const config: NativeAppAuthorizationConfiguration = {
+    const config: ElectronAuthorizationBackendConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
@@ -68,7 +68,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
   });
 
   it("Should sign in", async () =>{
-    const config: NativeAppAuthorizationConfiguration = {
+    const config: ElectronAuthorizationBackendConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
@@ -118,7 +118,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
   });
 
   it("Should refresh old token", async () =>{
-    const config: NativeAppAuthorizationConfiguration = {
+    const config: ElectronAuthorizationBackendConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
@@ -170,7 +170,7 @@ describe("ElectronAuthorizationBackend Authority URL Logic", () => {
     sinon.stub(ElectronAuthorizationBackend.prototype, "setupIPCHandlers" as any);
   });
 
-  const config: NativeAppAuthorizationConfiguration = {
+  const config: ElectronAuthorizationBackendConfiguration = {
     clientId: "testClientId",
     scope: "testScope",
   };

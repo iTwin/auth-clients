@@ -10,10 +10,9 @@
 
 import * as Http from "http";
 import * as Url from "url";
-import { NativeAppAuthorizationConfiguration } from "@itwin/core-common";
 import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronAuthorizationBackend } from "./BackendClient";
+import { ElectronAuthorizationBackend, ElectronAuthorizationBackendConfiguration } from "./BackendClient";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 
@@ -48,7 +47,7 @@ export class LoopbackWebServer {
   private static _authState: AuthorizationState = new AuthorizationState();
 
   /** Start a web server to listen to the browser requests */
-  public static start(clientConfiguration: NativeAppAuthorizationConfiguration) {
+  public static start(clientConfiguration: ElectronAuthorizationBackendConfiguration) {
     if (LoopbackWebServer._httpServer)
       return;
 
