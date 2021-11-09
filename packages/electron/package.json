@@ -1,6 +1,6 @@
 {
   "name": "@itwin/electron-authorization",
-  "version": "0.4.0",
+  "version": "0.3.0",
   "description": "Electron authorization client for iTwin platform",
   "scripts": {
     "build": "npm run -s build:cjs",
