@@ -39,8 +39,8 @@
     "nyc": "^15.1.0",
     "sinon": "^9.0.0",
     "eslint": "^7.32.0",
-    "typescript": "~4.3.5",
-    "rimraf": "^3.0.2"
+    "rimraf": "^3.0.2",
+    "typescript": "~4.3.5"
   },
   "eslintConfig": {
     "plugins": [
