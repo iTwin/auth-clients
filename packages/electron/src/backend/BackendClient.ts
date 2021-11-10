@@ -65,7 +65,7 @@ export interface ElectronAuthorizationBackendConfiguration {
  */
 export class ElectronAuthorizationBackend implements AuthorizationClient {
   protected _accessToken: AccessToken = "";
-  public config?: ElectronAuthorizationBackendConfiguration;
+  public config: ElectronAuthorizationBackendConfiguration;
   public expireSafety = 60 * 10; // refresh token 10 minutes before real expiration time
   public url = "https://ims.bentley.com";
   public static defaultRedirectUri = "http://localhost:3000/signin-callback";
@@ -76,17 +76,30 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
   public get tokenStore() { return this._tokenStore; }
   private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
 
-  public constructor(config?: ElectronAuthorizationBackendConfiguration) {
+  private constructor(config: ElectronAuthorizationBackendConfiguration) {
     this.config = config;
     this.setupIPCHandlers();
 
+    if (!this.config)
+      throw new IModelError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronAuthorizationBackend");
+
     let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this.config?.issuerUrl ?? this.url);
-    if (prefix && !this.config?.issuerUrl) {
+    const authority = new URL(this.config.issuerUrl ?? this.url);
+    if (prefix && !this.config.issuerUrl) {
       prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
     }
     this.url = authority.href.replace(/\/$/, "");
+
+    if (this.config.expiryBuffer)
+      this.expireSafety = this.config.expiryBuffer;
+
+  }
+
+  public static async create(config: ElectronAuthorizationBackendConfiguration): Promise<ElectronAuthorizationBackend> {
+    const authClient = new ElectronAuthorizationBackend(config);
+    await authClient.initialize();
+    return authClient;
   }
 
   private setupIPCHandlers(): void {
@@ -135,34 +148,33 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
 
   public static readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
 
-  public get redirectUri() { return this.config?.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri; }
+  public get redirectUri() { return this.config.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri; }
 
   public setAccessToken(token: AccessToken) {
     if (token === this._accessToken)
       return;
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
+    ElectronAuthorizationBackend.onUserStateChanged.raiseEvent(this._accessToken);
   }
 
   /**
    * Used to initialize the client - must be awaited before any other methods are called.
    * The call attempts a silent sign-if possible.
    */
-  public async initialize(config?: ElectronAuthorizationBackendConfiguration): Promise<void> {
-    this.config = config ?? this.config;
-    if (!this.config)
-      throw new IModelError(AuthStatus.Error, "Must specify a valid configuration when initializing authorization");
-    if (this.config.expiryBuffer)
-      this.expireSafety = this.config.expiryBuffer;
-
+  private async initialize(): Promise<void> {
     this._tokenStore = new ElectronTokenStore(this.config.clientId);
 
-    const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-    this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.url, tokenRequestor);
-    Logger.logTrace(loggerCategory, "Initialized service configuration", () => ({ configuration: this._configuration }));
+    try {
+      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
+      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.url, tokenRequestor);
+      Logger.logTrace(loggerCategory, "Initialized service configuration", () => ({ configuration: this._configuration }));
 
-    // Attempt to load the access token from store
-    await this.loadAccessToken();
+      // Attempt to load the access token from store
+      await this.loadAccessToken();
+    } catch (error: any) {
+      Logger.logError(loggerCategory, error.message);
+    }
   }
 
   /** Forces a refresh of the user's access token regardless if the current token has expired. */

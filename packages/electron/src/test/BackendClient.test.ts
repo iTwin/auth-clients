@@ -28,7 +28,10 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
   });
 
   it("Should throw if not signed in", async () =>{
-    const client = new ElectronAuthorizationBackend();
+    const client = await ElectronAuthorizationBackend.create({
+      clientId: "testClientId",
+      scope: "testScope",
+    });
     // eslint-disable-next-line @typescript-eslint/unbound-method
     chai.expect(client.getAccessToken).to.be.throw;
   });
@@ -58,8 +61,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
     });
 
     // Create client and call initialize
-    const client = new ElectronAuthorizationBackend(config);
-    await client.initialize();
+    const client = await ElectronAuthorizationBackend.create(config);
 
     // Get access token and assert its response equals what mock
     const returnedToken = await client.getAccessToken();
@@ -108,8 +110,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
     });
 
     // Create client and call initialize
-    const client = new ElectronAuthorizationBackend(config);
-    await client.initialize();
+    const client = await ElectronAuthorizationBackend.create(config);
     await client.signIn();
 
     const token = await client.getAccessToken();
@@ -147,8 +148,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
     });
 
     // Create client and call initialize
-    const client = new ElectronAuthorizationBackend(config);
-    await client.initialize();
+    const client = await ElectronAuthorizationBackend.create(config);
 
     // TODO: Need cleaner way to reset just one method (performTokenRequest)
     sinon.restore();
@@ -178,31 +178,31 @@ describe("ElectronAuthorizationBackend Authority URL Logic", () => {
 
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = new ElectronAuthorizationBackend({ ...config, issuerUrl: testAuthority });
+    const client = await ElectronAuthorizationBackend.create({ ...config, issuerUrl: testAuthority });
     expect(client.url).equals(testAuthority);
   });
 
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = new ElectronAuthorizationBackend({ ...config, issuerUrl: testAuthority });
+    const client = await ElectronAuthorizationBackend.create({ ...config, issuerUrl: testAuthority });
     expect(client.url).equals("https://test.authority.com");
   });
 
   it("should use default authority without prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = new ElectronAuthorizationBackend(config);
+    const client = await ElectronAuthorizationBackend.create(config);
     expect(client.url).equals("https://ims.bentley.com");
   });
 
   it("should use default authority with prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = new ElectronAuthorizationBackend(config);
+    const client = await ElectronAuthorizationBackend.create(config);
     expect(client.url).equals("https://prefix-ims.bentley.com");
   });
 
   it("should reroute dev prefix to qa if on default ", async () => {
     process.env.IMJS_URL_PREFIX = "dev-";
-    const client = new ElectronAuthorizationBackend(config);
+    const client = await ElectronAuthorizationBackend.create(config);
     expect(client.url).equals("https://qa-ims.bentley.com");
   });
 });
