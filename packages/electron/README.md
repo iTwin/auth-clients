@@ -10,7 +10,7 @@ The __@itwin/electron-authorization__ package contains an electron based client 
 
 For information about the electron authorization workflow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizesinglepageapplicationsspaanddesktopmobileapplicationsnative).
 
-**IPC Setup**
+## How to setup
 
 The electron frontend and backend auth clients communicate via electron's IPC channels in order to exchange login and access token information. The channels must be setup correctly for it to work. There are 3 general steps to set this up:
 
