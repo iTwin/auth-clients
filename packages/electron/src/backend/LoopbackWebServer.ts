@@ -9,7 +9,6 @@
  */
 
 import * as Http from "http";
-import * as Url from "url";
 import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import { ElectronAuthorizationEvents } from "./Events";
 import { ElectronAuthorizationBackend, ElectronAuthorizationBackendConfiguration } from "./BackendClient";
