@@ -43,7 +43,8 @@ stages:
         displayName: 'Lint'
 
       - script: pnpm run cover
-        displayName: 'Cover'
+        displayName: 'cover'
+        condition: ne(variables['Agent.OS'], 'Linux')
 
       - template: ./publish-test-results.yaml
 
@@ -54,10 +55,12 @@ stages:
       # publish artifact
 
       - bash: |
-          browserAuthVer=$(node -p "require('./packages/browser/package.json').version")
-          browserAuthName=$(node -p "require('./packages/browser/package.json').name")
+          BrowserAuthVer=$(node -p "require('./packages/browser/package.json').version")
+          BrowserAuthName=$(node -p "require('./packages/browser/package.json').name")
           ServiceAuthVer=$(node -p "require('./packages/service/package.json').version")
           ServiceAuthName=$(node -p "require('./packages/service/package.json').name")
+          ElectronAuthVer=$(node -p "require('./packages/electron/package.json').version")
+          ElectronAuthName=$(node -p "require('./packages/electron/package.json').name")
           oidcSignInToolVer=$(node -p "require('./packages/oidc-signin-tool/package.json').version")
           oidcSignInToolName=$(node -p "require('./packages/oidc-signin-tool/package.json').name")
 
@@ -78,11 +81,12 @@ stages:
             fi
           }
 
-          updateBrowser=$(checkVer $browserAuthVer $browserAuthName)
+          updateBrowser=$(checkVer $BrowserAuthVer $BrowserAuthName)
           updateService=$(checkVer $ServiceAuthVer $ServiceAuthName)
           updateOidcSignInTool=$(checkVer $oidcSignInToolVer $oidcSignInToolName)
+          updateElectron=true
 
-          if [ "$updateBrowser" = "true" ] && [ "$updateBrowser" = "$updateService" ] && [ "$browserAuthVer" = "$ServiceAuthVer" ]; then
+          if [ "$updateBrowser" = "true" ] && [ "$updateBrowser" = "$updateService" ] && [ "$BrowserAuthVer" = "$ServiceAuthVer" ]; then
             echo "Auth package publishing conditions are met."
             shouldPublishAuthClients=true
           else
@@ -98,12 +102,23 @@ stages:
             shouldPublishSignInTool=false
           fi
 
+          if [ "$updateElectron" = "true" ]; then
+            echo "Electron Auth package publishing conditions are met."
+            shouldPublishElectronAuthClient=true
+          else
+            echo "Electron Auth package publishing conditions not met."
+            shouldPublishElectronAuthClient=false
+          fi
+
           echo "##vso[task.setvariable variable=shouldPublishAuthClients;isOutput=true]$shouldPublishAuthClients"
           echo "##vso[task.setvariable variable=shouldPublishSignInTool;isOutput=true]$shouldPublishSignInTool"
-          echo "##vso[task.setvariable variable=browserAuthVer;isOutput=true]$browserAuthVer"
-          echo "##vso[task.setvariable variable=browserAuthName;isOutput=true]$browserAuthName"
+          echo "##vso[task.setvariable variable=shouldPublishElectronAuthClient;isOutput=true]$shouldPublishElectronAuthClient"
+          echo "##vso[task.setvariable variable=BrowserAuthVer;isOutput=true]$BrowserAuthVer"
+          echo "##vso[task.setvariable variable=BrowserAuthName;isOutput=true]$BrowserAuthName"
           echo "##vso[task.setvariable variable=ServiceAuthVer;isOutput=true]$ServiceAuthVer"
           echo "##vso[task.setvariable variable=ServiceAuthName;isOutput=true]$ServiceAuthName"
+          echo "##vso[task.setvariable variable=ElectronAuthVer;isOutput=true]$ElectronAuthVer"
+          echo "##vso[task.setvariable variable=ElectronAuthName;isOutput=true]$ElectronAuthName"
           echo "##vso[task.setvariable variable=oidcSignInToolVer;isOutput=true]$oidcSignInToolVer"
           echo "##vso[task.setvariable variable=oidcSignInToolName;isOutput=true]$oidcSignInToolName"
 
@@ -113,7 +128,7 @@ stages:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.SourcesDirectory)/packages/browser/itwin-browser-authorization-$(info.browserAuthVer).tgz'
+          PathtoPublish: '$(Build.SourcesDirectory)/packages/browser/itwin-browser-authorization-$(info.BrowserAuthVer).tgz'
           artifactName: BrowserAuthorizationClient
         displayName: 'Publish Browser Auth'
         condition: and(succeeded(), eq(variables['info.shouldPublishAuthClients'], 'true'))
@@ -124,6 +139,13 @@ stages:
           artifactName: ServiceAuthorizationClient
         displayName: 'Publish Service Auth'
         condition: and(succeeded(), eq(variables['info.shouldPublishAuthClients'], 'true'))
+
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: '$(Build.SourcesDirectory)/packages/electron/itwin-service-authorization-$(info.ElectronAuthVer).tgz'
+          artifactName: ElectronAuthorizationClient
+        displayName: 'Publish Electron Auth'
+        condition: and(succeeded(), eq(variables['info.shouldPublishElectronAuthClient'], 'true'))
 
       - task: PublishBuildArtifacts@1
         inputs:
@@ -148,6 +170,11 @@ stages:
         path: '*.tgz'
         artifactName: ServiceAuthorizationClient
         name: ServiceAuthorizationClient
+    - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
+      parameters:
+        path: '*.tgz'
+        artifactName: ElectronAuthorizationClient
+        name: ElectronAuthorizationClient
 
 - stage: Publish_Oidc_Sign_In_Tool
   displayName: Publish OIDC Sign In Tool
@@ -160,3 +187,15 @@ stages:
         path: '*.tgz'
         artifactName: OIDCSignInTool
         name: OIDCSignInTool
+
+- stage: Publish_Electron_Auth_Client
+  displayName: Publish Electron Auth Client
+  condition: and(succeeded(), eq(dependencies.Build.outputs['BuildPackages.linux.info.shouldPublishElectronAuthClient'], 'true'))
+  dependsOn: Build
+
+  jobs:
+    - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
+      parameters:
+        path: '*.tgz'
+        artifactName: ElectronAuthorizationClient
+        name: ElectronAuthorizationClient

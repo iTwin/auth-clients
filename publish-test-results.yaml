@@ -17,13 +17,13 @@ steps:
       testRunTitle: "Auth Clients - Browser Client - $(Agent.OS) - ${{ parameters.NodeVersion }}"
       searchFolder: ${{ parameters.workingDir }}
     condition: succeededOrFailed()
-  # - task: PublishTestResults@2
-  #   displayName: "Publish Electron Test Results"
-  #   inputs:
-  #     testResultsFiles: "packages/electron/lib/test/junit_results.xml"
-  #     testRunTitle: "Auth Clients - Electron Client - $(Agent.OS) - ${{ parameters.NodeVersion }}"
-  #     searchFolder: ${{ parameters.workingDir }}
-  #   condition: succeededOrFailed()
+  - task: PublishTestResults@2
+    displayName: "Publish Electron Test Results"
+    inputs:
+      testResultsFiles: "packages/electron/lib/test/junit_results.xml"
+      testRunTitle: "Auth Clients - Electron Client - $(Agent.OS) - ${{ parameters.NodeVersion }}"
+      searchFolder: ${{ parameters.workingDir }}
+    condition: succeededOrFailed()
   - task: PublishTestResults@2
     displayName: "Publish Service Test Results"
     inputs:

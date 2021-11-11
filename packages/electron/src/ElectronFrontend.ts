@@ -3,5 +3,4 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-export * from "./ElectronHost";
-export * from "./Client";
+export * from "./frontend/FrontendClient";
