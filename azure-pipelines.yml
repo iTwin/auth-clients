@@ -142,7 +142,7 @@ stages:
 
       - task: PublishBuildArtifacts@1
         inputs:
-          PathtoPublish: '$(Build.SourcesDirectory)/packages/electron/itwin-service-authorization-$(info.ElectronAuthVer).tgz'
+          PathtoPublish: '$(Build.SourcesDirectory)/packages/electron/itwin-electron-authorization-$(info.ElectronAuthVer).tgz'
           artifactName: ElectronAuthorizationClient
         displayName: 'Publish Electron Auth'
         condition: and(succeeded(), eq(variables['info.shouldPublishElectronAuthClient'], 'true'))
@@ -170,11 +170,6 @@ stages:
         path: '*.tgz'
         artifactName: ServiceAuthorizationClient
         name: ServiceAuthorizationClient
-    - template: templates/npmjs-publish-deployment.yaml@build-pipeline-scripts
-      parameters:
-        path: '*.tgz'
-        artifactName: ElectronAuthorizationClient
-        name: ElectronAuthorizationClient
 
 - stage: Publish_Oidc_Sign_In_Tool
   displayName: Publish OIDC Sign In Tool
