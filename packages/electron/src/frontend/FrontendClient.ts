@@ -56,7 +56,7 @@ export class ElectronAppAuthorization implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
   public get hasSignedIn() { return this._cachedToken !== ""; }
   public get isAuthorized(): boolean {
-    return this.hasSignedIn && this._hasExpired;
+    return this.hasSignedIn && !this._hasExpired;
   }
   private _ipcAuthAPI: ElectronAuthIPC = new ElectronAuthIPC();
 
