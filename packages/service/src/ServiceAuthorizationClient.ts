@@ -6,7 +6,7 @@
  * @module Authentication
  */
 
-import { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient } from "@itwin/core-common";
 import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
 import { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
 
