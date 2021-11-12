@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 import { AccessToken, BeEvent } from "@itwin/core-bentley";
-import { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient } from "@itwin/core-common";
 import { AuthorizationParameters, Client, custom, generators, Issuer, OpenIDCallbackChecks } from "openid-client";
 import * as os from "os";
 import * as puppeteer from "puppeteer";

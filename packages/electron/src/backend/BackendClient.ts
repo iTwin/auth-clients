@@ -12,7 +12,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import { AccessToken, assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
-import { AuthorizationClient, IModelError } from "@itwin/core-common";
+import type { AuthorizationClient } from "@itwin/core-common";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestJson, AuthorizationResponse, AuthorizationServiceConfiguration,
   BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest, RevokeTokenRequestJson, StringMap,
@@ -81,7 +81,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
     this.setupIPCHandlers();
 
     if (!this.config)
-      throw new IModelError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronAuthorizationBackend");
+      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronAuthorizationBackend");
 
     let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this.config.issuerUrl ?? this.url);

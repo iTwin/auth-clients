@@ -8,7 +8,7 @@
  */
 
 import { AccessToken, BeEvent } from "@itwin/core-bentley";
-import { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient } from "@itwin/core-common";
 import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
 import { BrowserAuthorizationLogger } from "./Logger";
 import { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
