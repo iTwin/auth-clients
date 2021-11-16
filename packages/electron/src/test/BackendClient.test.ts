@@ -19,7 +19,10 @@ const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 describe("ElectronAuthorizationBackend Token Logic", () => {
-  beforeEach(()=>{
+  beforeEach(function () {
+    if (process.platform === "linux")
+      this.skip();
+
     sinon.restore();
     // Stub Electron calls
     sinon.stub(ElectronAuthorizationBackend.prototype, "setupIPCHandlers" as any);
