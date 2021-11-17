@@ -44,7 +44,6 @@ stages:
 
       - script: pnpm run cover
         displayName: 'cover'
-        condition: ne(variables['Agent.OS'], 'Linux')
 
       - template: ./publish-test-results.yaml
 
