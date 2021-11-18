@@ -8,7 +8,7 @@ The __@itwin/electron-authorization__ package contains an Electron based client 
 
 ## How it works
 
-First, for background information on the Authorization Code + PKCE workflow used by this package, please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizesinglepageapplicationsspaanddesktopmobileapplicationsnative).
+The OAuth2.0 workflow used in this package is Authorization Code + PKCE, for more information about the flow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizesinglepageapplicationsspaanddesktopmobileapplicationsnative).
 
 The package is broken into two main classes `ElectronAuthorizationBackend` and `ElectronAppAuthorization` that communicate via Electron's IPC between the [main](https://www.electronjs.org/docs/latest/api/ipc-main) and [renderer](https://www.electronjs.org/docs/latest/api/ipc-renderer) process, respectively. The IPC channel is used to pass the login and access token information and handle refreshing the token when necessary.
 
