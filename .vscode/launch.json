@@ -41,16 +41,15 @@
       "protocol": "inspector"
     },
     {
-      "type": "node",
-      "request": "launch",
       "name": "OIDC Signin Tool Integration Tests",
-      "program": "${workspaceFolder}/packages/oidc-signin-tool/node_modules/mocha/bin/_mocha",
-      "args": [
-        "${workspaceFolder}/packages/oidc-signin-tool/lib/cjs/test/**/*.test.js",
-      ],
-      "console": "integratedTerminal",
-      "internalConsoleOptions": "neverOpen",
-      "protocol": "inspector"
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/oidc-signin-tool",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "test:integration"
+      ]
     }
   ]
 }
