@@ -382,14 +382,16 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
         page.$eval(".allow", (button: any) => button.click()),
       ]);
     } else if (await page.title() === "Permissions") { // Another new consent page...
-      await page.waitForSelector("div.iui-input-bar button");
+      await page.waitForXPath("(//button/span[text()='Accept'] | //div[contains(@class, 'ping-buttons')]/a[text()='Accept'])[1]");
+
+      const acceptButton = await page.$x("(//button/span[text()='Accept'] | //div[contains(@class, 'ping-buttons')]/a[text()='Accept'])[1]");
 
       await Promise.all([
         page.waitForNavigation({
           timeout: 60000,
           waitUntil: "networkidle2",
         }),
-        page.$eval("div.iui-input-bar button span", (button: any) => button.click()),
+        acceptButton[0].click(),
       ]);
     }
   }
