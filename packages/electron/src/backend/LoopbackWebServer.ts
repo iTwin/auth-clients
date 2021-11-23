@@ -9,11 +9,9 @@
  */
 
 import * as Http from "http";
-import * as Url from "url";
-import { NativeAppAuthorizationConfiguration } from "@itwin/core-common";
 import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronAuthorizationClient } from "./Client";
+import { ElectronAuthorizationBackend, ElectronAuthorizationBackendConfiguration } from "./BackendClient";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 
@@ -48,13 +46,12 @@ export class LoopbackWebServer {
   private static _authState: AuthorizationState = new AuthorizationState();
 
   /** Start a web server to listen to the browser requests */
-  public static start(clientConfiguration: NativeAppAuthorizationConfiguration) {
+  public static start(clientConfiguration: ElectronAuthorizationBackendConfiguration) {
     if (LoopbackWebServer._httpServer)
       return;
 
     LoopbackWebServer._httpServer = Http.createServer(LoopbackWebServer.onBrowserRequest);
-    // eslint-disable-next-line deprecation/deprecation
-    const urlParts: Url.UrlWithStringQuery = Url.parse(clientConfiguration.redirectUri ?? ElectronAuthorizationClient.defaultRedirectUri);
+    const urlParts: URL = new URL(clientConfiguration.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri);
     LoopbackWebServer._httpServer.listen(urlParts.port);
   }
 
@@ -77,9 +74,8 @@ export class LoopbackWebServer {
       return;
 
     // Parse the request URL to determine the authorization code, state and errors if any
-    // eslint-disable-next-line deprecation/deprecation
-    const urlParts: Url.UrlWithStringQuery = Url.parse(httpRequest.url);
-    const searchParams = new Url.URLSearchParams(urlParts.query || "");
+    const redirectedUrl = new URL(httpRequest.url, ElectronAuthorizationBackend.defaultRedirectUri);
+    const searchParams = redirectedUrl.searchParams;
 
     const state = searchParams.get("state") || undefined;
     const code = searchParams.get("code");
