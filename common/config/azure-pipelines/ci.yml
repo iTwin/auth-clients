@@ -4,14 +4,6 @@ parameters:
     type: boolean
     default: false
 
-trigger:
-- main
-
-pr:
-  drafts: false
-  branches:
-    include:
-      - main
 
 resources:
   repositories:
@@ -36,9 +28,12 @@ stages:
       pool:
         vmImage: $(imageName)
       steps:
+      - checkout: self
+        persistCredentials: true
+
       - script: |
-          git config --local user.email imodeljs-admin@users.noreply.github.com
-          git config --local user.name imodeljs-admin
+          git config user.email imodeljs-admin@users.noreply.github.com
+          git config user.name imodeljs-admin
         displayName: git config
 
       - script: node common/scripts/install-run-rush.js install
