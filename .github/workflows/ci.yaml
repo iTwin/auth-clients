@@ -1,0 +1,47 @@
+name: Auth Clients CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  Auth Clients CI:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Rush Install
+        run: node common/scripts/install-run-rush.js install
+
+      - name: Rush Change
+        run: node common/scripts/install-run-rush.js change -v
+
+      - name: Rush Build
+        run: node common/scripts/install-run-rush.js build -v -p max
+
+      - name: Rush Lint
+        run: node common/scripts/install-run-rush.js lint
+
+      - name: Rush Cover - Linux
+        run: xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' node common/scripts/install-run-rush.js cover --verbose
+        if: runner.os == 'Linux'
+
+      - name: Rush Cover - Windows/Mac
+        run: node common/scripts/install-run-rush.js cover --verbose
+        if: runner.os == 'Windows' || runner.os == 'macOS'
+
