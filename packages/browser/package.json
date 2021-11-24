@@ -1,6 +1,6 @@
 {
   "name": "@itwin/browser-authorization",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Browser authorization client for iTwin platform",
   "main": "lib/index.js",
   "typings": "lib/index",
