@@ -44,6 +44,8 @@ stages:
       - script: node common/scripts/install-run-rush.js install
         displayName: Rush Install
 
+      - script: node common/scripts/install-run-rush.js change -v
+
       - script: node common/scripts/install-run-rush.js build -v -p max
         displayName: Rush Build
 
