@@ -3,7 +3,7 @@ parameters:
     type: boolean # data type of the parameter; required
 
 steps:
-  - script: node common/scripts/install-run-rush.js publish --publish -a -b main
+  - script: node common/scripts/install-run-rush.js publish --publish -a -b main --set-access-level public
     displayName: rush publish package
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
     env:
