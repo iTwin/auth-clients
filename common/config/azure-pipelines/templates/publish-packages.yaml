@@ -3,9 +3,6 @@ parameters:
     type: boolean # data type of the parameter; required
 
 steps:
-  - checkout: self
-    persistCredentials: true
-
   - script: node common/scripts/install-run-rush.js publish --publish -a -b main --npm-auth-token $(System.AccessToken)
     displayName: rush publish package
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
