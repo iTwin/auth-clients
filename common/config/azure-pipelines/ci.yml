@@ -4,11 +4,6 @@ parameters:
     type: boolean
     default: false
 
-pr:
-  drafts: false
-  branches:
-    include:
-      - main
 
 resources:
   repositories:
