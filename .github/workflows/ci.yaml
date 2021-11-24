@@ -9,7 +9,7 @@ on:
       - main
 
 jobs:
-  Auth Clients CI:
+  Auth-Clients-CI:
     strategy:
       fail-fast: false
       matrix:
