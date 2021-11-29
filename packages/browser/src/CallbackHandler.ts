@@ -10,6 +10,7 @@
 import { UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
 import { BrowserAuthorizationLogger } from "./Logger";
 import { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
+import { UnexpectedErrors } from "@itwin/core-bentley";
 
 /**
  * @beta
@@ -110,7 +111,6 @@ export class BrowserAuthorizationCallbackHandler {
   /**
    * Attempts to parse an OIDC token from the current window URL
    * When called within an iframe or popup, the host frame will automatically be destroyed before the promise resolves.
-   * @throws when a token cannot be obtained from the URL.
    * @param redirectUrl Checked against the current window's URL. If the given redirectUrl and the window's path don't match, no attempt is made to parse the URL for a token.
    */
   public static async handleSigninCallback(redirectUrl: string): Promise<void> {
@@ -140,7 +140,8 @@ export class BrowserAuthorizationCallbackHandler {
       return;
     }
 
-    throw new Error(`SigninCallback error - failed to process signin request in callback using all known modes of token delivery: ${errorMessage}`);
+    errorMessage = `SigninCallback error - failed to process signin request in callback using all known modes of token delivery: ${errorMessage}`;
+    UnexpectedErrors.handle(new Error(errorMessage));
   }
 
   /**
