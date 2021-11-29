@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/electron-authorization",
       "comment": "Renaming barrel files to match electron naming scheme",
-      "type": "patch"
+      "type": "minor"
     }
   ],
   "packageName": "@itwin/electron-authorization"
