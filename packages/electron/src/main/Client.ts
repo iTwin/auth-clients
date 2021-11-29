@@ -83,8 +83,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
         redirectUri: config.redirectUri,
         clientId: config.clientId,
         scope: `${config.scope} offline_access`,
-        expiryBuffer: config.expiryBuffer
-      }
+        expiryBuffer: config.expiryBuffer,
+      };
     }
 
     this.config = config;

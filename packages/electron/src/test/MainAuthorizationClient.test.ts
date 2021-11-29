@@ -228,7 +228,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
   it("Should not add offline_access scope", async () => {
     const client = await ElectronMainAuthorization.create({
       clientId: "testClientId",
-      scope: "testScope offline_access"
+      scope: "testScope offline_access",
     });
     expect(client.config.scope).equals("testScope offline_access");
   });
