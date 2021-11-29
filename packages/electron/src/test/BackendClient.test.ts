@@ -6,8 +6,8 @@
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
-import { ElectronAuthorizationBackend } from "../backend/BackendClient";
-import { ElectronAuthorizationBackendConfiguration } from "../ElectronBackend";
+import { ElectronAuthorizationMain } from "../backend/BackendClient";
+import { ElectronAuthorizationMainConfiguration } from "../ElectronBackend";
 import { ElectronTokenStore } from "../backend/TokenStore";
 import { AuthorizationListener, AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenRequest, TokenResponse } from "@openid/appauth";
 import { LoopbackWebServer } from "../backend/LoopbackWebServer";
@@ -18,20 +18,20 @@ const expect = chai.expect;
 
 chai.use(chaiAsPromised);
 
-describe("ElectronAuthorizationBackend Token Logic", () => {
+describe("ElectronAuthorizationMain Token Logic", () => {
   beforeEach(function () {
     if (process.platform === "linux")
       this.skip();
 
     sinon.restore();
     // Stub Electron calls
-    sinon.stub(ElectronAuthorizationBackend.prototype, "setupIPCHandlers" as any);
-    sinon.stub(ElectronAuthorizationBackend.prototype, "notifyFrontendAccessTokenChange" as any);
-    sinon.stub(ElectronAuthorizationBackend.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
+    sinon.stub(ElectronAuthorizationMain.prototype, "setupIPCHandlers" as any);
+    sinon.stub(ElectronAuthorizationMain.prototype, "notifyFrontendAccessTokenChange" as any);
+    sinon.stub(ElectronAuthorizationMain.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
   });
 
   it("Should throw if not signed in", async () =>{
-    const client = await ElectronAuthorizationBackend.create({
+    const client = await ElectronAuthorizationMain.create({
       clientId: "testClientId",
       scope: "testScope",
     });
@@ -40,7 +40,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
   });
 
   it("Should load token response from token store", async () =>{
-    const config: ElectronAuthorizationBackendConfiguration = {
+    const config: ElectronAuthorizationMainConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
@@ -58,13 +58,13 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
 
     // Mock auth request
     const spy = sinon.fake();
-    sinon.stub(ElectronAuthorizationBackend.prototype, "refreshToken").callsFake(spy);
+    sinon.stub(ElectronAuthorizationMain.prototype, "refreshToken").callsFake(spy);
     sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
       return mockTokenResponse;
     });
 
     // Create client and call initialize
-    const client = await ElectronAuthorizationBackend.create(config);
+    const client = await ElectronAuthorizationMain.create(config);
 
     // Get access token and assert its response equals what mock
     const returnedToken = await client.getAccessToken();
@@ -73,7 +73,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
   });
 
   it("Should sign in", async () =>{
-    const config: ElectronAuthorizationBackendConfiguration = {
+    const config: ElectronAuthorizationMainConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
@@ -113,7 +113,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
     });
 
     // Create client and call initialize
-    const client = await ElectronAuthorizationBackend.create(config);
+    const client = await ElectronAuthorizationMain.create(config);
     await client.signIn();
 
     const token = await client.getAccessToken();
@@ -122,7 +122,7 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
   });
 
   it("Should refresh old token", async () =>{
-    const config: ElectronAuthorizationBackendConfiguration = {
+    const config: ElectronAuthorizationMainConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
@@ -151,12 +151,12 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
     });
 
     // Create client and call initialize
-    const client = await ElectronAuthorizationBackend.create(config);
+    const client = await ElectronAuthorizationMain.create(config);
 
     // TODO: Need cleaner way to reset just one method (performTokenRequest)
     sinon.restore();
-    sinon.stub(ElectronAuthorizationBackend.prototype, "notifyFrontendAccessTokenChange" as any);
-    sinon.stub(ElectronAuthorizationBackend.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
+    sinon.stub(ElectronAuthorizationMain.prototype, "notifyFrontendAccessTokenChange" as any);
+    sinon.stub(ElectronAuthorizationMain.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
     sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
       return mockTokenResponse;
     });
@@ -167,13 +167,13 @@ describe("ElectronAuthorizationBackend Token Logic", () => {
   });
 });
 
-describe("ElectronAuthorizationBackend Authority URL Logic", () => {
+describe("ElectronAuthorizationMain Authority URL Logic", () => {
   beforeEach(()=>{
     sinon.restore();
-    sinon.stub(ElectronAuthorizationBackend.prototype, "setupIPCHandlers" as any);
+    sinon.stub(ElectronAuthorizationMain.prototype, "setupIPCHandlers" as any);
   });
 
-  const config: ElectronAuthorizationBackendConfiguration = {
+  const config: ElectronAuthorizationMainConfiguration = {
     clientId: "testClientId",
     scope: "testScope",
   };
@@ -181,31 +181,31 @@ describe("ElectronAuthorizationBackend Authority URL Logic", () => {
 
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = await ElectronAuthorizationBackend.create({ ...config, issuerUrl: testAuthority });
+    const client = await ElectronAuthorizationMain.create({ ...config, issuerUrl: testAuthority });
     expect(client.url).equals(testAuthority);
   });
 
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = await ElectronAuthorizationBackend.create({ ...config, issuerUrl: testAuthority });
+    const client = await ElectronAuthorizationMain.create({ ...config, issuerUrl: testAuthority });
     expect(client.url).equals("https://test.authority.com");
   });
 
   it("should use default authority without prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = await ElectronAuthorizationBackend.create(config);
+    const client = await ElectronAuthorizationMain.create(config);
     expect(client.url).equals("https://ims.bentley.com");
   });
 
   it("should use default authority with prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = await ElectronAuthorizationBackend.create(config);
+    const client = await ElectronAuthorizationMain.create(config);
     expect(client.url).equals("https://prefix-ims.bentley.com");
   });
 
   it("should reroute dev prefix to qa if on default ", async () => {
     process.env.IMJS_URL_PREFIX = "dev-";
-    const client = await ElectronAuthorizationBackend.create(config);
+    const client = await ElectronAuthorizationMain.create(config);
     expect(client.url).equals("https://qa-ims.bentley.com");
   });
 });
