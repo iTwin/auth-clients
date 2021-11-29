@@ -77,6 +77,16 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
 
   private constructor(config: ElectronMainAuthorizationConfiguration) {
+    if (!config.scope.includes("offline_access")){
+      config = {
+        issuerUrl: config.issuerUrl,
+        redirectUri: config.redirectUri,
+        clientId: config.clientId,
+        scope: `${config.scope} offline_access`,
+        expiryBuffer: config.expiryBuffer
+      }
+    }
+
     this.config = config;
     this.setupIPCHandlers();
 
