@@ -6,11 +6,11 @@
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
-import { ElectronAuthorizationMain, ElectronAuthorizationMainConfiguration } from "../backend/BackendClient";
-import { ElectronTokenStore } from "../backend/TokenStore";
+import { ElectronAuthorizationMain, ElectronAuthorizationMainConfiguration } from "../main/Client";
+import { ElectronTokenStore } from "../main/TokenStore";
 import { AuthorizationListener, AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenRequest, TokenResponse } from "@openid/appauth";
-import { LoopbackWebServer } from "../backend/LoopbackWebServer";
-import { ElectronAuthorizationRequestHandler } from "../backend/ElectronAuthorizationRequestHandler";
+import { LoopbackWebServer } from "../main/LoopbackWebServer";
+import { ElectronAuthorizationRequestHandler } from "../main/ElectronAuthorizationRequestHandler";
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert = chai.assert;
 const expect = chai.expect;

@@ -10,8 +10,8 @@
 
 import * as Http from "http";
 import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
+import { ElectronAuthorizationMain, ElectronAuthorizationMainConfiguration } from "./Client";
 import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronAuthorizationMain, ElectronAuthorizationMainConfiguration } from "./BackendClient";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 

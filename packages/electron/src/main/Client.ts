@@ -25,7 +25,7 @@ import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
 import { DefaultRequestOptionsProvider, RequestOptions } from "@bentley/itwin-client";
 import { BrowserWindow, ipcMain } from "electron";
-import { ElectronAuthIPCChannelNames } from "../frontend/FrontendClient";
+import { ElectronAuthIPCChannelNames } from "../renderer/Client";
 const loggerCategory = "electron-auth";
 
 /**
