@@ -11,7 +11,7 @@
 import * as Http from "http";
 import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronAuthorizationBackend, ElectronAuthorizationBackendConfiguration } from "./BackendClient";
+import { ElectronAuthorizationMain, ElectronAuthorizationMainConfiguration } from "./BackendClient";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 
@@ -46,12 +46,12 @@ export class LoopbackWebServer {
   private static _authState: AuthorizationState = new AuthorizationState();
 
   /** Start a web server to listen to the browser requests */
-  public static start(clientConfiguration: ElectronAuthorizationBackendConfiguration) {
+  public static start(clientConfiguration: ElectronAuthorizationMainConfiguration) {
     if (LoopbackWebServer._httpServer)
       return;
 
     LoopbackWebServer._httpServer = Http.createServer(LoopbackWebServer.onBrowserRequest);
-    const urlParts: URL = new URL(clientConfiguration.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri);
+    const urlParts: URL = new URL(clientConfiguration.redirectUri ?? ElectronAuthorizationMain.defaultRedirectUri);
     LoopbackWebServer._httpServer.listen(urlParts.port);
   }
 
@@ -74,7 +74,7 @@ export class LoopbackWebServer {
       return;
 
     // Parse the request URL to determine the authorization code, state and errors if any
-    const redirectedUrl = new URL(httpRequest.url, ElectronAuthorizationBackend.defaultRedirectUri);
+    const redirectedUrl = new URL(httpRequest.url, ElectronAuthorizationMain.defaultRedirectUri);
     const searchParams = redirectedUrl.searchParams;
 
     const state = searchParams.get("state") || undefined;
