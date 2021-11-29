@@ -20,7 +20,7 @@ import {
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
 import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronAuthorizationRequestHandler } from "./ElectronAuthorizationRequestHandler";
+import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler";
 import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
 import { DefaultRequestOptionsProvider, RequestOptions } from "@bentley/itwin-client";
@@ -242,7 +242,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     // Start a web server to listen to the browser requests
     LoopbackWebServer.start(nativeConfig);
 
-    const authorizationHandler = new ElectronAuthorizationRequestHandler(authorizationEvents);
+    const authorizationHandler = new ElectronMainAuthorizationRequestHandler(authorizationEvents);
 
     // Setup a notifier to obtain the result of authorization
     const notifier = new AuthorizationNotifier();

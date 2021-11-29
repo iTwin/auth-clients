@@ -10,7 +10,7 @@ import { ElectronMainAuthorization, ElectronMainAuthorizationConfiguration } fro
 import { ElectronTokenStore } from "../main/TokenStore";
 import { AuthorizationListener, AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenRequest, TokenResponse } from "@openid/appauth";
 import { LoopbackWebServer } from "../main/LoopbackWebServer";
-import { ElectronAuthorizationRequestHandler } from "../main/ElectronAuthorizationRequestHandler";
+import { ElectronMainAuthorizationRequestHandler } from "../main/ElectronMainAuthorizationRequestHandler";
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert = chai.assert;
 const expect = chai.expect;
@@ -91,7 +91,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     // Mock auth request
     const mockLoopbackStart = sinon.fake();
     sinon.stub(LoopbackWebServer, "start").callsFake(mockLoopbackStart);
-    sinon.stub(ElectronAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
+    sinon.stub(ElectronMainAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
       await new Promise((resolve) => setImmediate(resolve));
     });
     sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
