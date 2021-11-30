@@ -80,6 +80,13 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     this.config = config;
     this.setupIPCHandlers();
 
+    if (!this.config.scope.includes("offline_access")){
+      this.config = {
+        ...this.config,
+        scope: `${this.config.scope} offline_access`,
+      };
+    }
+
     if (!this.config)
       throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronMainAuthorization");
 

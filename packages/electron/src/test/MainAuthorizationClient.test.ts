@@ -208,3 +208,28 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
     expect(client.url).equals("https://qa-ims.bentley.com");
   });
 });
+
+describe("ElectronMainAuthorization Config Scope Logic", () => {
+  beforeEach(()=>{
+    sinon.restore();
+    sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
+  });
+
+  const config: ElectronMainAuthorizationConfiguration = {
+    clientId: "testClientId",
+    scope: "testScope",
+  };
+
+  it("Should add offline_access scope", async () => {
+    const client = await ElectronMainAuthorization.create(config);
+    expect(client.config.scope).equals(`${config.scope} offline_access`);
+  });
+
+  it("Should not add offline_access scope", async () => {
+    const client = await ElectronMainAuthorization.create({
+      clientId: "testClientId",
+      scope: "testScope offline_access",
+    });
+    expect(client.config.scope).equals("testScope offline_access");
+  });
+});
