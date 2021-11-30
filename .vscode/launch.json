@@ -28,5 +28,28 @@
       "internalConsoleOptions": "neverOpen",
       "protocol": "inspector"
     },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Electron-Authorization Tests",
+      "program": "${workspaceFolder}/packages/electron/node_modules/mocha/bin/_mocha",
+      "args": [
+        "${workspaceFolder}/packages/electron/lib/cjs/test/**/*.test.js",
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "protocol": "inspector"
+    },
+    {
+      "name": "OIDC Signin Tool Integration Tests",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/packages/oidc-signin-tool",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "test:integration"
+      ]
+    }
   ]
 }
