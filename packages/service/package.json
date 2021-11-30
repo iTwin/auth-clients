@@ -39,7 +39,7 @@
     "@types/mocha": "^8.2.3",
     "@types/sinon": "^9.0.0",
     "eslint": "^7.32.0",
-    "chai": "^4.3.4",
+    "chai": "^4.2.22",
     "chai-as-promised": "^7.1.1",
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",
