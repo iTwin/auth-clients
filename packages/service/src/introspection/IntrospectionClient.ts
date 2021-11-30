@@ -14,8 +14,6 @@ import * as jwks from "jwks-rsa";
 import * as jwt from "jsonwebtoken";
 
 /**
- * @param clientId
- * @param clientSecret
  * @param issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
  */
 export interface IntrospectionClientConfiguration {
