@@ -87,6 +87,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       };
     }
 
+    // Random change to trigger pipeline
+
     if (!this.config)
       throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronMainAuthorization");
 
