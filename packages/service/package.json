@@ -51,14 +51,21 @@
       "@itwin"
     ],
     "extends": "plugin:@itwin/itwinjs-recommended",
-    "rules": {
-      "@typescript-eslint/dot-notation": [
-        "error",
-        {
-          "allowPrivateClassPropertyAccess": true
+    "overrides": [
+      {
+        "files": [
+          "src/test/Introspection.test.ts"
+        ],
+        "rules": {
+          "@typescript-eslint/dot-notation": [
+            "error",
+            {
+              "allowPrivateClassPropertyAccess": true
+            }
+          ],
+          "dot-notation": "off"
         }
-      ],
-      "dot-notation": "off"
-    }
+      }
+    ]
   }
 }

@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { Guid, Logger } from "@itwin/core-bentley";
+import { Logger } from "@itwin/core-bentley";
 import { assert, use as chaiUse, expect } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as jwt from "jsonwebtoken";
