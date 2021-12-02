@@ -16,7 +16,7 @@ The package is broken into two main classes `ElectronMainAuthorization` and `Ele
 
 An Electron application must follow a few setup steps in order to consume and use these classes correctly.
 
-1. The Electron preload script (required for [context isolation](https://www.electronjs.org/docs/latest/tutorial/context-isolation)) must create an implementation of `ITwinElectronApi` to allow the use of the `ipcRenderer` object provided by Electron. The implementation must be exposed in the window object so that the renderer process has a means of accessing the Electron IPC. This is required because the renderer process does not naturally have access to the `ipcRenderer` object to interact with Electron IPC. An example of this can be seen in [ElectronPreload.ts](./src/renderer/ElectronPreload.ts).
+1. The Electron preload script (required for [context isolation](https://www.electronjs.org/docs/latest/tutorial/context-isolation)) must create an implementation of `ITwinElectronApi` to allow the use of the `ipcRenderer` object provided by Electron. The implementation must be exposed in the window object so that the renderer process has a means of accessing the Electron IPC since it doesn't naturally have access to the `ipcRenderer`. An example of this can be seen in [ElectronPreload.ts](./src/renderer/ElectronPreload.ts).
 
     > Note: The `@itwin/core-electron` package handles this for any iTwin.js application working with an iModel so this step can be skipped if you're starting you app using `ElectronHost`.
 
