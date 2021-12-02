@@ -12,6 +12,9 @@ resources:
       ref: master
       name: iModelTechnologies/imodeljs-build-pipeline-scripts
 
+trigger: none
+pr: none
+
 stages:
 - stage: Build
   displayName: Build
