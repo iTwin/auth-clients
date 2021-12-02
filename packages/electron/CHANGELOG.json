@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.5.1",
+      "tag": "@itwin/electron-authorization_v0.5.1",
+      "date": "Thu, 02 Dec 2021 18:07:16 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Automatically adds offline_access scope if not already included"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.5.0",
       "tag": "@itwin/electron-authorization_v0.5.0",
       "date": "Mon, 29 Nov 2021 22:10:32 GMT",
