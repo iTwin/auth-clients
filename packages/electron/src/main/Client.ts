@@ -20,19 +20,19 @@ import {
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
 import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronAuthorizationRequestHandler } from "./ElectronAuthorizationRequestHandler";
+import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler";
 import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
 import { DefaultRequestOptionsProvider, RequestOptions } from "@bentley/itwin-client";
 import { BrowserWindow, ipcMain } from "electron";
-import { ElectronAuthIPCChannelNames } from "../frontend/FrontendClient";
+import { ElectronAuthIPCChannelNames } from "../renderer/Client";
 const loggerCategory = "electron-auth";
 
 /**
  * Client configuration to generate OIDC/OAuth tokens for native applications
  * @beta
  */
-export interface ElectronAuthorizationBackendConfiguration {
+export interface ElectronMainAuthorizationConfiguration {
   /**
    * The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
    */
@@ -63,9 +63,9 @@ export interface ElectronAuthorizationBackendConfiguration {
  * Utility to generate OIDC/OAuth tokens for Desktop Applications
  * @beta
  */
-export class ElectronAuthorizationBackend implements AuthorizationClient {
+export class ElectronMainAuthorization implements AuthorizationClient {
   protected _accessToken: AccessToken = "";
-  public config: ElectronAuthorizationBackendConfiguration;
+  public config: ElectronMainAuthorizationConfiguration;
   public expireSafety = 60 * 10; // refresh token 10 minutes before real expiration time
   public url = "https://ims.bentley.com";
   public static defaultRedirectUri = "http://localhost:3000/signin-callback";
@@ -76,12 +76,19 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
   public get tokenStore() { return this._tokenStore; }
   private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
 
-  private constructor(config: ElectronAuthorizationBackendConfiguration) {
+  private constructor(config: ElectronMainAuthorizationConfiguration) {
     this.config = config;
     this.setupIPCHandlers();
 
+    if (!this.config.scope.includes("offline_access")){
+      this.config = {
+        ...this.config,
+        scope: `${this.config.scope} offline_access`,
+      };
+    }
+
     if (!this.config)
-      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronAuthorizationBackend");
+      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronMainAuthorization");
 
     let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this.config.issuerUrl ?? this.url);
@@ -96,8 +103,8 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
 
   }
 
-  public static async create(config: ElectronAuthorizationBackendConfiguration): Promise<ElectronAuthorizationBackend> {
-    const authClient = new ElectronAuthorizationBackend(config);
+  public static async create(config: ElectronMainAuthorizationConfiguration): Promise<ElectronMainAuthorization> {
+    const authClient = new ElectronMainAuthorization(config);
     await authClient.initialize();
     return authClient;
   }
@@ -121,7 +128,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
   }
 
   /**
-   * Notifies ElectronAppAuthorization that the access token has changed so it can raise
+   * Notifies ElectronRendererAuthorization that the access token has changed so it can raise
    * an event for anything subscribed to its listener
    */
   private notifyFrontendAccessTokenChange(token: AccessToken): void {
@@ -141,21 +148,21 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
    * @returns Promise resolves after the defaults are setup.
    */
   protected async setupOptionDefaults(options: RequestOptions): Promise<void> {
-    if (!ElectronAuthorizationBackend._defaultRequestOptionsProvider)
-      ElectronAuthorizationBackend._defaultRequestOptionsProvider = new DefaultRequestOptionsProvider();
-    return ElectronAuthorizationBackend._defaultRequestOptionsProvider.assignOptions(options);
+    if (!ElectronMainAuthorization._defaultRequestOptionsProvider)
+      ElectronMainAuthorization._defaultRequestOptionsProvider = new DefaultRequestOptionsProvider();
+    return ElectronMainAuthorization._defaultRequestOptionsProvider.assignOptions(options);
   }
 
   public static readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
 
-  public get redirectUri() { return this.config.redirectUri ?? ElectronAuthorizationBackend.defaultRedirectUri; }
+  public get redirectUri() { return this.config.redirectUri ?? ElectronMainAuthorization.defaultRedirectUri; }
 
   public setAccessToken(token: AccessToken) {
     if (token === this._accessToken)
       return;
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
-    ElectronAuthorizationBackend.onUserStateChanged.raiseEvent(this._accessToken);
+    ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
   }
 
   /**
@@ -202,7 +209,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
 
   /** Initializes and completes the sign-in process for the user.
    *
-   * Once the promise is returned, use [[ElectronAuthorizationBackend.getAccessToken]] to retrieve the token.
+   * Once the promise is returned, use [[ElectronMainAuthorization.getAccessToken]] to retrieve the token.
    *
    * The following actions happen upon completion of the promise:
    * - calls the onUserStateChanged() call back after the authorization completes
@@ -242,7 +249,7 @@ export class ElectronAuthorizationBackend implements AuthorizationClient {
     // Start a web server to listen to the browser requests
     LoopbackWebServer.start(nativeConfig);
 
-    const authorizationHandler = new ElectronAuthorizationRequestHandler(authorizationEvents);
+    const authorizationHandler = new ElectronMainAuthorizationRequestHandler(authorizationEvents);
 
     // Setup a notifier to obtain the result of authorization
     const notifier = new AuthorizationNotifier();

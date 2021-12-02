@@ -1,0 +1,29 @@
+{
+  "name": "@itwin/electron-authorization",
+  "entries": [
+    {
+      "version": "0.5.0",
+      "tag": "@itwin/electron-authorization_v0.5.0",
+      "date": "Mon, 29 Nov 2021 22:10:32 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Renaming barrel files to match electron naming scheme"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.4.0",
+      "tag": "@itwin/electron-authorization_v0.4.0",
+      "date": "Mon, 29 Nov 2021 15:30:19 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Changed ElectronAuthorizationBackend name to ElectronAuthorizationMain and ElectronAppAuthorization to ElectronAuthorizationRenderer"
+          }
+        ]
+      }
+    }
+  ]
+}

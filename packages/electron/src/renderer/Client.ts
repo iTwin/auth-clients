@@ -49,7 +49,7 @@ class ElectronAuthIPC  {
  * and then gets the access token from the backend.
  * @public
  */
-export class ElectronAppAuthorization implements AuthorizationClient {
+export class ElectronRendererAuthorization implements AuthorizationClient {
   private _cachedToken: AccessToken = "";
   private _refreshingToken = false;
   private _expiresAt?: Date;
@@ -60,7 +60,7 @@ export class ElectronAppAuthorization implements AuthorizationClient {
   }
   private _ipcAuthAPI: ElectronAuthIPC = new ElectronAuthIPC();
 
-  /** Constructor for ElectronAppAuthorization. Sets up listeners for when the access token changes both on the frontend and the backend. */
+  /** Constructor for ElectronRendererAuthorization. Sets up listeners for when the access token changes both on the frontend and the backend. */
   public constructor() {
     this.onAccessTokenChanged.addListener((token: AccessToken) => {
       this._cachedToken = token;

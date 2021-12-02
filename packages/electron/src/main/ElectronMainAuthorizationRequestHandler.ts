@@ -21,7 +21,7 @@ import { ElectronAuthorizationEvents } from "./Events";
  * Utility to setup a local web server that listens to authorization responses to the browser and make the necessary redirections
  * @internal
  */
-export class ElectronAuthorizationRequestHandler extends AuthorizationRequestHandler {
+export class ElectronMainAuthorizationRequestHandler extends AuthorizationRequestHandler {
   private _authorizationPromise: Promise<AuthorizationRequestResponse> | null = null;
   private _authorizationEvents: ElectronAuthorizationEvents;
 
