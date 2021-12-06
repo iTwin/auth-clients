@@ -23,7 +23,6 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "dependencies": {
-    "@itwin/core-common": "nightly",
     "@itwin/core-bentley": "nightly",
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^2.0.4",
