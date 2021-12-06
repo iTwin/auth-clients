@@ -18,8 +18,21 @@ An Electron application must follow a few setup steps in order to consume and us
 
 1. The Electron preload script (required for [context isolation](https://www.electronjs.org/docs/latest/tutorial/context-isolation)) must create an implementation of `ITwinElectronApi` to allow the use of the `ipcRenderer` object provided by Electron. The implementation must be exposed in the window object so that the renderer process has a means of accessing the Electron IPC since it doesn't naturally have access to the `ipcRenderer`. An example of this can be seen in [ElectronPreload.ts](./src/renderer/ElectronPreload.ts).
 
-    > Note: The `@itwin/core-electron` package handles this for any iTwin.js application working with an iModel so this step can be skipped if you're starting you app using `ElectronHost`.
+    > Note: The `@itwin/core-electron` package handles this for any iTwin.js application working with an iModel so this step can be skipped if you're starting your app using `ElectronHost`.
 
 2. `ElectronMainAuthorization` needs to setup listeners via the `ipcMain` object from Electron. The listeners should use the exact same channel names that the renderer process uses. The listeners will respond to requests to sign-in, sign-out, and retrieve the access token. When a token changes in the main process then it becomes necessary to send messages to the renderer process client unprovoked which cannot be done with the `ipcMain` object. Instead it must be done by accessing the window object's 'webContents' which has a `send` method that allows you to send data over a specific IPC channel name. An example of all this can be seen in the main [Client.ts](./src/main/Client.ts).
 
 3. `ElectronRendererAuthorization`, for use in the renderer process, needs to be constructed needs to be created create and use a basic class that interacts with the `ITwinElectronApi` that is referenced from the window object. It should setup not only listeners to react when a token is changed in the main process client but also methods that will invoke the main process client when a sign-in or sign-out needs to happen. An example of this class (`ElectronAuthIPC`) and how the renderer process client uses it can be seen in the renderer [Client.ts](./src/renderer/Client.ts).
+
+## Linux Usage
+
+`ElectronMainAuthorization` uses the node package [Keytar](https://www.npmjs.com/package/keytar) to securely save refresh tokens to disk. This allows the client to automatically sign-in and receive a new access token between sessions. Keytar does this by using different native secure storage solutions depending on the operating system, and it uses libsecret on linux. In order to use keytar on linux, specifically Debian/Ubuntu,  `libsecret-1-dev` must be installed.
+
+If keytar is being used in a headless environment additional steps need to be taken. The following packages will need to be installed:
+
+- libsecret-1-dev
+- dbus-x11
+- gnome-keyring
+- xvfb
+
+Users will then need to start a dbus session and create a keyring password by running `dbus-run-session -- sh && echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock`. Then to actually run any apps that are using keytar you must prepend it with xvfb-run command in order to simulate a screen like so: `xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' npm run start`.
