@@ -26,7 +26,7 @@ An Electron application must follow a few setup steps in order to consume and us
 
 ## Linux Usage
 
-`ElectronMainAuthorization` uses the node package [Keytar](https://www.npmjs.com/package/keytar) to securely save refresh tokens to disk. This allows the client to automatically sign-in and receive a new access token between sessions. Keytar does this by using different native secure storage solutions depending on the operating system, and it uses libsecret on linux. In order to use keytar on linux, specifically Debian/Ubuntu,  `libsecret-1-dev` must be installed.
+`ElectronMainAuthorization` uses the node package [Keytar](https://www.npmjs.com/package/keytar) to securely save refresh tokens to disk. This allows the client to automatically sign-in and receive a new access token between sessions. Keytar does this by using different native secure storage solutions depending on the operating system, and it uses libsecret on linux. In order to use keytar on linux, specifically Debian/Ubuntu, `libsecret-1-dev` must be installed.
 
 If keytar is being used in a headless environment additional steps need to be taken. The following packages will need to be installed:
 
@@ -35,4 +35,4 @@ If keytar is being used in a headless environment additional steps need to be ta
 - gnome-keyring
 - xvfb
 
-Users will then need to start a dbus session and create a keyring password by running `dbus-run-session -- sh && echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock`. Then to actually run any apps that are using keytar you must prepend it with xvfb-run command in order to simulate a screen like so: `xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' npm run start`. If running within a Docker container, make sure to add the `--privileged` argument when running the container.
+Users will then need to start a dbus session and create a keyring password by running `dbus-run-session -- sh` and then creating a keyring with `echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock`. Then to actually run any apps that are using keytar you must prepend it with xvfb-run command in order to simulate a screen like so: `xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' npm run start`. If running within a Docker container, make sure to add the `--privileged` argument when running the container.
