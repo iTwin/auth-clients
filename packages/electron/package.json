@@ -1,6 +1,6 @@
 {
   "name": "@itwin/electron-authorization",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Electron authorization client for iTwin platform",
   "scripts": {
     "build": "npm run -s build:cjs",
@@ -29,10 +29,10 @@
     "username": "^5.1.0"
   },
   "devDependencies": {
-    "@itwin/core-common": "nightly",
     "@itwin/build-tools": "nightly",
-    "@itwin/eslint-plugin": "nightly",
+    "@itwin/core-common": "nightly",
     "@itwin/core-geometry": "nightly",
+    "@itwin/eslint-plugin": "nightly",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
     "@types/mocha": "^8.2.3",

@@ -1,0 +1,11 @@
+{
+  "name": "@itwin/oidc-signin-tool",
+  "entries": [
+    {
+      "version": "3.0.0",
+      "tag": "@itwin/oidc-signin-tool_v3.0.0",
+      "date": "Thu, 02 Dec 2021 18:07:16 GMT",
+      "comments": {}
+    }
+  ]
+}
