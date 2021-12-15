@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "pin deps to core rc",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
