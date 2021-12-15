@@ -253,7 +253,6 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   /**
    * Attempts a silent sign in with the authorization provider
-   * @throws [Error] If the silent sign in fails
    */
   public async signInSilent(): Promise<void> {
     if (!this._configuration){
