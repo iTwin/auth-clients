@@ -1,6 +1,13 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Mon, 29 Nov 2021 22:10:32 GMT and should not be manually modified.
+This log was last generated on Wed, 15 Dec 2021 20:20:04 GMT and should not be manually modified.
+
+## 0.4.0
+Wed, 15 Dec 2021 20:20:04 GMT
+
+### Minor changes
+
+- pin deps to core rc
 
 ## 0.3.2
 Mon, 29 Nov 2021 22:10:32 GMT

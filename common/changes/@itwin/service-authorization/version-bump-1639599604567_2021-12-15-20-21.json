@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/service-authorization",
-      "comment": "pin deps to core rc",
-      "type": "minor"
+      "comment": "",
+      "type": "none"
     }
   ],
   "packageName": "@itwin/service-authorization"
