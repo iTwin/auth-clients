@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "comment": "pin deps to core rc",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool"
+}
