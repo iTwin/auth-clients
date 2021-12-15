@@ -23,13 +23,13 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "dependencies": {
-    "@itwin/core-bentley": "nightly",
+    "@itwin/core-bentley": "rc",
     "openid-client": "^4.7.4"
   },
   "devDependencies": {
-    "@itwin/core-common": "nightly",
-    "@itwin/build-tools": "nightly",
-    "@itwin/eslint-plugin": "nightly",
+    "@itwin/core-common": "rc",
+    "@itwin/build-tools": "rc",
+    "@itwin/eslint-plugin": "rc",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^8.2.3",
     "@types/sinon": "^9.0.0",
