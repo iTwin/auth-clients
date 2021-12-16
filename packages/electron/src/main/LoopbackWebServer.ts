@@ -46,12 +46,12 @@ export class LoopbackWebServer {
   private static _authState: AuthorizationState = new AuthorizationState();
 
   /** Start a web server to listen to the browser requests */
-  public static start(clientConfiguration: ElectronMainAuthorizationConfiguration) {
+  public static start(redirectUri: string) {
     if (LoopbackWebServer._httpServer)
       return;
 
     LoopbackWebServer._httpServer = Http.createServer(LoopbackWebServer.onBrowserRequest);
-    const urlParts: URL = new URL(clientConfiguration.redirectUri ?? ElectronMainAuthorization.defaultRedirectUri);
+    const urlParts: URL = new URL(redirectUri);
     LoopbackWebServer._httpServer.listen(urlParts.port);
   }
 
