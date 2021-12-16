@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@itwin/core-bentley": "rc",
+    "jsonwebtoken": "^8.5.1",
+    "jwks-rsa": "^2.0.4",
     "openid-client": "^4.7.4"
   },
   "devDependencies": {
@@ -31,10 +33,13 @@
     "@itwin/build-tools": "rc",
     "@itwin/eslint-plugin": "rc",
     "@types/chai": "^4.2.22",
+    "@types/chai-as-promised": "^7",
+    "@types/jsonwebtoken": "^8.5.5",
     "@types/mocha": "^8.2.3",
     "@types/sinon": "^9.0.0",
     "eslint": "^7.32.0",
     "chai": "^4.2.22",
+    "chai-as-promised": "^7",
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
@@ -46,6 +51,22 @@
     "plugins": [
       "@itwin"
     ],
-    "extends": "plugin:@itwin/itwinjs-recommended"
+    "extends": "plugin:@itwin/itwinjs-recommended",
+    "overrides": [
+      {
+        "files": [
+          "src/test/Introspection.test.ts"
+        ],
+        "rules": {
+          "@typescript-eslint/dot-notation": [
+            "error",
+            {
+              "allowPrivateClassPropertyAccess": true
+            }
+          ],
+          "dot-notation": "off"
+        }
+      }
+    ]
   }
 }
