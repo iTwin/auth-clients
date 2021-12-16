@@ -77,6 +77,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
+    if (!config.clientId || !config.scope)
+      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration with a clientId and scope when initializing ElectronMainAuthorization");
     this.config = config;
     this.setupIPCHandlers();
 
@@ -86,9 +88,6 @@ export class ElectronMainAuthorization implements AuthorizationClient {
         scope: `${this.config.scope} offline_access`,
       };
     }
-
-    if (!this.config)
-      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronMainAuthorization");
 
     let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this.config.issuerUrl ?? this.url);
