@@ -1,6 +1,6 @@
 {
   "name": "@itwin/electron-authorization",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Electron authorization client for iTwin platform",
   "scripts": {
     "build": "npm run -s build:cjs",
@@ -21,18 +21,18 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "dependencies": {
-    "@bentley/itwin-client": "nightly",
-    "@itwin/core-bentley": "nightly",
+    "@bentley/itwin-client": "rc",
+    "@itwin/core-bentley": "rc",
     "@openid/appauth": "^1.3.1",
     "keytar": "^7.7.0",
     "open": "^8.3.0",
     "username": "^5.1.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "nightly",
-    "@itwin/core-common": "nightly",
-    "@itwin/core-geometry": "nightly",
-    "@itwin/eslint-plugin": "nightly",
+    "@itwin/build-tools": "rc",
+    "@itwin/core-common": "rc",
+    "@itwin/core-geometry": "rc",
+    "@itwin/eslint-plugin": "rc",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
     "@types/mocha": "^8.2.3",

@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.6.0",
+      "tag": "@itwin/electron-authorization_v0.6.0",
+      "date": "Wed, 15 Dec 2021 20:20:04 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "pin deps to core rc"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.5.1",
       "tag": "@itwin/electron-authorization_v0.5.1",
       "date": "Thu, 02 Dec 2021 18:07:16 GMT",
