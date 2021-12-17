@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.7.0",
+      "tag": "@itwin/electron-authorization_v0.7.0",
+      "date": "Fri, 17 Dec 2021 19:52:59 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Replaced initialize with silent signin"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.6.0",
       "tag": "@itwin/electron-authorization_v0.6.0",
       "date": "Wed, 15 Dec 2021 20:20:04 GMT",
