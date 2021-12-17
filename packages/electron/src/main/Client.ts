@@ -76,7 +76,9 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   public get tokenStore() { return this._tokenStore; }
   private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
 
-  private constructor(config: ElectronMainAuthorizationConfiguration) {
+  public constructor(config: ElectronMainAuthorizationConfiguration) {
+    if (!config.clientId || !config.scope)
+      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration with a clientId and scope when initializing ElectronMainAuthorization");
     this.config = config;
     this.setupIPCHandlers();
 
@@ -86,9 +88,6 @@ export class ElectronMainAuthorization implements AuthorizationClient {
         scope: `${this.config.scope} offline_access`,
       };
     }
-
-    if (!this.config)
-      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration when initializing ElectronMainAuthorization");
 
     let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this.config.issuerUrl ?? this.url);
@@ -101,12 +100,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (this.config.expiryBuffer)
       this.expireSafety = this.config.expiryBuffer;
 
-  }
-
-  public static async create(config: ElectronMainAuthorizationConfiguration): Promise<ElectronMainAuthorization> {
-    const authClient = new ElectronMainAuthorization(config);
-    await authClient.initialize();
-    return authClient;
+    this._tokenStore = new ElectronTokenStore(this.config.clientId);
   }
 
   private setupIPCHandlers(): void {
@@ -165,25 +159,6 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
   }
 
-  /**
-   * Used to initialize the client - must be awaited before any other methods are called.
-   * The call attempts a silent sign-if possible.
-   */
-  private async initialize(): Promise<void> {
-    this._tokenStore = new ElectronTokenStore(this.config.clientId);
-
-    try {
-      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.url, tokenRequestor);
-      Logger.logTrace(loggerCategory, "Initialized service configuration", () => ({ configuration: this._configuration }));
-
-      // Attempt to load the access token from store
-      await this.loadAccessToken();
-    } catch (error: any) {
-      Logger.logError(loggerCategory, error.message);
-    }
-  }
-
   /** Forces a refresh of the user's access token regardless if the current token has expired. */
   public async refreshToken(): Promise<AccessToken> {
     if (this._tokenResponse === undefined || this._tokenResponse.refreshToken === undefined)
@@ -219,8 +194,12 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    *   (ii) an interactive signin that requires user input.
    */
   public async signIn(): Promise<void> {
-    if (!this._configuration)
-      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
+    if (!this._configuration){
+      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
+      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.url, tokenRequestor);
+      Logger.logTrace(loggerCategory, "Initialized service configuration", () => ({ configuration: this._configuration }));
+    }
+
     assert(this.config !== undefined);
 
     // Attempt to load the access token from store
@@ -269,6 +248,23 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     // Start the signin
     await authorizationHandler.performAuthorizationRequest(this._configuration, authorizationRequest);
+  }
+
+  /**
+   * Attempts a silent sign in with the authorization provider
+   */
+  public async signInSilent(): Promise<void> {
+    if (!this._configuration){
+      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
+      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.url, tokenRequestor);
+      Logger.logTrace(loggerCategory, "Initialized service configuration", () => ({ configuration: this._configuration }));
+    }
+    try {
+      // Attempt to load the access token from store
+      await this.loadAccessToken();
+    } catch (error: any) {
+      Logger.logError(loggerCategory, error.message);
+    }
   }
 
   private async _onAuthorizationResponse(authRequest: AuthorizationRequest, authResponse: AuthorizationResponse | null, authError: AuthorizationError | null): Promise<TokenResponse | undefined> {
