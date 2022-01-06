@@ -1,6 +1,13 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 15 Dec 2021 20:20:04 GMT and should not be manually modified.
+This log was last generated on Fri, 17 Dec 2021 19:52:59 GMT and should not be manually modified.
+
+## 0.7.0
+Fri, 17 Dec 2021 19:52:59 GMT
+
+### Minor changes
+
+- Replaced initialize with silent signin
 
 ## 0.6.0
 Wed, 15 Dec 2021 20:20:04 GMT
