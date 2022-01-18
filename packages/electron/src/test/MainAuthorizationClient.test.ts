@@ -27,7 +27,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("Should throw if not signed in", async () =>{
-    const client = await ElectronMainAuthorization.create({
+    const client = new ElectronMainAuthorization({
       clientId: "testClientId",
       scope: "testScope",
     });
@@ -59,8 +59,9 @@ describe("ElectronMainAuthorization Token Logic", () => {
       return mockTokenResponse;
     });
 
-    // Create client and call initialize
-    const client = await ElectronMainAuthorization.create(config);
+    // Create client and silent sign in
+    const client = new ElectronMainAuthorization(config);
+    await client.signInSilent();
 
     // Get access token and assert its response equals what mock
     const returnedToken = await client.getAccessToken();
@@ -109,7 +110,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     });
 
     // Create client and call initialize
-    const client = await ElectronMainAuthorization.create(config);
+    const client = new ElectronMainAuthorization(config);
     await client.signIn();
 
     const token = await client.getAccessToken();
@@ -146,8 +147,9 @@ describe("ElectronMainAuthorization Token Logic", () => {
       return mockExpiredTokenResponse;
     });
 
-    // Create client and call initialize
-    const client = await ElectronMainAuthorization.create(config);
+    // Create client and silent signin
+    const client = new ElectronMainAuthorization(config);
+    await client.signInSilent();
 
     // TODO: Need cleaner way to reset just one method (performTokenRequest)
     sinon.restore();
@@ -177,31 +179,31 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
 
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = await ElectronMainAuthorization.create({ ...config, issuerUrl: testAuthority });
+    const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
     expect(client.url).equals(testAuthority);
   });
 
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = await ElectronMainAuthorization.create({ ...config, issuerUrl: testAuthority });
+    const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
     expect(client.url).equals("https://test.authority.com");
   });
 
   it("should use default authority without prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = await ElectronMainAuthorization.create(config);
+    const client = new ElectronMainAuthorization(config);
     expect(client.url).equals("https://ims.bentley.com");
   });
 
   it("should use default authority with prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = await ElectronMainAuthorization.create(config);
+    const client = new ElectronMainAuthorization(config);
     expect(client.url).equals("https://prefix-ims.bentley.com");
   });
 
   it("should reroute dev prefix to qa if on default ", async () => {
     process.env.IMJS_URL_PREFIX = "dev-";
-    const client = await ElectronMainAuthorization.create(config);
+    const client = new ElectronMainAuthorization(config);
     expect(client.url).equals("https://qa-ims.bentley.com");
   });
 });
@@ -218,12 +220,12 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
   };
 
   it("Should add offline_access scope", async () => {
-    const client = await ElectronMainAuthorization.create(config);
+    const client = new ElectronMainAuthorization(config);
     expect(client.config.scope).equals(`${config.scope} offline_access`);
   });
 
   it("Should not add offline_access scope", async () => {
-    const client = await ElectronMainAuthorization.create({
+    const client = new ElectronMainAuthorization({
       clientId: "testClientId",
       scope: "testScope offline_access",
     });

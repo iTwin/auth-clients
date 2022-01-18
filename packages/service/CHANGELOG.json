@@ -1,0 +1,23 @@
+{
+  "name": "@itwin/service-authorization",
+  "entries": [
+    {
+      "version": "0.5.0",
+      "tag": "@itwin/service-authorization_v0.5.0",
+      "date": "Fri, 17 Dec 2021 14:14:35 GMT",
+      "comments": {}
+    },
+    {
+      "version": "0.4.0",
+      "tag": "@itwin/service-authorization_v0.4.0",
+      "date": "Wed, 15 Dec 2021 20:20:04 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "pin deps to core rc"
+          }
+        ]
+      }
+    }
+  ]
+}
