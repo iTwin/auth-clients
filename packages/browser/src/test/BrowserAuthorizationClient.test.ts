@@ -4,7 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as chai from "chai";
-import { BrowserAuthorizationClient, BrowserAuthorizationClientConfiguration } from "../Client";
+import type { BrowserAuthorizationClientConfiguration } from "../Client";
+import { BrowserAuthorizationClient } from "../Client";
 
 describe("BrowserAuthorizationClient", () => {
 

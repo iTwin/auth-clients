@@ -7,7 +7,8 @@
  * @module Logging
  */
 
-import { Logger as IOidcClientLogger, Log as OidcClientLog } from "oidc-client";
+import type { Logger as IOidcClientLogger} from "oidc-client";
+import { Log as OidcClientLog } from "oidc-client";
 import { Logger, LogLevel } from "@itwin/core-bentley";
 import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 

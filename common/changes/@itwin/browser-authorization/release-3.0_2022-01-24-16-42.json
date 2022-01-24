@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "Update to use iTwin.js 3.0 official release",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}

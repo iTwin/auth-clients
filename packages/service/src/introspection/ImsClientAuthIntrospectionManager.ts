@@ -6,7 +6,7 @@
  * @module Introspection
  */
 
-import { ImsIntrospectionResponse } from "./ImsIntrospectionResponse";
+import type { ImsIntrospectionResponse } from "./ImsIntrospectionResponse";
 
 /**
  * @internal

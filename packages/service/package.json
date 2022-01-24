@@ -2,16 +2,18 @@
   "name": "@itwin/service-authorization",
   "version": "0.5.0",
   "description": "Service authorization client for iTwin platform",
-  "main": "lib/index.js",
-  "typings": "lib/index",
+  "main": "lib/cjs/index.js",
+  "typings": "lib/cjs/index",
   "scripts": {
     "build": "tsc 1>&2",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
-    "test": "mocha \"./lib/test/**/*.test.js\"",
+    "lint:fix": "npm run lint -- --fix",
+    "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
     "test:integration": "",
     "cover": "nyc npm test",
     "clean": "rimraf lib .rush/temp/package-deps*.json",
-    "pack": "npm pack"
+    "pack": "npm pack",
+    "rebuild": "npm run clean && npm run build"
   },
   "author": {
     "name": "Bentley Systems, Inc.",
@@ -23,15 +25,15 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "dependencies": {
-    "@itwin/core-bentley": "rc",
+    "@itwin/core-bentley": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
     "jwks-rsa": "^2.0.4",
     "openid-client": "^4.7.4"
   },
   "devDependencies": {
-    "@itwin/core-common": "rc",
-    "@itwin/build-tools": "rc",
-    "@itwin/eslint-plugin": "rc",
+    "@itwin/core-common": "^3.0.0",
+    "@itwin/build-tools": "^3.0.0",
+    "@itwin/eslint-plugin": "^3.0.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
     "@types/jsonwebtoken": "^8.5.5",
@@ -67,6 +69,10 @@
           "dot-notation": "off"
         }
       }
-    ]
+    ],
+    "rules": {
+      "no-duplicate-imports": "off",
+      "@typescript-eslint/consistent-type-imports": "error"
+    }
   }
 }

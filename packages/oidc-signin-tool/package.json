@@ -30,17 +30,17 @@
     "url": "http://www.bentley.com"
   },
   "dependencies": {
-    "@itwin/core-bentley": "rc",
-    "@itwin/certa": "rc",
+    "@itwin/core-bentley": "^3.0.0",
+    "@itwin/certa": "^3.0.0",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
     "openid-client": "^4.7.4",
     "puppeteer": "chrome-86"
   },
   "devDependencies": {
-    "@itwin/build-tools": "rc",
-    "@itwin/eslint-plugin": "rc",
-    "@itwin/core-common": "rc",
+    "@itwin/build-tools": "^3.0.0",
+    "@itwin/eslint-plugin": "^3.0.0",
+    "@itwin/core-common": "^3.0.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
     "@types/mocha": "^8.2.3",

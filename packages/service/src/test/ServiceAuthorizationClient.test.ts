@@ -5,8 +5,8 @@
 
 import * as chai from "chai";
 import { ServiceAuthorizationClient } from "../ServiceAuthorizationClient";
-import { ServiceAuthorizationClientConfiguration } from "../ServiceAuthorizationClientConfiguration";
-import { Client, Issuer } from "openid-client";
+import type { ServiceAuthorizationClientConfiguration } from "../ServiceAuthorizationClientConfiguration";
+import type { Client, Issuer } from "openid-client";
 
 describe("ServiceAuthorizationClient", () => {
 
