@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/service-authorization",
+      "comment": "update core dependencies",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/service-authorization"
+}
