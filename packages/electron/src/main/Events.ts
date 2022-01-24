@@ -9,7 +9,7 @@
  */
 
 import { BeEvent } from "@itwin/core-bentley";
-import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
+import type { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 
 /** @internal */
 export type AuthorizationResponseCompletedListener = (error?: AuthorizationErrorJson) => void;

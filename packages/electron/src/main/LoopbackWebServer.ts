@@ -9,8 +9,8 @@
  */
 
 import * as Http from "http";
-import { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
-import { ElectronAuthorizationEvents } from "./Events";
+import type { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
+import type { ElectronAuthorizationEvents } from "./Events";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 

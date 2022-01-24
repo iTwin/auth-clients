@@ -6,9 +6,11 @@
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
-import { ElectronMainAuthorization, ElectronMainAuthorizationConfiguration } from "../main/Client";
+import type { ElectronMainAuthorizationConfiguration } from "../main/Client";
+import { ElectronMainAuthorization } from "../main/Client";
 import { ElectronTokenStore } from "../main/TokenStore";
-import { AuthorizationListener, AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenRequest, TokenResponse } from "@openid/appauth";
+import type { AuthorizationListener, AuthorizationServiceConfiguration, TokenRequest} from "@openid/appauth";
+import { AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
 import { LoopbackWebServer } from "../main/LoopbackWebServer";
 import { ElectronMainAuthorizationRequestHandler } from "../main/ElectronMainAuthorizationRequestHandler";
 /* eslint-disable @typescript-eslint/naming-convention */

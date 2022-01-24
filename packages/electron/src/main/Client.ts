@@ -11,12 +11,14 @@
 // cSpell:ignore openid appauth signin Pkce Signout
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import { AccessToken, assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
+import type { AccessToken} from "@itwin/core-bentley";
+import { assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import {
-  AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestJson, AuthorizationResponse, AuthorizationServiceConfiguration,
-  BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest, RevokeTokenRequestJson, StringMap,
-  TokenRequest, TokenRequestHandler, TokenRequestJson, TokenResponse,
+import type {
+  AuthorizationError, AuthorizationRequestJson, AuthorizationResponse, RevokeTokenRequestJson, StringMap, TokenRequestHandler, TokenRequestJson, TokenResponse} from "@openid/appauth";
+import { AuthorizationNotifier, AuthorizationRequest, AuthorizationServiceConfiguration,
+  BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest,
+  TokenRequest,
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
 import { ElectronAuthorizationEvents } from "./Events";
@@ -148,7 +150,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   }
 
   public static readonly onUserStateChanged = new BeEvent<
-    (token: AccessToken) => void
+  (token: AccessToken) => void
   >();
 
   public get scope() {
