@@ -5,9 +5,9 @@
 
 import * as fs from "fs";
 import * as path from "path";
-import { AccessToken } from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { registerBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
-import { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "../TestUsers";
+import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "../TestUsers";
 import { TestUtility } from "../TestUtility";
 import { getTokenCallbackName } from "./certaCommon";
 
