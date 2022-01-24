@@ -13,11 +13,13 @@
     "build": "tsc 1>&2 --outDir lib/cjs",
     "clean": "rimraf lib .rush/temp/package-deps*.json",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
+    "lint:fix": "npm run lint -- --fix",
     "test": "",
     "test:integration": "mocha \"./lib/cjs/test/**/*.test.js\"",
     "docs": "",
     "cover": "",
-    "pack": "npm pack"
+    "pack": "npm pack",
+    "rebuild": "npm run clean && npm run build"
   },
   "keywords": [
     "Bentley",
@@ -57,6 +59,10 @@
     "plugins": [
       "@itwin"
     ],
-    "extends": "plugin:@itwin/itwinjs-recommended"
+    "extends": "plugin:@itwin/itwinjs-recommended",
+    "rules": {
+      "no-duplicate-imports": "off",
+      "@typescript-eslint/consistent-type-imports": "error"
+    }
   }
 }
