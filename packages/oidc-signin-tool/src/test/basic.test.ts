@@ -6,7 +6,8 @@
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as path from "path";
-import { getTestAccessToken, TestBrowserAuthorizationClientConfiguration, TestUsers, TestUtility } from "../index";
+import type { TestBrowserAuthorizationClientConfiguration} from "../index";
+import { getTestAccessToken, TestUsers, TestUtility } from "../index";
 import * as fs from "fs";
 
 /** Loads the provided `.env` file into process.env */

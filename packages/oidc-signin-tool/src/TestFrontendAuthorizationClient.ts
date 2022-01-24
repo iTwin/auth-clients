@@ -3,7 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import { AccessToken, AuthStatus, BeEvent, BentleyError } from "@itwin/core-bentley";
+import type { AccessToken} from "@itwin/core-bentley";
+import { AuthStatus, BeEvent, BentleyError } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 
 /**
