@@ -2,6 +2,18 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "version": "0.5.0",
+      "tag": "@itwin/browser-authorization_v0.5.0",
+      "date": "Mon, 24 Jan 2022 19:35:01 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Update to use iTwin.js 3.0 official release"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.4.0",
       "tag": "@itwin/browser-authorization_v0.4.0",
       "date": "Wed, 15 Dec 2021 20:20:04 GMT",

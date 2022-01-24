@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.8.0",
+      "tag": "@itwin/electron-authorization_v0.8.0",
+      "date": "Mon, 24 Jan 2022 19:35:01 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Update to use iTwin.js 3.0 official release"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.7.0",
       "tag": "@itwin/electron-authorization_v0.7.0",
       "date": "Fri, 17 Dec 2021 19:52:59 GMT",
