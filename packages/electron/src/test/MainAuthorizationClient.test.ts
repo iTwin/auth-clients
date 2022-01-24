@@ -183,31 +183,31 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
     const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
-    expect(client.url).equals(testAuthority);
+    expect(client.issuerUrl).equals(testAuthority);
   });
 
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
     const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
-    expect(client.url).equals("https://test.authority.com");
+    expect(client.issuerUrl).equals("https://test.authority.com");
   });
 
   it("should use default authority without prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "";
     const client = new ElectronMainAuthorization(config);
-    expect(client.url).equals("https://ims.bentley.com");
+    expect(client.issuerUrl).equals("https://ims.bentley.com");
   });
 
   it("should use default authority with prefix ", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
     const client = new ElectronMainAuthorization(config);
-    expect(client.url).equals("https://prefix-ims.bentley.com");
+    expect(client.issuerUrl).equals("https://prefix-ims.bentley.com");
   });
 
   it("should reroute dev prefix to qa if on default ", async () => {
     process.env.IMJS_URL_PREFIX = "dev-";
     const client = new ElectronMainAuthorization(config);
-    expect(client.url).equals("https://qa-ims.bentley.com");
+    expect(client.issuerUrl).equals("https://qa-ims.bentley.com");
   });
 });
 
@@ -224,7 +224,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
 
   it("Should add offline_access scope", async () => {
     const client = new ElectronMainAuthorization(config);
-    expect(client.config.scope).equals(`${config.scope} offline_access`);
+    expect(client.scope).equals(`${config.scope} offline_access`);
   });
 
   it("Should not add offline_access scope", async () => {
@@ -232,6 +232,6 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       clientId: "testClientId",
       scope: "testScope offline_access",
     });
-    expect(client.config.scope).equals("testScope offline_access");
+    expect(client.scope).equals("testScope offline_access");
   });
 });

@@ -23,7 +23,6 @@ import { ElectronAuthorizationEvents } from "./Events";
 import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler";
 import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
-import { DefaultRequestOptionsProvider, RequestOptions } from "@bentley/itwin-client";
 import { BrowserWindow, ipcMain } from "electron";
 import { ElectronAuthIPCChannelNames } from "../renderer/Client";
 const loggerCategory = "electron-auth";
@@ -36,7 +35,7 @@ export interface ElectronMainAuthorizationConfiguration {
   /**
    * The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
    */
-  issuerUrl?: string;
+  readonly issuerUrl?: string;
 
   /**
    * Upon signing in, the client application receives a response from the Bentley IMS OIDC/OAuth2 provider at this URI
@@ -65,42 +64,49 @@ export interface ElectronMainAuthorizationConfiguration {
  */
 export class ElectronMainAuthorization implements AuthorizationClient {
   protected _accessToken: AccessToken = "";
-  public config: ElectronMainAuthorizationConfiguration;
-  public expireSafety = 60 * 10; // refresh token 10 minutes before real expiration time
-  public url = "https://ims.bentley.com";
-  public static defaultRedirectUri = "http://localhost:3000/signin-callback";
+
+  private _issuerUrl = "https://ims.bentley.com";
+  private _redirectUri = "http://localhost:3000/signin-callback";
+  private _clientId: string;
+  private _scopes: string;
+  private _expiryBuffer = 60 * 10; // refresh token 10 minutes before real expiration time
+
   private _configuration: AuthorizationServiceConfiguration | undefined;
   private _tokenResponse: TokenResponse | undefined;
   private _tokenStore?: ElectronTokenStore;
   private _expiresAt?: Date;
-  public get tokenStore() { return this._tokenStore; }
-  private static _defaultRequestOptionsProvider: DefaultRequestOptionsProvider;
+  public get tokenStore() {
+    return this._tokenStore;
+  }
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
     if (!config.clientId || !config.scope)
-      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration with a clientId and scope when initializing ElectronMainAuthorization");
-    this.config = config;
+      throw new BentleyError(
+        AuthStatus.Error,
+        "Must specify a valid configuration with a clientId and scope when initializing ElectronMainAuthorization"
+      );
     this.setupIPCHandlers();
 
-    if (!this.config.scope.includes("offline_access")){
-      this.config = {
-        ...this.config,
-        scope: `${this.config.scope} offline_access`,
-      };
+    this._clientId = config.clientId;
+
+    if (!config.scope.includes("offline_access")) {
+      this._scopes = `${config.scope} offline_access`;
+    } else {
+      this._scopes = config.scope;
     }
 
     let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this.config.issuerUrl ?? this.url);
-    if (prefix && !this.config.issuerUrl) {
+    const authority = new URL(config.issuerUrl ?? this._issuerUrl);
+    if (prefix && !config.issuerUrl) {
       prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
     }
-    this.url = authority.href.replace(/\/$/, "");
+    this._issuerUrl = authority.href.replace(/\/$/, "");
 
-    if (this.config.expiryBuffer)
-      this.expireSafety = this.config.expiryBuffer;
+    if (config.redirectUri) this._redirectUri = config.redirectUri;
+    if (config.expiryBuffer) this._expiryBuffer = config.expiryBuffer;
 
-    this._tokenStore = new ElectronTokenStore(this.config.clientId);
+    this._tokenStore = new ElectronTokenStore(config.clientId);
   }
 
   private setupIPCHandlers(): void {
@@ -127,33 +133,38 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    */
   private notifyFrontendAccessTokenChange(token: AccessToken): void {
     const window = BrowserWindow.getAllWindows()[0];
-    window?.webContents.send(ElectronAuthIPCChannelNames.onAccessTokenChanged, token);
+    window?.webContents.send(
+      ElectronAuthIPCChannelNames.onAccessTokenChanged,
+      token
+    );
   }
 
   private notifyFrontendAccessTokenExpirationChange(expiresAt: Date): void {
     const window = BrowserWindow.getAllWindows()[0];
-    window?.webContents.send(ElectronAuthIPCChannelNames.onAccessTokenExpirationChanged, expiresAt);
+    window?.webContents.send(
+      ElectronAuthIPCChannelNames.onAccessTokenExpirationChanged,
+      expiresAt
+    );
   }
 
-  /**
-   * Augments request options with defaults returned by the DefaultRequestOptionsProvider.
-   * @note The options passed in by clients override any defaults where necessary.
-   * @param options Options the caller wants to augment with the defaults.
-   * @returns Promise resolves after the defaults are setup.
-   */
-  protected async setupOptionDefaults(options: RequestOptions): Promise<void> {
-    if (!ElectronMainAuthorization._defaultRequestOptionsProvider)
-      ElectronMainAuthorization._defaultRequestOptionsProvider = new DefaultRequestOptionsProvider();
-    return ElectronMainAuthorization._defaultRequestOptionsProvider.assignOptions(options);
+  public static readonly onUserStateChanged = new BeEvent<
+    (token: AccessToken) => void
+  >();
+
+  public get scope() {
+    return this._scopes;
   }
 
-  public static readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
+  public get issuerUrl() {
+    return this._issuerUrl;
+  }
 
-  public get redirectUri() { return this.config.redirectUri ?? ElectronMainAuthorization.defaultRedirectUri; }
+  public get redirectUri() {
+    return this._redirectUri;
+  }
 
   public setAccessToken(token: AccessToken) {
-    if (token === this._accessToken)
-      return;
+    if (token === this._accessToken) return;
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
     ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
@@ -194,25 +205,21 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    *   (ii) an interactive signin that requires user input.
    */
   public async signIn(): Promise<void> {
-    if (!this._configuration){
+    if (!this._configuration) {
       const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.url, tokenRequestor);
+      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._issuerUrl, tokenRequestor);
       Logger.logTrace(loggerCategory, "Initialized service configuration", () => ({ configuration: this._configuration }));
     }
 
-    assert(this.config !== undefined);
-
     // Attempt to load the access token from store
     const token = await this.loadAccessToken();
-    if (token)
-      return this.setAccessToken(token);
+    if (token) return this.setAccessToken(token);
 
     // Create the authorization request
-    const nativeConfig = this.config;
     const authReqJson: AuthorizationRequestJson = {
-      client_id: nativeConfig.clientId,
+      client_id: this._clientId,
       redirect_uri: this.redirectUri,
-      scope: nativeConfig.scope,
+      scope: this._scopes,
       response_type: AuthorizationRequest.RESPONSE_TYPE_CODE,
       extras: { prompt: "consent", access_type: "offline" },
     };
@@ -226,7 +233,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     LoopbackWebServer.addCorrelationState(authorizationRequest.state, authorizationEvents);
 
     // Start a web server to listen to the browser requests
-    LoopbackWebServer.start(nativeConfig);
+    LoopbackWebServer.start(this._redirectUri);
 
     const authorizationHandler = new ElectronMainAuthorizationRequestHandler(authorizationEvents);
 
@@ -254,9 +261,9 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    * Attempts a silent sign in with the authorization provider
    */
   public async signInSilent(): Promise<void> {
-    if (!this._configuration){
+    if (!this._configuration) {
       const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this.url, tokenRequestor);
+      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._issuerUrl, tokenRequestor);
       Logger.logTrace(loggerCategory, "Initialized service configuration", () => ({ configuration: this._configuration }));
     }
     try {
@@ -322,10 +329,9 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   }
 
   private get _hasExpired(): boolean {
-    if (!this._expiresAt)
-      return false;
+    if (!this._expiresAt) return false;
 
-    return this._expiresAt.getTime() - Date.now() <= this.expireSafety * 1000; // Consider this.expireSafety's amount of time early as expired
+    return this._expiresAt.getTime() - Date.now() <= this._expiryBuffer * 1000; // Consider this.expireSafety's amount of time early as expired
   }
 
   public async getAccessToken(): Promise<AccessToken> {
@@ -344,15 +350,14 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private async swapAuthorizationCodeForTokens(authCode: string, codeVerifier: string): Promise<TokenResponse> {
     if (!this._configuration)
       throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
-    assert(this.config !== undefined);
+    assert(this._clientId !== "");
 
-    const nativeConfig = this.config;
     const extras: StringMap = { code_verifier: codeVerifier };
     const tokenRequestJson: TokenRequestJson = {
       grant_type: GRANT_TYPE_AUTHORIZATION_CODE,
       code: authCode,
       redirect_uri: this.redirectUri,
-      client_id: nativeConfig.clientId,
+      client_id: this._clientId,
       extras,
     };
 
@@ -371,13 +376,13 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private async makeRefreshAccessTokenRequest(refreshToken: string): Promise<TokenResponse> {
     if (!this._configuration)
       throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
-    assert(this.config !== undefined);
+    assert(this._clientId !== "");
 
     const tokenRequestJson: TokenRequestJson = {
       grant_type: GRANT_TYPE_REFRESH_TOKEN,
       refresh_token: refreshToken,
       redirect_uri: this.redirectUri,
-      client_id: this.config.clientId,
+      client_id: this._clientId,
     };
 
     const tokenRequest = new TokenRequest(tokenRequestJson);
@@ -389,14 +394,14 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private async makeRevokeTokenRequest(): Promise<void> {
     if (!this._tokenResponse)
       throw new BentleyError(AuthStatus.Error, "Missing refresh token. First call signIn() and ensure it's successful");
-    assert(this.config !== undefined);
+    assert(this._clientId !== "");
 
     const refreshToken = this._tokenResponse.refreshToken!;
 
     const revokeTokenRequestJson: RevokeTokenRequestJson = {
       token: refreshToken,
       token_type_hint: "refresh_token",
-      client_id: this.config.clientId,
+      client_id: this._clientId,
     };
 
     const revokeTokenRequest = new RevokeTokenRequest(revokeTokenRequestJson);
