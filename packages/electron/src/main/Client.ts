@@ -83,10 +83,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
     if (!config.clientId || !config.scope)
-      throw new BentleyError(
-        AuthStatus.Error,
-        "Must specify a valid configuration with a clientId and scope when initializing ElectronMainAuthorization"
-      );
+      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration with a clientId and scope when initializing ElectronMainAuthorization");
     this.setupIPCHandlers();
 
     this._clientId = config.clientId;
@@ -135,23 +132,15 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    */
   private notifyFrontendAccessTokenChange(token: AccessToken): void {
     const window = BrowserWindow.getAllWindows()[0];
-    window?.webContents.send(
-      ElectronAuthIPCChannelNames.onAccessTokenChanged,
-      token
-    );
+    window?.webContents.send(ElectronAuthIPCChannelNames.onAccessTokenChanged, token);
   }
 
   private notifyFrontendAccessTokenExpirationChange(expiresAt: Date): void {
     const window = BrowserWindow.getAllWindows()[0];
-    window?.webContents.send(
-      ElectronAuthIPCChannelNames.onAccessTokenExpirationChanged,
-      expiresAt
-    );
+    window?.webContents.send(ElectronAuthIPCChannelNames.onAccessTokenExpirationChanged, expiresAt);
   }
 
-  public static readonly onUserStateChanged = new BeEvent<
-  (token: AccessToken) => void
-  >();
+  public static readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
 
   public get scope() {
     return this._scopes;
