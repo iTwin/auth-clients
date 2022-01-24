@@ -7,11 +7,13 @@
   "scripts": {
     "build": "tsc 1>&2",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
+    "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/test/**/*.test.js\"",
     "test:integration": "",
     "cover": "nyc npm test",
     "clean": "rimraf lib .rush/temp/package-deps*.json",
-    "pack": "npm pack"
+    "pack": "npm pack",
+    "rebuild": "npm run clean && npm run build"
   },
   "author": {
     "name": "Bentley Systems, Inc.",
@@ -67,6 +69,10 @@
           "dot-notation": "off"
         }
       }
-    ]
+    ],
+    "rules": {
+      "no-duplicate-imports": "off",
+      "@typescript-eslint/consistent-type-imports": "error"
+    }
   }
 }
