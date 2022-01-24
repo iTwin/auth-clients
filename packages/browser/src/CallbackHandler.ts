@@ -7,9 +7,10 @@
  * @module Authorization
  */
 
-import { UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
+import type { UserManagerSettings} from "oidc-client";
+import { UserManager, WebStorageStateStore } from "oidc-client";
 import { BrowserAuthorizationLogger } from "./Logger";
-import { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
+import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 import { UnexpectedErrors } from "@itwin/core-bentley";
 
 /**
