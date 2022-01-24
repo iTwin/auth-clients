@@ -2,6 +2,18 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "version": "0.6.0",
+      "tag": "@itwin/service-authorization_v0.6.0",
+      "date": "Mon, 24 Jan 2022 19:35:01 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Update to use iTwin.js 3.0 official release"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.5.0",
       "tag": "@itwin/service-authorization_v0.5.0",
       "date": "Fri, 17 Dec 2021 14:14:35 GMT",
