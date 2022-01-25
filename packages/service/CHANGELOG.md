@@ -1,6 +1,13 @@
 # Change Log - @itwin/service-authorization
 
-This log was last generated on Mon, 24 Jan 2022 19:35:01 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jan 2022 15:34:41 GMT and should not be manually modified.
+
+## 0.6.1
+Tue, 25 Jan 2022 15:34:41 GMT
+
+### Patches
+
+- update core dependencies
 
 ## 0.6.0
 Mon, 24 Jan 2022 19:35:01 GMT
