@@ -1,6 +1,13 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 25 Jan 2022 15:34:41 GMT and should not be manually modified.
+This log was last generated on Thu, 27 Jan 2022 14:10:00 GMT and should not be manually modified.
+
+## 3.2.2
+Thu, 27 Jan 2022 14:10:00 GMT
+
+### Patches
+
+- Update itwin/certa to be a direct dependency
 
 ## 3.2.1
 Tue, 25 Jan 2022 15:34:41 GMT
