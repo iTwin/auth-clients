@@ -33,6 +33,5 @@ If keytar is being used in a headless environment additional steps need to be ta
 - libsecret-1-dev
 - dbus-x11
 - gnome-keyring
-- xvfb
 
-Users will then need to start a dbus session and create a keyring password by running `dbus-run-session -- sh` and then creating a keyring with `echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock`. Then to actually run any apps that are using keytar you must prepend it with xvfb-run command in order to simulate a screen like so: `xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' npm run start`. If running within a Docker container, make sure to add the `--privileged` argument when running the container.
+Users will then need to start a dbus session and create a keyring password by running `dbus-run-session -- sh` and then creating a keyring with `echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock`. Then simply start up the application like normal while in the dbus session: `npm run start`. If running within a Docker container, make sure to add the `--privileged` argument when running the container.
