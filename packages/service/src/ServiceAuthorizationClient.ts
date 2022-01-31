@@ -7,8 +7,9 @@
  */
 
 import type { AuthorizationClient } from "@itwin/core-common";
-import { ClientMetadata, custom, GrantBody, Issuer, Client as OpenIdClient, TokenSet } from "openid-client";
-import { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
+import type { ClientMetadata, GrantBody, Client as OpenIdClient, TokenSet } from "openid-client";
+import { custom, Issuer } from "openid-client";
+import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
 
 /**
   * Utility to generate OIDC/OAuth tokens for service or service applications

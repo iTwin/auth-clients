@@ -10,12 +10,13 @@
 
 import * as open from "open";
 import { Logger } from "@itwin/core-bentley";
+import type { AuthorizationErrorJson, AuthorizationRequest, AuthorizationRequestResponse,
+  AuthorizationResponseJson, AuthorizationServiceConfiguration} from "@openid/appauth";
 import {
-  AuthorizationError, AuthorizationErrorJson, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationRequestResponse, AuthorizationResponse,
-  AuthorizationResponseJson, AuthorizationServiceConfiguration, BasicQueryStringUtils,
+  AuthorizationError, AuthorizationRequestHandler, AuthorizationResponse, BasicQueryStringUtils,
 } from "@openid/appauth";
 import { NodeCrypto } from "@openid/appauth/built/node_support";
-import { ElectronAuthorizationEvents } from "./Events";
+import type { ElectronAuthorizationEvents } from "./Events";
 
 /**
  * Utility to setup a local web server that listens to authorization responses to the browser and make the necessary redirections

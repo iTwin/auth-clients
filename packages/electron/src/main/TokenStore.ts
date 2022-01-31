@@ -9,7 +9,8 @@
  */
 
 import * as OperatingSystemUserName from "username";
-import { TokenResponse, TokenResponseJson } from "@openid/appauth";
+import type { TokenResponseJson } from "@openid/appauth";
+import { TokenResponse } from "@openid/appauth";
 import { deletePassword, getPassword, setPassword } from "keytar";
 
 /**

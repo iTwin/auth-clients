@@ -2,9 +2,10 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import { AccessToken } from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { TestBrowserAuthorizationClient } from "./TestBrowserAuthorizationClient";
-import { TestBrowserAuthorizationClientConfiguration, TestUserCredentials, TestUsers } from "./TestUsers";
+import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials} from "./TestUsers";
+import { TestUsers } from "./TestUsers";
 
 /**
  * A set of convenience methods to get an Access Token, AuthorizationClient or an AuthorizedClientRequestContext for a given TestUserCredential.

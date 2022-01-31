@@ -7,11 +7,13 @@
  * @module Authorization
  */
 
-import { AccessToken, BeEvent } from "@itwin/core-bentley";
+import type { AccessToken} from "@itwin/core-bentley";
+import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import { User, UserManager, UserManagerSettings, WebStorageStateStore } from "oidc-client";
+import type { User, UserManagerSettings} from "oidc-client";
+import { UserManager, WebStorageStateStore } from "oidc-client";
 import { BrowserAuthorizationLogger } from "./Logger";
-import { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
+import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 
 /**
  * @beta

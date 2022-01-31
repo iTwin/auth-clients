@@ -6,8 +6,9 @@
  * @module Introspection
  */
 
-import { custom, Issuer, Client as OpenIdClient } from "openid-client";
-import { IntrospectionResponse } from "./IntrospectionResponse";
+import type { Client as OpenIdClient } from "openid-client";
+import { custom, Issuer } from "openid-client";
+import type { IntrospectionResponse } from "./IntrospectionResponse";
 import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
 import { BentleyError, Logger } from "@itwin/core-bentley";
 import * as jwks from "jwks-rsa";

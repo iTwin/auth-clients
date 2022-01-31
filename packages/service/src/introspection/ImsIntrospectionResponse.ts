@@ -6,7 +6,7 @@
  * @module Introspection
  */
 
-import { IntrospectionResponse } from "./IntrospectionResponse";
+import type { IntrospectionResponse } from "./IntrospectionResponse";
 
 /* eslint-disable @typescript-eslint/naming-convention */
 

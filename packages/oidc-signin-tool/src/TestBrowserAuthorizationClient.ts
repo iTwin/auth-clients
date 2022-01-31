@@ -2,12 +2,14 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import { AccessToken, BeEvent } from "@itwin/core-bentley";
+import type { AccessToken} from "@itwin/core-bentley";
+import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import { AuthorizationParameters, Client, custom, generators, Issuer, OpenIDCallbackChecks } from "openid-client";
+import type { AuthorizationParameters, Client, OpenIDCallbackChecks } from "openid-client";
+import { custom, generators, Issuer } from "openid-client";
 import * as os from "os";
 import * as puppeteer from "puppeteer";
-import { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "./TestUsers";
+import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "./TestUsers";
 
 /**
  * Implementation of AuthorizationClient used for the iModel.js integration tests.
