@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "Update invalid \"this\" reference",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
