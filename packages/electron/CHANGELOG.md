@@ -1,6 +1,13 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 25 Jan 2022 15:34:41 GMT and should not be manually modified.
+This log was last generated on Tue, 01 Feb 2022 18:01:38 GMT and should not be manually modified.
+
+## 0.8.2
+Tue, 01 Feb 2022 18:01:38 GMT
+
+### Patches
+
+- Update invalid "this" reference
 
 ## 0.8.1
 Tue, 25 Jan 2022 15:34:41 GMT
