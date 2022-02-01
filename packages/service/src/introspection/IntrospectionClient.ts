@@ -79,10 +79,10 @@ export class IntrospectionClient {
   }
 
   private async validateToken(accessToken: string): Promise<IntrospectionResponse> {
-    const decoded = jwt.decode(accessToken, { complete: true });
+    const decoded = jwt.decode(accessToken, { complete: true, json: true });
     if (!decoded)
       throw new Error("Failed to decode JWT");
-    const { payload, header } = decoded;
+    const { payload, header } = decoded as { payload: jwt.JwtPayload, header: jwt.JwtHeader };
 
     if (!payload || !payload.scope)
       throw new Error("Missing scope in JWT");
