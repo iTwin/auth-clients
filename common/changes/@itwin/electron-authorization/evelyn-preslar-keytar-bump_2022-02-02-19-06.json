@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "update keytar version",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
