@@ -10,7 +10,7 @@ import type { Client as OpenIdClient } from "openid-client";
 import { custom, Issuer } from "openid-client";
 import type { IntrospectionResponse } from "./IntrospectionResponse";
 import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
-import { BentleyError, Logger } from "@itwin/core-bentley";
+import { BentleyError, BentleyStatus, Logger } from "@itwin/core-bentley";
 import * as jwks from "jwks-rsa";
 import * as jwt from "jsonwebtoken";
 
@@ -22,7 +22,10 @@ export interface IntrospectionClientConfiguration {
 }
 
 function removeAccessTokenPrefix(accessToken: string): string {
-  return accessToken.substr(accessToken.indexOf(" ") + 1);
+  const splitAccessToken = accessToken.split(" ");
+  if (splitAccessToken.length !== 2)
+    throw new BentleyError(BentleyStatus.ERROR, "Unsupported access token format");
+  return splitAccessToken[1];
 }
 
 /** @alpha */
