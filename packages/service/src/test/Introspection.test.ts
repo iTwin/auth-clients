@@ -67,14 +67,8 @@ describe("IntrospectionClient", () => {
   });
 
   it("should throw if token is not a JWT", async () => {
-    const logStub = sinon.stub(Logger, "logError");
-
     const client = new IntrospectionClient();
     await expect(client.introspect("not a JWT")).to.be.rejectedWith("Failed to decode JWT");
-
-    expect(logStub.callCount).to.equal(1);
-    expect(logStub.firstCall.args[1]).to.equal("Unable to introspect client token");
-    expect(logStub.firstCall.lastArg().message).to.equal("Error: Failed to decode JWT");
   });
 
   it("should throw if scope claim is missing", async () => {
@@ -130,8 +124,8 @@ describe("IntrospectionClient", () => {
         jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
       },
     } as Issuer<OpenIdClient>);
-    const fakeKey1 = { getPublicKey: () => "fake key 1" };
-    const fakeKey2 = { getPublicKey: () => "fake key 2" };
+    const fakeKey1 = { getPublicKey: () => "fake key1" };
+    const fakeKey2 = { getPublicKey: () => "fake key2" };
     const payload = { scope: ["scope1", "scope2"] };
     sinon.stub(jwt, "decode")
       .onFirstCall().returns({ payload, header: { kid: "kid1" } })
@@ -151,7 +145,7 @@ describe("IntrospectionClient", () => {
     const client = new IntrospectionClient();
 
     // call with kid1 - added to cache
-    await client.introspect("fake token 1");
+    await client.introspect("fake token1");
     expect(client["_signingKeyCache"].size).to.equal(1);
     expect(client["_signingKeyCache"].has("kid1")).to.be.true;
     expect(client["_signingKeyCache"].get("kid1")).to.equal(fakeKey1);
@@ -162,7 +156,7 @@ describe("IntrospectionClient", () => {
     client["_jwks"]!.getSigningKey = jwks.JwksClient.prototype.getSigningKey.bind(client["_jwks"]);
 
     // call with kid2 - added to cache
-    await client.introspect("fake token 2");
+    await client.introspect("fake token2");
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(client["_signingKeyCache"].has("kid2")).to.be.true;
     expect(client["_signingKeyCache"].get("kid2")).to.equal(fakeKey2);
@@ -170,18 +164,18 @@ describe("IntrospectionClient", () => {
     expect(keyStub.lastCall.firstArg).to.equal("kid2");
 
     // call with kid2 - already in cache, nothing changes
-    await client.introspect("fake token 3");
+    await client.introspect("fake token3");
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(keyStub.callCount).to.equal(2);
 
     // call without kid - new key retrieved, cache not affected
-    await client.introspect("fake token 4");
+    await client.introspect("fake token4");
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(keyStub.callCount).to.equal(3);
     expect(keyStub.lastCall.firstArg).to.be.undefined;
 
     // call without kid - new key retrieved, cache not affected
-    await client.introspect("fake-token-5");
+    await client.introspect("fake token5");
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(keyStub.callCount).to.equal(4);
     expect(keyStub.lastCall.firstArg).to.be.undefined;

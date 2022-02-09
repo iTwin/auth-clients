@@ -24,7 +24,7 @@ export interface IntrospectionClientConfiguration {
 function removeAccessTokenPrefix(accessToken: string): string {
   const splitAccessToken = accessToken.split(" ");
   if (splitAccessToken.length !== 2)
-    throw new BentleyError(BentleyStatus.ERROR, "Unsupported access token format");
+    throw new BentleyError(BentleyStatus.ERROR, "Failed to decode JWT");
   return splitAccessToken[1];
 }
 
