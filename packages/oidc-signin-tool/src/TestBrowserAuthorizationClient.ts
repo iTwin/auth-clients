@@ -22,7 +22,7 @@ import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials }
 export class TestBrowserAuthorizationClient implements AuthorizationClient {
   private _client!: Client;
   private _issuer!: Issuer<Client>;
-  private _imsUrl: string = "https://ims.bentley.com";
+  private _authorityUrl: string = "https://ims.bentley.com";
   private readonly _config: TestBrowserAuthorizationClientConfiguration;
   private readonly _user: TestUserCredentials;
   private _accessToken: AccessToken = "";
@@ -38,23 +38,30 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     this._user = user;
 
     let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._config.authority ?? this._imsUrl);
+    const authority = new URL(this._config.authority ?? this._authorityUrl);
     if (prefix && !this._config.authority) {
       prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
     }
-    this._imsUrl = authority.href.replace(/\/$/, "");
+    this._authorityUrl = authority.href.replace(/\/$/, "");
   }
 
   private async initialize() {
-    // Due to issues with a timeout or failed request to the authorization service increasing the standard timeout and adding retries.
-    // Docs for this option here, https://github.com/panva/node-openid-client/tree/master/docs#customizing-http-requests
-    custom.setHttpOptionsDefaults({
+    // Keep a list of http defaults
+    const httpOptionsDefaults: any = {
       timeout: 10000,
       retry: 3,
-    });
+    };
 
-    this._issuer = await Issuer.discover(this._imsUrl);
+    // AzureAD needs to have the origin header to allow CORS
+    if (this._config.authority && -1 !== this._config.authority.indexOf("microsoftonline"))
+      httpOptionsDefaults.headers = { Origin: "http://localhost" }; // eslint-disable-line @typescript-eslint/naming-convention
+
+    // Due to issues with a timeout or failed request to the authorization service increasing the standard timeout and adding retries.
+    // Docs for this option here, https://github.com/panva/node-openid-client/tree/master/docs#customizing-http-requests
+    custom.setHttpOptionsDefaults(httpOptionsDefaults);
+
+    this._issuer = await Issuer.discover(this._authorityUrl);
     this._client = new this._issuer.Client({ client_id: this._config.clientId, token_endpoint_auth_method: "none" }); // eslint-disable-line @typescript-eslint/naming-convention
   }
 
@@ -158,6 +165,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
       // Handle federated sign-in
       await this.handleFederatedSignin(page);
+
+      // Handle AzureAD sign-in
+      await this.handleAzureADSignin(page);
     } catch (err) {
       await page.close();
       await browser.close();
@@ -166,7 +176,10 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     await this.handleConsentPage(page);
 
-    const tokenSet = await this._client.callback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks);
+    // If using AzureAD, use pure oauthcallback. It suppresses id_token validation
+    const tokenSet = (this._config.authority && -1 !== this._config.authority.indexOf("microsoftonline")) ?
+      await this._client.oauthCallback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks) :
+      await this._client.callback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks);
 
     await page.close();
     await browser.close();
@@ -235,7 +248,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async handleLoginPage(page: puppeteer.Page): Promise<void> {
-    const loginUrl = new URL("/IMS/Account/Login", this._imsUrl);
+    const loginUrl = new URL("/IMS/Account/Login", this._authorityUrl);
     if (page.url().startsWith(loginUrl.toString())) {
       await page.waitForSelector("[name=EmailAddress]");
       await page.type("[name=EmailAddress]", this._user.email);
@@ -267,7 +280,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async handlePingLoginPage(page: puppeteer.Page): Promise<void> {
-    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint))
+    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("ims") )
       return;
 
     await page.waitForSelector("#identifierInput");
@@ -365,6 +378,50 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
 
     await page.waitForNavigation({ waitUntil: "networkidle2" });
+  }
+
+  // AzureAD specific login.
+  private async handleAzureADSignin(page: puppeteer.Page): Promise<void> {
+    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("microsoftonline") )
+      return;
+
+    // Get username selector
+    if (!(await this.checkSelectorExists(page, "#i0116")))
+      throw new Error("Username selector does not exist");
+
+    // Type username and wait for navigation
+    await page.type("#i0116", this._user.email);
+    await page.$eval("#idSIButton9", (button: any) => button.click());
+    await Promise.all([
+      page.$eval("#idSIButton9", (button: any) => button.click()),
+      page.waitForNavigation({
+        timeout: 60000,
+        waitUntil: ["networkidle0", "networkidle2"],
+      }),
+    ]);
+
+    // Get password selector
+    if (!(await this.checkSelectorExists(page, "#i0118")))
+      throw new Error("Password selector does not exist");
+
+    // Type password and wait for navigation
+    await page.type("#i0118", this._user.password, { delay: 10 });
+    await Promise.all([
+      page.$eval("#idSIButton9", (button: any) => button.click()),
+      page.waitForNavigation({
+        timeout: 60000,
+        waitUntil: ["networkidle0", "networkidle2"],
+      }),
+    ]);
+
+    // Accept stay signed-in page and complete sign in
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 60000,
+        waitUntil: "networkidle2",
+      }),
+      page.$eval("#idSIButton9", (button: any) => button.click()),
+    ]);
   }
 
   private async handleConsentPage(page: puppeteer.Page): Promise<void> {
