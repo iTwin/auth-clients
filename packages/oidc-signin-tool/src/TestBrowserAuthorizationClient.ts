@@ -405,7 +405,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     // Verify username selector exists
     if (!(await this.checkSelectorExists(page, "#i0116")))
-      throw new Error("Username selector does not exist");
+      throw new Error("Username field does not exist");
 
     // Type username and wait for navigation
     await page.type("#i0116", this._user.email);
@@ -420,7 +420,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     // Verify password selector exists
     if (!(await this.checkSelectorExists(page, "#i0118")))
-      throw new Error("Password selector does not exist");
+      throw new Error("Password field does not exist");
 
     // Type password and wait for navigation
     await page.waitFor(2000); // Seems like we have to wait before typing the password otherwise it does not get registered
@@ -450,11 +450,11 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     // Verify username selector exists
     if (!(await this.checkSelectorExists(page, "#identity")))
-      throw new Error("Username selector does not exist");
+      throw new Error("Username field does not exist");
 
     // Verify password selector exists
     if (!(await this.checkSelectorExists(page, "#password")))
-      throw new Error("Password selector does not exist");
+      throw new Error("Password field does not exist");
 
     // Verify log in button exists
     const button = await page.$x("//button[contains(@class,'authing-login-btn')]");
