@@ -2,10 +2,10 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import type { AccessToken} from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import type { AuthorizationParameters, Client, OpenIDCallbackChecks } from "openid-client";
+import type { AuthorizationParameters, Client, ClientMetadata, HttpOptions, OpenIDCallbackChecks } from "openid-client";
 import { custom, generators, Issuer } from "openid-client";
 import * as os from "os";
 import * as puppeteer from "puppeteer";
@@ -48,13 +48,13 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
   private async initialize() {
     // Keep a list of http defaults
-    const httpOptionsDefaults: any = {
+    const httpOptionsDefaults: HttpOptions = {
       timeout: 10000,
       retry: 3,
     };
 
     // AzureAD needs to have the origin header to allow CORS
-    if (this._config.authority && -1 !== this._config.authority.indexOf("microsoftonline"))
+    if (-1 !== this._authorityUrl.indexOf("microsoftonline"))
       httpOptionsDefaults.headers = { Origin: "http://localhost" }; // eslint-disable-line @typescript-eslint/naming-convention
 
     // Due to issues with a timeout or failed request to the authorization service increasing the standard timeout and adding retries.
@@ -62,7 +62,15 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     custom.setHttpOptionsDefaults(httpOptionsDefaults);
 
     this._issuer = await Issuer.discover(this._authorityUrl);
-    this._client = new this._issuer.Client({ client_id: this._config.clientId, token_endpoint_auth_method: "none" }); // eslint-disable-line @typescript-eslint/naming-convention
+    const clientMetadata: ClientMetadata = {
+      client_id: this._config.clientId, // eslint-disable-line @typescript-eslint/naming-convention
+      token_endpoint_auth_method: "none", // eslint-disable-line @typescript-eslint/naming-convention
+    };
+    if (this._config.clientSecret) {
+      clientMetadata.client_secret = this._config.clientSecret;
+      clientMetadata.token_endpoint_auth_method = "client_secret_basic";
+    }
+    this._client = new this._issuer.Client(clientMetadata); // eslint-disable-line @typescript-eslint/naming-convention
   }
 
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
@@ -154,7 +162,14 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     await page.setRequestInterception(true);
     const onRedirectRequest = this.interceptRedirectUri(page);
-    await page.goto(authorizationUrl, { waitUntil: "networkidle2" });
+    const navigationOptions: puppeteer.DirectNavigationOptions = {
+      waitUntil: "networkidle2",
+    };
+
+    // If AzureAD or Authing, we want to wait till the page is fully loaded with no network requests remaining
+    if (-1 === authorizationUrl.indexOf("ims"))
+      navigationOptions.waitUntil = ["networkidle0"];
+    await page.goto(authorizationUrl, navigationOptions);
 
     try {
       await this.handleErrorPage(page);
@@ -168,6 +183,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
       // Handle AzureAD sign-in
       await this.handleAzureADSignin(page);
+
+      // Handle Authing sign-in
+      await this.handleAuthingSignin(page);
     } catch (err) {
       await page.close();
       await browser.close();
@@ -176,10 +194,10 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     await this.handleConsentPage(page);
 
-    // If using AzureAD, use pure oauthcallback. It suppresses id_token validation
-    const tokenSet = (this._config.authority && -1 !== this._config.authority.indexOf("microsoftonline")) ?
-      await this._client.oauthCallback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks) :
-      await this._client.callback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks);
+    // For all other OAuthProviders, we want to use pure oauthcallback. It suppresses id_token validation
+    const tokenSet = (-1 !== this._authorityUrl.indexOf("ims")) ?
+      await this._client.callback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks):
+      await this._client.oauthCallback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks);
 
     await page.close();
     await browser.close();
@@ -385,7 +403,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("microsoftonline") )
       return;
 
-    // Get username selector
+    // Verify username selector exists
     if (!(await this.checkSelectorExists(page, "#i0116")))
       throw new Error("Username selector does not exist");
 
@@ -396,21 +414,22 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       page.$eval("#idSIButton9", (button: any) => button.click()),
       page.waitForNavigation({
         timeout: 60000,
-        waitUntil: ["networkidle0", "networkidle2"],
+        waitUntil: ["networkidle0"], // Need to wait longer
       }),
     ]);
 
-    // Get password selector
+    // Verify password selector exists
     if (!(await this.checkSelectorExists(page, "#i0118")))
       throw new Error("Password selector does not exist");
 
     // Type password and wait for navigation
-    await page.type("#i0118", this._user.password, { delay: 10 });
+    await page.waitFor(2000); // Seems like we have to wait before typing the password otherwise it does not get registered
+    await page.type("#i0118", this._user.password);
     await Promise.all([
       page.$eval("#idSIButton9", (button: any) => button.click()),
       page.waitForNavigation({
         timeout: 60000,
-        waitUntil: ["networkidle0", "networkidle2"],
+        waitUntil: ["networkidle0"], // Need to wait longer
       }),
     ]);
 
@@ -418,9 +437,41 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     await Promise.all([
       page.waitForNavigation({
         timeout: 60000,
-        waitUntil: "networkidle2",
+        waitUntil: ["networkidle0"], // Need to wait longer
       }),
       page.$eval("#idSIButton9", (button: any) => button.click()),
+    ]);
+  }
+
+  // Authing specific login.
+  private async handleAuthingSignin(page: puppeteer.Page): Promise<void> {
+    if (undefined === this._issuer.metadata.authorization_endpoint || -1 === page.url().indexOf("authing") )
+      return;
+
+    // Verify username selector exists
+    if (!(await this.checkSelectorExists(page, "#identity")))
+      throw new Error("Username selector does not exist");
+
+    // Verify password selector exists
+    if (!(await this.checkSelectorExists(page, "#password")))
+      throw new Error("Password selector does not exist");
+
+    // Verify log in button exists
+    const button = await page.$x("//button[contains(@class,'authing-login-btn')]");
+    if (!button || button.length === 0)
+      throw new Error("Log in button does not exist");
+
+    // Type username and password
+    await page.type("#identity", this._user.email);
+    await page.type("#password", this._user.password);
+
+    // Log in and navigate
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 60000,
+        waitUntil: ["networkidle0"], // Need to wait longer
+      }),
+      button[0].click(),
     ]);
   }
 

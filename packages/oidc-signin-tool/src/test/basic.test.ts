@@ -34,6 +34,7 @@ loadEnv(path.join(__dirname, "..", "..", "..", ".env"));
 describe("Sign in (#integration)", () => {
   let oidcConfig: TestBrowserAuthorizationClientConfiguration;
   let azureAdOidcConfig: TestBrowserAuthorizationClientConfiguration;
+  let authingOidcConfig: TestBrowserAuthorizationClientConfiguration;
 
   before(() => {
     // IMS oidc config
@@ -43,6 +44,12 @@ describe("Sign in (#integration)", () => {
       throw new Error("Could not find IMJS_OIDC_BROWSER_TEST_REDIRECT_URI");
     if (process.env.IMJS_OIDC_BROWSER_TEST_SCOPES === undefined)
       throw new Error("Could not find IMJS_OIDC_BROWSER_TEST_SCOPES");
+
+    oidcConfig = {
+      clientId: process.env.IMJS_OIDC_BROWSER_TEST_CLIENT_ID ?? "",
+      redirectUri: process.env.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI ?? "",
+      scope: process.env.IMJS_OIDC_BROWSER_TEST_SCOPES ?? "",
+    };
 
     // AzureAd oidc config
     if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY === undefined)
@@ -54,17 +61,31 @@ describe("Sign in (#integration)", () => {
     if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES === undefined)
       throw new Error("Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES");
 
-    oidcConfig = {
-      clientId: process.env.IMJS_OIDC_BROWSER_TEST_CLIENT_ID ?? "",
-      redirectUri: process.env.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI ?? "",
-      scope: process.env.IMJS_OIDC_BROWSER_TEST_SCOPES ?? "",
-    };
     azureAdOidcConfig = {
       authority: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY,
       clientId: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID ?? "",
       redirectUri: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI ?? "",
       scope: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES ?? "",
     };
+
+    // Authing oidc config
+    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY === undefined)
+      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY");
+    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID === undefined)
+      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID");
+    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI === undefined)
+      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI");
+    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES === undefined)
+      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES");
+
+    authingOidcConfig = {
+      authority: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY,
+      clientId: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID ?? "",
+      redirectUri: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI ?? "",
+      scope: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES ?? "",
+    };
+    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_SECRET)
+      authingOidcConfig.clientSecret = process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_SECRET;
   });
 
   it("success with valid user", async () => {
@@ -121,6 +142,20 @@ describe("Sign in (#integration)", () => {
       password: process.env.IMJS_TEST_AZUREAD_USER_PASSWORD,
     };
     const token = await getTestAccessToken(azureAdOidcConfig, validUser);
+    assert.exists(token);
+  });
+
+  it("success Authing with valid user", async () => {
+    if (process.env.IMJS_TEST_AUTHING_USER_NAME === undefined)
+      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_NAME");
+    if (process.env.IMJS_TEST_AUTHING_USER_PASSWORD === undefined)
+      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_PASSWORD");
+
+    const validUser = {
+      email: process.env.IMJS_TEST_AUTHING_USER_NAME,
+      password: process.env.IMJS_TEST_AUTHING_USER_PASSWORD,
+    };
+    const token = await getTestAccessToken(authingOidcConfig, validUser);
     assert.exists(token);
   });
 });
