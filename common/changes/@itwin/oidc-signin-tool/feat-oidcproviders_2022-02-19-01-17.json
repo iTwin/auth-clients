@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "comment": "Added support for AzureAD and Authing to generate tokens using the oidc-signin-tool",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool"
+}
