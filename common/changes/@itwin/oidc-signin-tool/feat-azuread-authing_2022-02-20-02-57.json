@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "comment": "Add support for AzureAD and Authing OAuth providers.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool"
+}
