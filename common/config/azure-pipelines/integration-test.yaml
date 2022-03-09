@@ -1,0 +1,46 @@
+
+trigger: none
+
+pr: none
+
+variables:
+  - group: iTwin.js non-secret config variables
+  - group: iTwin.js Integration Test Users
+
+jobs:
+- job: BuildPackages
+  strategy:
+    matrix:
+      linux:
+        imageName: 'ubuntu-latest'
+      mac:
+        imageName: 'macos-latest'
+      windows:
+        imageName: 'windows-latest'
+  pool:
+    vmImage: $(imageName)
+  steps:
+  - checkout: self
+    persistCredentials: true
+
+  - script: |
+      git config user.email imodeljs-admin@users.noreply.github.com
+      git config user.name imodeljs-admin
+    displayName: git config
+
+  - script: node common/scripts/install-run-rush.js install
+    displayName: Rush Install
+
+  - script: node common/scripts/install-run-rush.js build -v --to oidc-signin-tool
+    displayName: Rush Build
+
+  - script: node common/scripts/install-run-rush.js test:integration
+    displayName: Rush test:integration
+
+  - task: PublishTestResults@2
+    displayName: "Publish OIDC Signin Tool Test Results"
+    inputs:
+      testResultsFiles: "packages/oidc-signin-tool/lib/test/junit_results.xml"
+      testRunTitle: "Tools -  OIDC Signin Tool - $(Agent.OS) - ${{ parameters.NodeVersion }}"
+      searchFolder: ${{ parameters.workingDir }}
+    condition: succeededOrFailed()
