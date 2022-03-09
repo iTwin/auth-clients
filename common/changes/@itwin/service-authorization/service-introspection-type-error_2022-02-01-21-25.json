@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@itwin/service-authorization",
-      "comment": "Cast to resolve type erro between union type",
+      "comment": "Cast to resolve type error between union type",
       "type": "patch"
     }
   ],
