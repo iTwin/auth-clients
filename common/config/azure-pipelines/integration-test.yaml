@@ -41,6 +41,5 @@ jobs:
     displayName: "Publish OIDC Signin Tool Test Results"
     inputs:
       testResultsFiles: "packages/oidc-signin-tool/lib/test/junit_results.xml"
-      testRunTitle: "Tools -  OIDC Signin Tool - $(Agent.OS) - ${{ parameters.NodeVersion }}"
-      searchFolder: ${{ parameters.workingDir }}
+      testRunTitle: "Tools -  OIDC Signin Tool - $(Agent.OS)"
     condition: succeededOrFailed()
