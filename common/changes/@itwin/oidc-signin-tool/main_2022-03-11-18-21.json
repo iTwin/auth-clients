@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "comment": "Update callback handling to not require an id_token present. The 'openid' scope is now no longer required.",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool"
+}
