@@ -2,6 +2,21 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "version": "0.6.2",
+      "tag": "@itwin/service-authorization_v0.6.2",
+      "date": "Mon, 21 Mar 2022 12:23:06 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Cast to resolve type error between union type"
+          },
+          {
+            "comment": "Update token handling to provide better error message when an empty string or invalid token format is provided."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.6.1",
       "tag": "@itwin/service-authorization_v0.6.1",
       "date": "Tue, 25 Jan 2022 15:34:41 GMT",
