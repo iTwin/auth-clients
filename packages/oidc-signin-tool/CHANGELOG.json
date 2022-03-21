@@ -2,6 +2,23 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "version": "3.3.0",
+      "tag": "@itwin/oidc-signin-tool_v3.3.0",
+      "date": "Mon, 21 Mar 2022 12:23:06 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Add support for AzureAD and Authing OAuth providers."
+          }
+        ],
+        "patch": [
+          {
+            "comment": "Update callback handling to not require an id_token present. The 'openid' scope is now no longer required."
+          }
+        ]
+      }
+    },
+    {
       "version": "3.2.2",
       "tag": "@itwin/oidc-signin-tool_v3.2.2",
       "date": "Thu, 27 Jan 2022 14:10:00 GMT",

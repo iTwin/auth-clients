@@ -1,6 +1,17 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Thu, 27 Jan 2022 14:10:00 GMT and should not be manually modified.
+This log was last generated on Mon, 21 Mar 2022 12:23:06 GMT and should not be manually modified.
+
+## 3.3.0
+Mon, 21 Mar 2022 12:23:06 GMT
+
+### Minor changes
+
+- Add support for AzureAD and Authing OAuth providers.
+
+### Patches
+
+- Update callback handling to not require an id_token present. The 'openid' scope is now no longer required.
 
 ## 3.2.2
 Thu, 27 Jan 2022 14:10:00 GMT
