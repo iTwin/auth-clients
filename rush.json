@@ -38,6 +38,12 @@
       "versionPolicyName": "individual-versioning"
     },
     {
+      "packageName": "@itwin/node-cli-authorization",
+      "projectFolder": "packages/node-cli",
+      "shouldPublish": true,
+      "versionPolicyName": "individual-versioning"
+    },
+    {
       "packageName": "@itwin/oidc-signin-tool",
       "projectFolder": "packages/oidc-signin-tool",
       "shouldPublish": true,
