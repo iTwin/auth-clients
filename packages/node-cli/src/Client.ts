@@ -63,11 +63,7 @@ export interface NodeCliAuthorizationConfiguration {
 export class NodeCliAuthorizationClient implements AuthorizationClient {
   private _accessToken: AccessToken = "";
 
-  private _issuerUrl = "https://ims.bentley.com";
-  private _redirectUri = "http://localhost:3000/signin-callback";
-  private _clientId: string;
-  private _scopes: string;
-  private _expiryBuffer = 60 * 10; // refresh token 10 minutes before real expiration time
+  private _bakedConfig: BakedAuthorizationConfiguration;
 
   private _tokenStore: TokenStore;
   private _configuration?: AuthorizationServiceConfiguration;
@@ -77,30 +73,10 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   private readonly _onAccessTokenSet = new BeEvent();
 
   public constructor(config: NodeCliAuthorizationConfiguration) {
-    if (!config.clientId || !config.scope)
-      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration with a clientId and scope when initializing NodeCliAuthorizationClient");
+    this._bakedConfig = new BakedAuthorizationConfiguration(config);
 
-    this._clientId = config.clientId;
-    this._tokenStore = new TokenStore(`Bentley.iTwinJs.OidcTokenStore.${this._clientId}`);
-
-    // If offline_access is not included, add it so that we can get a refresh token.
-    if (!config.scope.includes("offline_access"))
-      this._scopes = `${config.scope} offline_access`;
-    else
-      this._scopes = config.scope;
-
-    let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(config.issuerUrl ?? this._issuerUrl);
-    if (prefix && !config.issuerUrl) {
-      prefix = prefix === "dev-" ? "qa-" : prefix;
-      authority.hostname = prefix + authority.hostname;
-    }
-    this._issuerUrl = authority.href.replace(/\/$/, "");
-
-    if (config.redirectUri)
-      this._redirectUri = config.redirectUri;
-    if (config.expiryBuffer)
-      this._expiryBuffer = config.expiryBuffer;
+    const appStorageKey = `Bentley.iTwinJs.OidcTokenStore.${this._bakedConfig.clientId}`;
+    this._tokenStore = new TokenStore(appStorageKey);
   }
 
   /**
@@ -116,7 +92,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
     // If we already acquired an AccessToken, make sure it's current
     if (this._tokenResponse?.refreshToken !== undefined && this._expiresAt !== undefined) {
-      const hasExpired = (this._expiresAt.getTime() - Date.now()) <= this._expiryBuffer * 1000;
+      const hasExpired = (this._expiresAt.getTime() - Date.now()) <= this._bakedConfig.expiryBuffer * 1000;
       if (hasExpired) {
         const refreshTokenResponse = await this.makeRefreshAccessTokenRequest(this._tokenResponse.refreshToken);
         await this.setTokenResponse(refreshTokenResponse);
@@ -151,7 +127,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   private async initialize() {
     // Would ideally set up in constructor, but async...
     if (!this._configuration)
-      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._issuerUrl, new NodeRequestor());
+      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._bakedConfig.issuerUrl, new NodeRequestor());
   }
 
   private async loadAndRefreshAccessToken() {
@@ -184,9 +160,9 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
     const authReqJson: AuthorizationRequestJson = {
       /* eslint-disable @typescript-eslint/naming-convention */
-      client_id: this._clientId,
-      redirect_uri: this._redirectUri,
-      scope: this._scopes,
+      client_id: this._bakedConfig.clientId,
+      redirect_uri: this._bakedConfig.redirectUri,
+      scope: this._bakedConfig.scopes,
       response_type: AuthorizationRequest.RESPONSE_TYPE_CODE,
       extras: { prompt: "consent", access_type: "offline" },
       /* eslint-enable @typescript-eslint/naming-convention */
@@ -195,7 +171,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     await authorizationRequest.setupCodeVerifier();
 
     const authorizationEvents = new NodeCliAuthorizationEvents();
-    this.startLoopbackWebServer(this._redirectUri, authorizationRequest.state, authorizationEvents);
+    this.startLoopbackWebServer(this._bakedConfig.redirectUri, authorizationRequest.state, authorizationEvents);
 
     const authorizationHandler = new NodeCliAuthorizationRequestHandler(authorizationEvents);
     const notifier = new AuthorizationNotifier();
@@ -239,8 +215,8 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
         /* eslint-disable @typescript-eslint/naming-convention */
         grant_type: GRANT_TYPE_AUTHORIZATION_CODE,
         code: authResponse.code,
-        redirect_uri: this._redirectUri,
-        client_id: this._clientId,
+        redirect_uri: this._bakedConfig.redirectUri,
+        client_id: this._bakedConfig.clientId,
         extras: { code_verifier: authRequest.internal.code_verifier },
         /* eslint-enable @typescript-eslint/naming-convention */
       }));
@@ -260,8 +236,8 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     const tokenRequestJson: TokenRequestJson = {
       grant_type: GRANT_TYPE_REFRESH_TOKEN,
       refresh_token: refreshToken,
-      redirect_uri: this._redirectUri,
-      client_id: this._clientId,
+      redirect_uri: this._bakedConfig.redirectUri,
+      client_id: this._bakedConfig.clientId,
     };
     /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -311,6 +287,44 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
     const httpServer = Http.createServer(onBrowserRequest);
     httpServer.listen(new URL(redirectUrl).port);
+  }
+}
+
+/**
+ * @internal
+ */
+export class BakedAuthorizationConfiguration {
+  public readonly clientId: string;
+  public readonly scopes: string;
+  public readonly issuerUrl: string;
+  public readonly redirectUri: string = "http://localhost:3000/signin-callback";
+  public readonly expiryBuffer: number = 60 * 10; // refresh token 10 minutes before real expiration time;
+
+  public constructor(config: NodeCliAuthorizationConfiguration) {
+    if (!config.clientId || !config.scope)
+      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration with a clientId and scope when initializing NodeCliAuthorizationClient");
+
+    this.clientId = config.clientId;
+
+    // If offline_access is not included, add it so that we can get a refresh token.
+    if (!config.scope.includes("offline_access"))
+      this.scopes = `${config.scope} offline_access`;
+    else
+      this.scopes = config.scope;
+
+    const defaultIssuerUrl = "https://ims.bentley.com";
+    let prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(config.issuerUrl ?? defaultIssuerUrl);
+    if (prefix && !config.issuerUrl) {
+      prefix = prefix === "dev-" ? "qa-" : prefix;
+      authority.hostname = prefix + authority.hostname;
+    }
+    this.issuerUrl = authority.href.replace(/\/$/, "");
+
+    if (config.redirectUri)
+      this.redirectUri = config.redirectUri;
+    if (config.expiryBuffer)
+      this.expiryBuffer = config.expiryBuffer;
   }
 }
 
