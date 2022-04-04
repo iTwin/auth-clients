@@ -56,6 +56,8 @@ export interface NodeCliAuthorizationConfiguration {
 
 /**
  * Utility to generate OIDC/OAuth tokens for command-line applications
+ * This client is intended for developer tooling and does not aspire to provide the full set of functionality
+ * needed for a user-facing app.
  * @public
  */
 export class NodeCliAuthorizationClient implements AuthorizationClient {
@@ -101,6 +103,11 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
       this._expiryBuffer = config.expiryBuffer;
   }
 
+  /**
+   * Returns a promise that resolves to the AccessToken of the currently authorized user.
+   * The AccessToken is refreshed as necessary.
+   * If signIn hasn't been called, the AccessToken will remain empty.
+   */
   public async getAccessToken(): Promise<AccessToken> {
     if (!this._configuration) {
       Logger.logTrace(NODE_CLI_AUTH_LOGGER_CATEGORY, "getAccessToken called but not initialized. Call signIn first");
@@ -119,6 +126,12 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     return this._accessToken;
   }
 
+  /**
+   * Attempts to authorize the current user, and resolves when the authorization process is complete.
+   * Once the returned promises resolves, getAccessToken will return a valid AccessToken.
+   * @note On Windows and MacOS, this will cache the refreshToken in secure storage to reduce the frequency of interactive sign-in.
+   * @note This function succeeds only if the user authorizes your application. If the user never clicks Accept, no feedback is provided.
+   */
   public async signIn() {
     await this.initialize();
 
@@ -126,7 +139,6 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     if (this._accessToken !== "") // Will be defined if AccessToken was successfully loaded from store
       return;
 
-    // Known issue - this won't resolve if the user doesn't click Accept.
     return new Promise<void>((resolve, reject) => {
       this._onAccessTokenSet.addOnce(() => resolve());
       this.beginSignIn().catch((reason) => {
