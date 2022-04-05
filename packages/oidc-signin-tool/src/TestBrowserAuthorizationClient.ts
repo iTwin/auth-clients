@@ -422,7 +422,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       throw new Error("Password field does not exist");
 
     // Type password and wait for navigation
-    await page.waitFor(2000); // Seems like we have to wait before typing the password otherwise it does not get registered
+    await page.waitForTimeout(2000); // Seems like we have to wait before typing the password otherwise it does not get registered
     await page.type("#i0118", this._user.password);
     await Promise.all([
       page.$eval("#idSIButton9", (button: any) => button.click()),
