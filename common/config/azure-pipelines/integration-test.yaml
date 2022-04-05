@@ -23,6 +23,12 @@ jobs:
   - checkout: self
     persistCredentials: true
 
+  - bash: |
+     echo "test"
+     export
+    displayName: 'Add config to environment'
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+
   - script: |
       git config user.email imodeljs-admin@users.noreply.github.com
       git config user.name imodeljs-admin
