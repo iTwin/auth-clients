@@ -17,3 +17,5 @@ There are 3 clients in the repository, each of them corresponding to one of the 
 - [Service](./packages/service/README.md)
 
 In addition, the [OIDC Signin Tool](./packages/oidc-signin-tool/README.md) is a test helper package to automate the sign-in workflow to aid writing integration tests.
+
+There is also an [authorization client for command-line developer tools](./packages/node-cli/README.md).
