@@ -135,7 +135,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     const authorizationUrl = this._client.authorizationUrl(authParams);
 
     // Launch puppeteer with no sandbox only on linux
-    let launchOptions: puppeteer.LaunchOptions = { dumpio: true }; // , headless: false, slowMo: 500 };
+    let launchOptions: puppeteer.BrowserLaunchArgumentOptions & puppeteer.LaunchOptions = { dumpio: true }; // , headless: false, slowMo: 500 };
     if (os.platform() === "linux") {
       launchOptions = {
         args: ["--no-sandbox"], // , "--disable-setuid-sandbox"],
@@ -143,7 +143,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
 
     const proxyUrl = process.env.HTTPS_PROXY;
-    let proxyAuthOptions: puppeteer.AuthOptions | undefined;
+    let proxyAuthOptions: puppeteer.Credentials | undefined;
     if (proxyUrl) {
       const proxyUrlObj = new URL(proxyUrl);
       proxyAuthOptions = { username: proxyUrlObj.username, password: proxyUrlObj.password };
@@ -162,7 +162,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     await page.setRequestInterception(true);
     const onRedirectRequest = this.interceptRedirectUri(page);
-    const navigationOptions: puppeteer.DirectNavigationOptions = {
+    const navigationOptions: puppeteer.WaitForOptions = {
       waitUntil: "networkidle2",
     };
 
@@ -297,7 +297,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async handlePingLoginPage(page: puppeteer.Page): Promise<void> {
-    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("ims") )
+    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("ims"))
       return;
 
     await page.waitForSelector("#identifierInput");
@@ -399,7 +399,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
   // AzureAD specific login.
   private async handleAzureADSignin(page: puppeteer.Page): Promise<void> {
-    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("microsoftonline") )
+    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("microsoftonline"))
       return;
 
     // Verify username selector exists
@@ -444,7 +444,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
   // Authing specific login.
   private async handleAuthingSignin(page: puppeteer.Page): Promise<void> {
-    if (undefined === this._issuer.metadata.authorization_endpoint || -1 === page.url().indexOf("authing") )
+    if (undefined === this._issuer.metadata.authorization_endpoint || -1 === page.url().indexOf("authing"))
       return;
 
     // Verify username selector exists
