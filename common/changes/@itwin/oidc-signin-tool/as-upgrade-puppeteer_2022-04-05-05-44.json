@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@itwin/oidc-signin-tool",
-      "comment": "Add support for AzureAD and Authing OAuth providers.",
+      "comment": "Upgrade puppeteer to 13.5.2",
       "type": "minor"
     }
   ],
