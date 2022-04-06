@@ -38,7 +38,7 @@ export interface NodeCliAuthorizationConfiguration {
   readonly issuerUrl?: string;
   /**
    * Upon signing in, the client application receives a response from the Bentley IMS OIDC/OAuth2 provider at this URI
-   * For mobile/desktop applications, must start with `http://localhost:${redirectPort}` or `https://localhost:${redirectPort}`
+   * For this client, must start with `http://localhost:${redirectPort}` or `https://localhost:${redirectPort}`
    */
   readonly redirectUri?: string;
   /** Client application's identifier as registered with the OIDC/OAuth2 provider. */
