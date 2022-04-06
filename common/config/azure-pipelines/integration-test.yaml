@@ -1,7 +1,12 @@
 
-trigger: none
+trigger: main
 
-pr: none
+pr:
+  autoCancel: true
+  drafts: false
+  branches:
+    include:
+      - main
 
 variables:
   - group: iTwin.js non-secret config variables
@@ -31,12 +36,6 @@ jobs:
      echo "##vso[task.setvariable variable=imjs_test_regular_user_password;]$test_reg_password"
      echo "##vso[task.setvariable variable=imjs_test_authing_user_password;]$test_authing_user_password"
      echo "##vso[task.setvariable variable=imjs_test_azuread_user_password;]$test_azuread_user_password"
-     echo $test_super_manager_password
-     echo $test_super_user_password
-     echo $test_manager_user_password
-     echo $test_reg_password
-     echo $test_authing_user_password
-     echo $test_azuread_user_password
     displayName: 'Add config to environment'
     env:
       test_super_manager_password: $(imjs_super_manager_user_password)
@@ -54,12 +53,6 @@ jobs:
       Write-Host "##vso[task.setvariable variable=imjs_test_regular_user_password;]$Env:test_reg_password"
       Write-Host "##vso[task.setvariable variable=imjs_test_authing_user_password;]$Env:test_authing_user_password"
       Write-Host "##vso[task.setvariable variable=imjs_test_azuread_user_password;]$Env:test_azuread_user_password"
-      Write-Host $Env:test_super_manager_password
-      Write-Host $Env:test_super_user_password
-      Write-Host $Env:test_manager_user_password
-      Write-Host $Env:test_reg_password
-      Write-Host $Env:test_authing_user_password
-      Write-Host $Env:test_azuread_user_password
     displayName: 'Add config to environment'
     env:
       test_super_manager_password: $(imjs_super_manager_user_password)
