@@ -11,6 +11,16 @@ import type { NodeCliAuthorizationConfiguration } from "../Client";
 
 chai.use(chaiAsPromised);
 
+describe("NodeCliAuthorizationConfiguration defaults", () => {
+  it("should throw if clientId is an empty string", () => {
+    chai.expect(() => new BakedAuthorizationConfiguration({ clientId: "", scope: "testScope" })).to.throw();
+  });
+
+  it("should throw if scope is an empty string", () => {
+    chai.expect(() => new BakedAuthorizationConfiguration({ clientId: "testClientId", scope: "" })).to.throw();
+  });
+});
+
 describe("NodeCliAuthorizationConfiguration Authority URL Logic", () => {
   const config: NodeCliAuthorizationConfiguration = {
     clientId: "testClientId",

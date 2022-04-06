@@ -38,7 +38,8 @@ export interface NodeCliAuthorizationConfiguration {
   readonly issuerUrl?: string;
   /**
    * Upon signing in, the client application receives a response from the Bentley IMS OIDC/OAuth2 provider at this URI
-   * For this client, must start with `http://localhost:${redirectPort}` or `https://localhost:${redirectPort}`
+   * For this client, must start with `http://localhost:${redirectPort}`
+   * Defaults to "http://localhost:3000/signin-callback" if undefined.
    */
   readonly redirectUri?: string;
   /** Client application's identifier as registered with the OIDC/OAuth2 provider. */
@@ -86,7 +87,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
    */
   public async getAccessToken(): Promise<AccessToken> {
     if (!this._configuration) {
-      Logger.logTrace(NODE_CLI_AUTH_LOGGER_CATEGORY, "getAccessToken called but not initialized. Call signIn first");
+      Logger.logError(NODE_CLI_AUTH_LOGGER_CATEGORY, "getAccessToken called but not initialized. Call signIn first");
       return "";
     }
 

@@ -12,9 +12,11 @@ The OAuth2.0 workflow used in this package is Authorization Code + PKCE, for mor
 
 ## How to setup
 
-See the [AccessToken](https://www.itwinjs.org/learning/common/accesstoken/) article in the iTwin.js documentation for background on authorization in iTwin.js.
+Choose "Desktop/Mobile" as your application type when [registering for use with this client](https://developer.bentley.com/register/).
 
-Note that your registered application's redirectUri must start with `http://localhost:${redirectPort}` or `https://localhost:${redirectPort}`.
+Note that your registered application's redirectUri must start with `http://localhost:${redirectPort}`.
+
+See the [AccessToken](https://www.itwinjs.org/learning/common/accesstoken/) article in the iTwin.js documentation for background on authorization in iTwin.js.
 
 ```ts
 const authClient = new NodeCliAuthorizationClient(yourConfig);
