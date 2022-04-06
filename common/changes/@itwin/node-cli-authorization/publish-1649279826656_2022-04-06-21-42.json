@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/node-cli-authorization",
-      "comment": "Initial version",
-      "type": "minor"
+      "comment": "",
+      "type": "none"
     }
   ],
   "packageName": "@itwin/node-cli-authorization"
