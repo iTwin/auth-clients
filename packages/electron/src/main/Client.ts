@@ -11,12 +11,14 @@
 // cSpell:ignore openid appauth signin Pkce Signout
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import type { AccessToken} from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type {
-  AuthorizationError, AuthorizationRequestJson, AuthorizationResponse, RevokeTokenRequestJson, StringMap, TokenRequestHandler, TokenRequestJson, TokenResponse} from "@openid/appauth";
-import { AuthorizationNotifier, AuthorizationRequest, AuthorizationServiceConfiguration,
+  AuthorizationError, AuthorizationRequestJson, AuthorizationResponse, RevokeTokenRequestJson, StringMap, TokenRequestHandler, TokenRequestJson, TokenResponse
+} from "@openid/appauth";
+import {
+  AuthorizationNotifier, AuthorizationRequest, AuthorizationServiceConfiguration,
   BaseTokenRequestHandler, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN, RevokeTokenRequest,
   TokenRequest,
 } from "@openid/appauth";
@@ -105,7 +107,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (config.redirectUri) this._redirectUri = config.redirectUri;
     if (config.expiryBuffer) this._expiryBuffer = config.expiryBuffer;
 
-    this._tokenStore = new ElectronTokenStore(config.clientId);
+    const appStorageKey = `iTwinJs:${this._clientId}:${this._issuerUrl}`;
+    this._tokenStore = new ElectronTokenStore(appStorageKey);
   }
 
   private setupIPCHandlers(): void {
