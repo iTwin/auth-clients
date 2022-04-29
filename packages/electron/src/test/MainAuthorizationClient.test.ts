@@ -3,16 +3,16 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
+import type { AuthorizationListener, AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
+import { AuthorizationNotifier, AuthorizationRequest, AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import type { ElectronMainAuthorizationConfiguration } from "../main/Client";
 import { ElectronMainAuthorization } from "../main/Client";
-import { ElectronTokenStore } from "../main/TokenStore";
-import type { AuthorizationListener, AuthorizationServiceConfiguration, TokenRequest} from "@openid/appauth";
-import { AuthorizationNotifier, AuthorizationRequest,  AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
-import { LoopbackWebServer } from "../main/LoopbackWebServer";
 import { ElectronMainAuthorizationRequestHandler } from "../main/ElectronMainAuthorizationRequestHandler";
+import { LoopbackWebServer } from "../main/LoopbackWebServer";
+import { ElectronTokenStore } from "../main/TokenStore";
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert = chai.assert;
 const expect = chai.expect;
@@ -48,7 +48,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
   });
 
-  it("Should throw if not signed in", async () =>{
+  it("Should throw if not signed in", async () => {
     const client = new ElectronMainAuthorization({
       clientId: "testClientId",
       scope: "testScope",
@@ -57,15 +57,15 @@ describe("ElectronMainAuthorization Token Logic", () => {
     chai.expect(client.getAccessToken).to.be.throw;
   });
 
-  it("Should load token response from token store", async () =>{
+  it("Should load token response from token store", async () => {
     const config: ElectronMainAuthorizationConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
     const mockTokenResponse: TokenResponse = new TokenResponse(
       {
-        access_token:"testAccessToken",
-        refresh_token:"testRefreshToken",
+        access_token: "testAccessToken",
+        refresh_token: "testRefreshToken",
         issued_at: (new Date()).getTime(),
         expires_in: "60000",
       });
@@ -91,15 +91,15 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.assert.notCalled(spy);
   });
 
-  it("Should sign in", async () =>{
+  it("Should sign in", async () => {
     const config: ElectronMainAuthorizationConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
     const mockTokenResponse: TokenResponse = new TokenResponse(
       {
-        access_token:"testAccessTokenSignInTest",
-        refresh_token:"testRefreshToken",
+        access_token: "testAccessTokenSignInTest",
+        refresh_token: "testRefreshToken",
         issued_at: (new Date()).getTime() / 1000,
         expires_in: "60000",
       });
@@ -123,11 +123,11 @@ describe("ElectronMainAuthorization Token Logic", () => {
         client_id: "testClient",
         redirect_uri: "testRedirect",
         scope: "testScope",
-        internal: {code_verifier:"testCodeVerifier"},
+        internal: { code_verifier: "testCodeVerifier" },
         state: "testState",
       });
 
-      const authResponse = new AuthorizationResponse({code:"testCode", state:"testState"});
+      const authResponse = new AuthorizationResponse({ code: "testCode", state: "testState" });
       listener(authRequest, authResponse, null);
     });
 
@@ -136,26 +136,26 @@ describe("ElectronMainAuthorization Token Logic", () => {
     await client.signIn();
 
     const token = await client.getAccessToken();
-    assert.equal(token,`bearer ${mockTokenResponse.accessToken}`);
+    assert.equal(token, `bearer ${mockTokenResponse.accessToken}`);
     sinon.assert.called(mockLoopbackStart);
   });
 
-  it("Should refresh old token", async () =>{
+  it("Should refresh old token", async () => {
     const config: ElectronMainAuthorizationConfiguration = {
       clientId: "testClientId",
       scope: "testScope",
     };
     const mockExpiredTokenResponse: TokenResponse = new TokenResponse(
       {
-        access_token:"testExpiredAccessToken",
-        refresh_token:"testRefreshToken",
+        access_token: "testExpiredAccessToken",
+        refresh_token: "testRefreshToken",
         issued_at: (new Date("1-1-2000")).getTime() / 1000,
         expires_in: "60000",
       });
     const mockTokenResponse: TokenResponse = new TokenResponse(
       {
-        access_token:"testAccessToken",
-        refresh_token:"testRefreshToken",
+        access_token: "testAccessToken",
+        refresh_token: "testRefreshToken",
         issued_at: new Date().getTime() / 1000,
         expires_in: "60000",
       });
@@ -188,7 +188,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
 });
 
 describe("ElectronMainAuthorization Authority URL Logic", () => {
-  beforeEach(()=>{
+  beforeEach(() => {
     sinon.restore();
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
@@ -231,7 +231,7 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
 });
 
 describe("ElectronMainAuthorization Config Scope Logic", () => {
-  beforeEach(()=>{
+  beforeEach(() => {
     sinon.restore();
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
