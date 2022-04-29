@@ -19,6 +19,23 @@ const expect = chai.expect;
 
 chai.use(chaiAsPromised);
 
+/**
+ * Produces a token store key using the same method as the Electron client
+ * @param clientId
+ * @param issuerUrl
+ * @returns
+ */
+function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
+  let prefix = process.env.IMJS_URL_PREFIX;
+  const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
+  if (prefix && !issuerUrl) {
+    prefix = prefix === "dev-" ? "qa-" : prefix;
+    authority.hostname = prefix + authority.hostname;
+  }
+  issuerUrl = authority.href.replace(/\/$/, "");
+  return `iTwinJs:${clientId}:${issuerUrl}`;
+}
+
 describe("ElectronMainAuthorization Token Logic", () => {
   beforeEach(function () {
     if (process.platform === "linux")
@@ -54,7 +71,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
       });
 
     // Load tokenResponse into token store - use clientId
-    const tokenStore = new ElectronTokenStore(config.clientId);
+    const tokenStore = new ElectronTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.save(mockTokenResponse);
 
     // Mock auth request
@@ -88,7 +105,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
       });
 
     // Clear token store
-    const tokenStore = new ElectronTokenStore(config.clientId);
+    const tokenStore = new ElectronTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.delete();
 
     // Mock auth request
@@ -144,7 +161,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
       });
 
     // Load tokenResponse into token store - use clientId
-    const tokenStore = new ElectronTokenStore(config.clientId);
+    const tokenStore = new ElectronTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.save(mockExpiredTokenResponse);
 
     // Mock auth request
