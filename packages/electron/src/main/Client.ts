@@ -15,7 +15,7 @@ import type { AccessToken } from "@itwin/core-bentley";
 import { assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type {
-  AuthorizationError, AuthorizationRequestJson, AuthorizationResponse, RevokeTokenRequestJson, StringMap, TokenRequestHandler, TokenRequestJson, TokenResponse
+  AuthorizationError, AuthorizationRequestJson, AuthorizationResponse, RevokeTokenRequestJson, StringMap, TokenRequestHandler, TokenRequestJson, TokenResponse,
 } from "@openid/appauth";
 import {
   AuthorizationNotifier, AuthorizationRequest, AuthorizationServiceConfiguration,
