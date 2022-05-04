@@ -167,9 +167,9 @@ describe("Authing and AzureAD (#integration)", () => {
 
   it("success Authing with valid user", async () => {
     if (process.env.IMJS_TEST_AUTHING_USER_NAME === undefined)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_NAME");
+      throw new Error("Could not find IMJS_TEST_AUTHING_USER_NAME");
     if (process.env.IMJS_TEST_AUTHING_USER_PASSWORD === undefined)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_PASSWORD");
+      throw new Error("Could not find IMJS_TEST_AUTHING_USER_PASSWORD");
 
     const validUser = {
       email: process.env.IMJS_TEST_AUTHING_USER_NAME,

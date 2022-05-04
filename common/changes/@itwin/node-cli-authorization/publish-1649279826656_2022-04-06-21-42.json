@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/node-cli-authorization",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@itwin/node-cli-authorization"
+}

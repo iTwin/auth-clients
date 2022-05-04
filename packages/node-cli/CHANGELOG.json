@@ -1,0 +1,17 @@
+{
+  "name": "@itwin/node-cli-authorization",
+  "entries": [
+    {
+      "version": "0.9.0",
+      "tag": "@itwin/node-cli-authorization_v0.9.0",
+      "date": "Wed, 06 Apr 2022 21:17:06 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Initial version"
+          }
+        ]
+      }
+    }
+  ]
+}

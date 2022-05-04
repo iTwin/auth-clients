@@ -1,6 +1,13 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Mon, 21 Mar 2022 12:23:06 GMT and should not be manually modified.
+This log was last generated on Wed, 06 Apr 2022 21:17:06 GMT and should not be manually modified.
+
+## 3.4.0
+Wed, 06 Apr 2022 21:17:06 GMT
+
+### Minor changes
+
+- Upgrade puppeteer to 13.5.2
 
 ## 3.3.0
 Mon, 21 Mar 2022 12:23:06 GMT
