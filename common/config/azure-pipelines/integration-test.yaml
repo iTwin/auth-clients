@@ -43,8 +43,8 @@ jobs:
       test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
       test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
       test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
-      test_authing_user_password: $(IMJS_TEST_AUTHING_USER_PASSWORD)
-      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+      test_authing_user_password: $(IMJS_AUTHING_USER_PASSWORD)
+      test_azuread_user_password: $(IMJS_AZUREAD_USER_PASSWORD)
     condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
 
   - powershell: |
@@ -60,8 +60,8 @@ jobs:
       test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
       test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
       test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
-      test_authing_user_password: $(IMJS_TEST_AUTHING_USER_PASSWORD)
-      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+      test_authing_user_password: $(IMJS_AUTHING_USER_PASSWORD)
+      test_azuread_user_password: $(IMJS_AZUREAD_USER_PASSWORD)
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - script: |
