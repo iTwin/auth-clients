@@ -30,12 +30,13 @@ jobs:
     persistCredentials: true
 
   - bash: |
-     echo "##vso[task.setvariable variable=IMJS_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
-     echo "##vso[task.setvariable variable=IMJS_SUPER_USER_PASSWORD;]$test_super_user_password"
-     echo "##vso[task.setvariable variable=IMJS_MANAGER_USER_PASSWORD;]$test_manager_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;]$test_authing_user_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$test_azuread_user_password"
+     export
     displayName: 'Add config to environment'
     env:
       test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
@@ -47,9 +48,9 @@ jobs:
     condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
 
   - powershell: |
-      Write-Host "##vso[task.setvariable variable=IMJS_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
-      Write-Host "##vso[task.setvariable variable=IMJS_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
-      Write-Host "##vso[task.setvariable variable=IMJS_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;]$Env:test_authing_user_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
