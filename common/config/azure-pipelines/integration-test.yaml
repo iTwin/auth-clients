@@ -47,6 +47,9 @@ jobs:
       test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
     condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
 
+  - bash: |
+      export
+
   - powershell: |
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
