@@ -6,7 +6,7 @@
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 
-import { BakedAuthorizationConfiguration } from "../Client";
+import { BakedAuthorizationConfiguration, makeAppStorageKey } from "../Client";
 import type { NodeCliAuthorizationConfiguration } from "../Client";
 
 chai.use(chaiAsPromised);
@@ -56,6 +56,36 @@ describe("NodeCliAuthorizationConfiguration Authority URL Logic", () => {
     process.env.IMJS_URL_PREFIX = "dev-";
     const bakedConfig = new BakedAuthorizationConfiguration(config);
     chai.expect(bakedConfig.issuerUrl).equals("https://qa-ims.bentley.com");
+  });
+});
+
+describe("NodeCliAuthorizationConfiguration TokenStore Key Logic", () => {
+  const baselineKeyArgs = {
+    clientId: "testClientId",
+    issuerUrl: "https://test.authority.com",
+    scopes: "testScope:read testScope:modify",
+  };
+  const baselineKey = makeAppStorageKey(baselineKeyArgs);
+
+  it("should create different keys based on clientId", () => {
+    const testKeyArgs = { ...baselineKeyArgs };
+    testKeyArgs.clientId = "anotherClientId";
+    const testKey = makeAppStorageKey(testKeyArgs);
+    chai.expect(testKey).is.not.equal(baselineKey);
+  });
+
+  it("should create different keys based on issuerUrl", () => {
+    const testKeyArgs = { ...baselineKeyArgs };
+    testKeyArgs.issuerUrl = "https://test.new-authority.com";
+    const testKey = makeAppStorageKey(testKeyArgs);
+    chai.expect(testKey).is.not.equal(baselineKey);
+  });
+
+  it("should create different keys based on scopes", () => {
+    const testKeyArgs = { ...baselineKeyArgs };
+    testKeyArgs.scopes = "anotherScope:read";
+    const testKey = makeAppStorageKey(testKeyArgs);
+    chai.expect(testKey).is.not.equal(baselineKey);
   });
 });
 

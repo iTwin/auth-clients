@@ -5,6 +5,7 @@
 // Code based on the blog article @ https://authguidance.com
 
 import * as Http from "http";
+import * as crypto from "crypto";
 import * as open from "open";
 import { assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import {
@@ -76,7 +77,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   public constructor(config: NodeCliAuthorizationConfiguration) {
     this._bakedConfig = new BakedAuthorizationConfiguration(config);
 
-    const appStorageKey = `iTwinJs:${this._bakedConfig.clientId}:${this._bakedConfig.issuerUrl}`;
+    const appStorageKey = makeAppStorageKey({ ...this._bakedConfig });
     this._tokenStore = new TokenStore(appStorageKey);
   }
 
@@ -289,6 +290,16 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     const httpServer = Http.createServer(onBrowserRequest);
     httpServer.listen(new URL(redirectUrl).port);
   }
+}
+
+/**
+ * @internal
+ */
+export function makeAppStorageKey(namedArgs: {clientId: string, issuerUrl: string, scopes: string}): string {
+  // A stored credential is only valid for a combination of the clientId, the issuing authority and the requested scopes.
+  // Incorporate all these parameters into the secure storage key in order to avoid reusing mismatched credentials.
+  const scopesHash = crypto.createHash("md5").update(namedArgs.scopes).digest("hex");
+  return `iTwinJs:${namedArgs.clientId}:${namedArgs.issuerUrl}:${scopesHash}`;
 }
 
 /**
