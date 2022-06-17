@@ -5,7 +5,6 @@
 // Code based on the blog article @ https://authguidance.com
 
 import * as Http from "http";
-import * as crypto from "crypto";
 import * as open from "open";
 import { assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import {

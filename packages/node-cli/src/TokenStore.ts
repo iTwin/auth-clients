@@ -64,7 +64,7 @@ export class TokenStore {
     tokenResponseObj.idToken = "";
 
     // TokenResponse.scope is always empty in my testing, so manually add to object instead
-    const cacheEntry = { 
+    const cacheEntry = {
       scopesForCacheValidation: this._scopes,
       ...tokenResponseObj.toJson(),
     };
