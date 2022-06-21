@@ -9,6 +9,6 @@
 # @global-owner1 and @global-owner2 will be requested for
 # review when someone opens a pull request.
 
-*       @calebmshafer @pbell97 @evelynpreslar-bentley
+*       @calebmshafer @evelynpreslar-bentley @aruniverse
 
 /packages/oidc-signin-tool  @calebmshafer @wgoehrig

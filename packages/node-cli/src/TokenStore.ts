@@ -11,10 +11,16 @@ import { TokenResponse } from "@openid/appauth";
  * Utility to store OIDC AppAuth in secure storage
  */
 export class TokenStore {
-  private _appStorageKey: string;
+  private readonly _appStorageKey: string;
+  private readonly _scopes: string;
 
-  public constructor(appStorageKey: string) {
-    this._appStorageKey = appStorageKey;
+  public constructor(namedArgs: {clientId: string, issuerUrl: string, scopes: string}) {
+    // A stored credential is only valid for a combination of the clientId, the issuing authority and the requested scopes.
+    // We make the storage key a combination of clientId and issuing authority so that keys can stay cached when switching
+    // between PROD and QA environments.
+    // We store the scopes in our password blob so we know if a new token is required due to updated scopes.
+    this._appStorageKey = `iTwinJs:${namedArgs.clientId}:${namedArgs.issuerUrl}`;
+    this._scopes = namedArgs.scopes;
   }
 
   private _userName?: string;
@@ -36,7 +42,13 @@ export class TokenStore {
     if (!tokenResponseStr)
       return undefined;
 
-    return new TokenResponse(JSON.parse(tokenResponseStr));
+    // Only reuse token if matching scopes. Don't include cache data for TokenResponse object.
+    const tokenResponseObj = JSON.parse(tokenResponseStr);
+    if (tokenResponseObj?.scopesForCacheValidation !== this._scopes)
+      return undefined;
+    delete tokenResponseObj.scopesForCacheValidation;
+
+    return new TokenResponse(tokenResponseObj);
   }
 
   public async save(tokenResponse: TokenResponse): Promise<void> {
@@ -51,6 +63,12 @@ export class TokenStore {
     tokenResponseObj.accessToken = "";
     tokenResponseObj.idToken = "";
 
-    await setPassword(this._appStorageKey, userName, JSON.stringify(tokenResponseObj.toJson()));
+    // TokenResponse.scope is always empty in my testing, so manually add to object instead
+    const cacheEntry = {
+      scopesForCacheValidation: this._scopes,
+      ...tokenResponseObj.toJson(),
+    };
+
+    await setPassword(this._appStorageKey, userName, JSON.stringify(cacheEntry));
   }
 }
