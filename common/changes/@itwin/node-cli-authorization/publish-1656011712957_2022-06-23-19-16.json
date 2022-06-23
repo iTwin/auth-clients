@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/node-cli-authorization",
-      "comment": "Ensure only credentials with matching scopes are reused from cache.",
-      "type": "patch"
+      "comment": "",
+      "type": "none"
     }
   ],
   "packageName": "@itwin/node-cli-authorization"
