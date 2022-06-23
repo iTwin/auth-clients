@@ -1,6 +1,13 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 02 Feb 2022 20:20:14 GMT and should not be manually modified.
+This log was last generated on Tue, 03 May 2022 00:43:48 GMT and should not be manually modified.
+
+## 0.8.4
+Tue, 03 May 2022 00:43:48 GMT
+
+### Patches
+
+- Include issuerUrl in Electron client TokenStore key
 
 ## 0.8.3
 Wed, 02 Feb 2022 20:20:14 GMT
