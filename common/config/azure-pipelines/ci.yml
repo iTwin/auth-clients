@@ -4,7 +4,6 @@ parameters:
     type: boolean
     default: false
 
-
 resources:
   repositories:
     - repository: build-pipeline-scripts
