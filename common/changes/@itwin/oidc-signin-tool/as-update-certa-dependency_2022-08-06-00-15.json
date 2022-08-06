@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/oidc-signin-tool",
       "comment": "Update certa to version 3.4.0-dev.3",
-      "type": "patch"
+      "type": "minor"
     }
   ],
   "packageName": "@itwin/oidc-signin-tool"
