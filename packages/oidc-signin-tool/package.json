@@ -32,7 +32,7 @@
     "url": "http://www.bentley.com"
   },
   "dependencies": {
-    "@itwin/certa": "3.4.0-dev.3",
+    "@itwin/certa": "^3.0.0",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
     "openid-client": "^4.7.4",
