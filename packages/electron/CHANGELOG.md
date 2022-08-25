@@ -1,6 +1,13 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 03 May 2022 00:43:48 GMT and should not be manually modified.
+This log was last generated on Thu, 25 Aug 2022 13:58:56 GMT and should not be manually modified.
+
+## 0.8.5
+Thu, 25 Aug 2022 13:58:56 GMT
+
+### Patches
+
+- Add Electron as peer dependency.
 
 ## 0.8.4
 Tue, 03 May 2022 00:43:48 GMT

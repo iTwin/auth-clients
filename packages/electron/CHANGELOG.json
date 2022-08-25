@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.8.5",
+      "tag": "@itwin/electron-authorization_v0.8.5",
+      "date": "Thu, 25 Aug 2022 13:58:56 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Add Electron as peer dependency."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.8.4",
       "tag": "@itwin/electron-authorization_v0.8.4",
       "date": "Tue, 03 May 2022 00:43:48 GMT",
