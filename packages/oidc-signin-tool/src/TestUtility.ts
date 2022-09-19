@@ -15,6 +15,12 @@ import { TestUsers } from "./TestUsers";
 export class TestUtility {
   private static _clients = new Map<string, TestBrowserAuthorizationClient>();
 
+  private static getAuthClientHash(user: TestUserCredentials, oidcConfig?: TestBrowserAuthorizationClientConfiguration): string {
+    if (oidcConfig === undefined)
+      return user.email;
+    return `${user.email}-${oidcConfig.clientId}-${oidcConfig.scope}-${oidcConfig.authority ?? ""}`;
+  }
+
   /**
    * Gets the authorization client for the specified iModel.js test user.
    * - Caches the client for future use.
@@ -24,13 +30,14 @@ export class TestUtility {
    * @internal
    */
   public static getAuthorizationClient(user: TestUserCredentials, oidcConfig?: TestBrowserAuthorizationClientConfiguration): TestBrowserAuthorizationClient {
-    let client = this._clients.get(user.email);
+    const hash = this.getAuthClientHash(user, oidcConfig);
+    let client = this._clients.get(hash);
     if (client !== undefined)
       return client;
 
-    const config = undefined === oidcConfig ? TestUsers.getTestBrowserAuthorizationClientConfiguration() : oidcConfig;
+    const config = oidcConfig ?? TestUsers.getTestBrowserAuthorizationClientConfiguration();
     client = new TestBrowserAuthorizationClient(config, user);
-    this._clients.set(user.email, client);
+    this._clients.set(hash, client);
     return client;
   }
 
@@ -46,5 +53,4 @@ export class TestUtility {
     const client = this.getAuthorizationClient(user);
     return client.getAccessToken();
   }
-
 }
