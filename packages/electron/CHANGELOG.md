@@ -1,6 +1,20 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 02 Feb 2022 20:20:14 GMT and should not be manually modified.
+This log was last generated on Thu, 25 Aug 2022 13:58:56 GMT and should not be manually modified.
+
+## 0.8.5
+Thu, 25 Aug 2022 13:58:56 GMT
+
+### Patches
+
+- Add Electron as peer dependency.
+
+## 0.8.4
+Tue, 03 May 2022 00:43:48 GMT
+
+### Patches
+
+- Include issuerUrl in Electron client TokenStore key
 
 ## 0.8.3
 Wed, 02 Feb 2022 20:20:14 GMT

@@ -2,6 +2,16 @@
   "$schema": "https://developer.microsoft.com/json-schemas/rush/v5/command-line.schema.json",
   "commands": [
     {
+      "name": "build",
+      "commandKind": "bulk",
+      "summary": "Run build script for each package",
+      "description": "Runs the 'build' script for each package in the monorepo.",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
       "name": "cover",
       "commandKind": "bulk",
       "summary": "Run cover script for each package",

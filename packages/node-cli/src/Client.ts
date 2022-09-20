@@ -75,9 +75,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
   public constructor(config: NodeCliAuthorizationConfiguration) {
     this._bakedConfig = new BakedAuthorizationConfiguration(config);
-
-    const appStorageKey = `iTwinJs:${this._bakedConfig.clientId}:${this._bakedConfig.issuerUrl}`;
-    this._tokenStore = new TokenStore(appStorageKey);
+    this._tokenStore = new TokenStore({ ...this._bakedConfig });
   }
 
   /**
