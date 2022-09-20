@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 import type { AccessToken } from "@itwin/core-bentley";
 import { TestBrowserAuthorizationClient } from "./TestBrowserAuthorizationClient";
-import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials} from "./TestUsers";
+import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "./TestUsers";
 import { TestUsers } from "./TestUsers";
 
 /**
