@@ -1,6 +1,13 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 03 May 2022 00:43:48 GMT and should not be manually modified.
+This log was last generated on Thu, 22 Sep 2022 14:49:41 GMT and should not be manually modified.
+
+## 3.5.0
+Thu, 22 Sep 2022 14:49:41 GMT
+
+### Minor changes
+
+- Change getAccessTokenFromBackend() client cache to include more parameters besides email
 
 ## 3.4.1
 Tue, 03 May 2022 00:43:48 GMT
