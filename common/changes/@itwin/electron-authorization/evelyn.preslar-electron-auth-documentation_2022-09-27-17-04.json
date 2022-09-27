@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "fix for minor documentation inconsistencies",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
