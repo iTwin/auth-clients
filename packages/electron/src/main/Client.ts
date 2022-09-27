@@ -294,10 +294,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    *
    * The following actions happen upon completion:
    *
-   * - calls the onUserStateChanged() call back after the authorization completes
-   *   or if there is an error.
-   * - redirects application to the postSignoutRedirectUri specified in the configuration when the sign out is
-   *   complete
+   * - calls the onUserStateChanged() call back after the signout completes without error.
    */
   public async signOut(): Promise<void> {
     await this.makeRevokeTokenRequest();
