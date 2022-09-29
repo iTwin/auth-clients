@@ -27,7 +27,7 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "dependencies": {
-    "oidc-client": "^1.11.5"
+    "oidc-client-ts": "^2.0.6"
   },
   "devDependencies": {
     "@itwin/build-tools": "^3.0.0",

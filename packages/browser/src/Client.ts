@@ -7,13 +7,13 @@
  * @module Authorization
  */
 
-import type { AccessToken} from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import type { User, UserManagerSettings} from "oidc-client";
-import { UserManager, WebStorageStateStore } from "oidc-client";
-import { BrowserAuthorizationLogger } from "./Logger";
+import type { User, UserManagerSettings } from "oidc-client-ts";
+import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
+import { BrowserAuthorizationLogger } from "./Logger";
 
 /**
  * @beta
@@ -119,7 +119,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
-      authority: basicSettings.authority,
+      authority: basicSettings.authority ?? this.url,
       redirect_uri: basicSettings.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       client_id: basicSettings.clientId, // eslint-disable-line @typescript-eslint/naming-convention
       scope: basicSettings.scope,
@@ -133,10 +133,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     if (advancedSettings) {
       userManagerSettings = Object.assign(userManagerSettings, advancedSettings);
-    }
-
-    if (!userManagerSettings.authority) {
-      userManagerSettings.authority = this.url;
     }
 
     return userManagerSettings;
@@ -237,7 +233,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     // Attempt a silent sign-in
     try {
-      user = await userManager.signinSilent(); // calls events
+      user = await userManager.signinSilent() ?? undefined; // calls events
       return user;
     } catch (err) {
       return undefined;
@@ -268,7 +264,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       return;
     }
     this._accessToken = `Bearer ${user.access_token}`;
-    this._expiresAt = new Date(user.expires_at * 1000);
+    this._expiresAt = user.expires_at ? new Date(user.expires_at * 1000) : undefined;
   }
 
   /**

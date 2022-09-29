@@ -7,11 +7,11 @@
  * @module Authorization
  */
 
-import type { UserManagerSettings} from "oidc-client";
-import { UserManager, WebStorageStateStore } from "oidc-client";
-import { BrowserAuthorizationLogger } from "./Logger";
-import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 import { UnexpectedErrors } from "@itwin/core-bentley";
+import type { UserManagerSettings } from "oidc-client-ts";
+import { UserManager, WebStorageStateStore } from "oidc-client-ts";
+import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
+import { BrowserAuthorizationLogger } from "./Logger";
 
 /**
  * @beta
@@ -23,7 +23,7 @@ export interface BrowserAuthorizationCallbackHandlerConfiguration {
    * Authorization code responses are expected to be delivered in the query string, while access tokens are delivered via the fragment.
    * Sign-OUT responses are always expected to be delivered in the query string.
    */
-  responseMode?: "query" | "fragment" | string;
+  responseMode?: "query" | "fragment";
 }
 
 /**
@@ -72,6 +72,9 @@ export class BrowserAuthorizationCallbackHandler {
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationCallbackHandlerConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
+      authority: "", // some settings are required for UserManager initialization, but remain unused when handling callbacks, so we use empty strings.
+      client_id: "",
+      redirect_uri: "",
       response_mode: basicSettings.responseMode, // eslint-disable-line @typescript-eslint/naming-convention
       userStore: new WebStorageStateStore({ store: window.localStorage }),
     };
@@ -124,7 +127,7 @@ export class BrowserAuthorizationCallbackHandler {
     try {
       await callbackHandler.handleSigninCallbackInternal();
       return;
-    } catch (err) {
+    } catch (err: any) {
       errorMessage += `${err.message}\n`;
     }
 
@@ -132,7 +135,7 @@ export class BrowserAuthorizationCallbackHandler {
     try {
       await callbackHandler.handleSigninCallbackInternal();
       return;
-    } catch (err) {
+    } catch (err: any) {
       errorMessage += `${err.message}\n`;
     }
 
