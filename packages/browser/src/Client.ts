@@ -8,12 +8,14 @@
  */
 
 import type { AccessToken } from "@itwin/core-bentley";
-import { BeEvent } from "@itwin/core-bentley";
+import { BeEvent, Logger } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { User, UserManagerSettings } from "oidc-client-ts";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 import { BrowserAuthorizationLogger } from "./Logger";
+import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
+import { getImsAuthority } from "./utils";
 
 /**
  * @beta
@@ -65,7 +67,7 @@ export const isBrowserAuthorizationClient = (client: AuthorizationClient | undef
  */
 export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
-  public url = "https://ims.bentley.com";
+  public readonly authorityUrl: string;
   protected _userManager?: UserManager;
 
   protected _basicSettings: BrowserAuthorizationClientConfiguration;
@@ -77,14 +79,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   public constructor(configuration: BrowserAuthorizationClientConfiguration) {
     BrowserAuthorizationLogger.initializeLogger();
     this._basicSettings = configuration;
-
-    let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._basicSettings.authority ?? this.url);
-    if (prefix && !this._basicSettings.authority) {
-      prefix = prefix === "dev-" ? "qa-" : prefix;
-      authority.hostname = prefix + authority.hostname;
-    }
-    this.url = authority.href.replace(/\/$/, "");
+    this.authorityUrl = configuration.authority ?? getImsAuthority();
   }
 
   public get isAuthorized(): boolean {
@@ -119,7 +114,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
-      authority: basicSettings.authority ?? this.url,
+      authority: this.authorityUrl,
       redirect_uri: basicSettings.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       client_id: basicSettings.clientId, // eslint-disable-line @typescript-eslint/naming-convention
       scope: basicSettings.scope,
@@ -132,7 +127,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     };
 
     if (advancedSettings) {
-      userManagerSettings = Object.assign(userManagerSettings, advancedSettings);
+      userManagerSettings = { ...userManagerSettings, ...advancedSettings };
     }
 
     return userManagerSettings;
@@ -156,7 +151,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   }
 
   /**
-   * Alias for signInRedirect needed to satisfy [[FrontendAuthorizationClient]]
+   * Alias for signInRedirect
    * @param requestContext
    */
   public async signIn(): Promise<void> {
@@ -182,7 +177,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       successRedirectUrl: successRedirectUrl || window.location.href,
     };
 
-    const redirectArgs = Object.assign({ state }, args);
+    const redirectArgs = { ...state, ...args };
     await userManager.signinRedirect(redirectArgs); // This call changes the window's URL, which effectively ends execution here unless an exception is thrown.
   }
 
@@ -321,9 +316,8 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     this.initAccessToken(user);
     try {
       this.onAccessTokenChanged.raiseEvent(this._accessToken);
-    } catch (err) {
-      return; // TODO: Replace
-      // Logger.logError(FrontendAuthorizationClientLoggerCategory.Authorization, "Error thrown when handing OidcBrowserClient.onUserStateChanged event", () => ({ message: err.message }));
+    } catch (err: any) {
+      Logger.logError(BrowserAuthorizationLoggerCategory.Authorization, "Error thrown when handing BrowserAuthorizationClient.onUserStateChanged event", () => ({ message: err.message }));
     }
   };
 
