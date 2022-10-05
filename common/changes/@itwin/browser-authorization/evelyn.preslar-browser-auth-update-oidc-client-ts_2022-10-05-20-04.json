@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "update to oidc-client-ts",
+      "type": "major"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}
