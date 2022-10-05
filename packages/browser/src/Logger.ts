@@ -8,7 +8,8 @@
  */
 
 import { Logger, LogLevel } from "@itwin/core-bentley";
-import { ILogger as IOidcClientLogger, Log as OidcClientLog } from "oidc-client-ts";
+import type { ILogger as IOidcClientLogger } from "oidc-client-ts";
+import { Log as OidcClientLog } from "oidc-client-ts";
 import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 
 /**
