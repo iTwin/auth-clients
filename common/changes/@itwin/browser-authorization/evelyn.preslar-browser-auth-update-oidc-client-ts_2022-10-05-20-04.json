@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/browser-authorization",
       "comment": "update to oidc-client-ts",
-      "type": "major"
+      "type": "minor"
     }
   ],
   "packageName": "@itwin/browser-authorization"
