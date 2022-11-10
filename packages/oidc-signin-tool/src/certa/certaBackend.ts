@@ -59,7 +59,9 @@ async function signin(user: TestUserCredentials, oidcConfig?: TestBrowserAuthori
   return token;
 }
 
-registerBackendCallback(getTokenCallbackName, async (user: any, oidcConfig?: any): Promise<string> => {
-  const accessToken = await signin(user, oidcConfig);
-  return accessToken?.toString() ?? "";
-});
+registerBackendCallback(
+  getTokenCallbackName,
+  async (user: any, oidcConfig?: any): Promise<string> => {
+    return await signin(user, oidcConfig);
+  }
+);
