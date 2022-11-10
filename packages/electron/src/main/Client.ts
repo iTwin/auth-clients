@@ -12,7 +12,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import type { AccessToken } from "@itwin/core-bentley";
-import { assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
+import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type {
   AuthorizationError, AuthorizationRequestJson, AuthorizationResponse, RevokeTokenRequestJson, StringMap, TokenRequestHandler, TokenRequestJson, TokenResponse,
@@ -85,7 +85,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
     if (!config.clientId || !config.scope)
-      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration with a clientId and scope when initializing ElectronMainAuthorization");
+      throw new Error("Must specify a valid configuration with a clientId and scope when initializing ElectronMainAuthorization");
     this.setupIPCHandlers();
 
     this._clientId = config.clientId;
@@ -167,7 +167,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   /** Forces a refresh of the user's access token regardless if the current token has expired. */
   public async refreshToken(): Promise<AccessToken> {
     if (this._tokenResponse === undefined || this._tokenResponse.refreshToken === undefined)
-      throw new BentleyError(AuthStatus.Error, "Not signed In. First call signIn()");
+      throw new Error("Not signed In. First call signIn()");
 
     return this.refreshAccessToken(this._tokenResponse.refreshToken);
   }
@@ -340,7 +340,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   /** Swap the authorization code for a refresh token and access token */
   private async swapAuthorizationCodeForTokens(authCode: string, codeVerifier: string): Promise<TokenResponse> {
     if (!this._configuration)
-      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
+      throw new Error("Not initialized. First call initialize()");
     assert(this._clientId !== "");
 
     const extras: StringMap = { code_verifier: codeVerifier };
@@ -366,7 +366,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   private async makeRefreshAccessTokenRequest(refreshToken: string): Promise<TokenResponse> {
     if (!this._configuration)
-      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
+      throw new Error("Not initialized. First call initialize()");
     assert(this._clientId !== "");
 
     const tokenRequestJson: TokenRequestJson = {
@@ -384,7 +384,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   private async makeRevokeTokenRequest(): Promise<void> {
     if (!this._tokenResponse)
-      throw new BentleyError(AuthStatus.Error, "Missing refresh token. First call signIn() and ensure it's successful");
+      throw new Error("Missing refresh token. First call signIn() and ensure it's successful");
     assert(this._clientId !== "");
 
     const refreshToken = this._tokenResponse.refreshToken!;
