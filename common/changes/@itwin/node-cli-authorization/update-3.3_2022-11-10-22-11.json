@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/node-cli-authorization",
+      "comment": "Update minimum iTwin.js version to 3.3.0",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/node-cli-authorization"
+}
