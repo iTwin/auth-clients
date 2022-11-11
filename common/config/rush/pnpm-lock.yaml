@@ -187,10 +187,10 @@ importers:
 
   ../../packages/service:
     specifiers:
-      '@itwin/build-tools': ^3.0.0
-      '@itwin/core-bentley': ^3.0.0
-      '@itwin/core-common': ^3.0.0
-      '@itwin/eslint-plugin': ^3.0.0
+      '@itwin/build-tools': ^3.3.0
+      '@itwin/core-bentley': ^3.3.0
+      '@itwin/core-common': ^3.3.0
+      '@itwin/eslint-plugin': ^3.3.0
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7
       '@types/jsonwebtoken': ^8.5.5

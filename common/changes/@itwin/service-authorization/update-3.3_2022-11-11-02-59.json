@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@itwin/service-authorization",
-      "comment": "",
+      "comment": "Update minimum iTwin.js version to 3.3.0",
       "type": "none"
     }
   ],
