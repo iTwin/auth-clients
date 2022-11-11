@@ -104,8 +104,10 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     }
     this._issuerUrl = authority.href.replace(/\/$/, "");
 
-    if (config.redirectUri) this._redirectUri = config.redirectUri;
-    if (config.expiryBuffer) this._expiryBuffer = config.expiryBuffer;
+    if (config.redirectUri)
+      this._redirectUri = config.redirectUri;
+    if (config.expiryBuffer)
+      this._expiryBuffer = config.expiryBuffer;
 
     const appStorageKey = `iTwinJs:${this._clientId}:${this._issuerUrl}`;
     this._tokenStore = new ElectronTokenStore(appStorageKey);
@@ -158,7 +160,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   }
 
   public setAccessToken(token: AccessToken) {
-    if (token === this._accessToken) return;
+    if (token === this._accessToken)
+      return;
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
     ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
@@ -207,7 +210,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     // Attempt to load the access token from store
     const token = await this.loadAccessToken();
-    if (token) return this.setAccessToken(token);
+    if (token)
+      return this.setAccessToken(token);
 
     // Create the authorization request
     const authReqJson: AuthorizationRequestJson = {
@@ -320,7 +324,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   }
 
   private get _hasExpired(): boolean {
-    if (!this._expiresAt) return false;
+    if (!this._expiresAt)
+      return false;
 
     return this._expiresAt.getTime() - Date.now() <= this._expiryBuffer * 1000; // Consider this.expireSafety's amount of time early as expired
   }
