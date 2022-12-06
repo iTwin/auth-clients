@@ -50,7 +50,7 @@
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.0.0",
-    "electron": ">=14.0.0 <23.0.0"
+    "electron": ">=14.0.0 <18.0.0 || >=22.0.0 <23.0.0"
   },
   "eslintConfig": {
     "plugins": [
