@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "Add Electron 22 as supported Electron version.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
