@@ -29,7 +29,7 @@ describe("IntrospectionClient", () => {
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
     const client = new IntrospectionClient({ issuerUrl: testAuthority });
-    expect(client.url).equals("https://test.authority.com");
+    expect(client.url).equals(testAuthority);
   });
 
   it("should use default authority without prefix", async () => {
