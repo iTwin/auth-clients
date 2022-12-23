@@ -2,6 +2,23 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.9.0",
+      "tag": "@itwin/electron-authorization_v0.9.0",
+      "date": "Fri, 23 Dec 2022 16:03:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix for minor documentation inconsistencies"
+          }
+        ],
+        "minor": [
+          {
+            "comment": "Add Electron 22 as supported Electron version."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.8.5",
       "tag": "@itwin/electron-authorization_v0.8.5",
       "date": "Thu, 25 Aug 2022 13:58:56 GMT",

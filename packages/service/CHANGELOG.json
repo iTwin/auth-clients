@@ -2,6 +2,18 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "version": "0.6.3",
+      "tag": "@itwin/service-authorization_v0.6.3",
+      "date": "Fri, 23 Dec 2022 16:03:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Upgraded jsonwebtoken dependency"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.6.2",
       "tag": "@itwin/service-authorization_v0.6.2",
       "date": "Mon, 21 Mar 2022 12:23:06 GMT",
