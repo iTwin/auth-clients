@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/service-authorization",
       "comment": "Upgraded jsonwebtoken dependency",
-      "type": "minor"
+      "type": "patch"
     }
   ],
   "packageName": "@itwin/service-authorization"
