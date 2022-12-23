@@ -25,7 +25,7 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "dependencies": {
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "jwks-rsa": "^2.0.4",
     "openid-client": "^4.7.4"
   },
