@@ -36,7 +36,7 @@
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
     "@types/mocha": "^8.2.3",
-    "@types/sinon": "^9.0.0",
+    "@types/sinon": "^10.0.13",
     "chai": "^4.2.22",
     "chai-as-promised": "^7",
     "electron": "^22.0.0",
@@ -45,7 +45,7 @@
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
-    "sinon": "^9.0.0",
+    "sinon": "^15.0.1",
     "typescript": "~4.3.5"
   },
   "peerDependencies": {
