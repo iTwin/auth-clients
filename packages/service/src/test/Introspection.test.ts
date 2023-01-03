@@ -124,9 +124,12 @@ describe("IntrospectionClient", () => {
     const payload = { scope: ["scope1", "scope2"] };
 
     const keyStub = sinon.stub(jwks.JwksClient.prototype, "getSigningKey").callsFake(async (kid) => {
-      if (kid === "kid1") return fakeKey1;
-      if (kid === "kid2") return fakeKey2;
-      if (kid === undefined) return { getPublicKey: () => "fake key" };
+      if (kid === "kid1")
+        return fakeKey1;
+      if (kid === "kid2")
+        return fakeKey2;
+      if (kid === undefined)
+        return { getPublicKey: () => "fake key" };
       assert.fail("unexpected key id");
     });
 
