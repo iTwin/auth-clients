@@ -1,6 +1,13 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Thu, 22 Sep 2022 14:49:41 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Jan 2023 21:06:26 GMT and should not be manually modified.
+
+## 3.6.0
+Tue, 03 Jan 2023 21:06:26 GMT
+
+### Minor changes
+
+- Update minimum iTwin.js version to 3.3.0
 
 ## 3.5.0
 Thu, 22 Sep 2022 14:49:41 GMT

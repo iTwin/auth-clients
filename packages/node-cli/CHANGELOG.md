@@ -1,6 +1,13 @@
 # Change Log - @itwin/node-cli-authorization
 
-This log was last generated on Thu, 23 Jun 2022 19:15:13 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Jan 2023 21:06:26 GMT and should not be manually modified.
+
+## 0.10.0
+Tue, 03 Jan 2023 21:06:26 GMT
+
+### Minor changes
+
+- Update minimum iTwin.js version to 3.3.0
 
 ## 0.9.2
 Thu, 23 Jun 2022 19:15:13 GMT
