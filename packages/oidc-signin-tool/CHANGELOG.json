@@ -2,6 +2,18 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "version": "3.6.0",
+      "tag": "@itwin/oidc-signin-tool_v3.6.0",
+      "date": "Tue, 03 Jan 2023 21:06:26 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Update minimum iTwin.js version to 3.3.0"
+          }
+        ]
+      }
+    },
+    {
       "version": "3.5.0",
       "tag": "@itwin/oidc-signin-tool_v3.5.0",
       "date": "Thu, 22 Sep 2022 14:49:41 GMT",
