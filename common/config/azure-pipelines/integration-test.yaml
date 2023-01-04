@@ -34,8 +34,8 @@ jobs:
      echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
-     echo "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;]$test_authing_user_password"
-     echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$test_azuread_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;issecret=true]$test_authing_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;issecret=true]$test_azuread_user_password"
      export
     displayName: 'Add config to environment'
     env:
@@ -55,8 +55,8 @@ jobs:
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
-      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;]$Env:test_authing_user_password"
-      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;issecret=true]$Env:test_authing_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;issecret=true]$Env:test_azuread_user_password"
     displayName: 'Add config to environment'
     env:
       test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
@@ -80,13 +80,6 @@ jobs:
 
   - script: node common/scripts/install-run-rush.js test:integration
     displayName: Rush test:integration
-    env:
-      test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
-      test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
-      test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
-      test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
-      test_authing_user_password: $(IMJS_TEST_AUTHING_USER_PASSWORD)
-      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
 
   - task: PublishTestResults@2
     displayName: "Publish OIDC Signin Tool Test Results"
