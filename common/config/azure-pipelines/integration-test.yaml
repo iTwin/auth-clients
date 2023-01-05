@@ -30,6 +30,7 @@ jobs:
     persistCredentials: true
 
   - bash: |
+     echo "value is: $my_tmp"
      echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
@@ -45,6 +46,7 @@ jobs:
       test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
       test_authing_user_password: $(IMJS_TEST_AUTHING_USER_PASSWORD)
       test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+      my_tmp: $(IMJS_TEST_AUTHING_USER_PASSWORD)
     condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
 
   - bash: |
@@ -80,6 +82,9 @@ jobs:
 
   - script: node common/scripts/install-run-rush.js test:integration
     displayName: Rush test:integration
+    env:
+      IMJS_TEST_AUTHING_USER_PASSWORD: $(IMJS_TEST_AUTHING_USER_PASSWORD)
+      IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
 
   - task: PublishTestResults@2
     displayName: "Publish OIDC Signin Tool Test Results"
