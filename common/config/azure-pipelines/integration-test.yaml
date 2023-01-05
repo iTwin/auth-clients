@@ -29,45 +29,44 @@ jobs:
   - checkout: self
     persistCredentials: true
 
-  # - bash: |
-  #    echo "value is: $my_tmp"
-  #    echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
-  #    echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
-  #    echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
-  #    echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
-  #    echo "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;issecret=true]$test_authing_user_password"
-  #    echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;issecret=true]$test_azuread_user_password"
-  #    export
-  #   displayName: 'Add config to environment'
-  #   env:
-  #     test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
-  #     test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
-  #     test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
-  #     test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
-  #     test_authing_user_password: $(IMJS_TEST_AUTHING_USER_PASSWORD)
-  #     test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
-  #     my_tmp: $(IMJS_TEST_AUTHING_USER_PASSWORD)
-  #   condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+  - bash: |
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;issecret=true]$test_authing_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;issecret=true]$test_azuread_user_password"
+     export
+    displayName: 'Add config to environment'
+    env:
+      test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
+      test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
+      test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
+      test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
+      test_authing_user_password: $(IMJS_TEST_AUTHING_USER_PASSWORD)
+      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
 
-  # - bash: |
-  #     export
+  # For debugging
+  - bash: |
+      export
 
-  # - powershell: |
-  #     Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
-  #     Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
-  #     Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
-  #     Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
-  #     Write-Host "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;issecret=true]$Env:test_authing_user_password"
-  #     Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;issecret=true]$Env:test_azuread_user_password"
-  #   displayName: 'Add config to environment'
-  #   env:
-  #     test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
-  #     test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
-  #     test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
-  #     test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
-  #     test_authing_user_password: $(IMJS_TEST_AUTHING_USER_PASSWORD)
-  #     test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
-  #   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AUTHING_USER_PASSWORD;issecret=true]$Env:test_authing_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;issecret=true]$Env:test_azuread_user_password"
+    displayName: 'Add config to environment'
+    env:
+      test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
+      test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
+      test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
+      test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
+      test_authing_user_password: $(IMJS_TEST_AUTHING_USER_PASSWORD)
+      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - script: |
       git config user.email imodeljs-admin@users.noreply.github.com
