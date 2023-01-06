@@ -30,10 +30,10 @@ jobs:
     persistCredentials: true
 
   - bash: |
-     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
-     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
-     echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
-     echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;issecret=true]$test_super_manager_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;issecret=true]$test_super_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;issecret=true]$test_manager_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;issecret=true]$test_reg_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;issecret=true]$test_azuread_user_password"
      export
     displayName: 'Add config to environment'
@@ -50,10 +50,10 @@ jobs:
       export
 
   - powershell: |
-      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
-      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
-      Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
-      Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;issecret=true]$Env:test_super_manager_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;issecret=true]$Env:test_super_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;issecret=true]$Env:test_manager_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;issecret=true]$Env:test_reg_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;issecret=true]$Env:test_azuread_user_password"
     displayName: 'Add config to environment'
     env:
@@ -78,6 +78,7 @@ jobs:
   - script: node common/scripts/install-run-rush.js test:integration
     displayName: Rush test:integration
     env:
+      # Couldn't get this variable to be ingested in the steps above, but this works
       IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
 
   - task: PublishTestResults@2
