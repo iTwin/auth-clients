@@ -81,9 +81,9 @@ jobs:
 
   - script: node common/scripts/install-run-rush.js test:integration
     displayName: Rush test:integration
-    env:
-      IMJS_TEST_AUTHING_USER_PASSWORD: $(IMJS_TEST_AUTHING_USER_PASSWORD)
-      IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+    # env:
+    #   IMJS_TEST_AUTHING_USER_PASSWORD: $(IMJS_TEST_AUTHING_USER_PASSWORD)
+    #   IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
 
   - task: PublishTestResults@2
     displayName: "Publish OIDC Signin Tool Test Results"

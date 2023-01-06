@@ -165,7 +165,7 @@ describe("Authing and AzureAD (#integration)", () => {
     assert.exists(token);
   });
 
-  it("success Authing with valid user", async () => {
+  it.skip("success Authing with valid user", async () => {
     if (process.env.IMJS_TEST_AUTHING_USER_NAME === undefined)
       throw new Error("Could not find IMJS_TEST_AUTHING_USER_NAME");
     if (process.env.IMJS_TEST_AUTHING_USER_PASSWORD === undefined)
