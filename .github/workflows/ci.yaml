@@ -44,6 +44,15 @@ jobs:
       - name: Rush Lint
         run: node common/scripts/install-run-rush.js lint
 
+      # Necessary for running linux tests in a dbus session
+      #   See packages/electron/README.md for more details
+      - name: Install Packages - Linux
+        run: |
+          sudo apt-get install -y libsecret-1-dev
+          sudo apt-get install -y dbus-x11
+          sudo apt-get install -y gnome-keyring
+        if: runner.os == 'Linux'
+
       # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
       #   See packages/electron/README.md for more details
       - name: Rush Cover - Linux
