@@ -1,0 +1,53 @@
+{
+  "name": "@itwin/node-cli-authorization",
+  "entries": [
+    {
+      "version": "0.10.0",
+      "tag": "@itwin/node-cli-authorization_v0.10.0",
+      "date": "Tue, 03 Jan 2023 21:06:26 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Update minimum iTwin.js version to 3.3.0"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.9.2",
+      "tag": "@itwin/node-cli-authorization_v0.9.2",
+      "date": "Thu, 23 Jun 2022 19:15:13 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Ensure only credentials with matching scopes are reused from cache."
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.9.1",
+      "tag": "@itwin/node-cli-authorization_v0.9.1",
+      "date": "Tue, 03 May 2022 00:43:48 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Include issuerUrl in TokenStore key to avoid conflicts"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.9.0",
+      "tag": "@itwin/node-cli-authorization_v0.9.0",
+      "date": "Wed, 06 Apr 2022 21:17:06 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Initial version"
+          }
+        ]
+      }
+    }
+  ]
+}

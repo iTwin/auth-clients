@@ -1,6 +1,28 @@
 # Change Log - @itwin/service-authorization
 
-This log was last generated on Tue, 25 Jan 2022 15:34:41 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Jan 2023 21:06:26 GMT and should not be manually modified.
+
+## 0.7.0
+Tue, 03 Jan 2023 21:06:26 GMT
+
+### Minor changes
+
+- Update minimum iTwin.js version to 3.3.0
+
+## 0.6.3
+Fri, 23 Dec 2022 16:03:26 GMT
+
+### Patches
+
+- Upgraded jsonwebtoken dependency
+
+## 0.6.2
+Mon, 21 Mar 2022 12:23:06 GMT
+
+### Patches
+
+- Cast to resolve type error between union type
+- Update token handling to provide better error message when an empty string or invalid token format is provided.
 
 ## 0.6.1
 Tue, 25 Jan 2022 15:34:41 GMT

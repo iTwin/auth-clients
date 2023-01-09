@@ -2,7 +2,7 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import type { AccessToken} from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { ITwinElectronApi } from "./ElectronPreload";
@@ -19,7 +19,7 @@ export enum ElectronAuthIPCChannelNames {
 /**
  * Frontend Ipc support for Electron apps.
  */
-class ElectronAuthIPC  {
+class ElectronAuthIPC {
   private _api: ITwinElectronApi;
   public async signIn(): Promise<void> {
     await this._api.invoke(ElectronAuthIPCChannelNames.signIn);
@@ -74,12 +74,12 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     });
   }
 
-  /** Called to start the sign-in process. Subscribe to onUserStateChanged to be notified when sign-in completes */
+  /** Called to start the sign-in process. Subscribe to onAccessTokenChanged to be notified when sign-in completes */
   public async signIn(): Promise<void> {
     await this._ipcAuthAPI.signIn();
   }
 
-  /** Called to start the sign-out process. Subscribe to onUserStateChanged to be notified when sign-out completes */
+  /** Called to start the sign-out process. Subscribe to onAccessTokenChanged to be notified when sign-out completes */
   public async signOut(): Promise<void> {
     await this._ipcAuthAPI.signOut();
   }
@@ -88,7 +88,7 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
    * - The token is ensured to be valid *at least* for the buffer of time specified by the configuration.
    * - The token is refreshed if it's possible and necessary.
    * - This method must be called to refresh the token - the client does NOT automatically monitor for token expiry.
-   * - Getting or refreshing the token will trigger the [[onUserStateChanged]] event.
+   * - Getting or refreshing the token will trigger the [[onAccessTokenChanged]] event.
    */
   public async getAccessToken(): Promise<AccessToken> {
     // if we have a valid token, return it. Otherwise call backend to refresh the token.
@@ -97,7 +97,7 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
         return Promise.reject(); // short-circuits any recursive use of this function
       }
 
-      try{
+      try {
         this._refreshingToken = true;
         this._cachedToken = (await this._ipcAuthAPI.getAccessToken()) ?? "";
       } catch (err) {

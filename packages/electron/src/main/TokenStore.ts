@@ -20,8 +20,8 @@ import { deletePassword, getPassword, setPassword } from "keytar";
 export class ElectronTokenStore {
   private _appStorageKey: string;
 
-  public constructor(clientId: string) {
-    this._appStorageKey = `Bentley.iModelJs.OidcTokenStore.${clientId}`;
+  public constructor(appStorageKey: string) {
+    this._appStorageKey = appStorageKey;
   }
 
   private _userName?: string; // Cached user name

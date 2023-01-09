@@ -1,6 +1,52 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 25 Jan 2022 15:34:41 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Jan 2023 21:06:26 GMT and should not be manually modified.
+
+## 0.10.0
+Tue, 03 Jan 2023 21:06:26 GMT
+
+### Minor changes
+
+- Update minimum iTwin.js version to 3.3.0
+
+## 0.9.0
+Fri, 23 Dec 2022 16:03:26 GMT
+
+### Minor changes
+
+- Add Electron 22 as supported Electron version.
+
+### Patches
+
+- fix for minor documentation inconsistencies
+
+## 0.8.5
+Thu, 25 Aug 2022 13:58:56 GMT
+
+### Patches
+
+- Add Electron as peer dependency.
+
+## 0.8.4
+Tue, 03 May 2022 00:43:48 GMT
+
+### Patches
+
+- Include issuerUrl in Electron client TokenStore key
+
+## 0.8.3
+Wed, 02 Feb 2022 20:20:14 GMT
+
+### Patches
+
+- update keytar version
+
+## 0.8.2
+Tue, 01 Feb 2022 18:01:38 GMT
+
+### Patches
+
+- Update invalid "this" reference
 
 ## 0.8.1
 Tue, 25 Jan 2022 15:34:41 GMT

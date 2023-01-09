@@ -2,6 +2,45 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "version": "0.7.0",
+      "tag": "@itwin/service-authorization_v0.7.0",
+      "date": "Tue, 03 Jan 2023 21:06:26 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Update minimum iTwin.js version to 3.3.0"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.6.3",
+      "tag": "@itwin/service-authorization_v0.6.3",
+      "date": "Fri, 23 Dec 2022 16:03:26 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Upgraded jsonwebtoken dependency"
+          }
+        ]
+      }
+    },
+    {
+      "version": "0.6.2",
+      "tag": "@itwin/service-authorization_v0.6.2",
+      "date": "Mon, 21 Mar 2022 12:23:06 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Cast to resolve type error between union type"
+          },
+          {
+            "comment": "Update token handling to provide better error message when an empty string or invalid token format is provided."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.6.1",
       "tag": "@itwin/service-authorization_v0.6.1",
       "date": "Tue, 25 Jan 2022 15:34:41 GMT",
