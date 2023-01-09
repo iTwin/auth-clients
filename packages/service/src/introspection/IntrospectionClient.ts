@@ -10,7 +10,7 @@ import type { Client as OpenIdClient } from "openid-client";
 import { custom, Issuer } from "openid-client";
 import type { IntrospectionResponse } from "./IntrospectionResponse";
 import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
-import { BentleyError, Logger } from "@itwin/core-bentley";
+import { BentleyError, BentleyStatus, Logger } from "@itwin/core-bentley";
 import * as jwks from "jwks-rsa";
 import * as jwt from "jsonwebtoken";
 
@@ -22,7 +22,10 @@ export interface IntrospectionClientConfiguration {
 }
 
 function removeAccessTokenPrefix(accessToken: string): string {
-  return accessToken.substr(accessToken.indexOf(" ") + 1);
+  const splitAccessToken = accessToken.split(" ");
+  if (splitAccessToken.length !== 2)
+    throw new BentleyError(BentleyStatus.ERROR, "Failed to decode JWT");
+  return splitAccessToken[1];
 }
 
 /** @alpha */
@@ -79,10 +82,10 @@ export class IntrospectionClient {
   }
 
   private async validateToken(accessToken: string): Promise<IntrospectionResponse> {
-    const decoded = jwt.decode(accessToken, { complete: true });
+    const decoded = jwt.decode(accessToken, { complete: true, json: true });
     if (!decoded)
       throw new Error("Failed to decode JWT");
-    const { payload, header } = decoded;
+    const { payload, header } = decoded as { payload: jwt.JwtPayload, header: jwt.JwtHeader };
 
     if (!payload || !payload.scope)
       throw new Error("Missing scope in JWT");

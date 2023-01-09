@@ -29,7 +29,7 @@ describe("IntrospectionClient", () => {
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
     const client = new IntrospectionClient({ issuerUrl: testAuthority });
-    expect(client.url).equals("https://test.authority.com");
+    expect(client.url).equals(testAuthority);
   });
 
   it("should use default authority without prefix", async () => {
@@ -53,13 +53,11 @@ describe("IntrospectionClient", () => {
   it("should throw if issuer does not support JWKS", async () => {
     sinon.stub(Issuer, "discover").resolves({ metadata: {} } as Issuer<OpenIdClient>);
     const logStub = sinon.stub(Logger, "logError");
-    sinon.stub(jwt, "decode").returns({
-      header: {},
-      payload: { scope: ["scope1", "scope2"] },
-    });
+
+    const token = jwt.sign({ scope: ["scope1", "scope2"] }, "very secret");
 
     const client = new IntrospectionClient();
-    await expect(client.introspect("fake token")).to.be.rejectedWith("Issuer does not support JWKS");
+    await expect(client.introspect(`fake ${token}`)).to.be.rejectedWith("Issuer does not support JWKS");
 
     expect(logStub.callCount).to.be.equal(2);
     expect(logStub.firstCall.args[1]).to.equal("Issuer does not support JWKS");
@@ -67,14 +65,8 @@ describe("IntrospectionClient", () => {
   });
 
   it("should throw if token is not a JWT", async () => {
-    const logStub = sinon.stub(Logger, "logError");
-
     const client = new IntrospectionClient();
     await expect(client.introspect("not a JWT")).to.be.rejectedWith("Failed to decode JWT");
-
-    expect(logStub.callCount).to.equal(1);
-    expect(logStub.firstCall.args[1]).to.equal("Unable to introspect client token");
-    expect(logStub.firstCall.lastArg().message).to.equal("Error: Failed to decode JWT");
   });
 
   it("should throw if scope claim is missing", async () => {
@@ -84,16 +76,15 @@ describe("IntrospectionClient", () => {
       },
     } as Issuer<OpenIdClient>);
     const logStub = sinon.stub(Logger, "logError");
-    sinon.stub(jwt, "decode").returns({
-      header: {},
-    });
     sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
       getPublicKey: () => "fake key",
     });
     sinon.stub(jwt, "verify");
 
+    const token = jwt.sign({}, "very secret");
+
     const client = new IntrospectionClient();
-    await expect(client.introspect("fake token")).to.be.rejectedWith("Missing scope in JWT");
+    await expect(client.introspect(`fake ${token}`)).to.be.rejectedWith("Missing scope in JWT");
 
     expect(logStub.callCount).to.equal(1);
     expect(logStub.firstCall.args[1]).to.equal("Unable to introspect client token");
@@ -107,17 +98,15 @@ describe("IntrospectionClient", () => {
       },
     } as Issuer<OpenIdClient>);
     const logStub = sinon.stub(Logger, "logError");
-    sinon.stub(jwt, "decode").returns({
-      header: {},
-      payload: { scope: [1, 2, 3] },
-    });
     sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
       getPublicKey: () => "fake key",
     });
     sinon.stub(jwt, "verify");
 
+    const token = jwt.sign({ scope: [1, 2, 3] }, "very secret");
+
     const client = new IntrospectionClient();
-    await expect(client.introspect("fake token")).to.be.rejectedWith("Invalid scope");
+    await expect(client.introspect(`fake ${token}`)).to.be.rejectedWith("Invalid scope");
 
     expect(logStub.callCount).to.equal(1);
     expect(logStub.firstCall.args[1]).to.equal("Unable to introspect client token");
@@ -130,28 +119,32 @@ describe("IntrospectionClient", () => {
         jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
       },
     } as Issuer<OpenIdClient>);
-    const fakeKey1 = { getPublicKey: () => "fake key 1" };
-    const fakeKey2 = { getPublicKey: () => "fake key 2" };
+    const fakeKey1 = { getPublicKey: () => "fake key1" };
+    const fakeKey2 = { getPublicKey: () => "fake key2" };
     const payload = { scope: ["scope1", "scope2"] };
-    sinon.stub(jwt, "decode")
-      .onFirstCall().returns({ payload, header: { kid: "kid1" } })
-      .onSecondCall().returns({ payload, header: { kid: "kid2" } })
-      .onThirdCall().returns({ payload, header: { kid: "kid2" } })
-      .returns({ payload, header: {} });
 
     const keyStub = sinon.stub(jwks.JwksClient.prototype, "getSigningKey").callsFake(async (kid) => {
-      if (kid === "kid1") return fakeKey1;
-      if (kid === "kid2") return fakeKey2;
-      if (kid === undefined) return { getPublicKey: () => "fake key" };
+      if (kid === "kid1")
+        return fakeKey1;
+      if (kid === "kid2")
+        return fakeKey2;
+      if (kid === undefined)
+        return { getPublicKey: () => "fake key" };
       assert.fail("unexpected key id");
     });
 
     sinon.stub(jwt, "verify");
 
+    const token1 = jwt.sign(payload, "very secret", { header: { kid: "kid1", alg: "none" } });
+    const token2 = jwt.sign(payload, "very secret", { header: { kid: "kid2", alg: "none" } });
+    const token3 = jwt.sign(payload, "very secret", { header: { kid: "kid2", alg: "none" } });
+    const token4 = jwt.sign(payload, "very secret");
+    const token5 = jwt.sign(payload, "very secret");
+
     const client = new IntrospectionClient();
 
     // call with kid1 - added to cache
-    await client.introspect("fake token 1");
+    await client.introspect(`fake ${token1}`);
     expect(client["_signingKeyCache"].size).to.equal(1);
     expect(client["_signingKeyCache"].has("kid1")).to.be.true;
     expect(client["_signingKeyCache"].get("kid1")).to.equal(fakeKey1);
@@ -162,7 +155,7 @@ describe("IntrospectionClient", () => {
     client["_jwks"]!.getSigningKey = jwks.JwksClient.prototype.getSigningKey.bind(client["_jwks"]);
 
     // call with kid2 - added to cache
-    await client.introspect("fake token 2");
+    await client.introspect(`fake ${token2}`);
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(client["_signingKeyCache"].has("kid2")).to.be.true;
     expect(client["_signingKeyCache"].get("kid2")).to.equal(fakeKey2);
@@ -170,18 +163,18 @@ describe("IntrospectionClient", () => {
     expect(keyStub.lastCall.firstArg).to.equal("kid2");
 
     // call with kid2 - already in cache, nothing changes
-    await client.introspect("fake token 3");
+    await client.introspect(`fake ${token3}`);
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(keyStub.callCount).to.equal(2);
 
     // call without kid - new key retrieved, cache not affected
-    await client.introspect("fake token 4");
+    await client.introspect(`fake ${token4}`);
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(keyStub.callCount).to.equal(3);
     expect(keyStub.lastCall.firstArg).to.be.undefined;
 
     // call without kid - new key retrieved, cache not affected
-    await client.introspect("fake-token-5");
+    await client.introspect(`fake ${token5}`);
     expect(client["_signingKeyCache"].size).to.equal(2);
     expect(keyStub.callCount).to.equal(4);
     expect(keyStub.lastCall.firstArg).to.be.undefined;

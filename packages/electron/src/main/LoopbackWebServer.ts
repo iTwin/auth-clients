@@ -75,7 +75,7 @@ export class LoopbackWebServer {
       return;
 
     // Parse the request URL to determine the authorization code, state and errors if any
-    const redirectedUrl = new URL(httpRequest.url, this._redirectUri);
+    const redirectedUrl = new URL(httpRequest.url, LoopbackWebServer._redirectUri);
     const searchParams = redirectedUrl.searchParams;
 
     const state = searchParams.get("state") || undefined;

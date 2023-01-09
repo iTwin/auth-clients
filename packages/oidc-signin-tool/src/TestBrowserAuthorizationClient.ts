@@ -2,10 +2,10 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-import type { AccessToken} from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import type { AuthorizationParameters, Client, OpenIDCallbackChecks } from "openid-client";
+import type { AuthorizationParameters, Client, ClientMetadata, HttpOptions, OpenIDCallbackChecks } from "openid-client";
 import { custom, generators, Issuer } from "openid-client";
 import * as os from "os";
 import * as puppeteer from "puppeteer";
@@ -22,7 +22,7 @@ import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials }
 export class TestBrowserAuthorizationClient implements AuthorizationClient {
   private _client!: Client;
   private _issuer!: Issuer<Client>;
-  private _imsUrl: string = "https://ims.bentley.com";
+  private _authorityUrl: string = "https://ims.bentley.com";
   private readonly _config: TestBrowserAuthorizationClientConfiguration;
   private readonly _user: TestUserCredentials;
   private _accessToken: AccessToken = "";
@@ -38,24 +38,39 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     this._user = user;
 
     let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._config.authority ?? this._imsUrl);
+    const authority = new URL(this._config.authority ?? this._authorityUrl);
     if (prefix && !this._config.authority) {
       prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
     }
-    this._imsUrl = authority.href.replace(/\/$/, "");
+    this._authorityUrl = authority.href.replace(/\/$/, "");
   }
 
   private async initialize() {
-    // Due to issues with a timeout or failed request to the authorization service increasing the standard timeout and adding retries.
-    // Docs for this option here, https://github.com/panva/node-openid-client/tree/master/docs#customizing-http-requests
-    custom.setHttpOptionsDefaults({
+    // Keep a list of http defaults
+    const httpOptionsDefaults: HttpOptions = {
       timeout: 10000,
       retry: 3,
-    });
+    };
 
-    this._issuer = await Issuer.discover(this._imsUrl);
-    this._client = new this._issuer.Client({ client_id: this._config.clientId, token_endpoint_auth_method: "none" }); // eslint-disable-line @typescript-eslint/naming-convention
+    // AzureAD needs to have the origin header to allow CORS
+    if (-1 !== this._authorityUrl.indexOf("microsoftonline"))
+      httpOptionsDefaults.headers = { Origin: "http://localhost" }; // eslint-disable-line @typescript-eslint/naming-convention
+
+    // Due to issues with a timeout or failed request to the authorization service increasing the standard timeout and adding retries.
+    // Docs for this option here, https://github.com/panva/node-openid-client/tree/master/docs#customizing-http-requests
+    custom.setHttpOptionsDefaults(httpOptionsDefaults);
+
+    this._issuer = await Issuer.discover(this._authorityUrl);
+    const clientMetadata: ClientMetadata = {
+      client_id: this._config.clientId, // eslint-disable-line @typescript-eslint/naming-convention
+      token_endpoint_auth_method: "none", // eslint-disable-line @typescript-eslint/naming-convention
+    };
+    if (this._config.clientSecret) {
+      clientMetadata.client_secret = this._config.clientSecret;
+      clientMetadata.token_endpoint_auth_method = "client_secret_basic";
+    }
+    this._client = new this._issuer.Client(clientMetadata); // eslint-disable-line @typescript-eslint/naming-convention
   }
 
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
@@ -120,7 +135,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     const authorizationUrl = this._client.authorizationUrl(authParams);
 
     // Launch puppeteer with no sandbox only on linux
-    let launchOptions: puppeteer.LaunchOptions = { dumpio: true }; // , headless: false, slowMo: 500 };
+    let launchOptions: puppeteer.BrowserLaunchArgumentOptions & puppeteer.LaunchOptions = { dumpio: true }; // , headless: false, slowMo: 500 };
     if (os.platform() === "linux") {
       launchOptions = {
         args: ["--no-sandbox"], // , "--disable-setuid-sandbox"],
@@ -128,7 +143,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
 
     const proxyUrl = process.env.HTTPS_PROXY;
-    let proxyAuthOptions: puppeteer.AuthOptions | undefined;
+    let proxyAuthOptions: puppeteer.Credentials | undefined;
     if (proxyUrl) {
       const proxyUrlObj = new URL(proxyUrl);
       proxyAuthOptions = { username: proxyUrlObj.username, password: proxyUrlObj.password };
@@ -147,7 +162,15 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     await page.setRequestInterception(true);
     const onRedirectRequest = this.interceptRedirectUri(page);
-    await page.goto(authorizationUrl, { waitUntil: "networkidle2" });
+    const navigationOptions: puppeteer.WaitForOptions = {
+      waitUntil: "networkidle2",
+    };
+
+    if (-1 !== authorizationUrl.indexOf("microsoftonline")) // If OAuthProvider is AzureAD, we want to wait till the page has no more network requests
+      navigationOptions.waitUntil = ["networkidle0"];
+    else if (-1 !== authorizationUrl.indexOf("authing")) // If OAuthProvider is Authing, page fires different events at different intervals. The safest bet is to wait for all events to finish
+      navigationOptions.waitUntil = ["load", "domcontentloaded", "networkidle0"];
+    await page.goto(authorizationUrl, navigationOptions);
 
     try {
       await this.handleErrorPage(page);
@@ -158,6 +181,12 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
       // Handle federated sign-in
       await this.handleFederatedSignin(page);
+
+      // Handle AzureAD sign-in
+      await this.handleAzureADSignin(page);
+
+      // Handle Authing sign-in
+      await this.handleAuthingSignin(page);
     } catch (err) {
       await page.close();
       await browser.close();
@@ -166,7 +195,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     await this.handleConsentPage(page);
 
-    const tokenSet = await this._client.callback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks);
+    // For all other OAuthProviders, we want to use pure oauthcallback. It suppresses id_token validation
+    const tokenSet = await this._client.oauthCallback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks);
 
     await page.close();
     await browser.close();
@@ -235,7 +265,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async handleLoginPage(page: puppeteer.Page): Promise<void> {
-    const loginUrl = new URL("/IMS/Account/Login", this._imsUrl);
+    const loginUrl = new URL("/IMS/Account/Login", this._authorityUrl);
     if (page.url().startsWith(loginUrl.toString())) {
       await page.waitForSelector("[name=EmailAddress]");
       await page.type("[name=EmailAddress]", this._user.email);
@@ -267,7 +297,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async handlePingLoginPage(page: puppeteer.Page): Promise<void> {
-    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint))
+    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("ims"))
       return;
 
     await page.waitForSelector("#identifierInput");
@@ -365,6 +395,83 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
 
     await page.waitForNavigation({ waitUntil: "networkidle2" });
+  }
+
+  // AzureAD specific login.
+  private async handleAzureADSignin(page: puppeteer.Page): Promise<void> {
+    if (undefined === this._issuer.metadata.authorization_endpoint || !page.url().startsWith(this._issuer.metadata.authorization_endpoint) || -1 === page.url().indexOf("microsoftonline"))
+      return;
+
+    // Verify username selector exists
+    if (!(await this.checkSelectorExists(page, "#i0116")))
+      throw new Error("Username field does not exist");
+
+    // Type username and wait for navigation
+    await page.type("#i0116", this._user.email);
+    await page.$eval("#idSIButton9", (button: any) => button.click());
+    await Promise.all([
+      page.$eval("#idSIButton9", (button: any) => button.click()),
+      page.waitForNavigation({
+        timeout: 60000,
+        waitUntil: ["networkidle0"], // Need to wait longer
+      }),
+    ]);
+
+    // Verify password selector exists
+    if (!(await this.checkSelectorExists(page, "#i0118")))
+      throw new Error("Password field does not exist");
+
+    // Type password and wait for navigation
+    await page.waitForTimeout(2000); // Seems like we have to wait before typing the password otherwise it does not get registered
+    await page.type("#i0118", this._user.password);
+    await Promise.all([
+      page.$eval("#idSIButton9", (button: any) => button.click()),
+      page.waitForNavigation({
+        timeout: 60000,
+        waitUntil: ["networkidle0"], // Need to wait longer
+      }),
+    ]);
+
+    // Accept stay signed-in page and complete sign in
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 60000,
+        waitUntil: ["networkidle0"], // Need to wait longer
+      }),
+      page.$eval("#idSIButton9", (button: any) => button.click()),
+    ]);
+  }
+
+  // Authing specific login.
+  private async handleAuthingSignin(page: puppeteer.Page): Promise<void> {
+    if (undefined === this._issuer.metadata.authorization_endpoint || -1 === page.url().indexOf("authing"))
+      return;
+
+    // Verify username selector exists
+    if (!(await this.checkSelectorExists(page, "#identity")))
+      throw new Error("Username field does not exist");
+
+    // Verify password selector exists
+    if (!(await this.checkSelectorExists(page, "#password")))
+      throw new Error("Password field does not exist");
+
+    // Verify log in button exists
+    const button = await page.$x("//button[contains(@class,'authing-login-btn')]");
+    if (!button || button.length === 0)
+      throw new Error("Log in button does not exist");
+
+    // Type username and password
+    await page.type("#identity", this._user.email);
+    await page.type("#password", this._user.password);
+
+    // Log in and navigate
+    await Promise.all([
+      page.waitForNavigation({
+        timeout: 60000,
+        waitUntil: ["networkidle0"], // Need to wait longer
+      }),
+      button[0].click(),
+    ]);
   }
 
   private async handleConsentPage(page: puppeteer.Page): Promise<void> {
