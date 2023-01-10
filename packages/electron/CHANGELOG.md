@@ -1,6 +1,13 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 03 Jan 2023 21:06:26 GMT and should not be manually modified.
+This log was last generated on Tue, 10 Jan 2023 15:45:09 GMT and should not be manually modified.
+
+## 0.10.1
+Tue, 10 Jan 2023 15:45:09 GMT
+
+### Patches
+
+- Enabled linux usage for tokenstore
 
 ## 0.10.0
 Tue, 03 Jan 2023 21:06:26 GMT

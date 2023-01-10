@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/electron-authorization",
-      "comment": "Enabled linux usage for tokenstore",
-      "type": "patch"
+      "comment": "",
+      "type": "none"
     }
   ],
   "packageName": "@itwin/electron-authorization"
