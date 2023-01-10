@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.10.1",
+      "tag": "@itwin/electron-authorization_v0.10.1",
+      "date": "Tue, 10 Jan 2023 15:45:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Enabled linux usage for tokenstore"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.0",
       "tag": "@itwin/electron-authorization_v0.10.0",
       "date": "Tue, 03 Jan 2023 21:06:26 GMT",
