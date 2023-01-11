@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import type { AccessToken} from "@itwin/core-bentley";
-import { AuthStatus, BeEvent, BentleyError } from "@itwin/core-bentley";
+import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 
 /**
@@ -45,7 +45,7 @@ export class TestFrontendAuthorizationClient implements AuthorizationClient {
 
   public async getAccessToken(): Promise<AccessToken> {
     if (!this._activeToken)
-      throw new BentleyError(AuthStatus.Error, "Cannot get access token");
+      throw new Error("Cannot get access token");
     return this._activeToken;
   }
 
