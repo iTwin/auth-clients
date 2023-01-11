@@ -6,7 +6,7 @@
 
 import * as Http from "http";
 import * as open from "open";
-import { assert, AuthStatus, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
+import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationResponse,
   AuthorizationServiceConfiguration, BaseTokenRequestHandler, BasicQueryStringUtils, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
@@ -155,7 +155,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
   private async beginSignIn() {
     if (!this._configuration)
-      throw new BentleyError(AuthStatus.Error, "Bug in NodeCliAuthorization client - _configuration not defined");
+      throw new Error("Bug in NodeCliAuthorization client - _configuration not defined");
 
     const authReqJson: AuthorizationRequestJson = {
       /* eslint-disable @typescript-eslint/naming-convention */
@@ -183,7 +183,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
       if (tokenResponse)
         await this.setTokenResponse(tokenResponse);
       else
-        throw new BentleyError(AuthStatus.Error, "No tokenResponse received from sign-in dialog");
+        throw new Error("No tokenResponse received from sign-in dialog");
     });
 
     // Open system browser to perform authorization request
@@ -229,7 +229,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
   private async makeRefreshAccessTokenRequest(refreshToken: string): Promise<TokenResponse> {
     if (!this._configuration)
-      throw new BentleyError(AuthStatus.Error, "Not initialized. First call initialize()");
+      throw new Error("Not initialized. First call initialize()");
 
     /* eslint-disable @typescript-eslint/naming-convention */
     const tokenRequestJson: TokenRequestJson = {
@@ -272,7 +272,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
       } else {
         const code = searchParams.get("code");
         if (!code)
-          throw new BentleyError(AuthStatus.Error, "Unexpected failure - AuthorizationResponse is missing a code value");
+          throw new Error("Unexpected failure - AuthorizationResponse is missing a code value");
         authorizationResponse = { code, state };
         httpResponse.writeHead(200, { "Content-Type": "text/html" }); //  eslint-disable-line @typescript-eslint/naming-convention
         httpResponse.write("<h1>Sign in was successful!</h1>You can close this browser window and return to the application");
@@ -301,7 +301,7 @@ export class BakedAuthorizationConfiguration {
 
   public constructor(config: NodeCliAuthorizationConfiguration) {
     if (!config.clientId || !config.scope)
-      throw new BentleyError(AuthStatus.Error, "Must specify a valid configuration with a clientId and scope when initializing NodeCliAuthorizationClient");
+      throw new Error("Must specify a valid configuration with a clientId and scope when initializing NodeCliAuthorizationClient");
 
     this.clientId = config.clientId;
 

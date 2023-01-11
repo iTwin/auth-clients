@@ -44,8 +44,22 @@ jobs:
       - name: Rush Lint
         run: node common/scripts/install-run-rush.js lint
 
+      # Necessary for running linux tests in a dbus session
+      #   See packages/electron/README.md for more details
+      - name: Install Packages - Linux
+        run: |
+          sudo apt-get install -y libsecret-1-dev
+          sudo apt-get install -y dbus-x11
+          sudo apt-get install -y gnome-keyring
+        if: runner.os == 'Linux'
+
+      # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
+      #   See packages/electron/README.md for more details
       - name: Rush Cover - Linux
-        run: xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' node common/scripts/install-run-rush.js cover --verbose
+        run: >-
+          dbus-run-session -- sh -c
+          "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
+           xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' node common/scripts/install-run-rush.js cover --verbose"
         if: runner.os == 'Linux'
 
       - name: Rush Cover - Windows/Mac

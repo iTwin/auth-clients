@@ -1,6 +1,13 @@
 # Change Log - @itwin/service-authorization
 
-This log was last generated on Fri, 23 Dec 2022 16:03:26 GMT and should not be manually modified.
+This log was last generated on Tue, 03 Jan 2023 21:06:26 GMT and should not be manually modified.
+
+## 0.7.0
+Tue, 03 Jan 2023 21:06:26 GMT
+
+### Minor changes
+
+- Update minimum iTwin.js version to 3.3.0
 
 ## 0.6.3
 Fri, 23 Dec 2022 16:03:26 GMT

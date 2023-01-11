@@ -33,9 +33,6 @@ export class ElectronTokenStore {
 
   /** Load token if available */
   public async load(): Promise<TokenResponse | undefined> {
-    if (process.platform === "linux")
-      return undefined;
-
     const userName = await this.getUserName();
     if (!userName)
       return;
@@ -51,9 +48,6 @@ export class ElectronTokenStore {
 
   /** Save token after signin */
   public async save(tokenResponse: TokenResponse): Promise<void> {
-    if (process.platform === "linux")
-      return undefined;
-
     const userName = await this.getUserName();
     if (!userName)
       return;
@@ -68,9 +62,6 @@ export class ElectronTokenStore {
 
   /** Delete token after signout */
   public async delete(): Promise<void> {
-    if (process.platform === "linux")
-      return undefined;
-
     const userName = await this.getUserName();
     if (!userName)
       return;

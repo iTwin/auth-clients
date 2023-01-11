@@ -164,18 +164,4 @@ describe("Authing and AzureAD (#integration)", () => {
     const token = await getTestAccessToken(azureAdOidcConfig, validUser);
     assert.exists(token);
   });
-
-  it("success Authing with valid user", async () => {
-    if (process.env.IMJS_TEST_AUTHING_USER_NAME === undefined)
-      throw new Error("Could not find IMJS_TEST_AUTHING_USER_NAME");
-    if (process.env.IMJS_TEST_AUTHING_USER_PASSWORD === undefined)
-      throw new Error("Could not find IMJS_TEST_AUTHING_USER_PASSWORD");
-
-    const validUser = {
-      email: process.env.IMJS_TEST_AUTHING_USER_NAME,
-      password: process.env.IMJS_TEST_AUTHING_USER_PASSWORD,
-    };
-    const token = await getTestAccessToken(authingOidcConfig, validUser);
-    assert.exists(token);
-  });
 });

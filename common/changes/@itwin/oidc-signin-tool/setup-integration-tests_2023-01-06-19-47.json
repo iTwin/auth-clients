@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/oidc-signin-tool",
-      "comment": "",
-      "type": "none"
+      "comment": "remove old OIDC Authing test",
+      "type": "patch"
     }
   ],
   "packageName": "@itwin/oidc-signin-tool"

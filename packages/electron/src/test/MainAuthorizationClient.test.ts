@@ -38,9 +38,6 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
 
 describe("ElectronMainAuthorization Token Logic", () => {
   beforeEach(function () {
-    if (process.platform === "linux")
-      this.skip();
-
     sinon.restore();
     // Stub Electron calls
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
