@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "comment": "remove old OIDC Authing test",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool"
+}

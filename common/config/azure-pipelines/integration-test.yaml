@@ -1,0 +1,89 @@
+trigger:
+  - main
+
+pr:
+  autoCancel: true
+  drafts: false
+  branches:
+    include:
+      - main
+
+variables:
+  - group: iTwin.js non-secret config variables
+  - group: iTwin.js Integration Test Users
+  - group: iTwin.js Auth Client Integration tests
+
+jobs:
+- job: BuildPackages
+  strategy:
+    matrix:
+      linux:
+        imageName: 'ubuntu-latest'
+      mac:
+        imageName: 'macos-latest'
+      windows:
+        imageName: 'windows-latest'
+  pool:
+    vmImage: $(imageName)
+  steps:
+  - checkout: self
+    persistCredentials: true
+
+  - bash: |
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$test_azuread_user_password"
+     export
+    displayName: 'Add config to environment'
+    env:
+      test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
+      test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
+      test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
+      test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
+      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+
+  # For debugging
+  - bash: |
+      export
+
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
+    displayName: 'Add config to environment'
+    env:
+      test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
+      test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
+      test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
+      test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
+      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+
+  - script: |
+      git config user.email imodeljs-admin@users.noreply.github.com
+      git config user.name imodeljs-admin
+    displayName: git config
+
+  - script: node common/scripts/install-run-rush.js install
+    displayName: Rush Install
+
+  - script: node common/scripts/install-run-rush.js build -v --to oidc-signin-tool
+    displayName: Rush Build
+
+  - script: node common/scripts/install-run-rush.js test:integration
+    displayName: Rush test:integration
+    env:
+      # Couldn't get this variable to be ingested in the steps above, but this works
+      IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+
+  - task: PublishTestResults@2
+    displayName: "Publish OIDC Signin Tool Test Results"
+    inputs:
+      testResultsFiles: "packages/oidc-signin-tool/lib/test/junit_results.xml"
+      testRunTitle: "Tools -  OIDC Signin Tool - $(Agent.OS)"
+    condition: succeededOrFailed()
