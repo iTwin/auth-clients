@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-const imsUrl = "https://ims.bentley.com";
+const DEFAULT_IMS_URL = "https://ims.bentley.com";
 
 /**
  * Returns the IMS authority URL. Environment prefix is adjusted based on the value of IMJS_URL_PREFIX
@@ -11,7 +11,7 @@ const imsUrl = "https://ims.bentley.com";
  * @returns
  */
 export function getImsAuthority(): string {
-  const authorityUrl = new URL(imsUrl);
+  const authorityUrl = new URL(DEFAULT_IMS_URL);
 
   let prefix = process.env.IMJS_URL_PREFIX;
   if (prefix) {
