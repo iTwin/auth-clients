@@ -10,7 +10,6 @@
 import { Logger, LogLevel } from "@itwin/core-bentley";
 import type { ILogger as IOidcClientLogger } from "oidc-client-ts";
 import { Log as OidcClientLog } from "oidc-client-ts";
-// import { Logger } from "oidc-client-ts"
 import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 
 /**
@@ -41,12 +40,32 @@ export class BrowserAuthorizationLogger implements IOidcClientLogger {
     Logger.logError(BrowserAuthorizationLoggerCategory.Authorization, message, () => optionalParams);
   }
 
+  protected static getLogLevel(loggerCategory: string): number {
+    const logLevel: LogLevel | undefined = Logger.getLevel(loggerCategory);
+    switch (logLevel) {
+      case LogLevel.Error:
+        return OidcClientLog.ERROR;
+      case LogLevel.Warning:
+        return OidcClientLog.WARN;
+      case LogLevel.Info:
+        return OidcClientLog.INFO;
+      case LogLevel.Trace:
+        return OidcClientLog.DEBUG;
+      case LogLevel.None:
+        return OidcClientLog.NONE;
+      default:
+        return OidcClientLog.NONE;
+    }
+  }
+
   /** Initializes forwarding of OidcClient logs to the Bentley Logger */
   public static initializeLogger() {
+    const logLevel = BrowserAuthorizationLogger.getLogLevel(BrowserAuthorizationLoggerCategory.Authorization);
     if (!BrowserAuthorizationLogger.initialized) {
       OidcClientLog.setLogger(new BrowserAuthorizationLogger());
     }
 
+    OidcClientLog.setLevel(logLevel);
     BrowserAuthorizationLogger.initialized = true;
   }
 }
