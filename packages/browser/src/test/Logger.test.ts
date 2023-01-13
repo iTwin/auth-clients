@@ -45,8 +45,8 @@ describe("Logger", () => {
 
     before(() => {
       BrowserAuthorizationLogger.initializeLogger();
-      oidcLogger = new (BrowserAuthorizationLogger as any);
-    })
+      oidcLogger = new (BrowserAuthorizationLogger as any)();
+    });
 
     it("log level is changed", () => {
       // Set log level to Info
@@ -101,7 +101,7 @@ describe("Logger", () => {
   });
 
   /**
-   * The syntax `BrowserAuthorizationLogger['getLogLevel']()` used below is to call
+   * The syntax `BrowserAuthorizationLogger["getLogLevel"]()` used below is to call
    * BrowserAuthorizationLogger.getLogLevel despite it being a protected method.
    * This works because once getLogLevel is compiled into JavaScript, there is no
    * form of protection.
@@ -110,42 +110,42 @@ describe("Logger", () => {
 
     it("Bentley trace log level maps to oidc debug log level", () => {
       BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.Trace);
-      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+      const loglevel = BrowserAuthorizationLogger["getLogLevel"](BrowserAuthorizationLoggerCategory.Authorization); // eslint-disable-line @typescript-eslint/dot-notation
 
       assert.equal(loglevel, OidcClientLog.DEBUG);
     });
 
     it("Bentley info log level maps to oidc info log level", () => {
       BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.Info);
-      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+      const loglevel = BrowserAuthorizationLogger["getLogLevel"](BrowserAuthorizationLoggerCategory.Authorization); // eslint-disable-line @typescript-eslint/dot-notation
 
       assert.equal(loglevel, OidcClientLog.INFO);
     });
 
     it("Bentley warning log level maps to oidc warn log level", () => {
       BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.Warning);
-      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+      const loglevel = BrowserAuthorizationLogger["getLogLevel"](BrowserAuthorizationLoggerCategory.Authorization); // eslint-disable-line @typescript-eslint/dot-notation
 
       assert.equal(loglevel, OidcClientLog.WARN);
     });
 
     it("Bentley error log level maps to oidc error log level", () => {
       BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.Error);
-      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+      const loglevel = BrowserAuthorizationLogger["getLogLevel"](BrowserAuthorizationLoggerCategory.Authorization); // eslint-disable-line @typescript-eslint/dot-notation
 
       assert.equal(loglevel, OidcClientLog.ERROR);
     });
 
     it("Bentley none log level maps to oidc none log level", () => {
       BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.None);
-      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+      const loglevel = BrowserAuthorizationLogger["getLogLevel"](BrowserAuthorizationLoggerCategory.Authorization); // eslint-disable-line @typescript-eslint/dot-notation
 
       assert.equal(loglevel, OidcClientLog.NONE);
     });
 
     it("undefined log level maps to oidc none log level", () => {
       // Note: No BentleyLogger level is set for BrowserAuthorizationLoggerCategory.Authorization
-      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+      const loglevel = BrowserAuthorizationLogger["getLogLevel"](BrowserAuthorizationLoggerCategory.Authorization); // eslint-disable-line @typescript-eslint/dot-notation
 
       assert.equal(loglevel, OidcClientLog.NONE);
     });

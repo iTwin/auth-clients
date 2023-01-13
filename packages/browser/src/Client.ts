@@ -80,8 +80,8 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     this._basicSettings = {
       ...configuration,
-      authority: configuration.authority ?? getImsAuthority()
-    }
+      authority: configuration.authority ?? getImsAuthority(),
+    };
   }
 
   public get isAuthorized(): boolean {
@@ -99,7 +99,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   }
 
   public getAuthorityUrl(): string {
-    return this._advancedSettings?.authority ?? this._basicSettings.authority
+    return this._advancedSettings?.authority ?? this._basicSettings.authority;
   }
 
   protected async getUserManager(): Promise<UserManager> {
