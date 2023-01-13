@@ -5,6 +5,7 @@
 
 import { assert } from "chai";
 import type { ILogger as IOidcClientLogger } from "oidc-client-ts";
+import { Log as OidcClientLog } from "oidc-client-ts";
 
 import { Logger as BentleyLogger, LogLevel as BentleyLogLevel } from "@itwin/core-bentley";
 
@@ -98,4 +99,56 @@ describe("Logger", () => {
       });
     });
   });
+
+  /**
+   * The syntax `BrowserAuthorizationLogger['getLogLevel']()` used below is to call
+   * BrowserAuthorizationLogger.getLogLevel despite it being a protected method.
+   * This works because once getLogLevel is compiled into JavaScript, there is no
+   * form of protection.
+   */
+  describe("#getLogLevel", () => {
+
+    it("Bentley trace log level maps to oidc debug log level", () => {
+      BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.Trace);
+      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+
+      assert.equal(loglevel, OidcClientLog.DEBUG);
+    });
+
+    it("Bentley info log level maps to oidc info log level", () => {
+      BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.Info);
+      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+
+      assert.equal(loglevel, OidcClientLog.INFO);
+    });
+
+    it("Bentley warning log level maps to oidc warn log level", () => {
+      BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.Warning);
+      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+
+      assert.equal(loglevel, OidcClientLog.WARN);
+    });
+
+    it("Bentley error log level maps to oidc error log level", () => {
+      BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.Error);
+      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+
+      assert.equal(loglevel, OidcClientLog.ERROR);
+    });
+
+    it("Bentley none log level maps to oidc none log level", () => {
+      BentleyLogger.setLevel(BrowserAuthorizationLoggerCategory.Authorization, BentleyLogLevel.None);
+      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+
+      assert.equal(loglevel, OidcClientLog.NONE);
+    });
+
+    it("undefined log level maps to oidc none log level", () => {
+      // Note: No BentleyLogger level is set for BrowserAuthorizationLoggerCategory.Authorization
+      const loglevel = BrowserAuthorizationLogger['getLogLevel'](BrowserAuthorizationLoggerCategory.Authorization);
+
+      assert.equal(loglevel, OidcClientLog.NONE);
+    });
+  });
+
 });
