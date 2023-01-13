@@ -7,7 +7,7 @@
  * @module Authorization
  */
 
-import type { AccessToken } from "@itwin/core-bentley";
+import type { AccessToken, MarkRequired } from "@itwin/core-bentley";
 import { BeEvent, Logger } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { User, UserManagerSettings } from "oidc-client-ts";
@@ -67,10 +67,9 @@ export const isBrowserAuthorizationClient = (client: AuthorizationClient | undef
  */
 export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
-  public readonly authorityUrl: string;
   protected _userManager?: UserManager;
 
-  protected _basicSettings: BrowserAuthorizationClientConfiguration;
+  protected _basicSettings: MarkRequired<BrowserAuthorizationClientConfiguration, "authority">;
   protected _advancedSettings?: UserManagerSettings;
 
   protected _accessToken: AccessToken = "";
@@ -78,8 +77,11 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   public constructor(configuration: BrowserAuthorizationClientConfiguration) {
     BrowserAuthorizationLogger.initializeLogger();
-    this._basicSettings = configuration;
-    this.authorityUrl = configuration.authority ?? getImsAuthority();
+
+    this._basicSettings = {
+      ...configuration,
+      authority: configuration.authority ?? getImsAuthority()
+    }
   }
 
   public get isAuthorized(): boolean {
@@ -94,6 +96,10 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   public get hasSignedIn(): boolean {
     return !!this._accessToken;
+  }
+
+  public getAuthorityUrl(): string {
+    return this._advancedSettings?.authority ?? this._basicSettings.authority
   }
 
   protected async getUserManager(): Promise<UserManager> {
@@ -114,7 +120,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
-      authority: this.authorityUrl,
+      authority: this.getAuthorityUrl(),
       redirect_uri: basicSettings.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       client_id: basicSettings.clientId, // eslint-disable-line @typescript-eslint/naming-convention
       scope: basicSettings.scope,
