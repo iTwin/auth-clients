@@ -12,6 +12,7 @@ import type { UserManagerSettings } from "oidc-client-ts";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 import { BrowserAuthorizationLogger } from "./Logger";
+import { getImsAuthority } from "./utils";
 
 /**
  * @beta
@@ -63,7 +64,7 @@ export class BrowserAuthorizationCallbackHandler {
 
     this._basicSettings = {
       ...configuration,
-      authority: configuration.authority ?? `https://${process.env.IMJS_URL_PREFIX ?? ""}ims.bentley.com`,
+      authority: configuration.authority ?? getImsAuthority(),
     };
   }
 
