@@ -7,7 +7,7 @@
  * @module Authorization
  */
 
-import { UnexpectedErrors } from "@itwin/core-bentley";
+import { UnexpectedErrors, MarkRequired } from "@itwin/core-bentley";
 import type { UserManagerSettings } from "oidc-client-ts";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
@@ -53,16 +53,22 @@ export enum OidcCallbackResponseMode {
  * @beta
  */
 export class BrowserAuthorizationCallbackHandler {
-  public readonly authorityUrl: string;
   protected _userManager?: UserManager;
 
-  protected _basicSettings: BrowserAuthorizationCallbackHandlerConfiguration;
+  protected _basicSettings: MarkRequired<BrowserAuthorizationCallbackHandlerConfiguration, "authority">;
   protected _advancedSettings?: UserManagerSettings;
 
   private constructor(configuration: BrowserAuthorizationCallbackHandlerConfiguration) {
-    this._basicSettings = configuration;
     BrowserAuthorizationLogger.initializeLogger();
-    this.authorityUrl = configuration.authority ?? `https://${process.env.IMJS_URL_PREFIX ?? ""}ims.bentley.com`;
+
+    this._basicSettings = {
+      ...configuration,
+      authority: configuration.authority ?? `https://${process.env.IMJS_URL_PREFIX ?? ""}ims.bentley.com`,
+    };
+  }
+
+  public get authorityUrl(): string {
+    return this._advancedSettings?.authority ?? this._basicSettings.authority;
   }
 
   protected async getUserManager(): Promise<UserManager> {
