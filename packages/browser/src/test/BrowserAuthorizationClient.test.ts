@@ -72,8 +72,7 @@ describe("BrowserAuthorizationClient", () => {
     });
 
     it("_basicSettings contains passed in configuration", () => {
-      // @ts-ignore
-      const settings = testClient._basicSettings;
+      const settings = testClient["_basicSettings"]; // eslint-disable-line @typescript-eslint/dot-notation
 
       assert.equal(settings.authority, "test_authority");
       assert.equal(settings.clientId, "test_clientId");

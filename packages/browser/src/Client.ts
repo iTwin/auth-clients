@@ -8,14 +8,15 @@
  */
 
 import type { AccessToken, MarkRequired } from "@itwin/core-bentley";
-import { BeEvent, Logger } from "@itwin/core-bentley";
-import type { AuthorizationClient } from "@itwin/core-common";
-import type { User, UserManagerSettings } from "oidc-client-ts";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
-import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
+import { BeEvent, Logger } from "@itwin/core-bentley";
 import { BrowserAuthorizationLogger } from "./Logger";
 import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 import { getImsAuthority } from "./utils";
+
+import type { AuthorizationClient } from "@itwin/core-common";
+import type { User, UserManagerSettings } from "oidc-client-ts";
+import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 
 /**
  * @beta

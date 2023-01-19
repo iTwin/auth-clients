@@ -7,12 +7,13 @@
  * @module Authorization
  */
 
-import { UnexpectedErrors, MarkRequired } from "@itwin/core-bentley";
-import type { UserManagerSettings } from "oidc-client-ts";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
-import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
+import { MarkRequired, UnexpectedErrors } from "@itwin/core-bentley";
 import { BrowserAuthorizationLogger } from "./Logger";
 import { getImsAuthority } from "./utils";
+
+import type { UserManagerSettings } from "oidc-client-ts";
+import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 
 /**
  * @beta
