@@ -8,10 +8,11 @@
  */
 
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
-import { MarkRequired, UnexpectedErrors } from "@itwin/core-bentley";
+import { UnexpectedErrors } from "@itwin/core-bentley";
 import { BrowserAuthorizationLogger } from "./Logger";
 import { getImsAuthority } from "./utils";
 
+import type { MarkRequired } from "@itwin/core-bentley";
 import type { UserManagerSettings } from "oidc-client-ts";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 
