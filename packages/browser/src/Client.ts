@@ -98,7 +98,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     return !!this._accessToken;
   }
 
-  public getAuthorityUrl(): string {
+  public get authorityUrl(): string {
     return this._advancedSettings?.authority ?? this._basicSettings.authority;
   }
 
@@ -120,7 +120,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
-      authority: this.getAuthorityUrl(),
+      authority: this.authorityUrl,
       redirect_uri: basicSettings.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       client_id: basicSettings.clientId, // eslint-disable-line @typescript-eslint/naming-convention
       scope: basicSettings.scope,
