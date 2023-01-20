@@ -18,5 +18,5 @@ export function getImsAuthority(): string {
   if (prefix === "dev-")
     prefix = "qa-";
 
-  return `https://${prefix}ims.bentley.com`
+  return `https://${prefix}ims.bentley.com`;
 }
