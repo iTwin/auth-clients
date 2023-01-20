@@ -3,20 +3,20 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-const DEFAULT_IMS_URL = "https://ims.bentley.com";
-
 /**
- * Returns the IMS authority URL. Environment prefix is adjusted based on the value of IMJS_URL_PREFIX
+ * Returns the IMS authority URL.
+ * A prefix will be prepended based on the value of the IMJS_URL_PREFIX environment variable.
+ * The prefix "dev-" will automatically be converted to "qa-".
  * @param authorityUrl
  * @returns
  */
 export function getImsAuthority(): string {
-  const authorityUrl = new URL(DEFAULT_IMS_URL);
 
-  let prefix = process.env.IMJS_URL_PREFIX;
-  if (prefix) {
-    prefix = prefix === "dev-" ? "qa-" : prefix;
-    authorityUrl.hostname = prefix + authorityUrl.hostname;
-  }
-  return authorityUrl.href.replace(/\/$/, ""); // remove trailing forward slash
+  let prefix = process.env.IMJS_URL_PREFIX ?? "";
+
+  // "dev-ims.bentley.com" doesn't exist, so convert prefix to "qa-"
+  if (prefix === "dev-")
+    prefix = "qa-";
+
+  return `https://${prefix}ims.bentley.com`
 }
