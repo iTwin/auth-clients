@@ -4,13 +4,12 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { assert } from "chai";
-import type { ILogger as IOidcClientLogger } from "oidc-client-ts";
 import { Log as OidcClientLog } from "oidc-client-ts";
-
 import { Logger as BentleyLogger, LogLevel as BentleyLogLevel } from "@itwin/core-bentley";
-
 import { BrowserAuthorizationLogger } from "../Logger";
 import { BrowserAuthorizationLoggerCategory } from "../LoggerCategory";
+
+import type { ILogger as IOidcClientLogger } from "oidc-client-ts";
 
 function assertMessageLogged(logOutlet: any[], expectedMessage: string | undefined) {
   assert.isDefined(logOutlet, "no messages found");
