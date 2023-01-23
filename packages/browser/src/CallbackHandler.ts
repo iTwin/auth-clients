@@ -143,7 +143,7 @@ export class BrowserAuthorizationCallbackHandler {
       return;
 
     let errorMessage = "";
-    let callbackHandler = new BrowserAuthorizationCallbackHandler({ ...config, ...{ responseMode: "fragment" } });
+    let callbackHandler = new BrowserAuthorizationCallbackHandler({ ...config, responseMode: "fragment" });
     try {
       await callbackHandler.handleSigninCallbackInternal();
       return;
@@ -151,7 +151,7 @@ export class BrowserAuthorizationCallbackHandler {
       errorMessage += `${err.message}\n`;
     }
 
-    callbackHandler = new BrowserAuthorizationCallbackHandler({ ...config, ...{ responseMode: "query" } });
+    callbackHandler = new BrowserAuthorizationCallbackHandler({ ...config, responseMode: "query" });
     try {
       await callbackHandler.handleSigninCallbackInternal();
       return;
