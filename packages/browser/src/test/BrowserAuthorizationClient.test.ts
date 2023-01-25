@@ -61,7 +61,7 @@ describe("BrowserAuthorizationClient", () => {
       assert.equal(testClient.authorityUrl, TEST_AUTHORITY);
     });
 
-    it("given authority is when no prefix is defined", async () => {
+    it("given authority is used when no prefix is defined", async () => {
       process.env.IMJS_URL_PREFIX = "";
 
       assert.equal(testClient.authorityUrl, TEST_AUTHORITY);
