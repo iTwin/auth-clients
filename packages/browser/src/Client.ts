@@ -19,9 +19,16 @@ import type { User, UserManagerSettings } from "oidc-client-ts";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 
 /**
+ * @internal
+ * The internal configuration used by BrowserAuthorizationClient.
+ */
+type BrowserAuthorizationClientConfiguration =
+  MarkRequired<BrowserAuthorizationClientConfigurationOptions, "authority">;
+
+/**
  * @beta
  */
-export interface BrowserAuthorizationClientConfiguration extends BrowserAuthorizationClientRequestOptions {
+export interface BrowserAuthorizationClientConfigurationOptions extends BrowserAuthorizationClientRequestOptions {
   /** The URL of the OIDC/OAuth2 provider. If left undefined, the Bentley auth authority will be used by default. */
   readonly authority?: string;
   /** The unique client id registered through the issuing authority. Required to obtain authorization from the user. */
@@ -70,13 +77,13 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
   protected _userManager?: UserManager;
 
-  protected _basicSettings: MarkRequired<BrowserAuthorizationClientConfiguration, "authority">;
+  protected _basicSettings: BrowserAuthorizationClientConfiguration;
   protected _advancedSettings?: UserManagerSettings;
 
   protected _accessToken: AccessToken = "";
   protected _expiresAt?: Date;
 
-  public constructor(configuration: BrowserAuthorizationClientConfiguration) {
+  public constructor(configuration: BrowserAuthorizationClientConfigurationOptions) {
     BrowserAuthorizationLogger.initializeLogger();
 
     this._basicSettings = {

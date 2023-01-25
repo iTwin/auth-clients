@@ -17,9 +17,16 @@ import type { UserManagerSettings } from "oidc-client-ts";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
 
 /**
+ * @internal
+ * The internal configuration used by BrowserAuthorizationCallbackHandler.
+ */
+type BrowserAuthorizationCallbackHandlerConfiguration =
+  MarkRequired<BrowserAuthorizationCallbackHandlerConfigurationOptions, "authority">;
+
+/**
  * @beta
  */
-export interface BrowserAuthorizationCallbackHandlerConfiguration {
+export interface BrowserAuthorizationCallbackHandlerConfigurationOptions {
   /** The URL of the OIDC/OAuth2 provider. If left undefined, the Bentley auth authority will be used by default. */
   readonly authority?: string;
   /** The unique client id registered through the issuing authority. Required to obtain authorization from the user. */
@@ -58,10 +65,10 @@ export enum OidcCallbackResponseMode {
 export class BrowserAuthorizationCallbackHandler {
   protected _userManager?: UserManager;
 
-  protected _basicSettings: MarkRequired<BrowserAuthorizationCallbackHandlerConfiguration, "authority">;
+  protected _basicSettings: BrowserAuthorizationCallbackHandlerConfiguration;
   protected _advancedSettings?: UserManagerSettings;
 
-  private constructor(configuration: BrowserAuthorizationCallbackHandlerConfiguration) {
+  private constructor(configuration: BrowserAuthorizationCallbackHandlerConfigurationOptions) {
     BrowserAuthorizationLogger.initializeLogger();
 
     this._basicSettings = {
