@@ -7,7 +7,7 @@ import { assert } from "chai";
 import { BrowserAuthorizationClient } from "../Client";
 import { getImsAuthority } from "../utils";
 
-import type { BrowserAuthorizationClientConfigurationOptions } from "../Client";
+import type { BrowserAuthorizationClientConfiguration } from "../Client";
 
 describe("BrowserAuthorizationClient", () => {
 
@@ -16,8 +16,8 @@ describe("BrowserAuthorizationClient", () => {
     const TEST_AUTHORITY = "https://test.authority.com";
 
     let testClient: BrowserAuthorizationClient;
-    let testConfig: BrowserAuthorizationClientConfigurationOptions;
-    let testConfigWithoutAuthority: BrowserAuthorizationClientConfigurationOptions;
+    let testConfig: BrowserAuthorizationClientConfiguration;
+    let testConfigWithoutAuthority: BrowserAuthorizationClientConfiguration;
 
     before(() => {
       testConfigWithoutAuthority = {

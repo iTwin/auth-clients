@@ -7,7 +7,7 @@ import { assert } from "chai";
 import { BrowserAuthorizationCallbackHandler } from "../CallbackHandler";
 import { getImsAuthority } from "../utils";
 
-import type { BrowserAuthorizationCallbackHandlerConfigurationOptions } from "../CallbackHandler";
+import type { BrowserAuthorizationCallbackHandlerConfiguration } from "../CallbackHandler";
 
 describe("BrowserAuthorizationCallbackHandler", () => {
 
@@ -16,8 +16,8 @@ describe("BrowserAuthorizationCallbackHandler", () => {
     const TEST_AUTHORITY = "https://test.authority.com";
 
     let testClient: BrowserAuthorizationCallbackHandler;
-    let testConfig: BrowserAuthorizationCallbackHandlerConfigurationOptions;
-    let testConfigWithoutAuthority: BrowserAuthorizationCallbackHandlerConfigurationOptions;
+    let testConfig: BrowserAuthorizationCallbackHandlerConfiguration;
+    let testConfigWithoutAuthority: BrowserAuthorizationCallbackHandlerConfiguration;
 
     before(() => {
       testConfigWithoutAuthority = {
