@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@itwin/browser-authorization",
-      "comment": "update to oidc-client-ts",
+      "comment": "Update to oidc-client-ts\\nAdd new required properties to BrowserAuthorizationClientConfiguration\\nRename BrowserAuthorizationClientConfiguration to BrowserAuthorizationClientConfigurationOptions",
       "type": "minor"
     }
   ],
