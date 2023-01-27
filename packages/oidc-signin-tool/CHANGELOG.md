@@ -1,6 +1,13 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 03 Jan 2023 21:06:26 GMT and should not be manually modified.
+This log was last generated on Fri, 27 Jan 2023 18:50:06 GMT and should not be manually modified.
+
+## 3.6.1
+Fri, 27 Jan 2023 18:50:06 GMT
+
+### Patches
+
+- remove old OIDC Authing test
 
 ## 3.6.0
 Tue, 03 Jan 2023 21:06:26 GMT
