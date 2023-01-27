@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "Update to oidc-client-ts\\nAdd new required properties to BrowserAuthorizationCallbackHandlerConfiguration",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}
