@@ -153,9 +153,6 @@ test.describe("BrowserAuthorizationClient (#integration)", () => {
     });
 
     let config: BrowserAuthorizationClientConfiguration = {
-      // clientId: "itwin-viewer-tile-load-perf-testing",
-      // redirectUri: "http://localhost:3000/signin-callback",
-      // scope: "notification-service navigator-backend log-dispatcher-2760:write ulas-realtime-log-posting-2733 notification-service-20 urlps-third-party projectwise-review-2892 openid ims-notification-search imodelhub:webview profile organization feature_tracking email badgers changed-elements-api clash-resolution-service cloud-orchestration-service-2566 context-registry-service rule-management-service context-registry-service:read-only design-review-backend design-validation-rms forms-data-access-2346 general-purpose-imodeljs-backend imodel-bridge-service-api-general imodelhub imodeljs-agent-orchestrator imodeljs-router itwinjs results-analysis-service rbac-service projectwise-share reality-data:read product-settings-service context-services log-dispatcher-2760:read imodelaccess:read users:read projects:read imodels:read realitydata:read",
       clientId: "",
       redirectUri: "",
       scope: "",
