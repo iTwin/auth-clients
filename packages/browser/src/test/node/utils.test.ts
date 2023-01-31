@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { assert } from "chai";
-import { getImsAuthority } from "../utils";
+import { getImsAuthority } from "../../utils";
 
 describe("getImsAuthority", () => {
 
