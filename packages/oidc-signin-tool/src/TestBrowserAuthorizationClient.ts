@@ -194,8 +194,10 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     await this.handleConsentPage(page);
 
-    // For all other OAuthProviders, we want to use pure oauthcallback. It suppresses id_token validation
-    const tokenSet = await this._client.oauthCallback(this._config.redirectUri, this._client.callbackParams(await onRedirectRequest), callbackChecks);
+    const callbackParams = this._client.callbackParams(await onRedirectRequest);
+    const tokenSet = !callbackParams.id_token
+      ? await this._client.oauthCallback(this._config.redirectUri, callbackParams, callbackChecks)
+      : await this._client.callback(this._config.redirectUri, callbackParams, callbackChecks);
 
     await page.close();
     await browser.close();
