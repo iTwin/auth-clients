@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/service-authorization",
+      "comment": "`openid-client` upgraded to 5.4.0",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/service-authorization"
+}
