@@ -49,7 +49,6 @@ export class IntrospectionClient {
 
     custom.setHttpOptionsDefaults({
       timeout: 10000,
-      retry: 4,
     });
 
     this._issuer = await Issuer.discover(this.url);

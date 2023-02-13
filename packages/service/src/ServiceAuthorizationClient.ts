@@ -35,14 +35,13 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
   constructor(serviceConfiguration: ServiceAuthorizationClientConfiguration) {
     custom.setHttpOptionsDefaults({
       timeout: 10000,
-      retry: 4,
     });
 
     this._configuration = serviceConfiguration;
 
     let prefix = process.env.IMJS_URL_PREFIX;
     const authority = new URL(this._configuration.authority ?? this.url);
-    if (prefix && !this._configuration.authority){
+    if (prefix && !this._configuration.authority) {
       prefix = prefix === "dev-" ? "qa-" : prefix;
       authority.hostname = prefix + authority.hostname;
     }

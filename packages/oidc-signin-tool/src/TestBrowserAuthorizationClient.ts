@@ -50,7 +50,6 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     // Keep a list of http defaults
     const httpOptionsDefaults: HttpOptions = {
       timeout: 10000,
-      retry: 3,
     };
 
     // AzureAD needs to have the origin header to allow CORS
