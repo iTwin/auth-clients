@@ -195,9 +195,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     await this.handleConsentPage(page);
 
     const callbackParams = this._client.callbackParams(await onRedirectRequest);
-    const tokenSet = !callbackParams.id_token
-      ? await this._client.oauthCallback(this._config.redirectUri, callbackParams, callbackChecks)
-      : await this._client.callback(this._config.redirectUri, callbackParams, callbackChecks);
+    const tokenSet = await this._client.callback(this._config.redirectUri, callbackParams, callbackChecks);
 
     await page.close();
     await browser.close();
