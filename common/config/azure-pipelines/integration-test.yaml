@@ -29,6 +29,11 @@ jobs:
   - checkout: self
     persistCredentials: true
 
+  - task: NodeTool@0
+    displayName: Use Node 18
+    inputs:
+      versionSpec: 18.x
+
   - bash: |
      echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
