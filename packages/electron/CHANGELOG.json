@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.11.0",
+      "tag": "@itwin/electron-authorization_v0.11.0",
+      "date": "Thu, 23 Feb 2023 22:01:20 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Drop support for Electron 14, 15, 16, 17, 22. Start supporting Electron 23."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.1",
       "tag": "@itwin/electron-authorization_v0.10.1",
       "date": "Tue, 10 Jan 2023 15:45:09 GMT",
