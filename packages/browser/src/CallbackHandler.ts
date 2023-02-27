@@ -7,42 +7,23 @@
  * @module Authorization
  */
 
-import { UserManager, WebStorageStateStore } from "oidc-client-ts";
-import { UnexpectedErrors } from "@itwin/core-bentley";
+import type { UserManagerSettings} from "oidc-client";
+import { UserManager, WebStorageStateStore } from "oidc-client";
 import { BrowserAuthorizationLogger } from "./Logger";
-import { getImsAuthority } from "./utils";
-
-import type { MarkRequired } from "@itwin/core-bentley";
-import type { UserManagerSettings } from "oidc-client-ts";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
-
-/**
- * @internal
- * The internal configuration used by BrowserAuthorizationCallbackHandler.
- */
-type BrowserAuthorizationCallbackHandlerConfigurationOptions =
-  MarkRequired<BrowserAuthorizationCallbackHandlerConfiguration, "authority">;
+import { UnexpectedErrors } from "@itwin/core-bentley";
 
 /**
  * @beta
  */
 export interface BrowserAuthorizationCallbackHandlerConfiguration {
-  /** The URL of the OIDC/OAuth2 provider. If left undefined, the Bentley auth authority will be used by default. */
-  readonly authority?: string;
-  /** The unique client id registered through the issuing authority. Required to obtain authorization from the user. */
-  readonly clientId: string;
-  /**
-   * The URL passed in the authorization request, to which the authority will redirect the browser after the user grants/denies access
-   * The redirect URL must be registered against the clientId through the issuing authority to be considered valid.
-   */
-  readonly redirectUri: string;
   /**
    * Depending upon the mechanism used to authenticate, the signin response may be delivered in either the URL query or fragment strings.
    * If left undefined, the callback handler will check the URL fragment by default.
    * Authorization code responses are expected to be delivered in the query string, while access tokens are delivered via the fragment.
    * Sign-OUT responses are always expected to be delivered in the query string.
    */
-  readonly responseMode?: "query" | "fragment";
+  responseMode?: "query" | "fragment" | string;
 }
 
 /**
@@ -65,20 +46,12 @@ export enum OidcCallbackResponseMode {
 export class BrowserAuthorizationCallbackHandler {
   protected _userManager?: UserManager;
 
-  protected _basicSettings: BrowserAuthorizationCallbackHandlerConfigurationOptions;
+  protected _basicSettings: BrowserAuthorizationCallbackHandlerConfiguration;
   protected _advancedSettings?: UserManagerSettings;
 
-  private constructor(configuration: BrowserAuthorizationCallbackHandlerConfiguration) {
+  private constructor(configuration: BrowserAuthorizationCallbackHandlerConfiguration = {}) {
+    this._basicSettings = configuration;
     BrowserAuthorizationLogger.initializeLogger();
-
-    this._basicSettings = {
-      ...configuration,
-      authority: configuration.authority ?? getImsAuthority(),
-    };
-  }
-
-  public get authorityUrl(): string {
-    return this._advancedSettings?.authority ?? this._basicSettings.authority;
   }
 
   protected async getUserManager(): Promise<UserManager> {
@@ -99,15 +72,12 @@ export class BrowserAuthorizationCallbackHandler {
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationCallbackHandlerConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
-      authority: this.authorityUrl,
-      client_id: basicSettings.clientId, // eslint-disable-line @typescript-eslint/naming-convention
-      redirect_uri: basicSettings.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       response_mode: basicSettings.responseMode, // eslint-disable-line @typescript-eslint/naming-convention
       userStore: new WebStorageStateStore({ store: window.localStorage }),
     };
 
     if (advancedSettings) {
-      userManagerSettings = { ...userManagerSettings, ...advancedSettings };
+      userManagerSettings = Object.assign(userManagerSettings, advancedSettings);
     }
 
     return userManagerSettings;
@@ -144,25 +114,25 @@ export class BrowserAuthorizationCallbackHandler {
    * When called within an iframe or popup, the host frame will automatically be destroyed before the promise resolves.
    * @param redirectUrl Checked against the current window's URL. If the given redirectUrl and the window's path don't match, no attempt is made to parse the URL for a token.
    */
-  public static async handleSigninCallback(config: BrowserAuthorizationCallbackHandlerConfiguration): Promise<void> {
-    const url = new URL(config.redirectUri);
+  public static async handleSigninCallback(redirectUrl: string): Promise<void> {
+    const url = new URL(redirectUrl);
     if (url.pathname !== window.location.pathname)
       return;
 
     let errorMessage = "";
-    let callbackHandler = new BrowserAuthorizationCallbackHandler({ ...config, responseMode: "fragment" });
+    let callbackHandler = new BrowserAuthorizationCallbackHandler({ responseMode: "fragment" });
     try {
       await callbackHandler.handleSigninCallbackInternal();
       return;
-    } catch (err: any) {
+    } catch (err) {
       errorMessage += `${err.message}\n`;
     }
 
-    callbackHandler = new BrowserAuthorizationCallbackHandler({ ...config, responseMode: "query" });
+    callbackHandler = new BrowserAuthorizationCallbackHandler({ responseMode: "query" });
     try {
       await callbackHandler.handleSigninCallbackInternal();
       return;
-    } catch (err: any) {
+    } catch (err) {
       errorMessage += `${err.message}\n`;
     }
 

@@ -7,23 +7,13 @@
  * @module Authorization
  */
 
-import type { AccessToken, MarkRequired } from "@itwin/core-bentley";
-import { UserManager, WebStorageStateStore } from "oidc-client-ts";
-import { BeEvent, Logger } from "@itwin/core-bentley";
-import { BrowserAuthorizationLogger } from "./Logger";
-import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
-import { getImsAuthority } from "./utils";
-
+import type { AccessToken} from "@itwin/core-bentley";
+import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import type { User, UserManagerSettings } from "oidc-client-ts";
+import type { User, UserManagerSettings} from "oidc-client";
+import { UserManager, WebStorageStateStore } from "oidc-client";
+import { BrowserAuthorizationLogger } from "./Logger";
 import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
-
-/**
- * @internal
- * The internal configuration used by BrowserAuthorizationClient.
- */
-type BrowserAuthorizationClientConfigurationOptions =
-  MarkRequired<BrowserAuthorizationClientConfiguration, "authority">;
 
 /**
  * @beta
@@ -75,9 +65,10 @@ export const isBrowserAuthorizationClient = (client: AuthorizationClient | undef
  */
 export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
+  public url = "https://ims.bentley.com";
   protected _userManager?: UserManager;
 
-  protected _basicSettings: BrowserAuthorizationClientConfigurationOptions;
+  protected _basicSettings: BrowserAuthorizationClientConfiguration;
   protected _advancedSettings?: UserManagerSettings;
 
   protected _accessToken: AccessToken = "";
@@ -85,11 +76,15 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   public constructor(configuration: BrowserAuthorizationClientConfiguration) {
     BrowserAuthorizationLogger.initializeLogger();
+    this._basicSettings = configuration;
 
-    this._basicSettings = {
-      ...configuration,
-      authority: configuration.authority ?? getImsAuthority(),
-    };
+    let prefix = process.env.IMJS_URL_PREFIX;
+    const authority = new URL(this._basicSettings.authority ?? this.url);
+    if (prefix && !this._basicSettings.authority) {
+      prefix = prefix === "dev-" ? "qa-" : prefix;
+      authority.hostname = prefix + authority.hostname;
+    }
+    this.url = authority.href.replace(/\/$/, "");
   }
 
   public get isAuthorized(): boolean {
@@ -104,10 +99,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   public get hasSignedIn(): boolean {
     return !!this._accessToken;
-  }
-
-  public get authorityUrl(): string {
-    return this._advancedSettings?.authority ?? this._basicSettings.authority;
   }
 
   protected async getUserManager(): Promise<UserManager> {
@@ -128,7 +119,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
-      authority: this.authorityUrl,
+      authority: basicSettings.authority,
       redirect_uri: basicSettings.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       client_id: basicSettings.clientId, // eslint-disable-line @typescript-eslint/naming-convention
       scope: basicSettings.scope,
@@ -141,7 +132,11 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     };
 
     if (advancedSettings) {
-      userManagerSettings = { ...userManagerSettings, ...advancedSettings };
+      userManagerSettings = Object.assign(userManagerSettings, advancedSettings);
+    }
+
+    if (!userManagerSettings.authority) {
+      userManagerSettings.authority = this.url;
     }
 
     return userManagerSettings;
@@ -165,7 +160,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   }
 
   /**
-   * Alias for signInRedirect
+   * Alias for signInRedirect needed to satisfy [[FrontendAuthorizationClient]]
    * @param requestContext
    */
   public async signIn(): Promise<void> {
@@ -191,7 +186,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       successRedirectUrl: successRedirectUrl || window.location.href,
     };
 
-    const redirectArgs = { ...state, ...args };
+    const redirectArgs = Object.assign({ state }, args);
     await userManager.signinRedirect(redirectArgs); // This call changes the window's URL, which effectively ends execution here unless an exception is thrown.
   }
 
@@ -242,7 +237,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     // Attempt a silent sign-in
     try {
-      user = await userManager.signinSilent() ?? undefined; // calls events
+      user = await userManager.signinSilent(); // calls events
       return user;
     } catch (err) {
       return undefined;
@@ -273,7 +268,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       return;
     }
     this._accessToken = `Bearer ${user.access_token}`;
-    this._expiresAt = user.expires_at ? new Date(user.expires_at * 1000) : undefined;
+    this._expiresAt = new Date(user.expires_at * 1000);
   }
 
   /**
@@ -330,8 +325,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     this.initAccessToken(user);
     try {
       this.onAccessTokenChanged.raiseEvent(this._accessToken);
-    } catch (err: any) {
-      Logger.logError(BrowserAuthorizationLoggerCategory.Authorization, "Error thrown when handing BrowserAuthorizationClient.onUserStateChanged event", () => ({ message: err.message }));
+    } catch (err) {
+      return; // TODO: Replace
+      // Logger.logError(FrontendAuthorizationClientLoggerCategory.Authorization, "Error thrown when handing OidcBrowserClient.onUserStateChanged event", () => ({ message: err.message }));
     }
   };
 
