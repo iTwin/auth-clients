@@ -7,9 +7,9 @@
  * @module Logging
  */
 
-import type { Logger as IOidcClientLogger} from "oidc-client";
-import { Log as OidcClientLog } from "oidc-client";
 import { Logger, LogLevel } from "@itwin/core-bentley";
+import type { ILogger as IOidcClientLogger } from "oidc-client-ts";
+import { Log as OidcClientLog } from "oidc-client-ts";
 import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 
 /**
@@ -62,12 +62,10 @@ export class BrowserAuthorizationLogger implements IOidcClientLogger {
   public static initializeLogger() {
     const logLevel = BrowserAuthorizationLogger.getLogLevel(BrowserAuthorizationLoggerCategory.Authorization);
     if (!BrowserAuthorizationLogger.initialized) {
-      OidcClientLog.logger = new BrowserAuthorizationLogger();
+      OidcClientLog.setLogger(new BrowserAuthorizationLogger());
     }
 
-    if (OidcClientLog.level < logLevel) {
-      OidcClientLog.level = logLevel;
-    }
+    OidcClientLog.setLevel(logLevel);
     BrowserAuthorizationLogger.initialized = true;
   }
 }
