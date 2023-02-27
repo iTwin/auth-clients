@@ -9,6 +9,7 @@ pnpm-lock.yaml
 
 # testing
 .nyc_output
+.parcel-cache
 
 # pnpm
 .pnpm-debug.log

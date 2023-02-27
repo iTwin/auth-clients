@@ -13,6 +13,8 @@
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
+    "test-integration:start-test-app": "npx parcel src/integration-tests/test-app/index.html",
+    "test-integration": "npx playwright test src/integration-tests",
     "cover": "nyc npm test",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
@@ -44,7 +46,12 @@
     "sinon": "^15.0.1",
     "eslint": "^7.32.0",
     "rimraf": "^3.0.2",
-    "typescript": "~4.3.5"
+    "typescript": "~4.3.5",
+    "@playwright/test": "~1.31.1",
+    "http-server": "~14.1.1",
+    "parcel": "~2.8.3",
+    "buffer": "~6.0.3",
+    "process": "~0.11.10"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.0.0"
