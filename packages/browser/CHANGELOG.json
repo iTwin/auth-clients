@@ -2,6 +2,18 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "version": "0.6.1",
+      "tag": "@itwin/browser-authorization_v0.6.1",
+      "date": "Tue, 28 Feb 2023 16:16:08 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix broken final redirect"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.6.0",
       "tag": "@itwin/browser-authorization_v0.6.0",
       "date": "Fri, 27 Jan 2023 18:50:06 GMT",
