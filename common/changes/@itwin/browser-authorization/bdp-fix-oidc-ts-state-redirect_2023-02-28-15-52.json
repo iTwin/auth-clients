@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "fix broken final redirect",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}
