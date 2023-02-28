@@ -1,6 +1,13 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 10 Jan 2023 15:45:09 GMT and should not be manually modified.
+This log was last generated on Thu, 23 Feb 2023 22:01:20 GMT and should not be manually modified.
+
+## 0.11.0
+Thu, 23 Feb 2023 22:01:20 GMT
+
+### Minor changes
+
+- Drop support for Electron 14, 15, 16, 17, 22. Start supporting Electron 23.
 
 ## 0.10.1
 Tue, 10 Jan 2023 15:45:09 GMT
