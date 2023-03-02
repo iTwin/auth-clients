@@ -12,9 +12,9 @@ export class TestHelper {
   async signIn(page: Page) {
     await page.getByLabel("Email address").fill(this.signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
-    await page.screenshot({ path: "./email_filled.jpg" });
+    await page.screenshot({ path: "./screenshots/email_filled.jpg" });
     await page.getByLabel("Password").fill(this.signInOptions.password);
-    await page.screenshot({ path: "./pass_filled.jpg" });
+    await page.screenshot({ path: "./screenshots/pass_filled.jpg" });
     await page.getByText("Sign In").click();
   }
 
@@ -45,7 +45,7 @@ export class TestHelper {
     authType: AuthType = AuthType.Redirect
   ) {
     const locator = page.getByTestId("content");
-    await page.screenshot({ path: "./looking for authorized.jpg" });
+    await page.screenshot({ path: "./screenshots/looking for authorized.jpg" });
     await expect(locator).toContainText("Authorized");
     const user = await this.getUserFromLocalStorage(page);
     expect(user.access_token).toBeDefined();

@@ -96,8 +96,15 @@ jobs:
       DEBUG: pw:api
 
   - task: PublishTestResults@2
-    displayName: "Publish OIDC Signin Tool Test Results"
+    displayName: "Publish Integration Test Results"
     inputs:
       testResultsFiles: "packages/**/junit_results.xml"
       testRunTitle: "Tools - auth-clients - $(Agent.OS)"
+    condition: succeededOrFailed()
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Agent.BuildDirectory)/packages/browser/screenshots'
+      ArtifactName: 'screenshots'
+      publishLocation: 'Container'
     condition: succeededOrFailed()
