@@ -3,15 +3,15 @@ node_modules
 package-lock.json
 pnpm-lock.yaml
 .pnpm-store
-
 # build output
+
 /**/lib
 packages/browser/dist
 
 # testing
 .nyc_output
 .parcel-cache
-
+junit_results.xml
 
 # pnpm
 .pnpm-debug.log

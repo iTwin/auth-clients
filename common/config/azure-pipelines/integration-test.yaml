@@ -81,9 +81,10 @@ jobs:
       # Couldn't get this variable to be ingested in the steps above, but this works
       IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
 
+
   - task: PublishTestResults@2
     displayName: "Publish OIDC Signin Tool Test Results"
     inputs:
-      testResultsFiles: "packages/oidc-signin-tool/lib/test/junit_results.xml"
-      testRunTitle: "Tools -  OIDC Signin Tool - $(Agent.OS)"
+      testResultsFiles: "packages/**/junit_results.xml"
+      testRunTitle: "Tools - auth-clients - $(Agent.OS)"
     condition: succeededOrFailed()

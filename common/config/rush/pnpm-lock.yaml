@@ -18,6 +18,7 @@ importers:
       '@types/sinon': ^10.0.13
       buffer: ~6.0.3
       chai: ^4.2.22
+      dotenv: ~16.0.3
       eslint: ^7.32.0
       http-server: ~14.1.1
       mocha: ^8.2.3
@@ -42,6 +43,7 @@ importers:
       '@types/sinon': 10.0.13
       buffer: 6.0.3
       chai: 4.3.7
+      dotenv: 16.0.3
       eslint: 7.32.0
       http-server: 14.1.1
       mocha: 8.4.0
@@ -2887,6 +2889,11 @@ packages:
     resolution: {integrity: sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==}
     engines: {node: '>=10'}
     dev: false
+
+  /dotenv/16.0.3:
+    resolution: {integrity: sha1-EVrsQrrFBT2zxFbbMMwkOlqDagc=}
+    engines: {node: '>=12'}
+    dev: true
 
   /dotenv/7.0.0:
     resolution: {integrity: sha1-or481Sc2ZzIG6KhftSEO6ilijnw=}
