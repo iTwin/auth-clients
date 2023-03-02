@@ -17,10 +17,11 @@ jobs:
 - job: BuildPackages
   strategy:
     matrix:
-      linux:
-        imageName: 'ubuntu-latest'
-      mac:
-        imageName: 'macos-latest'
+      # until I figure out this playwright binary path  
+      # linux:
+      #   imageName: 'ubuntu-latest'
+      # mac:
+      #   imageName: 'macos-latest'
       windows:
         imageName: 'windows-latest'
   pool:
@@ -36,7 +37,7 @@ jobs:
      echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$test_azuread_user_password"
      echo "##vso[task.setvariable variable=PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD;]1"
-     echo "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]0"
+     echo "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]$(Build.BinariesDirectory)/pw-browsers"
      export
     displayName: 'Add config to environment'
     env:
@@ -59,7 +60,7 @@ jobs:
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
       Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD;]1"
-      Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]0"
+      Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]$(Build.BinariesDirectory)/pw-browsers"
     displayName: 'Add config to environment'
     env:
       test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
@@ -91,7 +92,6 @@ jobs:
     env:
       # Couldn't get this variable to be ingested in the steps above, but this works
       IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
-
 
   - task: PublishTestResults@2
     displayName: "Publish OIDC Signin Tool Test Results"
