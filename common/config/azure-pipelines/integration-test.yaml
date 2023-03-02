@@ -35,6 +35,8 @@ jobs:
      echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$test_azuread_user_password"
+     echo "##vso[task.setvariable variable=PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD;]1"
+     echo "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]0"
      export
     displayName: 'Add config to environment'
     env:
@@ -55,6 +57,9 @@ jobs:
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
+      Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD;]1"
+      Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]0"
     displayName: 'Add config to environment'
     env:
       test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
@@ -71,12 +76,12 @@ jobs:
 
   - script: npx playwright install-deps
     displayName: Install Playwright Browser Binaries
-    env:
-       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1 # Skip downloading during yarn install
-       PLAYWRIGHT_BROWSERS_PATH: 0 # Places binaries to node_modules/@playwright/test
 
   - script: node common/scripts/install-run-rush.js install
     displayName: Rush Install
+
+  - script: npx playwright install
+    displayName: Install Playwright
 
   - script: node common/scripts/install-run-rush.js build -v --to oidc-signin-tool
     displayName: Rush Build
