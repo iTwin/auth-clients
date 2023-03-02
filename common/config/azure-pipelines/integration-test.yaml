@@ -92,6 +92,7 @@ jobs:
     env:
       # Couldn't get this variable to be ingested in the steps above, but this works
       IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+      DEBUG: pw:api
 
   - task: PublishTestResults@2
     displayName: "Publish OIDC Signin Tool Test Results"
