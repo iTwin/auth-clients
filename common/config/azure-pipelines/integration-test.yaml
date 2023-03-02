@@ -69,6 +69,12 @@ jobs:
       git config user.name imodeljs-admin
     displayName: git config
 
+  - script: npx playwright install-deps
+    displayName: Install Playwright Browser Binaries
+    env:
+       PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD: 1 # Skip downloading during yarn install
+       PLAYWRIGHT_BROWSERS_PATH: 0 # Places binaries to node_modules/@playwright/test
+
   - script: node common/scripts/install-run-rush.js install
     displayName: Rush Install
 
