@@ -13,8 +13,8 @@
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
-    "test-integration:start-test-app": "npx parcel src/integration-tests/test-app/index.html",
-    "test-integration": "npx playwright test src/integration-tests",
+    "test:integration:start-test-app": "parcel src/integration-tests/test-app/index.html",
+    "test:integration": "playwright test src/integration-tests",
     "cover": "nyc npm test",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
