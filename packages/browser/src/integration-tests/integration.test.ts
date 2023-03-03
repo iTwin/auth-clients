@@ -29,12 +29,16 @@ const testHelper = new TestHelper(signInOptions);
 test("login redirect", async ({ page }) => {
   await page.goto(signInOptions.url);
   await testHelper.signIn(page);
+  await page.waitForURL(signInOptions.url);
+
   await testHelper.validateAuthenticated(page);
 });
 
 test("logout redirect", async ({ page }) => {
   await page.goto(signInOptions.url);
   await testHelper.signIn(page);
+  await page.waitForURL(signInOptions.url);
+
   const locator = page.getByTestId("logout-button");
   await locator.click();
 
@@ -56,6 +60,7 @@ test("login popup", async ({ page }) => {
   const popup = await popupPromise;
   await popup.waitForLoadState();
   await testHelper.signIn(popup);
+  await popup.waitForEvent("close");
   await testHelper.validateAuthenticated(page, AuthType.PopUp);
 });
 
@@ -67,6 +72,7 @@ test("logout popup", async ({ page }) => {
   const popup = await popupPromise;
   await popup.waitForLoadState();
   await testHelper.signIn(popup);
+  await popup.waitForEvent("close");
   await testHelper.validateAuthenticated(page, AuthType.PopUp);
 
   const logoutPopupPromise = page.waitForEvent("popup");
