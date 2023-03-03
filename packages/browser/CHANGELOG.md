@@ -1,6 +1,13 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Fri, 27 Jan 2023 18:50:06 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Feb 2023 16:16:08 GMT and should not be manually modified.
+
+## 0.6.1
+Tue, 28 Feb 2023 16:16:08 GMT
+
+### Patches
+
+- fix broken final redirect
 
 ## 0.6.0
 Fri, 27 Jan 2023 18:50:06 GMT
