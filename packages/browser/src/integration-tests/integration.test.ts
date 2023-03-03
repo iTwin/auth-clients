@@ -26,14 +26,10 @@ const signInOptions: SignInOptions = {
 
 const testHelper = new TestHelper(signInOptions);
 
-test.only("login redirect", async ({ page }) => {
+test("login redirect", async ({ page }) => {
   await page.goto(signInOptions.url);
   await testHelper.signIn(page);
-  await page.screenshot({
-    path: "./screenshots/loginRedirect_AfterSignin.jpg",
-  });
   await testHelper.validateAuthenticated(page);
-  await page.screenshot({ path: "./screenshots/loginRedirect_EndState.jpg" });
 });
 
 test("logout redirect", async ({ page }) => {

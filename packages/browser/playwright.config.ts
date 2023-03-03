@@ -12,4 +12,7 @@ export default defineConfig({
     url: "http://localhost:1234",
   },
   reporter,
+  use: {
+    screenshot: "only-on-failure",
+  },
 });

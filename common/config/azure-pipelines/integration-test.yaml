@@ -17,11 +17,10 @@ jobs:
 - job: BuildPackages
   strategy:
     matrix:
-      # until I figure out this playwright binary path
-      # linux:
-      #   imageName: 'ubuntu-latest'
-      # mac:
-      #   imageName: 'macos-latest'
+      linux:
+        imageName: 'ubuntu-latest'
+      mac:
+        imageName: 'macos-latest'
       windows:
         imageName: 'windows-latest'
   pool:
@@ -104,7 +103,7 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: '$(Agent.BuildDirectory)/packages/browser/screenshots'
+      PathtoPublish: '$(Agent.BuildSourcesDirectory)/packages/browser/test-results'
       ArtifactName: 'screenshots'
       publishLocation: 'Container'
-    condition: succeededOrFailed()
+    condition: Failed()

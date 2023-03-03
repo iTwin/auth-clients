@@ -12,6 +12,7 @@ packages/browser/dist
 .nyc_output
 .parcel-cache
 junit_results.xml
+/**/test-results/**/*
 
 # pnpm
 .pnpm-debug.log

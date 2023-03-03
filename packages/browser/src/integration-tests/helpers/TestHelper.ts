@@ -12,10 +12,13 @@ export class TestHelper {
   async signIn(page: Page) {
     await page.getByLabel("Email address").fill(this.signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
-    await page.screenshot({ path: "./screenshots/email_filled.jpg" });
     await page.getByLabel("Password").fill(this.signInOptions.password);
-    await page.screenshot({ path: "./screenshots/pass_filled.jpg" });
     await page.getByText("Sign In").click();
+
+    const url = await page.url();
+    if (url.endsWith("resume/as/authorization.ping")) {
+      await this.handleConsentScreen(page);
+    }
   }
 
   async getUserFromLocalStorage(page: Page) {
@@ -45,7 +48,6 @@ export class TestHelper {
     authType: AuthType = AuthType.Redirect
   ) {
     const locator = page.getByTestId("content");
-    await page.screenshot({ path: "./screenshots/looking for authorized.jpg" });
     await expect(locator).toContainText("Authorized");
     const user = await this.getUserFromLocalStorage(page);
     expect(user.access_token).toBeDefined();
@@ -53,5 +55,12 @@ export class TestHelper {
     let url = `${this.signInOptions.url}/`;
     if (authType === AuthType.PopUp) url += "login-via-popup";
     expect(page.url()).toEqual(url);
+  }
+
+  private async handleConsentScreen(page: Page) {
+    const consentAcceptButton = await page.getByRole("link", {
+      name: "Accept",
+    });
+    if (consentAcceptButton) consentAcceptButton.click();
   }
 }
