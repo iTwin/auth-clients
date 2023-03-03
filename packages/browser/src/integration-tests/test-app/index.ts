@@ -9,7 +9,7 @@ import {
 } from "../../index";
 
 const oidcCallbackUrl = `${process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL}/oidc-callback`;
-const authority = `https://${process.env.imjs_url_prefix}ims.bentley.com`;
+const authority = `https://${process.env.IMJS_URL_PREFIX}ims.bentley.com`;
 const client = new BrowserAuthorizationClient({
   clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID!,
   redirectUri: oidcCallbackUrl,
