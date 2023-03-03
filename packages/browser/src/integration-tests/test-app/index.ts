@@ -85,6 +85,7 @@ function displayAuthorized(token: string) {
   console.log(token);
   if (contentArea) {
     contentArea.textContent = "Authorized!";
+
     const logOutButton = document.createElement("button");
     logOutButton.textContent = "Logout";
     logOutButton.setAttribute("data-testid", "logout-button");
@@ -92,7 +93,7 @@ function displayAuthorized(token: string) {
     contentArea.appendChild(logOutButton);
 
     const logOutButtonPopup = document.createElement("button");
-    logOutButtonPopup.textContent = "Logout";
+    logOutButtonPopup.textContent = "Logout Popup";
     logOutButtonPopup.setAttribute("data-testid", "logout-button-popup");
     logOutButtonPopup.addEventListener("click", () => logout(true));
     contentArea.appendChild(logOutButtonPopup);

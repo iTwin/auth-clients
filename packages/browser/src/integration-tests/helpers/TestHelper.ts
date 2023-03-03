@@ -27,6 +27,8 @@ export class TestHelper {
       (o) => o.origin === this.signInOptions.url
     )?.localStorage;
 
+    console.log("localstorage: ");
+    console.log(localStorage);
     if (!localStorage) return undefined;
 
     const user = localStorage.find(
@@ -34,6 +36,8 @@ export class TestHelper {
         s.name ===
         `oidc.user:https://${this.signInOptions.envPrefix}ims.bentley.com:${this.signInOptions.clientId}`
     );
+    console.log("localstorage:user");
+    console.log(user);
     const userValue = user?.value;
 
     try {
