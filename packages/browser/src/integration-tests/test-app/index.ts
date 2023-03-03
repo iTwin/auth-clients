@@ -8,14 +8,16 @@ import {
   BrowserAuthorizationCallbackHandler,
 } from "../../index";
 
+const oidcCallbackUrl = `${process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL}/oidc-callback`;
+const authority = `https://${process.env.imjs_url_prefix}ims.bentley.com`;
 const client = new BrowserAuthorizationClient({
-  clientId: "spa-pIa9gNNEaaBEQa8lOk0bdKvj1",
-  redirectUri: "http://localhost:1234/oidc-callback",
+  clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID!,
+  redirectUri: oidcCallbackUrl,
   scope: "itwins:read projects:read itwins:modify projects:modify users:read",
-  authority: "https://qa-ims.bentley.com",
+  authority,
   postSignoutRedirectUri: "",
   responseType: "code",
-  silentRedirectUri: "http://localhost:1234/oidc-callback",
+  silentRedirectUri: oidcCallbackUrl,
 });
 
 const contentArea = document.querySelector("div[data-testid='content']");
@@ -38,9 +40,9 @@ async function initialize() {
 
   if (isOidcCallbackPage()) {
     await BrowserAuthorizationCallbackHandler.handleSigninCallback({
-      clientId: "spa-pIa9gNNEaaBEQa8lOk0bdKvj1",
-      redirectUri: "http://localhost:1234/oidc-callback",
-      authority: "https://qa-ims.bentley.com",
+      clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID!,
+      redirectUri: oidcCallbackUrl,
+      authority,
       responseMode: "query",
     });
   }
