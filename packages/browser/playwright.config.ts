@@ -14,5 +14,6 @@ export default defineConfig({
   reporter,
   use: {
     screenshot: "only-on-failure",
+    video: "on",
   },
 });

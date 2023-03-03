@@ -103,7 +103,7 @@ jobs:
 
   - task: PublishBuildArtifacts@1
     inputs:
-      PathtoPublish: '$(Agent.BuildSourcesDirectory)/packages/browser/test-results'
+      PathtoPublish: '$(Build.SourcesDirectory)/packages/browser/test-results'
       ArtifactName: 'screenshots'
       publishLocation: 'Container'
     condition: Failed()
