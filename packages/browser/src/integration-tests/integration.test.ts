@@ -3,25 +3,20 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { TestHelper } from "./helpers/TestHelper";
-import { AuthType, SignInOptions } from "./types";
+import { AuthType } from "./types";
+import type { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
 
-const {
-  IMJS_TEST_REGULAR_USER_NAME,
-  IMJS_TEST_REGULAR_USER_PASSWORD,
-  BASE_URL,
-  CLIENT_ID,
-  ENV_PREFIX,
-} = loadConfig();
+const { url, clientId, envPrefix, email, password } = loadConfig();
 
 const signInOptions: SignInOptions = {
-  email: IMJS_TEST_REGULAR_USER_NAME,
-  password: IMJS_TEST_REGULAR_USER_PASSWORD,
-  url: BASE_URL,
-  clientId: CLIENT_ID,
-  envPrefix: ENV_PREFIX || "",
+  email,
+  password,
+  url,
+  clientId,
+  envPrefix: envPrefix || "",
 };
 
 const testHelper = new TestHelper(signInOptions);
@@ -55,7 +50,7 @@ test("signout redirect", async ({ page }) => {
 test("signin popup", async ({ page }) => {
   await page.goto(`${signInOptions.url}/signin-via-popup`);
   const popupPromise = page.waitForEvent("popup");
-  const el = await page.getByText("Signin via Popup");
+  const el = page.getByText("Signin via Popup");
   await el.click();
   const popup = await popupPromise;
   await popup.waitForLoadState();
@@ -67,7 +62,7 @@ test("signin popup", async ({ page }) => {
 test("signout popup", async ({ page }) => {
   await page.goto(`${signInOptions.url}/signin-via-popup`);
   const popupPromise = page.waitForEvent("popup");
-  const el = await page.getByText("Signin via Popup");
+  const el = page.getByText("Signin via Popup");
   await el.click();
   const popup = await popupPromise;
   await popup.waitForLoadState();

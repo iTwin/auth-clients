@@ -3,43 +3,47 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import { Page, expect } from "@playwright/test";
-import { SignInOptions, AuthType } from "../types";
+import { expect } from "@playwright/test";
+import type { Page } from "@playwright/test";
 import { User } from "oidc-client-ts";
+import { AuthType } from "../types";
+import type { SignInOptions } from "../types";
 
 export class TestHelper {
-  constructor(private signInOptions: SignInOptions) {}
+  constructor(private _signInOptions: SignInOptions) {}
 
-  async signIn(page: Page) {
-    await page.getByLabel("Email address").fill(this.signInOptions.email);
+  public async signIn(page: Page) {
+    await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
-    await page.getByLabel("Password").fill(this.signInOptions.password);
+    await page.getByLabel("Password").fill(this._signInOptions.password);
     await page.getByText("Sign In").click();
 
-    const url = await page.url();
+    const url = page.url();
     if (url.endsWith("resume/as/authorization.ping")) {
       await this.handleConsentScreen(page);
     }
   }
 
-  async getUserFromLocalStorage(page: Page): Promise<User> {
+  public async getUserFromLocalStorage(page: Page): Promise<User> {
     const storageState = await page.context().storageState();
     const localStorage = storageState.origins.find(
-      (o) => o.origin === this.signInOptions.url
+      (o) => o.origin === this._signInOptions.url
     )?.localStorage;
 
     if (!localStorage)
       throw new Error(
-        `Could not find local storage for origin: ${this.signInOptions.url}`
+        `Could not find local storage for origin: ${this._signInOptions.url}`
       );
 
     const user = localStorage.find((s) => s.name.startsWith("oidc.user"));
-    if (!user) throw new Error("Could not find user in localStorage");
+
+    if (!user)
+      throw new Error("Could not find user in localStorage");
 
     return User.fromStorageString(user.value);
   }
 
-  async validateAuthenticated(
+  public async validateAuthenticated(
     page: Page,
     authType: AuthType = AuthType.Redirect
   ) {
@@ -48,15 +52,18 @@ export class TestHelper {
     const user = await this.getUserFromLocalStorage(page);
     expect(user.access_token).toBeDefined();
 
-    let url = `${this.signInOptions.url}/`;
-    if (authType === AuthType.PopUp) url += "signin-via-popup";
+    let url = `${this._signInOptions.url}/`;
+    if (authType === AuthType.PopUp)
+      url += "signin-via-popup";
+
     expect(page.url()).toEqual(url);
   }
 
   private async handleConsentScreen(page: Page) {
-    const consentAcceptButton = await page.getByRole("link", {
+    const consentAcceptButton = page.getByRole("link", {
       name: "Accept",
     });
-    if (consentAcceptButton) consentAcceptButton.click();
+    if (consentAcceptButton)
+      await consentAcceptButton.click();
   }
 }

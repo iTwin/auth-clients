@@ -3,6 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
+// eslint@typescript-eslint/naming-convention
 import { config } from "dotenv";
 
 export function loadConfig() {
@@ -20,11 +21,10 @@ export function loadConfig() {
   }
 
   return {
-    IMJS_TEST_REGULAR_USER_NAME: process.env.IMJS_TEST_REGULAR_USER_NAME,
-    IMJS_TEST_REGULAR_USER_PASSWORD:
-      process.env.IMJS_TEST_REGULAR_USER_PASSWORD,
-    BASE_URL: process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL,
-    CLIENT_ID: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID,
-    ENV_PREFIX: process.env.IMJS_URL_PREFIX || "",
+    email: process.env.IMJS_TEST_REGULAR_USER_NAME,
+    password: process.env.IMJS_TEST_REGULAR_USER_PASSWORD,
+    url: process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL,
+    clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID,
+    envPrefix: process.env.IMJS_URL_PREFIX || "",
   };
 }

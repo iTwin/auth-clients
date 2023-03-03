@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 
 import {
-  BrowserAuthorizationClient,
   BrowserAuthorizationCallbackHandler,
-} from "../../index";
+} from "../../CallbackHandler";
+import { BrowserAuthorizationClient } from "../../Client";
 
 const oidcCallbackUrl = `${process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL}/oidc-callback`;
 const authority = `https://${process.env.IMJS_URL_PREFIX}ims.bentley.com`;
@@ -24,7 +24,8 @@ const contentArea = document.querySelector("div[data-testid='content']");
 
 async function initialize() {
   if (isSignoutPage()) {
-    if (contentArea) contentArea.textContent = "Signed Out!";
+    if (contentArea)
+      contentArea.textContent = "Signed Out!";
   } else if (isSigninViaPopupPage()) {
     const popupButton = document.getElementById("popup");
     if (popupButton)
@@ -62,31 +63,35 @@ async function validateAuthenticated() {
     await client.getAccessToken();
     displayAuthorized();
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log("issue getting access token after non interactive signin");
   }
 }
 
 async function signout(popup: boolean) {
-  if (popup) await client.signOutPopup();
-  else await client.signOutRedirect();
+  if (popup)
+    await client.signOutPopup();
+  else
+    await client.signOutRedirect();
 }
 
 function displayAuthorized() {
   if (contentArea) {
     contentArea.textContent = "Authorized!";
 
-    const signOutButton = document.createElement("button");
-    signOutButton.textContent = "Signout";
-    signOutButton.setAttribute("data-testid", "signout-button");
-    signOutButton.addEventListener("click", () => signout(false));
-    contentArea.appendChild(signOutButton);
-
-    const signOutButtonPopup = document.createElement("button");
-    signOutButtonPopup.textContent = "Signout Popup";
-    signOutButtonPopup.setAttribute("data-testid", "signout-button-popup");
-    signOutButtonPopup.addEventListener("click", () => signout(true));
-    contentArea.appendChild(signOutButtonPopup);
+    appendButton(contentArea, "Signout", "signout-button");
+    appendButton(contentArea, "Signout Popup", "signout-button-popup", true);
   }
+}
+
+function appendButton(parent: Element, text: string, testId: string, popup: boolean = false){
+  const button = document.createElement("button");
+  button.textContent = text;
+  button.setAttribute("data-testid", testId);
+  button.addEventListener("click", async () => {
+    await signout(popup);
+  });
+  parent.appendChild(button);
 }
 
 function isSignoutPage() {
@@ -101,6 +106,6 @@ function isOidcCallbackPage() {
   return window.location.href.includes("oidc-callback");
 }
 
-initialize().then(() => {
-  console.log("All Done");
+void initialize().then(() => {
+  // Finished
 });
