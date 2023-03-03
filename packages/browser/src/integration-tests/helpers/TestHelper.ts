@@ -31,11 +31,7 @@ export class TestHelper {
     console.log(localStorage);
     if (!localStorage) return undefined;
 
-    const user = localStorage.find(
-      (s) =>
-        s.name ===
-        `oidc.user:https://${this.signInOptions.envPrefix}ims.bentley.com:${this.signInOptions.clientId}`
-    );
+    const user = localStorage.find((s) => s.name.startsWith("oidc.user"));
     console.log("localstorage:user");
     console.log(user);
     const userValue = user?.value;
