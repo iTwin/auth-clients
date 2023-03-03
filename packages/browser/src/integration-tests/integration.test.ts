@@ -26,7 +26,7 @@ const signInOptions: SignInOptions = {
 
 const testHelper = new TestHelper(signInOptions);
 
-test("login redirect", async ({ page }) => {
+test("signin redirect", async ({ page }) => {
   await page.goto(signInOptions.url);
   await testHelper.signIn(page);
   await page.waitForURL(signInOptions.url);
@@ -34,12 +34,12 @@ test("login redirect", async ({ page }) => {
   await testHelper.validateAuthenticated(page);
 });
 
-test("logout redirect", async ({ page }) => {
+test("signout redirect", async ({ page }) => {
   await page.goto(signInOptions.url);
   await testHelper.signIn(page);
   await page.waitForURL(signInOptions.url);
 
-  const locator = page.getByTestId("logout-button");
+  const locator = page.getByTestId("signout-button");
   await locator.click();
 
   const content = page.getByText("Sign Off Successful");
@@ -47,15 +47,15 @@ test("logout redirect", async ({ page }) => {
 
   // Cannot get the below working on QA...
   // We'll have to settle for the above check
-  // await expect(content).toContainText("Logged Out!");
+  // await expect(content).toContainText("Signed Out!");
   // const user = await testHelper.getUserFromLocalStorage(page);
   // expect(user).not.toBeDefined();
 });
 
-test("login popup", async ({ page }) => {
-  await page.goto(`${signInOptions.url}/login-via-popup`);
+test("signin popup", async ({ page }) => {
+  await page.goto(`${signInOptions.url}/signin-via-popup`);
   const popupPromise = page.waitForEvent("popup");
-  const el = await page.getByText("Login via Popup");
+  const el = await page.getByText("Signin via Popup");
   await el.click();
   const popup = await popupPromise;
   await popup.waitForLoadState();
@@ -64,10 +64,10 @@ test("login popup", async ({ page }) => {
   await testHelper.validateAuthenticated(page, AuthType.PopUp);
 });
 
-test("logout popup", async ({ page }) => {
-  await page.goto(`${signInOptions.url}/login-via-popup`);
+test("signout popup", async ({ page }) => {
+  await page.goto(`${signInOptions.url}/signin-via-popup`);
   const popupPromise = page.waitForEvent("popup");
-  const el = await page.getByText("Login via Popup");
+  const el = await page.getByText("Signin via Popup");
   await el.click();
   const popup = await popupPromise;
   await popup.waitForLoadState();
@@ -75,11 +75,11 @@ test("logout popup", async ({ page }) => {
   await popup.waitForEvent("close");
   await testHelper.validateAuthenticated(page, AuthType.PopUp);
 
-  const logoutPopupPromise = page.waitForEvent("popup");
-  const locator = page.getByTestId("logout-button-popup");
+  const signoutPopupPromise = page.waitForEvent("popup");
+  const locator = page.getByTestId("signout-button-popup");
   await locator.click();
-  const logOutPopup = await logoutPopupPromise;
+  const signOutPopup = await signoutPopupPromise;
 
-  const content = logOutPopup.getByText("Sign Off Successful");
+  const content = signOutPopup.getByText("Sign Off Successful");
   expect(content).toBeDefined();
 });

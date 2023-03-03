@@ -8,8 +8,6 @@ import {
   BrowserAuthorizationCallbackHandler,
 } from "../../index";
 
-const contentArea = document.querySelector("div[data-testid='content']");
-
 const client = new BrowserAuthorizationClient({
   clientId: "spa-pIa9gNNEaaBEQa8lOk0bdKvj1",
   redirectUri: "http://localhost:1234/oidc-callback",
@@ -20,22 +18,12 @@ const client = new BrowserAuthorizationClient({
   silentRedirectUri: "http://localhost:1234/oidc-callback",
 });
 
-function logoutPage() {
-  return window.location.href.includes("logout");
-}
-
-function loginViaPopupPage() {
-  return window.location.href.includes("login-via-popup");
-}
-
-function oidcCallbackPage() {
-  return window.location.href.includes("oidc-callback");
-}
+const contentArea = document.querySelector("div[data-testid='content']");
 
 async function initialize() {
-  if (logoutPage()) {
-    if (contentArea) contentArea.textContent = "Logged Out!";
-  } else if (loginViaPopupPage()) {
+  if (isSignoutPage()) {
+    if (contentArea) contentArea.textContent = "Signed Out!";
+  } else if (isSigninViaPopupPage()) {
     const popupButton = document.getElementById("popup");
     if (popupButton)
       popupButton.addEventListener("click", async () => {
@@ -44,11 +32,11 @@ async function initialize() {
         popupButton.parentElement?.removeChild(popupButton);
         await validateAuthenticated();
       });
-  } else if (!oidcCallbackPage()) {
+  } else if (!isOidcCallbackPage()) {
     await authenticateRedirect();
   }
 
-  if (oidcCallbackPage()) {
+  if (isOidcCallbackPage()) {
     await BrowserAuthorizationCallbackHandler.handleSigninCallback({
       clientId: "spa-pIa9gNNEaaBEQa8lOk0bdKvj1",
       redirectUri: "http://localhost:1234/oidc-callback",
@@ -69,35 +57,46 @@ async function authenticateRedirect() {
 
 async function validateAuthenticated() {
   try {
-    const token = await client.getAccessToken();
-    displayAuthorized(token);
+    await client.getAccessToken();
+    displayAuthorized();
   } catch (error) {
     console.log("issue getting access token after non interactive signin");
   }
 }
 
-async function logout(popup: boolean) {
+async function signout(popup: boolean) {
   if (popup) await client.signOutPopup();
   else await client.signOutRedirect();
 }
 
-function displayAuthorized(token: string) {
-  console.log(token);
+function displayAuthorized() {
   if (contentArea) {
     contentArea.textContent = "Authorized!";
 
-    const logOutButton = document.createElement("button");
-    logOutButton.textContent = "Logout";
-    logOutButton.setAttribute("data-testid", "logout-button");
-    logOutButton.addEventListener("click", () => logout(false));
-    contentArea.appendChild(logOutButton);
+    const signOutButton = document.createElement("button");
+    signOutButton.textContent = "Signout";
+    signOutButton.setAttribute("data-testid", "signout-button");
+    signOutButton.addEventListener("click", () => signout(false));
+    contentArea.appendChild(signOutButton);
 
-    const logOutButtonPopup = document.createElement("button");
-    logOutButtonPopup.textContent = "Logout Popup";
-    logOutButtonPopup.setAttribute("data-testid", "logout-button-popup");
-    logOutButtonPopup.addEventListener("click", () => logout(true));
-    contentArea.appendChild(logOutButtonPopup);
+    const signOutButtonPopup = document.createElement("button");
+    signOutButtonPopup.textContent = "Signout Popup";
+    signOutButtonPopup.setAttribute("data-testid", "signout-button-popup");
+    signOutButtonPopup.addEventListener("click", () => signout(true));
+    contentArea.appendChild(signOutButtonPopup);
   }
+}
+
+function isSignoutPage() {
+  return window.location.href.includes("signout");
+}
+
+function isSigninViaPopupPage() {
+  return window.location.href.includes("signin-via-popup");
+}
+
+function isOidcCallbackPage() {
+  return window.location.href.includes("oidc-callback");
 }
 
 initialize().then(() => {

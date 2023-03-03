@@ -5,6 +5,7 @@
 
 import { Page, expect } from "@playwright/test";
 import { SignInOptions, AuthType } from "../types";
+import { User } from "oidc-client-ts";
 
 export class TestHelper {
   constructor(private signInOptions: SignInOptions) {}
@@ -21,26 +22,21 @@ export class TestHelper {
     }
   }
 
-  async getUserFromLocalStorage(page: Page) {
+  async getUserFromLocalStorage(page: Page): Promise<User> {
     const storageState = await page.context().storageState();
     const localStorage = storageState.origins.find(
       (o) => o.origin === this.signInOptions.url
     )?.localStorage;
 
-    console.log("localstorage: ");
-    console.log(localStorage);
-    if (!localStorage) return undefined;
+    if (!localStorage)
+      throw new Error(
+        `Could not find local storage for origin: ${this.signInOptions.url}`
+      );
 
     const user = localStorage.find((s) => s.name.startsWith("oidc.user"));
-    console.log("localstorage:user");
-    console.log(user);
-    const userValue = user?.value;
+    if (!user) throw new Error("Could not find user in localStorage");
 
-    try {
-      return JSON.parse(userValue!);
-    } catch (error) {
-      return undefined;
-    }
+    return User.fromStorageString(user.value);
   }
 
   async validateAuthenticated(
@@ -53,7 +49,7 @@ export class TestHelper {
     expect(user.access_token).toBeDefined();
 
     let url = `${this.signInOptions.url}/`;
-    if (authType === AuthType.PopUp) url += "login-via-popup";
+    if (authType === AuthType.PopUp) url += "signin-via-popup";
     expect(page.url()).toEqual(url);
   }
 

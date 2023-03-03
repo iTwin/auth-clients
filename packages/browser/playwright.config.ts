@@ -1,8 +1,7 @@
 import { defineConfig } from "@playwright/test";
 
-// Playwright types are not flexible enough, apparently
 const reporter: any = process.env.AGENT_ID
-  ? [["junit", { outputFile: "junit_results.xml" }]]
+  ? [["junit", { outputFile: "junit_results.xml" }], "dot"]
   : "list";
 
 export default defineConfig({
@@ -14,6 +13,5 @@ export default defineConfig({
   reporter,
   use: {
     screenshot: "only-on-failure",
-    video: "on",
   },
 });
