@@ -8,7 +8,6 @@
  * @module Authentication
  */
 
-import * as open from "open";
 import { Logger } from "@itwin/core-bentley";
 import type { AuthorizationErrorJson, AuthorizationRequest, AuthorizationRequestResponse,
   AuthorizationResponseJson, AuthorizationServiceConfiguration} from "@openid/appauth";
@@ -17,7 +16,9 @@ import {
 } from "@openid/appauth";
 import { NodeCrypto } from "@openid/appauth/built/node_support";
 import type { ElectronAuthorizationEvents } from "./Events";
+import { shell } from "electron";
 
+const electronAuthLoggerCategory = "electron-auth";
 /**
  * Utility to setup a local web server that listens to authorization responses to the browser and make the necessary redirections
  * @internal
@@ -38,7 +39,7 @@ export class ElectronMainAuthorizationRequestHandler extends AuthorizationReques
    * Makes an authorization request on the system browser
    */
   public async performAuthorizationRequest(serviceConfiguration: AuthorizationServiceConfiguration, authRequest: AuthorizationRequest): Promise<void> {
-    Logger.logTrace("electron-auth", "Making authorization request", () => ({ serviceConfiguration, authRequest }));
+    Logger.logTrace(electronAuthLoggerCategory, "Making authorization request", () => ({ serviceConfiguration, authRequest }));
 
     // Setup a promise to process the authorization response
     this._authorizationPromise = new Promise<AuthorizationRequestResponse>((resolve, _reject) => {
@@ -61,7 +62,8 @@ export class ElectronMainAuthorizationRequestHandler extends AuthorizationReques
 
     // Compose the request and invoke in the browser
     const authUrl = this.buildRequestUrl(serviceConfiguration, authRequest);
-    await open(authUrl);
+    const error = await shell.openPath(authUrl);
+    if (error) Logger.logError(electronAuthLoggerCategory, error)
   }
 
   /**
