@@ -63,7 +63,8 @@ export class ElectronMainAuthorizationRequestHandler extends AuthorizationReques
     // Compose the request and invoke in the browser
     const authUrl = this.buildRequestUrl(serviceConfiguration, authRequest);
     const error = await shell.openPath(authUrl);
-    if (error) Logger.logError(electronAuthLoggerCategory, error)
+    if (error)
+      Logger.logError(electronAuthLoggerCategory, error);
   }
 
   /**
