@@ -191,7 +191,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       successRedirectUrl: successRedirectUrl || window.location.href,
     };
 
-    const redirectArgs = { ...state, ...args };
+    const redirectArgs = { state, ...args };
     await userManager.signinRedirect(redirectArgs); // This call changes the window's URL, which effectively ends execution here unless an exception is thrown.
   }
 

@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "fix the fix for passing browser auth redirect state",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}
