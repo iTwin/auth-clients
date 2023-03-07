@@ -6,7 +6,7 @@
 import { assert } from "chai";
 import { BrowserAuthorizationClient } from "../Client";
 import { getImsAuthority } from "../utils";
-import { BrowserAuthorizationClientConfiguration } from "../types";
+import type { BrowserAuthorizationClientConfiguration } from "../types";
 
 describe("BrowserAuthorizationClient", () => {
   describe("#constructor", () => {

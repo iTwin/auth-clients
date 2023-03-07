@@ -7,7 +7,7 @@
  * @module Authorization
  */
 
-import type { AccessToken, MarkRequired } from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
 import { BeEvent, Logger, UnexpectedErrors } from "@itwin/core-bentley";
 import { BrowserAuthorizationLogger } from "./Logger";
@@ -74,7 +74,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     return this._userManager;
   }
 
-
   /**
    * Merges the basic and advanced settings into a single configuration object consumable by the internal userManager.
    * @param requestContext
@@ -93,7 +92,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       silent_redirect_uri: basicSettings.silentRedirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       userStore: new WebStorageStateStore({ store: window.localStorage }),
       prompt: basicSettings.prompt,
-      response_mode: basicSettings.responseMode
+      response_mode: basicSettings.responseMode, // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     if (advancedSettings) {
@@ -344,7 +343,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     }
   }
 
-
   /**
    * @internal
    * Allows for advanced options to be supplied to the underlying UserManager.
@@ -360,34 +358,33 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     this._advancedSettings = settings;
   }
 
-    /**
+  /**
    * Attempts to process a callback response in the current URL.
    * When called successfully within an iframe or popup, the host frame will automatically be destroyed.
    * @throws [[Error]] when this attempt fails for any reason.
    */
-    private async handleSigninCallbackInternal(): Promise<void> {
-      const userManager = await this.getUserManager();
-      // oidc-client-js uses an over-eager regex to parse the url, which may match values from the hash string when targeting the query string (and vice-versa)
-      // To ensure that this mismatching doesn't occur, we strip the unnecessary portion away here first.
-      const urlSuffix = userManager.settings.response_mode === "query"
-        ? window.location.search
-        : window.location.hash;
-      const url = `${window.location.origin}${window.location.pathname}${urlSuffix}`;
-  
-      const user = await userManager.signinCallback(url); // For silent or popup callbacks, execution effectively ends here, since the context will be destroyed.
-      if (!user || user.expired)
-        throw new Error("Authorization error: userManager.signinRedirectCallback does not resolve to authorized user");
-  
-      if (user.state) {
-        const state = user.state as BrowserAuthorizationClientRedirectState;
-        if (state.successRedirectUrl) { // Special case for signin via redirect used to return to the original location
-          window.location.replace(state.successRedirectUrl);
-        }
+  private async handleSigninCallbackInternal(): Promise<void> {
+    const userManager = await this.getUserManager();
+    // oidc-client-js uses an over-eager regex to parse the url, which may match values from the hash string when targeting the query string (and vice-versa)
+    // To ensure that this mismatching doesn't occur, we strip the unnecessary portion away here first.
+    const urlSuffix = userManager.settings.response_mode === "query"
+      ? window.location.search
+      : window.location.hash;
+    const url = `${window.location.origin}${window.location.pathname}${urlSuffix}`;
+
+    const user = await userManager.signinCallback(url); // For silent or popup callbacks, execution effectively ends here, since the context will be destroyed.
+    if (!user || user.expired)
+      throw new Error("Authorization error: userManager.signinRedirectCallback does not resolve to authorized user");
+
+    if (user.state) {
+      const state = user.state as BrowserAuthorizationClientRedirectState;
+      if (state.successRedirectUrl) { // Special case for signin via redirect used to return to the original location
+        window.location.replace(state.successRedirectUrl);
       }
     }
-  
+  }
 
-    /**
+  /**
    * Attempts to parse an OIDC token from the current window URL
    * When called within an iframe or popup, the host frame will automatically be destroyed before the promise resolves.
    * @param redirectUrl Checked against the current window's URL. If the given redirectUrl and the window's path don't match, no attempt is made to parse the URL for a token.
