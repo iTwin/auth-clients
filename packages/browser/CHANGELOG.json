@@ -2,6 +2,18 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "version": "0.6.2",
+      "tag": "@itwin/browser-authorization_v0.6.2",
+      "date": "Tue, 28 Feb 2023 18:25:46 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix the fix for passing browser auth redirect state"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.6.1",
       "tag": "@itwin/browser-authorization_v0.6.1",
       "date": "Tue, 28 Feb 2023 16:16:08 GMT",
