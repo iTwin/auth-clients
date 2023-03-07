@@ -74,9 +74,6 @@ jobs:
       git config user.name imodeljs-admin
     displayName: git config
 
-  - script: npx playwright install-deps
-    displayName: Install Playwright Browser Binaries
-
   - script: node common/scripts/install-run-rush.js install
     displayName: Rush Install
 
