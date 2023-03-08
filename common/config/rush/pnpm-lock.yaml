@@ -14,7 +14,7 @@ importers:
       '@playwright/test': ~1.31.1
       '@types/chai': ^4.2.22
       '@types/mocha': ^8.2.3
-      '@types/node': 18.11.5
+      '@types/node': ^18.11.5
       '@types/sinon': ^10.0.13
       buffer: ~6.0.3
       chai: ^4.2.22
@@ -38,7 +38,7 @@ importers:
       '@playwright/test': 1.31.2
       '@types/chai': 4.3.4
       '@types/mocha': 8.2.3
-      '@types/node': 18.11.5
+      '@types/node': 18.11.18
       '@types/sinon': 10.0.13
       buffer: 6.0.3
       chai: 4.3.7
@@ -154,7 +154,7 @@ importers:
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7
       '@types/mocha': ^8.2.3
-      '@types/node': 18.11.5
+      '@types/node': ^18.11.5
       '@types/sinon': ^10.0.13
       chai: ^4.2.22
       chai-as-promised: ^7
@@ -182,7 +182,7 @@ importers:
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
       '@types/mocha': 8.2.3
-      '@types/node': 18.11.5
+      '@types/node': 18.11.18
       '@types/sinon': 10.0.13
       chai: 4.3.7
       chai-as-promised: 7.1.1_chai@4.3.7
@@ -1744,20 +1744,12 @@ packages:
     resolution: {integrity: sha512-yxDeaQIAJlMav7fH5AQqPH1u8YIuhYJXYBzxaQ4PifsU0GDO38MSdmEDeRlIxrKbC6NbEaaEHDanWb+y30U8SQ==}
     dev: true
 
-  /@types/node/14.14.31:
-    resolution: {integrity: sha512-vFHy/ezP5qI0rFgJ7aQnjDXwAMrG0KqqIH7tQG5PPv3BWBayOPIQNBjVc/P6hhdZfMx51REc6tfDNXHUio893g==}
-    optional: true
-
   /@types/node/16.18.11:
     resolution: {integrity: sha512-3oJbGBUWuS6ahSnEq1eN2XrCyf4YsWI8OyCvo7c64zQJNplk3mO84t53o8lfTk+2ji59g5ycfc6qQ3fdHliHuA==}
     dev: true
 
   /@types/node/18.11.18:
     resolution: {integrity: sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==}
-
-  /@types/node/18.11.5:
-    resolution: {integrity: sha512-3JRwhbjI+cHLAkUorhf8RnqUbFXajvzX4q6fMn5JwkgtuwfYtRQYI3u4V92vI6NJuTsbBQWWh3RZjFsuevyMGQ==}
-    dev: true
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -1801,7 +1793,7 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 14.14.31
+      '@types/node': 18.11.18
     optional: true
 
   /@typescript-eslint/eslint-plugin/4.31.2_1ff229bad5b3f782209b865beb048324:
