@@ -5,3 +5,4 @@
 !lib/**/*.js
 !lib/**/*.js.map
 !*.md
+lib/**/*test*/**/*
