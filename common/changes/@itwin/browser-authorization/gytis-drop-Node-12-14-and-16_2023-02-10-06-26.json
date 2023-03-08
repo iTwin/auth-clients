@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "Drop support for Node 12, Node 14 and Node 16.",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}
