@@ -60,7 +60,6 @@ importers:
       keytar: ^7.8.0
       mocha: ^8.2.3
       nyc: ^15.1.0
-      open: ^8.3.0
       rimraf: ^3.0.2
       sinon: ^15.0.1
       source-map-support: ^0.5.9
@@ -69,7 +68,6 @@ importers:
     dependencies:
       '@openid/appauth': 1.3.1
       keytar: 7.9.0
-      open: 8.4.0
       username: 5.1.0
     devDependencies:
       '@itwin/build-tools': 3.5.1
