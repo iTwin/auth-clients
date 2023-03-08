@@ -1,6 +1,13 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Tue, 28 Feb 2023 16:16:08 GMT and should not be manually modified.
+This log was last generated on Tue, 28 Feb 2023 18:25:46 GMT and should not be manually modified.
+
+## 0.6.2
+Tue, 28 Feb 2023 18:25:46 GMT
+
+### Patches
+
+- fix the fix for passing browser auth redirect state
 
 ## 0.6.1
 Tue, 28 Feb 2023 16:16:08 GMT
