@@ -6,7 +6,53 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md 
 
 The **@itwin/browser-authorization** package contains a browser based client for authorization with the iTwin platform.
 
-## Documentation
+## Usage
+
+Create a new instance of `BrowserAuthorizationClient`, passing in needed credentials:
+
+```typescript
+const client = new BrowserAuthorizationClient({
+  clientId: // find at developer.bentley.com
+  redirectUri: // find/set at developer.bentley.com
+  scope: // find/set at developer.bentley.com
+  authority: // imsoidc.bentley.com
+  postSignoutRedirectUri: // find/set at developer.bentley.com
+  responseType: "code",
+  silentRedirectUri: // find/set at developer.bentley.com
+});
+```
+
+Exactly how you use the `client` will depend on your specific application and workflow. Here's one common way:
+
+```typescript
+try {
+  // will attempt to sign in silently
+  // If a user can be signed in without interaction, this will complete without error.
+  // Otherwise, an error will be thrown..
+  await client.signInSilent();
+} catch (err) {
+  // We catch and ignore the error, and start the sign in via redirect process.
+  await client.signInRedirect();
+
+  // Note: Instead of redirect, you may want to trigger a pop up to handle the sign in process:
+  // await client.signinPopup();
+}
+```
+
+After the user signs in, they will be redirected to the redirect url specified in your oidc configuration (developer.bentley.com)
+Once on that page, you must call:
+
+```typescript
+await client.handleSigninCallback();
+```
+
+to complete the process. Once back on your initial page, the call to `client.signInSilent` will succeed and you should be authorized.
+
+Other notable methods:
+`client.signOutRedirect()` - starts the signout flow via redirect
+`client.signOutPopup()` - starts the signout flow via popup.
+
+## Authorization Overview
 
 For information about the browser authorization workflow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizingwebapplications).
 
