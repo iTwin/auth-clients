@@ -21,8 +21,7 @@ const contentArea = document.querySelector("div[data-testid='content']");
 
 async function initialize() {
   if (isSignoutPage()) {
-    if (contentArea)
-      contentArea.textContent = "Signed Out!";
+    if (contentArea) contentArea.textContent = "Signed Out!";
   } else if (isSigninViaPopupPage()) {
     const popupButton = document.getElementById("popup");
     if (popupButton)
@@ -42,11 +41,7 @@ async function initialize() {
 }
 
 async function authenticateRedirect() {
-  try {
-    await client.signInSilent();
-  } catch (err) {
-    await client.signInRedirect();
-  }
+  await client.signInRedirect();
   await validateAuthenticated();
 }
 
@@ -61,10 +56,8 @@ async function validateAuthenticated() {
 }
 
 async function signout(popup: boolean) {
-  if (popup)
-    await client.signOutPopup();
-  else
-    await client.signOutRedirect();
+  if (popup) await client.signOutPopup();
+  else await client.signOutRedirect();
 }
 
 function displayAuthorized() {

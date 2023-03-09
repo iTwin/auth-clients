@@ -22,21 +22,18 @@ const client = new BrowserAuthorizationClient({
 });
 ```
 
-Exactly how you use the `client` will depend on your specific application and workflow. Here's one common way:
+The most common way to use an instance of `BrowserAuthorizationClient` will depend on your specific application and workflow. Here's one common way:
 
 ```typescript
-try {
-  // will attempt to sign in silently
-  // If a user can be signed in without interaction, this will complete without error.
-  // Otherwise, an error will be thrown..
-  await client.signInSilent();
-} catch (err) {
-  // We catch and ignore the error, and start the sign in via redirect process.
-  await client.signInRedirect();
+// will attempt to sign in silently,
+// and then via redirect if not possible.
+await client.signInRedirect();
+```
 
-  // Note: Instead of redirect, you may want to trigger a pop up to handle the sign in process:
-  // await client.signinPopup();
-}
+Instead of a redirect, you may want to trigger a pop up to handle the sign in process:
+
+```typescript
+await client.signinPopup();
 ```
 
 After the user signs in, they will be redirected to the redirect url specified in your oidc configuration (developer.bentley.com)
