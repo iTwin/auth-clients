@@ -76,9 +76,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Merges the basic and advanced settings into a single configuration object consumable by the internal userManager.
-   * @param requestContext
    * @param basicSettings
    * @param advancedSettings
+   * @returns a promise resolving to UserManagerSettings
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
@@ -121,7 +121,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Alias for signInRedirect
-   * @param requestContext
    */
   public async signIn(): Promise<void> {
     return this.signInRedirect();
@@ -134,6 +133,8 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Otherwise, an attempt to redirect the browser will proceed.
    * If an error prevents the redirection from occurring, the returned promise will be rejected with the responsible error.
    * Otherwise, the browser's window will be redirected away from the current page, effectively ending execution here.
+   * @param successRedirectUrl - (optional) path to redirect to after a successful authorization 
+   * @param args (optional) additional BrowserAuthorizationClientRequestOptions passed to signIn methods
    */
   public async signInRedirect(successRedirectUrl?: string, args?: BrowserAuthorizationClientRequestOptions): Promise<void> {
     const user = await this.nonInteractiveSignIn(args);
@@ -152,7 +153,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Attempts a sign-in via popup with the authorization provider
-   * @param requestContext
+   * @param args - @see BrowserAuthorizationClientRequestOptions
    */
   public async signInPopup(args?: BrowserAuthorizationClientRequestOptions): Promise<void> {
     let user = await this.nonInteractiveSignIn(args);
@@ -233,7 +234,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Alias for signOutRedirect
-   * @param requestContext
    */
   public async signOut(): Promise<void> {
     await this.signOutRedirect();
@@ -255,6 +255,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Returns a promise that resolves to the AccessToken of the currently authorized user.
    * The token is refreshed as necessary.
    * @throws [Error] If signIn() was not called, or there was an authorization error.
+   * @returns an AccessToken
    */
   public async getAccessToken(): Promise<AccessToken> {
     if (this._accessToken)
@@ -266,8 +267,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Checks the current local user session against that of the identity provider.
    * If the session is no longer valid, the local user is removed from storage.
    * @returns true if the local session is still active with the provider, false otherwise.
-   * @param requestContext
-   * @param ignoreCheckInterval Bypass the default behavior to wait until a certain time has passed since the last check was performed
    */
   public async checkSessionStatus(): Promise<boolean> {
     const userManager = await this.getUserManager();
@@ -361,13 +360,14 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   /**
    * Attempts to process a callback response in the current URL.
    * When called successfully within an iframe or popup, the host frame will automatically be destroyed.
+   * @param responseMode - Defines how OIDC auth reponse parameters are encoded. 
    * @throws [[Error]] when this attempt fails for any reason.
    */
-  private async handleSigninCallbackInternal(): Promise<void> {
+  private async handleSigninCallbackInternal(responseMode: "query" | "fragment"): Promise<void> {
     const userManager = await this.getUserManager();
     // oidc-client-js uses an over-eager regex to parse the url, which may match values from the hash string when targeting the query string (and vice-versa)
     // To ensure that this mismatching doesn't occur, we strip the unnecessary portion away here first.
-    const urlSuffix = userManager.settings.response_mode === "query"
+    const urlSuffix = responseMode === "query"
       ? window.location.search
       : window.location.hash;
     const url = `${window.location.origin}${window.location.pathname}${urlSuffix}`;
@@ -387,7 +387,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   /**
    * Attempts to parse an OIDC token from the current window URL
    * When called within an iframe or popup, the host frame will automatically be destroyed before the promise resolves.
-   * @param redirectUrl Checked against the current window's URL. If the given redirectUrl and the window's path don't match, no attempt is made to parse the URL for a token.
    */
   public async handleSigninCallback(): Promise<void> {
     const url = new URL(this._basicSettings.redirectUri);
@@ -397,14 +396,14 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     let errorMessage = "";
 
     try {
-      await this.handleSigninCallbackInternal();
+      await this.handleSigninCallbackInternal("fragment");
       return;
     } catch (err: any) {
       errorMessage += `${err.message}\n`;
     }
 
     try {
-      await this.handleSigninCallbackInternal();
+      await this.handleSigninCallbackInternal("query");
       return;
     } catch (err: any) {
       errorMessage += `${err.message}\n`;
