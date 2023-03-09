@@ -11,7 +11,7 @@ importers:
       '@itwin/core-bentley': ^3.0.0
       '@itwin/core-common': ^3.0.0
       '@itwin/eslint-plugin': ^3.0.0
-      '@playwright/test': ~1.31.1
+      '@playwright/test': ~1.31.2
       '@types/chai': ^4.2.22
       '@types/mocha': ^8.2.3
       '@types/node': 14.14.31
@@ -35,7 +35,7 @@ importers:
       '@itwin/core-bentley': 3.5.1
       '@itwin/core-common': 3.5.1_@itwin+core-bentley@3.5.1
       '@itwin/eslint-plugin': 3.5.1_eslint@7.32.0+typescript@4.3.5
-      '@playwright/test': 1.31.1
+      '@playwright/test': 1.31.2
       '@types/chai': 4.3.4
       '@types/mocha': 8.2.3
       '@types/node': 14.14.31
@@ -151,6 +151,7 @@ importers:
       '@itwin/core-bentley': ^3.3.0
       '@itwin/core-common': ^3.3.0
       '@itwin/eslint-plugin': ^3.3.0
+      '@playwright/test': ~1.31.2
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7
       '@types/mocha': ^8.2.3
@@ -164,7 +165,6 @@ importers:
       mocha: ^8.2.3
       nyc: ^15.1.0
       openid-client: ^4.7.4
-      puppeteer: ^13.5.2
       rimraf: ^3.0.2
       sinon: ^15.0.1
       typescript: ~4.3.5
@@ -173,12 +173,12 @@ importers:
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
       openid-client: 4.9.1
-      puppeteer: 13.7.0
     devDependencies:
       '@itwin/build-tools': 3.5.1
       '@itwin/core-bentley': 3.5.1
       '@itwin/core-common': 3.5.1_@itwin+core-bentley@3.5.1
       '@itwin/eslint-plugin': 3.5.1_eslint@7.32.0+typescript@4.3.5
+      '@playwright/test': 1.31.2
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
       '@types/mocha': 8.2.3
@@ -1551,13 +1551,13 @@ packages:
       nullthrows: 1.1.1
     dev: true
 
-  /@playwright/test/1.31.1:
-    resolution: {integrity: sha1-OdaHPcRq8TXxJFHXlwfbfRNXRV0=}
+  /@playwright/test/1.31.2:
+    resolution: {integrity: sha512-BYVutxDI4JeZKV1+ups6dt5WiqKhjBtIYowyZIJ3kBDmJgsuPKsqqKNIMFbUePLSCmp2cZu+BDL427RcNKTRYw==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
       '@types/node': 18.11.18
-      playwright-core: 1.31.1
+      playwright-core: 1.31.2
     optionalDependencies:
       fsevents: 2.3.2
     dev: true
@@ -1744,7 +1744,7 @@ packages:
     dev: true
 
   /@types/node/18.11.18:
-    resolution: {integrity: sha1-jfuX8Nojwik+VUxaUNYe8TTXaX8=}
+    resolution: {integrity: sha512-DHQpWGjyQKSHj3ebjFI/wRKcqQcdR+MoFBygntYOZytCqNfkd2ZC4ARDJ2DQqhjH5p85Nnd3jhUJIXrszFX/JA==}
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha1-L4u0QUNNFjs1+4/9zNcTiSf/uMA=}
@@ -2799,10 +2799,6 @@ packages:
     resolution: {integrity: sha512-wvq+KscQ7/6spEV7czhnZc9RM/woz1AY+/Vpd8/h2HFMwJSdTliu7f/yr1A6vDdJfKICZsShqsYpEQbdhg8AFQ==}
     dev: false
 
-  /devtools-protocol/0.0.981744:
-    resolution: {integrity: sha512-0cuGS8+jhR67Fy7qG3i3Pc7Aw494sb9yG9QgpG97SFVWwolgYjlhJg7n+UaHxOQT30d1TYu/EYe9k01ivLErIg==}
-    dev: false
-
   /diff/5.0.0:
     resolution: {integrity: sha512-/VTCrvm5Z0JGty/BWHljh+BAiw3IK+2j87NGMu8Nwc/f48WoDAC395uomO9ZD117ZOBaHmkX1oyLvkVM/aIT3w==}
     engines: {node: '>=0.3.1'}
@@ -3596,7 +3592,7 @@ packages:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
 
   /fsevents/2.3.2:
-    resolution: {integrity: sha1-ilJveLj99GI7cJ4Ll1xSwkwC/Ro=}
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     optional: true
@@ -5453,8 +5449,8 @@ packages:
       find-up: 2.1.0
     dev: true
 
-  /playwright-core/1.31.1:
-    resolution: {integrity: sha1-Te7ru4+3O1Elk/4kvqIG2P2F/38=}
+  /playwright-core/1.31.2:
+    resolution: {integrity: sha512-a1dFgCNQw4vCsG7bnojZjDnPewZcw7tZUNFN0ZkcLYKj+mPmXvg4MpaaKZ5SgqPsOmqIf2YsVRkgqiRDxD+fDQ==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true
@@ -5566,31 +5562,6 @@ packages:
     resolution: {integrity: sha512-LN6QV1IJ9ZhxWTNdktaPClrNfp8xdSAYS0Zk2ddX7XsXZAxckMHPCBcHRo0cTcEIgYPRiGEkmji3Idkh2yFtYw==}
     engines: {node: '>=6'}
     dev: true
-
-  /puppeteer/13.7.0:
-    resolution: {integrity: sha512-U1uufzBjz3+PkpCxFrWzh4OrMIdIb2ztzCu0YEPfRHjHswcSwHZswnK+WdsOQJsRV8WeTg3jLhJR4D867+fjsA==}
-    engines: {node: '>=10.18.1'}
-    deprecated: < 18.1.0 is no longer supported
-    requiresBuild: true
-    dependencies:
-      cross-fetch: 3.1.5
-      debug: 4.3.4
-      devtools-protocol: 0.0.981744
-      extract-zip: 2.0.1
-      https-proxy-agent: 5.0.1
-      pkg-dir: 4.2.0
-      progress: 2.0.3
-      proxy-from-env: 1.1.0
-      rimraf: 3.0.2
-      tar-fs: 2.1.1
-      unbzip2-stream: 1.4.3
-      ws: 8.5.0
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-    dev: false
 
   /puppeteer/15.5.0:
     resolution: {integrity: sha512-+vZPU8iBSdCx1Kn5hHas80fyo0TiVyMeqLGv/1dygX2HKhAZjO9YThadbRTCoTYq0yWw+w/CysldPsEekDtjDQ==}
@@ -6665,19 +6636,6 @@ packages:
       signal-exit: 3.0.7
       typedarray-to-buffer: 3.1.5
     dev: true
-
-  /ws/8.5.0:
-    resolution: {integrity: sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==}
-    engines: {node: '>=10.0.0'}
-    peerDependencies:
-      bufferutil: ^4.0.1
-      utf-8-validate: ^5.0.2
-    peerDependenciesMeta:
-      bufferutil:
-        optional: true
-      utf-8-validate:
-        optional: true
-    dev: false
 
   /ws/8.8.0:
     resolution: {integrity: sha512-JDAgSYQ1ksuwqfChJusw1LSJ8BizJ2e/vVu5Lxjq3YvNJNlROv1ui4i+c/kUUrPheBvQl4c5UbERhTwKa6QBJQ==}

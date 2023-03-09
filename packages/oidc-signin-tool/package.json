@@ -15,7 +15,7 @@
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
-    "test:integration": "mocha \"./lib/cjs/test-integration/**/*.test.js\"",
+    "test:integration": "playwright test src/test-integration",
     "docs": "",
     "cover": "nyc npm test",
     "pack": "npm pack",
@@ -35,14 +35,14 @@
     "@itwin/certa": "^3.3.0",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
-    "openid-client": "^4.7.4",
-    "puppeteer": "^13.5.2"
+    "openid-client": "^4.7.4"
   },
   "devDependencies": {
     "@itwin/build-tools": "^3.3.0",
     "@itwin/core-bentley": "^3.3.0",
     "@itwin/core-common": "^3.3.0",
     "@itwin/eslint-plugin": "^3.3.0",
+    "@playwright/test": "~1.31.2",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
     "@types/mocha": "^8.2.3",
