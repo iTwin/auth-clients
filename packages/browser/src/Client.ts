@@ -133,7 +133,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Otherwise, an attempt to redirect the browser will proceed.
    * If an error prevents the redirection from occurring, the returned promise will be rejected with the responsible error.
    * Otherwise, the browser's window will be redirected away from the current page, effectively ending execution here.
-   * @param successRedirectUrl - (optional) path to redirect to after a successful authorization 
+   * @param successRedirectUrl - (optional) path to redirect to after a successful authorization
    * @param args (optional) additional BrowserAuthorizationClientRequestOptions passed to signIn methods
    */
   public async signInRedirect(successRedirectUrl?: string, args?: BrowserAuthorizationClientRequestOptions): Promise<void> {
@@ -360,7 +360,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   /**
    * Attempts to process a callback response in the current URL.
    * When called successfully within an iframe or popup, the host frame will automatically be destroyed.
-   * @param responseMode - Defines how OIDC auth reponse parameters are encoded. 
+   * @param responseMode - Defines how OIDC auth reponse parameters are encoded.
    * @throws [[Error]] when this attempt fails for any reason.
    */
   private async handleSigninCallbackInternal(responseMode: "query" | "fragment"): Promise<void> {
