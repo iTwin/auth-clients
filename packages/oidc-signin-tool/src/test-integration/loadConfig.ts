@@ -1,7 +1,8 @@
 import { config } from "dotenv";
-import * as dotenvExpand from "dotenv-expand";
 import * as path from "path";
 import type { TestBrowserAuthorizationClientConfiguration } from "../TestUsers";
+
+const dotenvExpand = require("dotenv-expand");
 
 export enum TestConfigType {
   OIDC,
