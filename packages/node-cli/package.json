@@ -38,7 +38,7 @@
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
     "@types/mocha": "^8.2.3",
-    "@types/node": "^10.14.1",
+    "@types/node": "^18.11.5",
     "chai": "^4.2.22",
     "chai-as-promised": "^7",
     "source-map-support": "^0.5.9",
