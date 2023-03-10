@@ -4,25 +4,20 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from "path";
-import * as fs from "fs";
 import { expect, test } from "@playwright/test";
 import type { TestBrowserAuthorizationClientConfiguration } from "../index";
 import { getTestAccessToken, TestUsers, TestUtility } from "../index";
 
 /** Loads the provided `.env` file into process.env */
 function loadEnv(envFile: string) {
-  if (!fs.existsSync(envFile))
-    throw new Error(`Could not find env file at: ${envFile}`);
-
   const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
   const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
   const envResult = dotenv.config({ path: envFile });
-  if (envResult.error) {
-    throw envResult.error;
+  if (!envResult.error) {
+    dotenvExpand(envResult);
   }
-
-  dotenvExpand(envResult);
 }
+
 let oidcConfig: TestBrowserAuthorizationClientConfiguration;
 
 test.beforeEach(() => {
