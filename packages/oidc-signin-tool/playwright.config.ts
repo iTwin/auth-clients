@@ -13,5 +13,6 @@ export default defineConfig({
   reporter,
   use: {
     headless: true,
+    screenshot: "only-on-failure"
   },
 });

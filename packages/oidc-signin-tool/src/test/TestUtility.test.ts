@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 import * as chai from "chai";
 import { expect } from "chai";
-import chaiAsPromised from "chai-as-promised";
+import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import * as TestBrowserAuthorizationClientModule from "../TestBrowserAuthorizationClient";
 import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "../TestUsers";

@@ -1,6 +1,6 @@
 import { config } from "dotenv";
-import dotenvExpand from "dotenv-expand";
-import path from "path";
+import * as dotenvExpand from "dotenv-expand";
+import * as path from "path";
 import type { TestBrowserAuthorizationClientConfiguration } from "../TestUsers";
 
 export enum TestConfigType {

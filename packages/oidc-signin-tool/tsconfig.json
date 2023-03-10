@@ -3,8 +3,7 @@
   "compilerOptions": {
     "target": "es2021",
     "module": "commonjs",
-    "outDir": "./lib",
-    "esModuleInterop": true
+    "outDir": "./lib"
   },
   "include": [
     "./src/**/*.ts"
