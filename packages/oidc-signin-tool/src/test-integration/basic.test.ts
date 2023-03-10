@@ -12,7 +12,7 @@ import { getTestAccessToken, TestUsers, TestUtility } from "../index";
 /** Loads the provided `.env` file into process.env */
 function loadEnv(envFile: string) {
   if (!fs.existsSync(envFile))
-    throw new Error("Could not find env file at: " + envFile);
+    throw new Error(`Could not find env file at: ${envFile}`);
 
   const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
   const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires

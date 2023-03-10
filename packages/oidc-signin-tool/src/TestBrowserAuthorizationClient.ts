@@ -14,8 +14,8 @@ import type {
 } from "openid-client";
 import { custom, generators, Issuer } from "openid-client";
 import * as os from "os";
-import { LaunchOptions, Response, chromium } from "@playwright/test";
-import type { Page, Request } from "@playwright/test";
+import { chromium } from "@playwright/test";
+import type { LaunchOptions, Page, Request } from "@playwright/test";
 import type {
   TestBrowserAuthorizationClientConfiguration,
   TestUserCredentials,
@@ -85,9 +85,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     this._client = new this._issuer.Client(clientMetadata); // eslint-disable-line @typescript-eslint/naming-convention
   }
 
-  public readonly onAccessTokenChanged = new BeEvent<
-    (token: AccessToken) => void
-  >();
+  public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
 
   /** Returns true if there's a current authorized user or client (in the case of agent applications).
    * Returns true if signed in and the access token has not expired, and false otherwise.
@@ -98,7 +96,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
   /** Returns true if the user has signed in, but the token has expired and requires a refresh */
   public get hasExpired(): boolean {
-    if (!this._accessToken || !this._expiresAt) return false;
+    if (!this._accessToken || !this._expiresAt)
+      return false;
     // show expiry one minute before actual time to refresh
     return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000;
   }
@@ -114,7 +113,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
    * @throws [[BentleyError]] If the client was not used to authorize, or there was an authorization error.
    */
   public async getAccessToken(): Promise<AccessToken> {
-    if (this.isAuthorized) return this._accessToken;
+    if (this.isAuthorized)
+      return this._accessToken;
 
     // Add retry logic to help avoid flaky issues on CI machines.
     let numRetries = 0;
@@ -143,7 +143,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   public async signIn(): Promise<void> {
-    if (this._client === undefined) await this.initialize();
+    if (this._client === undefined)
+      await this.initialize();
 
     // eslint-disable-next-line no-console
     console.log(`Starting OIDC signin for ${this._user.email} ...`);
@@ -243,9 +244,11 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       return undefined;
     });
 
-    if (null === errMsgText) throw new Error("Unknown error page detected.");
+    if (null === errMsgText)
+      throw new Error("Unknown error page detected.");
 
-    if (undefined !== errMsgText) throw new Error(errMsgText);
+    if (undefined !== errMsgText)
+      throw new Error(errMsgText);
   }
 
   private async handleLoginPage(page: Page): Promise<void> {
@@ -256,7 +259,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       await page.waitForSelector(testSelectors.imsPassword);
       await page.type(testSelectors.imsPassword, this._user.password);
 
-      const submit = await page.locator(testSelectors.imsSubmit);
+      const submit = page.locator(testSelectors.imsSubmit);
       await submit.click();
     }
 
@@ -280,7 +283,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     await allow.click();
 
     // Cut out for federated sign-in
-    if (-1 !== page.url().indexOf("microsoftonline")) return;
+    if (-1 !== page.url().indexOf("microsoftonline"))
+      return;
 
     await page.waitForSelector(testSelectors.pingPassword);
     await page.type(testSelectors.pingPassword, this._user.password);
@@ -309,7 +313,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   // Bentley-specific federated login.  This will get called if a redirect to a url including "wsfed".
   private async handleFederatedSignin(page: Page): Promise<void> {
     await page.waitForLoadState("networkidle");
-    if (-1 === page.url().indexOf("wsfed")) return;
+    if (-1 === page.url().indexOf("wsfed"))
+      return;
 
     if (await this.checkSelectorExists(page, testSelectors.msUserNameField)) {
       await page.type(testSelectors.msUserNameField, this._user.email);
@@ -336,7 +341,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       // continue with navigation even if throws
     }
 
-    if (errorExists) await this.checkErrorOnPage(page, "#errorText");
+    if (errorExists)
+      await this.checkErrorOnPage(page, "#errorText");
 
     // May need to accept an additional prompt.
     if (
@@ -352,13 +358,15 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   private async handleAzureADSignin(page: Page): Promise<void> {
     await page.waitForLoadState("networkidle");
 
-    if (-1 === page.url().indexOf("microsoftonline")) return;
+    if (-1 === page.url().indexOf("microsoftonline"))
+      return;
 
     // Verify username selector exists
     const username = page.locator(testSelectors.msUserNameField);
     const exists = await username.count();
 
-    if (!exists) throw new Error("Username field does not exist");
+    if (!exists)
+      throw new Error("Username field does not exist");
 
     await username.type(this._user.email);
 
@@ -377,7 +385,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     const password = page.locator(testSelectors.msPasswordField);
     const passwordExists = await password.count();
 
-    if (!passwordExists) throw new Error("Password field does not exist");
+    if (!passwordExists)
+      throw new Error("Password field does not exist");
 
     // Type password and wait for navigation\
     await password.type(this._user.password);
@@ -405,7 +414,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       throw new Error("Password field does not exist");
 
     // Verify log in button exists
-    const button = await page.locator(
+    const button = page.locator(
       "xpath=//button[contains(@class,'authing-login-btn')]"
     );
     if (!button || (await button.all()).length === 0)
@@ -416,16 +425,13 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     await page.type(testSelectors.pingPassword, this._user.password);
 
     // Log in and navigate
-    await Promise.all([
-      page.waitForNavigation({
-        timeout: 60000,
-      }),
-      button.first().click(),
-    ]);
+    await page.waitForLoadState("networkidle");
+    await button.first().click();
   }
 
   private async handleConsentPage(page: Page): Promise<void> {
-    if ((await page.title()) === "localhost") return; // we're done
+    if ((await page.title()) === "localhost")
+      return; // we're done
 
     const consentUrl = new URL("/consent", this._issuer.issuer as string);
     if (page.url().startsWith(consentUrl.toString()))
@@ -459,7 +465,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   private async checkErrorOnPage(page: Page, selector: string): Promise<void> {
     const errMsgText = await page.evaluate((s) => {
       const errMsgElement = document.querySelector(s);
-      if (null === errMsgElement) return undefined;
+      if (null === errMsgElement)
+        return undefined;
       return errMsgElement.textContent;
     }, selector);
 
