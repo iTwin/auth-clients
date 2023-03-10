@@ -3,38 +3,15 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import * as path from "path";
 import { expect, test } from "@playwright/test";
 import type { TestBrowserAuthorizationClientConfiguration } from "../index";
 import { getTestAccessToken, TestUsers, TestUtility } from "../index";
-
-/** Loads the provided `.env` file into process.env */
-function loadEnv(envFile: string) {
-  const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const envResult = dotenv.config({ path: envFile });
-  if (!envResult.error) {
-    dotenvExpand(envResult);
-  }
-}
+import { loadConfig, TestConfigType } from "./loadConfig";
 
 let oidcConfig: TestBrowserAuthorizationClientConfiguration;
 
 test.beforeEach(() => {
-  loadEnv(path.join(__dirname, "..", "..", ".env"));
-  // IMS oidc config
-  if (process.env.IMJS_OIDC_BROWSER_TEST_CLIENT_ID === undefined)
-    throw new Error("Could not find IMJS_OIDC_BROWSER_TEST_CLIENT_ID");
-  if (process.env.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI === undefined)
-    throw new Error("Could not find IMJS_OIDC_BROWSER_TEST_REDIRECT_URI");
-  if (process.env.IMJS_OIDC_BROWSER_TEST_SCOPES === undefined)
-    throw new Error("Could not find IMJS_OIDC_BROWSER_TEST_SCOPES");
-
-  oidcConfig = {
-    clientId: process.env.IMJS_OIDC_BROWSER_TEST_CLIENT_ID ?? "",
-    redirectUri: process.env.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI ?? "",
-    scope: process.env.IMJS_OIDC_BROWSER_TEST_SCOPES ?? "",
-  };
+  oidcConfig = loadConfig(TestConfigType.OIDC);
 });
 test.describe("Sign in (#integration)", () => {
   test("success with valid user", async () => {
@@ -65,28 +42,18 @@ test.describe("Sign in (#integration)", () => {
   });
 
   test("failure with invalid Bentley federated user", async () => {
-    const invalidUser = {
-      email: "invalid@bentley.com",
-      password: "invalid",
-    };
-
     await expect(
-      getTestAccessToken(oidcConfig, invalidUser)
+      getTestAccessToken(oidcConfig, TestUsers.federatedInvalid)
     ).rejects.toThrowError(
-      `Failed OIDC signin for ${invalidUser.email}.\nError: Invalid username during AzureAD sign in`
+      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: Invalid username during AzureAD sign in`
     );
   });
 
   test("failure with invalid user", async () => {
-    const invalidUser = {
-      email: "invalid@email.com",
-      password: "invalid",
-      scope: process.env.IMJS_OIDC_BROWSER_TEST_SCOPES ?? "",
-    };
     await expect(
-      getTestAccessToken(oidcConfig, invalidUser)
+      getTestAccessToken(oidcConfig, TestUsers.invalid)
     ).rejects.toThrowError(
-      `Failed OIDC signin for ${invalidUser.email}.\nError: We didn't recognize the email address or password you entered. Please try again.`
+      `Failed OIDC signin for ${TestUsers.invalid.email}.\nError: We didn't recognize the email address or password you entered. Please try again.`
     );
   });
 });
@@ -109,72 +76,24 @@ test.describe("Authing and AzureAD (#integration)", () => {
   let authingOidcConfig: TestBrowserAuthorizationClientConfiguration;
 
   test.beforeAll(() => {
-    // AzureAd oidc config
-    loadEnv(path.join(__dirname, "..", "..", ".env"));
+    azureAdOidcConfig = loadConfig(TestConfigType.AZURE);
+    authingOidcConfig = loadConfig(TestConfigType.AUTHING);
+  });
 
-    if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY === undefined)
-      throw new Error(
-        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY"
-      );
-    if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID === undefined)
-      throw new Error(
-        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID"
-      );
-    if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI === undefined)
-      throw new Error(
-        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI"
-      );
-    if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES === undefined)
-      throw new Error("Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES");
-
-    azureAdOidcConfig = {
-      authority: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY,
-      clientId: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID ?? "",
-      redirectUri:
-        process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI ?? "",
-      scope: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES ?? "",
-    };
-
-    // Authing oidc config
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY === undefined)
-      throw new Error(
-        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY"
-      );
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID === undefined)
-      throw new Error(
-        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID"
-      );
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI === undefined)
-      throw new Error(
-        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI"
-      );
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES === undefined)
-      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES");
-
-    authingOidcConfig = {
-      authority: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY,
-      clientId: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID ?? "",
-      redirectUri:
-        process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI ?? "",
-      scope: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES ?? "",
-    };
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_SECRET)
-      authingOidcConfig.clientSecret =
-        process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_SECRET;
+  test("success AzureAD with valid user", async () => {
+    const token = await getTestAccessToken(
+      azureAdOidcConfig,
+      TestUsers.azureUser
+    );
+    expect(token).toBeDefined();
   });
 
   // reached active user limit
-  test.skip("success AzureAD with valid user", async () => {
-    if (process.env.IMJS_TEST_AZUREAD_USER_NAME === undefined)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_NAME");
-    if (process.env.IMJS_TEST_AZUREAD_USER_PASSWORD === undefined)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_PASSWORD");
-
-    const validUser = {
-      email: process.env.IMJS_TEST_AZUREAD_USER_NAME,
-      password: process.env.IMJS_TEST_AZUREAD_USER_PASSWORD,
-    };
-    const token = await getTestAccessToken(azureAdOidcConfig, validUser);
+  test.skip("success Authing with valid user", async () => {
+    const token = await getTestAccessToken(
+      authingOidcConfig,
+      TestUsers.authingUser
+    );
     expect(token).toBeDefined();
   });
 });

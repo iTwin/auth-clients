@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@itwin/certa": "^3.3.0",
+    "@playwright/test": "~1.31.2",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
     "openid-client": "^4.7.4"
@@ -42,7 +43,6 @@
     "@itwin/core-bentley": "^3.3.0",
     "@itwin/core-common": "^3.3.0",
     "@itwin/eslint-plugin": "^3.3.0",
-    "@playwright/test": "~1.31.2",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
     "@types/mocha": "^8.2.3",
