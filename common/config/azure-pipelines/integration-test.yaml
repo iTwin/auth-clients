@@ -106,13 +106,13 @@ jobs:
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.SourcesDirectory)/packages/browser/test-results'
-      ArtifactName: 'browser-test-screenshots'
+      ArtifactName: 'browser-test-artifacts'
       publishLocation: 'Container'
     condition: Failed()
 
   - task: PublishBuildArtifacts@1
     inputs:
       PathtoPublish: '$(Build.SourcesDirectory)/packages/oidc-signin-tool/test-results'
-      ArtifactName: 'sign-in-tool-test-screenshots'
+      ArtifactName: 'sign-in-tool-test-artifacts'
       publishLocation: 'Container'
     condition: Failed()
