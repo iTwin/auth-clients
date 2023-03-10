@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/oidc-signin-tool",
       "comment": "Move from puppeteer to playwright",
-      "type": "patch"
+      "type": "minor"
     }
   ],
   "packageName": "@itwin/oidc-signin-tool"
