@@ -188,7 +188,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     try {
       await this.handleConsentPage(page);
     } catch (error) {
-      // No callback page; TODO: try to solidify this
+      // ignore, if we get the callback Url, we're good.
     }
 
     const callbackUrl = await waitForCallbackUrl;
@@ -237,12 +237,12 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async handleErrorPage(page: Page): Promise<void> {
-    const errMsgText = await page.evaluate(() => {
-      const title = document.title;
-      if (title.toLocaleLowerCase() === "error")
-        return document.body.textContent;
-      return undefined;
-    });
+    await page.waitForLoadState("networkidle");
+    const pageTitle = await page.title();
+    let errMsgText;
+
+    if (pageTitle.toLocaleLowerCase() === "error")
+      errMsgText = await page.content();
 
     if (null === errMsgText)
       throw new Error("Unknown error page detected.");
@@ -307,7 +307,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
 
     // Check if there were any errors when performing sign-in
-    await this.checkErrorOnPageByClassName(page, "ping-error");
+    await this.checkErrorOnPage(page, ".ping-error");
   }
 
   // Bentley-specific federated login.  This will get called if a redirect to a url including "wsfed".
@@ -457,36 +457,18 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     page: Page,
     selector: string
   ): Promise<boolean> {
-    return page.evaluate((s) => {
-      return null !== document.querySelector(s);
-    }, selector);
+    const element = await page.$(selector);
+    return !!element;
   }
 
   private async checkErrorOnPage(page: Page, selector: string): Promise<void> {
-    const errMsgText = await page.evaluate((s) => {
-      const errMsgElement = document.querySelector(s);
-      if (null === errMsgElement)
-        return undefined;
-      return errMsgElement.textContent;
-    }, selector);
-
-    if (undefined !== errMsgText && null !== errMsgText)
-      throw new Error(errMsgText);
-  }
-
-  private async checkErrorOnPageByClassName(
-    page: Page,
-    className: string
-  ): Promise<void> {
-    const errMsgText = await page.evaluate((s) => {
-      const elements = document.getElementsByClassName(s);
-      if (0 === elements.length || undefined === elements[0].innerHTML)
-        return undefined;
-      return elements[0].innerHTML;
-    }, className);
-
-    if (undefined !== errMsgText && null !== errMsgText)
-      throw new Error(errMsgText);
+    await page.waitForLoadState("networkidle");
+    const errMsgElement = await page.$(selector);
+    if (errMsgElement) {
+      const errMsgText = await errMsgElement.textContent();
+      if (undefined !== errMsgText && null !== errMsgText)
+        throw new Error(errMsgText);
+    }
   }
 
   private async launchBrowser(enableSlowNetworkConditions = false) {
