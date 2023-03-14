@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "comment": "Move from puppeteer to playwright",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool"
+}
