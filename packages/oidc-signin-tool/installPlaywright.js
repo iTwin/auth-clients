@@ -7,8 +7,8 @@ const { exec } = require("child_process");
 
 const INSTALL_SCRIPT = "npx playwright install chromium";
 
-const controller = new AbortController();
-const { signal } = controller;
+// const controller = new AbortController();
+// const { signal } = controller;
 
 exec(INSTALL_SCRIPT, { signal }, (error, stdout, stderr) => {
   if (error) throw error;
@@ -16,4 +16,6 @@ exec(INSTALL_SCRIPT, { signal }, (error, stdout, stderr) => {
   console.log(stderr);
 });
 
-controller.abort();
+// console.log("going to abaort");
+// controller.abort();
+// console.log("aborted");
