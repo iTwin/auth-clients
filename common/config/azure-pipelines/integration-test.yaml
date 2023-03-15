@@ -64,7 +64,6 @@ jobs:
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
       Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD;]1"
-      Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]$(Build.BinariesDirectory)/pw-browsers"
     displayName: 'Add config to environment'
     env:
       test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
@@ -92,7 +91,6 @@ jobs:
       IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
       IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
       DEBUG: pw:api
-      PLAYWRIGHT_BROWSERS_PATH: $(Build.BinariesDirectory)/pw-browsers"
 
   - task: PublishTestResults@2
     displayName: "Publish Integration Test Results"
