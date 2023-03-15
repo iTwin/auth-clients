@@ -127,9 +127,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
           numRetries === 2 ||
           (err instanceof Error &&
             -1 ===
-              err.message.indexOf(
-                "Execution context was destroyed, most likely because of a navigation"
-              ))
+            err.message.indexOf(
+              "Execution context was destroyed, most likely because of a navigation"
+            ))
         )
           throw err;
         numRetries++;
@@ -155,56 +155,59 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     const authorizationUrl = this._client.authorizationUrl(authParams);
 
     const page = await this.launchBrowser();
-
-    // Eventually, we'll get a redirect to the callback url
-    // including the params we need to retrieve a token
-    // This varies depending on the type of user, so start
-    // waiting now and resolve at the end of the "sign in pipeline"
-    const waitForCallbackUrl = page.waitForRequest((req: Request) => {
-      return req.url().startsWith(this._config.redirectUri);
-    });
-
-    await page.goto(authorizationUrl);
-
     try {
-      await this.handleErrorPage(page);
+      // Eventually, we'll get a redirect to the callback url
+      // including the params we need to retrieve a token
+      // This varies depending on the type of user, so start
+      // waiting now and resolve at the end of the "sign in pipeline"
+      const waitForCallbackUrl = page.waitForRequest((req: Request) => {
+        return req.url().startsWith(this._config.redirectUri);
+      });
 
-      await this.handleLoginPage(page);
+      await page.goto(authorizationUrl);
 
-      await this.handlePingLoginPage(page);
+      try {
+        await this.handleErrorPage(page);
 
-      // Handle federated sign-in
-      await this.handleFederatedSignin(page);
+        await this.handleLoginPage(page);
 
-      // Handle AzureAD sign-in
-      await this.handleAzureADSignin(page);
+        await this.handlePingLoginPage(page);
 
-      // Handle Authing sign-in
-      await this.handleAuthingSignin(page);
-    } catch (err) {
-      throw new Error(`Failed OIDC signin for ${this._user.email}.\n${err}`);
+        // Handle federated sign-in
+        await this.handleFederatedSignin(page);
+
+        // Handle AzureAD sign-in
+        await this.handleAzureADSignin(page);
+
+        // Handle Authing sign-in
+        await this.handleAuthingSignin(page);
+      } catch (err) {
+        throw new Error(`Failed OIDC signin for ${this._user.email}.\n${err}`);
+      }
+
+      try {
+        await this.handleConsentPage(page);
+      } catch (error) {
+        // ignore, if we get the callback Url, we're good.
+      }
+
+      const callbackUrl = await waitForCallbackUrl;
+
+      const tokenSet = await this._client.oauthCallback(
+        this._config.redirectUri,
+        this._client.callbackParams(callbackUrl.url()),
+        callbackChecks
+      );
+
+      this._accessToken = `Bearer ${tokenSet.access_token}`;
+      if (tokenSet.expires_at)
+        this._expiresAt = new Date(tokenSet.expires_at * 1000);
+      this.onAccessTokenChanged.raiseEvent(this._accessToken);
+    } finally {
+      await page.close();
+      await page.context().close();
+      await page.context().browser()?.close();
     }
-
-    try {
-      await this.handleConsentPage(page);
-    } catch (error) {
-      // ignore, if we get the callback Url, we're good.
-    }
-
-    const callbackUrl = await waitForCallbackUrl;
-
-    const tokenSet = await this._client.oauthCallback(
-      this._config.redirectUri,
-      this._client.callbackParams(callbackUrl.url()),
-      callbackChecks
-    );
-
-    await page.close();
-
-    this._accessToken = `Bearer ${tokenSet.access_token}`;
-    if (tokenSet.expires_at)
-      this._expiresAt = new Date(tokenSet.expires_at * 1000);
-    this.onAccessTokenChanged.raiseEvent(this._accessToken);
   }
 
   public async signOut(): Promise<void> {
