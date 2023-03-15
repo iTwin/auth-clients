@@ -1,6 +1,6 @@
 {
   "name": "@itwin/service-authorization",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "Service authorization client for iTwin platform",
   "main": "lib/cjs/index.js",
   "typings": "lib/cjs/index",

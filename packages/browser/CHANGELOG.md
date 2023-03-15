@@ -1,6 +1,13 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Tue, 28 Feb 2023 18:25:46 GMT and should not be manually modified.
+This log was last generated on Tue, 14 Mar 2023 20:05:10 GMT and should not be manually modified.
+
+## 0.7.0
+Tue, 14 Mar 2023 20:05:10 GMT
+
+### Minor changes
+
+- Drop support for Node 12, Node 14 and Node 16.
 
 ## 0.6.2
 Tue, 28 Feb 2023 18:25:46 GMT
