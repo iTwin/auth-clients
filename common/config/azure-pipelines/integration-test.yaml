@@ -81,6 +81,8 @@ jobs:
 
   - script: node common/scripts/install-run-rush.js install
     displayName: Rush Install
+    env:
+      PLAYWRIGHT_BROWSERS_PATH: $(Build.BinariesDirectory)/pw-browsers
 
   - script: node common/scripts/install-run-rush.js build -v --to oidc-signin-tool
     displayName: Rush Build
