@@ -82,8 +82,8 @@ jobs:
   - script: node common/scripts/install-run-rush.js install
     displayName: Rush Install
 
-  - script: npx playwright install
-    displayName: Install Playwright
+  # - script: npx playwright install
+  #   displayName: Install Playwright
 
   - script: node common/scripts/install-run-rush.js build -v --to oidc-signin-tool
     displayName: Rush Build
