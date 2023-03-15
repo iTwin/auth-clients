@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@itwin/oidc-signin-tool",
-      "comment": "",
+      "comment": "add postInstall script hook to install playwright/chromium",
       "type": "none"
     }
   ],
