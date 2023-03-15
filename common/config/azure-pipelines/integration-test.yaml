@@ -95,6 +95,7 @@ jobs:
       IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
       IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
       DEBUG: pw:api
+      PLAYWRIGHT_BROWSERS_PATH: $(Build.BinariesDirectory)/pw-browsers"
 
   - task: PublishTestResults@2
     displayName: "Publish Integration Test Results"
