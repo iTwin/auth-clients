@@ -40,8 +40,6 @@ jobs:
      echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
      echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$test_azuread_user_password"
-     echo "##vso[task.setvariable variable=PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD;]1"
-     echo "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]$(Build.BinariesDirectory)/pw-browsers"
      export
     displayName: 'Add config to environment'
     env:
@@ -63,8 +61,6 @@ jobs:
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
       Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
-      Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD;]1"
-      Write-Host "##vso[task.setvariable variable=PLAYWRIGHT_BROWSERS_PATH;]$(Build.BinariesDirectory)/pw-browsers"
     displayName: 'Add config to environment'
     env:
       test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
@@ -81,8 +77,6 @@ jobs:
 
   - script: node common/scripts/install-run-rush.js install
     displayName: Rush Install
-    env:
-      PLAYWRIGHT_BROWSERS_PATH: $(Build.BinariesDirectory)/pw-browsers
 
   - script: node common/scripts/install-run-rush.js build -v --to oidc-signin-tool
     displayName: Rush Build
@@ -93,8 +87,6 @@ jobs:
       # Couldn't get this variable to be ingested in the steps above, but this works
       IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
       IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
-      DEBUG: pw:api
-      PLAYWRIGHT_BROWSERS_PATH: $(Build.BinariesDirectory)/pw-browsers
 
   - task: PublishTestResults@2
     displayName: "Publish Integration Test Results"
