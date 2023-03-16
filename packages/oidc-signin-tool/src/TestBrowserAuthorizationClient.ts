@@ -155,14 +155,19 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     const authorizationUrl = this._client.authorizationUrl(authParams);
 
     const page = await this.launchBrowser();
+
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    const waitForCallbackUrl = page.waitForRequest((req: Request) => {
+      return req.url().startsWith(this._config.redirectUri) || signal.aborted;
+    });
+
     try {
       // Eventually, we'll get a redirect to the callback url
       // including the params we need to retrieve a token
       // This varies depending on the type of user, so start
       // waiting now and resolve at the end of the "sign in pipeline"
-      const waitForCallbackUrl = page.waitForRequest((req: Request) => {
-        return req.url().startsWith(this._config.redirectUri);
-      });
 
       await page.goto(authorizationUrl);
 
@@ -182,6 +187,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
         // Handle Authing sign-in
         await this.handleAuthingSignin(page);
       } catch (err) {
+        controller.abort();
         throw new Error(`Failed OIDC signin for ${this._user.email}.\n${err}`);
       }
 
@@ -192,21 +198,20 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       }
 
       const callbackUrl = await waitForCallbackUrl;
+      if (callbackUrl) {
+        const tokenSet = await this._client.oauthCallback(
+          this._config.redirectUri,
+          this._client.callbackParams(callbackUrl.url()),
+          callbackChecks
+        );
 
-      const tokenSet = await this._client.oauthCallback(
-        this._config.redirectUri,
-        this._client.callbackParams(callbackUrl.url()),
-        callbackChecks
-      );
-
-      this._accessToken = `Bearer ${tokenSet.access_token}`;
-      if (tokenSet.expires_at)
-        this._expiresAt = new Date(tokenSet.expires_at * 1000);
-      this.onAccessTokenChanged.raiseEvent(this._accessToken);
+        this._accessToken = `Bearer ${tokenSet.access_token}`;
+        if (tokenSet.expires_at)
+          this._expiresAt = new Date(tokenSet.expires_at * 1000);
+        this.onAccessTokenChanged.raiseEvent(this._accessToken);
+      }
     } finally {
-      await page.close();
-      await page.context().close();
-      await page.context().browser()?.close();
+      await this.cleanup(page, signal, waitForCallbackUrl);
     }
   }
 
@@ -511,6 +516,19 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
 
     return page;
+  }
+
+  private async cleanup(
+    page: Page,
+    signal: AbortSignal,
+    waitForCallbackUrl: Promise<Request | boolean>
+  ) {
+    if (signal.aborted)
+      await page.reload();
+    await waitForCallbackUrl;
+    await page.close();
+    await page.context().close();
+    await page.context().browser()?.close();
   }
 }
 

@@ -18,8 +18,8 @@
     "test:integration": "playwright test src/test-integration",
     "docs": "",
     "cover": "nyc npm test",
-    "pack": "npm pack",
-    "rebuild": "npm run clean && npm run build"
+    "rebuild": "npm run clean && npm run build",
+    "postinstall": "node ./installPlaywright.js"
   },
   "keywords": [
     "Bentley",
