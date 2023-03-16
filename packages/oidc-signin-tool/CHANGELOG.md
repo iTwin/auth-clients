@@ -1,6 +1,13 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 14 Mar 2023 20:05:10 GMT and should not be manually modified.
+This log was last generated on Thu, 16 Mar 2023 01:23:39 GMT and should not be manually modified.
+
+## 3.7.1
+Thu, 16 Mar 2023 01:23:39 GMT
+
+### Patches
+
+- add postInstall script hook to install playwright/chromium
 
 ## 3.7.0
 Tue, 14 Mar 2023 20:05:10 GMT
