@@ -1,6 +1,6 @@
 {
   "name": "@itwin/oidc-signin-tool",
-  "version": "3.6.1",
+  "version": "3.7.1",
   "description": "OIDC Signin Helper",
   "main": "lib/cjs/index.js",
   "typings": "lib/cjs/index",
@@ -15,11 +15,11 @@
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
-    "test:integration": "mocha \"./lib/cjs/test-integration/**/*.test.js\"",
+    "test:integration": "playwright test src/test-integration",
     "docs": "",
     "cover": "nyc npm test",
-    "pack": "npm pack",
-    "rebuild": "npm run clean && npm run build"
+    "rebuild": "npm run clean && npm run build",
+    "postinstall": "node ./installPlaywright.js"
   },
   "keywords": [
     "Bentley",
@@ -33,10 +33,10 @@
   },
   "dependencies": {
     "@itwin/certa": "^3.3.0",
+    "@playwright/test": "~1.31.2",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
-    "openid-client": "^4.7.4",
-    "puppeteer": "^13.5.2"
+    "openid-client": "^4.7.4"
   },
   "devDependencies": {
     "@itwin/build-tools": "^3.3.0",

@@ -2,6 +2,18 @@
   "name": "@itwin/node-cli-authorization",
   "entries": [
     {
+      "version": "0.11.0",
+      "tag": "@itwin/node-cli-authorization_v0.11.0",
+      "date": "Tue, 14 Mar 2023 20:05:10 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Drop support for Node 12, Node 14 and Node 16."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.10.0",
       "tag": "@itwin/node-cli-authorization_v0.10.0",
       "date": "Tue, 03 Jan 2023 21:06:26 GMT",

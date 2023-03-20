@@ -1,6 +1,13 @@
 # Change Log - @itwin/node-cli-authorization
 
-This log was last generated on Tue, 03 Jan 2023 21:06:26 GMT and should not be manually modified.
+This log was last generated on Tue, 14 Mar 2023 20:05:10 GMT and should not be manually modified.
+
+## 0.11.0
+Tue, 14 Mar 2023 20:05:10 GMT
+
+### Minor changes
+
+- Drop support for Node 12, Node 14 and Node 16.
 
 ## 0.10.0
 Tue, 03 Jan 2023 21:06:26 GMT

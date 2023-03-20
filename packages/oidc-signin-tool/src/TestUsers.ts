@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 // Keep the dependencies of this file to only ones that can be used from both the frontend and backend.  This allows the same class for
 // test users to be used in either case.
 
@@ -12,6 +12,7 @@
 export interface TestUserCredentials {
   email: string;
   password: string;
+  scope?: string;
 }
 
 /**
@@ -60,6 +61,45 @@ export class TestUsers {
     return {
       email: process.env.IMJS_TEST_SUPER_MANAGER_USER_NAME ?? "",
       password: process.env.IMJS_TEST_SUPER_MANAGER_USER_PASSWORD ?? "",
+    };
+  }
+
+  public static get federatedInvalid(): TestUserCredentials {
+    return {
+      email: "invalid@bentley.com",
+      password: "invalid",
+    };
+  }
+
+  public static get invalid(): TestUserCredentials {
+    return {
+      email: "invalid@email.com",
+      password: "invalid",
+      scope: process.env.IMJS_OIDC_BROWSER_TEST_SCOPES ?? "",
+    };
+  }
+
+  public static get azureUser(): TestUserCredentials {
+    if (!process.env.IMJS_TEST_AZUREAD_USER_NAME)
+      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_NAME");
+    if (!process.env.IMJS_TEST_AZUREAD_USER_PASSWORD)
+      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_PASSWORD");
+
+    return {
+      email: process.env.IMJS_TEST_AZUREAD_USER_NAME,
+      password: process.env.IMJS_TEST_AZUREAD_USER_PASSWORD,
+    };
+  }
+
+  public static get authingUser(): TestUserCredentials {
+    if (!process.env.IMJS_TEST_AUTHING_USER_NAME)
+      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_NAME");
+    if (!process.env.IMJS_TEST_AUTHING_USER_PASSWORD)
+      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_PASSWORD");
+
+    return {
+      email: process.env.IMJS_TEST_AUTHING_USER_NAME,
+      password: process.env.IMJS_TEST_AUTHING_USER_PASSWORD,
     };
   }
 

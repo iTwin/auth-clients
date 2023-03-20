@@ -1,6 +1,6 @@
 {
   "name": "@itwin/browser-authorization",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "description": "Browser authorization client for iTwin platform",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
@@ -36,7 +36,7 @@
     "@itwin/core-bentley": "^3.0.0",
     "@itwin/core-common": "^3.0.0",
     "@itwin/eslint-plugin": "^3.0.0",
-    "@playwright/test": "~1.31.1",
+    "@playwright/test": "~1.31.2",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^8.2.3",
     "@types/node": "^18.11.5",

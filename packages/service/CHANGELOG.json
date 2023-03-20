@@ -2,6 +2,18 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "version": "0.8.0",
+      "tag": "@itwin/service-authorization_v0.8.0",
+      "date": "Tue, 14 Mar 2023 20:05:10 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Drop support for Node 12, Node 14 and Node 16."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.7.0",
       "tag": "@itwin/service-authorization_v0.7.0",
       "date": "Tue, 03 Jan 2023 21:06:26 GMT",
