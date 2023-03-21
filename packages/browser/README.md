@@ -15,7 +15,7 @@ const client = new BrowserAuthorizationClient({
   clientId: // find at developer.bentley.com
   redirectUri: // find/set at developer.bentley.com
   scope: // find/set at developer.bentley.com
-  authority: // imsoidc.bentley.com
+  authority: // ims.bentley.com
   postSignoutRedirectUri: // find/set at developer.bentley.com
   responseType: "code",
   silentRedirectUri: // find/set at developer.bentley.com
