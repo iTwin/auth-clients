@@ -4,7 +4,24 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md 
 
 ## Description
 
-The __@itwin/service-authorization__ package contains a service based client for authorization with the iTwin platform.
+The **@itwin/service-authorization** package contains a service based client for authorization with the iTwin platform.
+
+## Usage
+
+Very simple to get up and running and grab an access token.
+
+> Ensure you've added your service client email from your iTwin application to your iModel as a participant at developer.bentley.com and that your scopes match between app and app registration.
+
+```typescript
+const client = new ServiceAuthorizationClient({
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  scope: process.env.SCOPE,
+  authority: process.env.AUTHORITY,
+});
+
+const accessToken = await client.getAccessToken();
+```
 
 ## Documentation
 
