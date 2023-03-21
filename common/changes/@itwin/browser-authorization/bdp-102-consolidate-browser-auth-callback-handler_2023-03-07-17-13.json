@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "Consolidate BrowserAuthCallbackHandler into BrowserAuthorizationClient",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}

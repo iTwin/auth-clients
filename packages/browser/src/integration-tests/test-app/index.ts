@@ -3,9 +3,6 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import {
-  BrowserAuthorizationCallbackHandler,
-} from "../../CallbackHandler";
 import { BrowserAuthorizationClient } from "../../Client";
 
 const oidcCallbackUrl = `${process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL}/oidc-callback`;
@@ -40,21 +37,12 @@ async function initialize() {
   }
 
   if (isOidcCallbackPage()) {
-    await BrowserAuthorizationCallbackHandler.handleSigninCallback({
-      clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID!,
-      redirectUri: oidcCallbackUrl,
-      authority,
-      responseMode: "query",
-    });
+    await client.handleSigninCallback();
   }
 }
 
 async function authenticateRedirect() {
-  try {
-    await client.signInSilent();
-  } catch (err) {
-    await client.signInRedirect();
-  }
+  await client.signInRedirect();
   await validateAuthenticated();
 }
 
@@ -84,7 +72,12 @@ function displayAuthorized() {
   }
 }
 
-function appendButton(parent: Element, text: string, testId: string, popup: boolean = false){
+function appendButton(
+  parent: Element,
+  text: string,
+  testId: string,
+  popup: boolean = false
+) {
   const button = document.createElement("button");
   button.textContent = text;
   button.setAttribute("data-testid", testId);

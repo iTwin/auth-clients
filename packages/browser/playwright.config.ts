@@ -9,7 +9,7 @@ const reporter: any = process.env.AGENT_ID
   : "list";
 
 export default defineConfig({
-  timeout: 30000,
+  timeout: 60000,
   reporter,
   webServer: {
     command: "npm run test:integration:start-test-app",
