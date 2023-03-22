@@ -1,6 +1,13 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Tue, 14 Mar 2023 20:05:10 GMT and should not be manually modified.
+This log was last generated on Wed, 22 Mar 2023 18:23:21 GMT and should not be manually modified.
+
+## 0.8.0
+Wed, 22 Mar 2023 18:23:21 GMT
+
+### Minor changes
+
+- Consolidate BrowserAuthCallbackHandler into BrowserAuthorizationClient
 
 ## 0.7.0
 Tue, 14 Mar 2023 20:05:10 GMT
