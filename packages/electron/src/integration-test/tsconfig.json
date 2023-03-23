@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "lib": ["DOM"],
+    "target": "ES5",
+    "skipLibCheck": true,
+    "outDir": "../../dist"
+  },
+  "include": ["./index.ts"],
+  "exclude": ["node_modules"]
+}
