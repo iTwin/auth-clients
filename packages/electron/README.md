@@ -4,7 +4,7 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md 
 
 ## Description
 
-The __@itwin/electron-authorization__ package contains an Electron based client for authorization with the iTwin Platform by default and is configurable to work with any OAuth2.0 based provider.
+The **@itwin/electron-authorization** package contains an Electron based client for authorization with the iTwin Platform by default and is configurable to work with any OAuth2.0 based provider.
 
 ## How it works
 
@@ -18,7 +18,7 @@ An Electron application must follow a few setup steps in order to consume and us
 
 1. The Electron preload script (required for [context isolation](https://www.electronjs.org/docs/latest/tutorial/context-isolation)) must create an implementation of `ITwinElectronApi` to allow the use of the `ipcRenderer` object provided by Electron. The implementation must be exposed in the window object so that the renderer process has a means of accessing the Electron IPC since it doesn't naturally have access to the `ipcRenderer`. An example of this can be seen in [ElectronPreload.ts](./src/renderer/ElectronPreload.ts).
 
-    > Note: The `@itwin/core-electron` package handles this for any iTwin.js application working with an iModel so this step can be skipped if you're starting your app using `ElectronHost`.
+   > Note: The `@itwin/core-electron` package handles this for any iTwin.js application working with an iModel so this step can be skipped if you're starting your app using `ElectronHost`.
 
 2. `ElectronMainAuthorization` needs to setup listeners via the `ipcMain` object from Electron. The listeners should use the exact same channel names that the renderer process uses. The listeners will respond to requests to sign-in, sign-out, and retrieve the access token. When a token changes in the main process then it becomes necessary to send messages to the renderer process client unprovoked which cannot be done with the `ipcMain` object. Instead it must be done by accessing the window object's 'webContents' which has a `send` method that allows you to send data over a specific IPC channel name. An example of all this can be seen in the main [Client.ts](./src/main/Client.ts).
 

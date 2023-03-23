@@ -70,6 +70,7 @@ importers:
       keytar: ^7.8.0
       mocha: ^8.2.3
       nyc: ^15.1.0
+      parcel: ~2.8.3
       rimraf: ^3.0.2
       sinon: ^15.0.1
       source-map-support: ^0.5.9
@@ -94,6 +95,7 @@ importers:
       eslint: 7.32.0
       mocha: 8.4.0
       nyc: 15.1.0
+      parcel: 2.8.3
       rimraf: 3.0.2
       sinon: 15.0.1
       source-map-support: 0.5.21
