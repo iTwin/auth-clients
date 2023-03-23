@@ -1,5 +1,5 @@
 import { IpcRendererEvent } from "electron";
-import { ITwinElectronApi } from "../renderer/ElectronPreload";
+import type { ITwinElectronApi } from "../renderer/ElectronPreload";
 
 const { contextBridge, ipcRenderer } = require("electron");
 

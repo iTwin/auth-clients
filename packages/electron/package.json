@@ -9,8 +9,9 @@
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
-    "integration:test": "",
-    "integration:test:build": "parcel build src/integration-test/index.html index.ts preload.ts",
+    "integration:test:start": "electron dist/integration-test/index.js",
+    "integration:test:build": "parcel build src/integration-test/index.html --dist-dir dist/integration-test --public-url ./ && tsc ./src/integration-test/index.ts ./src/integration-test/preload.ts --module commonjs --moduleResolution node --lib DOM --target ES5 --skipLibCheck true --outDir ./dist",
+    "integration:parcel": "parcel build src/integration-test/index.html --dist-dir dist/integration-test",
     "cover": "nyc npm test",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
