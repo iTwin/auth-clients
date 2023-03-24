@@ -46,14 +46,21 @@ export class LoopbackWebServer {
   private static _redirectUri: string;
 
   /** Start a web server to listen to the browser requests */
-  public static start(redirectUrl: string) {
+  public static async start(redirectUri: string): Promise<void> {
     if (LoopbackWebServer._httpServer)
       return;
-    this._redirectUri = redirectUrl;
+    this._redirectUri = redirectUri;
 
-    LoopbackWebServer._httpServer = Http.createServer(LoopbackWebServer.onBrowserRequest);
-    const urlParts: URL = new URL(this._redirectUri);
-    LoopbackWebServer._httpServer.listen(urlParts.port);
+    return new Promise((resolve, reject) => {
+      const server = Http.createServer(LoopbackWebServer.onBrowserRequest);
+      server.on("error", reject);
+
+      const urlParts: URL = new URL(this._redirectUri);
+      server.listen(urlParts.port, () => {
+        LoopbackWebServer._httpServer = server;
+        resolve();
+      });
+    });
   }
 
   /** Add to the authorization state so that the correct response data is used for each request */
