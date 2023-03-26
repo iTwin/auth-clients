@@ -2,16 +2,27 @@ import { ElectronRendererAuthorization } from "../renderer/Client";
 
 const auth = new ElectronRendererAuthorization();
 auth.onAccessTokenChanged.addListener((token: string) => {
-  console.log("got token");
+  console.log("token changed");
   console.log(token);
 });
 
-auth
-  .signIn()
-  .then(() => {
-    console.log("complete");
-  })
-  .catch((e) => {
-    console.log(e);
-    console.log("wtf");
-  });
+const signOutButton = document.getElementById("signOut");
+const signInButton = document.getElementById("signIn");
+
+signOutButton?.addEventListener("click", async () => {
+  console.log("clicked");
+  try {
+    await auth.signOut();
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+signInButton?.addEventListener("click", async () => {
+  console.log("clicked");
+  try {
+    await auth.signIn();
+  } catch (error) {
+    console.log(error);
+  }
+});

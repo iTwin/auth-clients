@@ -15,7 +15,7 @@ import type { AccessToken } from "@itwin/core-bentley";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type {
-  AuthorizationError, AuthorizationRequestJson, AuthorizationResponse, RevokeTokenRequestJson, StringMap, TokenRequestHandler, TokenRequestJson, TokenResponse,
+  AuthorizationError, AuthorizationRequestJson, AuthorizationResponse, RevokeTokenRequestJson, StringMap, TokenRequestHandler, TokenRequestJson, TokenResponse, TokenTypeHint,
 } from "@openid/appauth";
 import {
   AuthorizationNotifier, AuthorizationRequest, AuthorizationServiceConfiguration,
@@ -27,7 +27,7 @@ import { ElectronAuthorizationEvents } from "./Events";
 import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler";
 import { ElectronTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
-import { BrowserWindow, ipcMain } from "electron";
+import { BrowserWindow, ipcMain, shell } from "electron";
 import { ElectronAuthIPCChannelNames } from "../renderer/Client";
 const loggerCategory = "electron-auth";
 
@@ -301,7 +301,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    * - calls the onUserStateChanged() call back after the signout completes without error.
    */
   public async signOut(): Promise<void> {
-    await this.makeRevokeTokenRequest();
+    await this.revokeTokens();
+    await shell.openExternal(this._configuration?.endSessionEndpoint!)
   }
 
   private async clearTokenResponse() {
@@ -387,7 +388,16 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     return tokenHandler.performTokenRequest(this._configuration, tokenRequest);
   }
 
-  private async makeRevokeTokenRequest(): Promise<void> {
+  private async revokeTokens(): Promise<void>{
+    await this.revokeToken("access_token")
+    Logger.logTrace(loggerCategory, "Revoked access token");
+    await this.revokeToken("refresh_token")
+    Logger.logTrace(loggerCategory, "Revoked refresh token");
+    await this.clearTokenResponse();
+    Logger.logTrace(loggerCategory, "Cleared local tokens");
+  }
+
+  private async revokeToken(tokenType: TokenTypeHint): Promise<void> {
     if (!this._tokenResponse)
       throw new Error("Missing refresh token. First call signIn() and ensure it's successful");
     assert(this._clientId !== "");
@@ -396,7 +406,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     const revokeTokenRequestJson: RevokeTokenRequestJson = {
       token: refreshToken,
-      token_type_hint: "refresh_token",
+      token_type_hint: tokenType,
       client_id: this._clientId,
     };
 
@@ -405,7 +415,6 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(tokenRequestor);
     await tokenHandler.performRevokeTokenRequest(this._configuration!, revokeTokenRequest);
 
-    Logger.logTrace(loggerCategory, "Authorization revoked, and removed access token");
-    await this.clearTokenResponse();
+
   }
 }

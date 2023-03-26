@@ -10,7 +10,6 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
     "integration:test:start": "npm run integration:test:build && electron dist/integration-test/index.js",
-    "integration:test:build:old": "parcel build src/integration-test/index.html --dist-dir dist/integration-test --public-url ./ && tsc ./src/integration-test/index.ts ./src/integration-test/preload.ts --module commonjs --moduleResolution node --lib DOM --target ES5 --skipLibCheck true --outDir ./dist",
     "integration:test:build": "npm run integration:parcel && tsc -p ./src/integration-test/",
     "integration:parcel": "parcel build src/integration-test/index.html --dist-dir dist/integration-test --public-url ./",
     "cover": "nyc npm test",
