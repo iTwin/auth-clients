@@ -17,16 +17,15 @@ class ElectronAuthIPC {
   private _ipcSocket: IpcSocketFrontend | ITwinElectronApi;
 
   public async signIn(): Promise<void> {
-    await this._ipcSocket.invoke(this._ipcChannelNames.signIn);
+    return this._ipcSocket.invoke(this._ipcChannelNames.signIn);
   }
 
   public async signOut(): Promise<void> {
-    await this._ipcSocket.invoke(this._ipcChannelNames.signOut);
+    return this._ipcSocket.invoke(this._ipcChannelNames.signOut);
   }
 
   public async getAccessToken(): Promise<AccessToken> {
-    const token = await this._ipcSocket.invoke(this._ipcChannelNames.getAccessToken);
-    return token;
+    return this._ipcSocket.invoke(this._ipcChannelNames.getAccessToken);
   }
 
   public addAccessTokenChangeListener(callback: (event: any, token: string) => void) {
