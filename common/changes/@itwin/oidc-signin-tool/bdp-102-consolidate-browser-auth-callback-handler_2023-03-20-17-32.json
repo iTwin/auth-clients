@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/oidc-signin-tool",
-      "comment": "Drop support for Node 12, Node 14 and Node 16.",
-      "type": "minor"
+      "comment": "",
+      "type": "none"
     }
   ],
   "packageName": "@itwin/oidc-signin-tool"

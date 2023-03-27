@@ -1,6 +1,17 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Thu, 23 Feb 2023 22:01:20 GMT and should not be manually modified.
+This log was last generated on Tue, 14 Mar 2023 20:05:10 GMT and should not be manually modified.
+
+## 0.12.0
+Tue, 14 Mar 2023 20:05:10 GMT
+
+### Minor changes
+
+- Drop support for Node 12, Node 14 and Node 16.
+
+### Patches
+
+- Replace npm open package for electron.shell.openPath
 
 ## 0.11.0
 Thu, 23 Feb 2023 22:01:20 GMT

@@ -11,11 +11,9 @@ const reporter: any = process.env.AGENT_ID
 export default defineConfig({
   timeout: 60000,
   reporter,
-  webServer: {
-    command: "npm run test:integration:start-test-app",
-    url: "http://localhost:1234",
-  },
   use: {
+    headless: true,
     screenshot: "only-on-failure",
+    video: "retain-on-failure",
   },
 });

@@ -6,7 +6,50 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md 
 
 The **@itwin/browser-authorization** package contains a browser based client for authorization with the iTwin platform.
 
-## Documentation
+## Usage
+
+Create a new instance of `BrowserAuthorizationClient`, passing in needed credentials:
+
+```typescript
+const client = new BrowserAuthorizationClient({
+  clientId: // find at developer.bentley.com
+  redirectUri: // find/set at developer.bentley.com
+  scope: // find/set at developer.bentley.com
+  authority: // ims.bentley.com
+  postSignoutRedirectUri: // find/set at developer.bentley.com
+  responseType: "code",
+  silentRedirectUri: // find/set at developer.bentley.com
+});
+```
+
+The most common way to use an instance of `BrowserAuthorizationClient` will depend on your specific application and workflow. Here's one common way:
+
+```typescript
+// will attempt to sign in silently,
+// and then via redirect if not possible.
+await client.signInRedirect();
+```
+
+Instead of a redirect, you may want to trigger a pop up to handle the sign in process:
+
+```typescript
+await client.signinPopup();
+```
+
+After the user signs in, they will be redirected to the redirect url specified in your oidc configuration (developer.bentley.com)
+Once on that page, you must call:
+
+```typescript
+await client.handleSigninCallback();
+```
+
+to complete the process. Once back on your initial page, the call to `client.signInSilent` will succeed and you should be authorized.
+
+Other notable methods:
+`client.signOutRedirect()` - starts the signout flow via redirect
+`client.signOutPopup()` - starts the signout flow via popup.
+
+## Authorization Overview
 
 For information about the browser authorization workflow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizingwebapplications).
 

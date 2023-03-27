@@ -7,61 +7,15 @@
  * @module Authorization
  */
 
-import type { AccessToken, MarkRequired } from "@itwin/core-bentley";
+import type { AccessToken } from "@itwin/core-bentley";
 import { UserManager, WebStorageStateStore } from "oidc-client-ts";
-import { BeEvent, Logger } from "@itwin/core-bentley";
+import { BeEvent, Logger, UnexpectedErrors } from "@itwin/core-bentley";
 import { BrowserAuthorizationLogger } from "./Logger";
 import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 import { getImsAuthority } from "./utils";
-
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { User, UserManagerSettings } from "oidc-client-ts";
-import type { BrowserAuthorizationClientRedirectState } from "./ClientRedirectState";
-
-/**
- * @internal
- * The internal configuration used by BrowserAuthorizationClient.
- */
-type BrowserAuthorizationClientConfigurationOptions =
-  MarkRequired<BrowserAuthorizationClientConfiguration, "authority">;
-
-/**
- * @beta
- */
-export interface BrowserAuthorizationClientConfiguration extends BrowserAuthorizationClientRequestOptions {
-  /** The URL of the OIDC/OAuth2 provider. If left undefined, the Bentley auth authority will be used by default. */
-  readonly authority?: string;
-  /** The unique client id registered through the issuing authority. Required to obtain authorization from the user. */
-  readonly clientId: string;
-  /**
-   * The URL passed in the authorization request, to which the authority will redirect the browser after the user grants/denies access
-   * The redirect URL must be registered against the clientId through the issuing authority to be considered valid.
-   */
-  readonly redirectUri: string;
-  /**
-   * The URL passed in the signout request, to which the authority will redirect the browser after the user has been signed out.
-   * The signout URL must be registered against the clientId through the issuing authority to be considered valid.
-   */
-  readonly postSignoutRedirectUri?: string;
-  /** A space-delimited collection of individual access claims specified by the authority. The user must consent to all specified scopes in order to grant authorization */
-  readonly scope: string;
-  /** The mechanism (or authentication flow) used to acquire auth information from the user through the authority */
-  readonly responseType?: "code" | "id_token" | "id_token token" | "code id_token" | "code token" | "code id_token token" | string;
-  /** if true, do NOT attempt a silent signIn on startup of the application */
-  readonly noSilentSignInOnAppStartup?: boolean;
-  /** The redirect URL used for silent sign in and renew. If not provided, will default to redirectUri. */
-  readonly silentRedirectUri?: string;
-}
-
-/**
- * Interface describing per-request configuration options for authorization requests
- * see: https://openid.net/specs/openid-connect-core-1_0.html#AuthRequest
- * @public
- */
-export interface BrowserAuthorizationClientRequestOptions {
-  /** The required action demanded of the user before the authentication request can succeed */
-  prompt?: "none" | "login" | "consent" | "select_account" | string;
-}
+import type { BrowserAuthorizationClientConfiguration, BrowserAuthorizationClientConfigurationOptions, BrowserAuthorizationClientRedirectState, BrowserAuthorizationClientRequestOptions } from "./types";
 
 /** BrowserAuthorization type guard.
  * @beta
@@ -122,9 +76,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Merges the basic and advanced settings into a single configuration object consumable by the internal userManager.
-   * @param requestContext
    * @param basicSettings
    * @param advancedSettings
+   * @returns a promise resolving to UserManagerSettings
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
@@ -138,6 +92,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       silent_redirect_uri: basicSettings.silentRedirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       userStore: new WebStorageStateStore({ store: window.localStorage }),
       prompt: basicSettings.prompt,
+      response_mode: basicSettings.responseMode, // eslint-disable-line @typescript-eslint/naming-convention
     };
 
     if (advancedSettings) {
@@ -166,7 +121,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Alias for signInRedirect
-   * @param requestContext
    */
   public async signIn(): Promise<void> {
     return this.signInRedirect();
@@ -179,6 +133,8 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Otherwise, an attempt to redirect the browser will proceed.
    * If an error prevents the redirection from occurring, the returned promise will be rejected with the responsible error.
    * Otherwise, the browser's window will be redirected away from the current page, effectively ending execution here.
+   * @param successRedirectUrl - (optional) path to redirect to after a successful authorization
+   * @param args (optional) additional BrowserAuthorizationClientRequestOptions passed to signIn methods
    */
   public async signInRedirect(successRedirectUrl?: string, args?: BrowserAuthorizationClientRequestOptions): Promise<void> {
     const user = await this.nonInteractiveSignIn(args);
@@ -197,7 +153,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Attempts a sign-in via popup with the authorization provider
-   * @param requestContext
+   * @param args - @see BrowserAuthorizationClientRequestOptions
    */
   public async signInPopup(args?: BrowserAuthorizationClientRequestOptions): Promise<void> {
     let user = await this.nonInteractiveSignIn(args);
@@ -278,7 +234,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Alias for signOutRedirect
-   * @param requestContext
    */
   public async signOut(): Promise<void> {
     await this.signOutRedirect();
@@ -300,6 +255,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Returns a promise that resolves to the AccessToken of the currently authorized user.
    * The token is refreshed as necessary.
    * @throws [Error] If signIn() was not called, or there was an authorization error.
+   * @returns an AccessToken
    */
   public async getAccessToken(): Promise<AccessToken> {
     if (this._accessToken)
@@ -311,8 +267,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Checks the current local user session against that of the identity provider.
    * If the session is no longer valid, the local user is removed from storage.
    * @returns true if the local session is still active with the provider, false otherwise.
-   * @param requestContext
-   * @param ignoreCheckInterval Bypass the default behavior to wait until a certain time has passed since the last check was performed
    */
   public async checkSessionStatus(): Promise<boolean> {
     const userManager = await this.getUserManager();
@@ -401,5 +355,66 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     }
 
     this._advancedSettings = settings;
+  }
+
+  /**
+   * Attempts to process a callback response in the current URL.
+   * When called successfully within an iframe or popup, the host frame will automatically be destroyed.
+   * @param responseMode - Defines how OIDC auth reponse parameters are encoded.
+   * @throws [[Error]] when this attempt fails for any reason.
+   */
+  private async handleSigninCallbackInternal(responseMode: "query" | "fragment"): Promise<void> {
+    const userManager = await this.getUserManager();
+    // oidc-client-js uses an over-eager regex to parse the url, which may match values from the hash string when targeting the query string (and vice-versa)
+    // To ensure that this mismatching doesn't occur, we strip the unnecessary portion away here first.
+    const urlSuffix = responseMode === "query"
+      ? window.location.search
+      : window.location.hash;
+    const url = `${window.location.origin}${window.location.pathname}${urlSuffix}`;
+
+    const user = await userManager.signinCallback(url); // For silent or popup callbacks, execution effectively ends here, since the context will be destroyed.
+    if (!user || user.expired)
+      throw new Error("Authorization error: userManager.signinRedirectCallback does not resolve to authorized user");
+
+    if (user.state) {
+      const state = user.state as BrowserAuthorizationClientRedirectState;
+      if (state.successRedirectUrl) { // Special case for signin via redirect used to return to the original location
+        window.location.replace(state.successRedirectUrl);
+      }
+    }
+  }
+
+  /**
+   * Attempts to parse an OIDC token from the current window URL
+   * When called within an iframe or popup, the host frame will automatically be destroyed before the promise resolves.
+   */
+  public async handleSigninCallback(): Promise<void> {
+    const url = new URL(this._basicSettings.redirectUri);
+    if (url.pathname !== window.location.pathname)
+      return;
+
+    let errorMessage = "";
+
+    try {
+      await this.handleSigninCallbackInternal("fragment");
+      return;
+    } catch (err: any) {
+      errorMessage += `${err.message}\n`;
+    }
+
+    try {
+      await this.handleSigninCallbackInternal("query");
+      return;
+    } catch (err: any) {
+      errorMessage += `${err.message}\n`;
+    }
+
+    if (window.self !== window.top) { // simply destroy the window if a failure is detected in an iframe.
+      window.close();
+      return;
+    }
+
+    errorMessage = `SigninCallback error - failed to process signin request in callback using all known modes of token delivery: ${errorMessage}`;
+    UnexpectedErrors.handle(new Error(errorMessage));
   }
 }

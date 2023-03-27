@@ -1,167 +1,99 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
-import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-import * as path from "path";
+import { expect, test } from "@playwright/test";
 import type { TestBrowserAuthorizationClientConfiguration } from "../index";
 import { getTestAccessToken, TestUsers, TestUtility } from "../index";
-import * as fs from "fs";
+import { loadConfig, TestConfigType } from "./loadConfig";
 
-/** Loads the provided `.env` file into process.env */
-function loadEnv(envFile: string) {
-  if (!fs.existsSync(envFile))
-    return;
+let oidcConfig: TestBrowserAuthorizationClientConfiguration;
 
-  const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const envResult = dotenv.config({ path: envFile });
-  if (envResult.error) {
-    throw envResult.error;
-  }
-
-  dotenvExpand(envResult);
-}
-
-const assert = chai.assert;
-const expect = chai.expect;
-chai.use(chaiAsPromised);
-
-loadEnv(path.join(__dirname, "..", "..", "..", ".env"));
-
-describe("Sign in (#integration)", () => {
-  let oidcConfig: TestBrowserAuthorizationClientConfiguration;
-
-  before(() => {
-    // IMS oidc config
-    if (process.env.IMJS_OIDC_BROWSER_TEST_CLIENT_ID === undefined)
-      throw new Error("Could not find IMJS_OIDC_BROWSER_TEST_CLIENT_ID");
-    if (process.env.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI === undefined)
-      throw new Error("Could not find IMJS_OIDC_BROWSER_TEST_REDIRECT_URI");
-    if (process.env.IMJS_OIDC_BROWSER_TEST_SCOPES === undefined)
-      throw new Error("Could not find IMJS_OIDC_BROWSER_TEST_SCOPES");
-
-    oidcConfig = {
-      clientId: process.env.IMJS_OIDC_BROWSER_TEST_CLIENT_ID ?? "",
-      redirectUri: process.env.IMJS_OIDC_BROWSER_TEST_REDIRECT_URI ?? "",
-      scope: process.env.IMJS_OIDC_BROWSER_TEST_SCOPES ?? "",
-    };
-  });
-
-  it("success with valid user", async () => {
+test.beforeEach(() => {
+  oidcConfig = loadConfig(TestConfigType.OIDC);
+});
+test.describe("Sign in (#integration)", () => {
+  test("success with valid user", async () => {
     const validUser = TestUsers.regular;
     const token = await getTestAccessToken(oidcConfig, validUser);
-    assert.exists(token);
+    expect(token).toBeDefined();
   });
 
   // test will not work without using a desktop client. setup correctly on master, will enable there.
-  it("success with valid user and iTwin Platform scope", async () => {
+  test("success with valid user and iTwin Platform scope", async () => {
     const validUser = TestUsers.regular;
-    const token = await getTestAccessToken({
-      ...oidcConfig,
-      scope: `${oidcConfig.scope} projects:read`,
-    }, validUser);
-    assert.exists(token);
+    const token = await getTestAccessToken(
+      {
+        ...oidcConfig,
+        scope: `${oidcConfig.scope} projects:read`,
+      },
+      validUser
+    );
+    expect(token).toBeDefined();
   });
 
-  it("failure with invalid url", async () => {
+  test("failure with invalid url", async () => {
     const oidcInvalidConfig = { ...oidcConfig, redirectUri: "invalid.com" };
     const validUser = TestUsers.regular;
-    await expect(getTestAccessToken(oidcInvalidConfig, validUser))
-      .to.be.rejectedWith(Error, `Failed OIDC signin for ${validUser.email}.\nError:`);
+    await expect(
+      getTestAccessToken(oidcInvalidConfig, validUser)
+    ).rejects.toThrowError(`400 - Invalid redirect_uri`);
   });
 
-  it.skip("failure with invalid Bentley federated user", async () => {
-    const invalidUser = {
-      email: "invalid@bentley.com",
-      password: "invalid",
-    };
-
-    await expect(getTestAccessToken(oidcConfig, invalidUser))
-      .to.be.rejectedWith(Error, `Failed OIDC signin for ${invalidUser.email}.\nError: Incorrect user ID or password. Type the correct user ID and password, and try again.`);
+  test("failure with invalid Bentley federated user", async () => {
+    await expect(
+      getTestAccessToken(oidcConfig, TestUsers.federatedInvalid)
+    ).rejects.toThrowError(
+      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: Invalid username during AzureAD sign in`
+    );
   });
 
-  it.skip("failure with invalid user", async () => {
-    const invalidUser = {
-      email: "invalid@email.com",
-      password: "invalid",
-      scope: process.env.IMJS_OIDC_BROWSER_TEST_SCOPES ?? "",
-    };
-    await expect(getTestAccessToken(oidcConfig, invalidUser))
-      .to.be.rejectedWith(Error, `Failed OIDC signin for ${invalidUser.email}.\nError: We didn't recognize the username or password you entered. Please try again.`);
+  test("failure with invalid user", async () => {
+    await expect(
+      getTestAccessToken(oidcConfig, TestUsers.invalid)
+    ).rejects.toThrowError(
+      `Failed OIDC signin for ${TestUsers.invalid.email}.\nError: We didn't recognize the email address or password you entered. Please try again.`
+    );
   });
 });
 
-describe("TestUsers utility (#integration)", () => {
-
-  it("can sign-in all the typically used integration test users", async () => {
+test.describe("TestUsers utility (#integration)", () => {
+  test("can sign-in all the typically used integration test users", async () => {
     let token = await TestUtility.getAccessToken(TestUsers.regular);
-    assert.exists(token);
+    expect(token).toBeDefined();
     token = await TestUtility.getAccessToken(TestUsers.manager);
-    assert.exists(token);
+    expect(token).toBeDefined();
     token = await TestUtility.getAccessToken(TestUsers.super);
-    assert.exists(token);
+    expect(token).toBeDefined();
     token = await TestUtility.getAccessToken(TestUsers.superManager);
-    assert.exists(token);
+    expect(token).toBeDefined();
   });
-
 });
 
-describe("Authing and AzureAD (#integration)", () => {
+test.describe("Authing and AzureAD (#integration)", () => {
   let azureAdOidcConfig: TestBrowserAuthorizationClientConfiguration;
   let authingOidcConfig: TestBrowserAuthorizationClientConfiguration;
 
-  before(() => {
-    // AzureAd oidc config
-    if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY === undefined)
-      throw new Error("Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY");
-    if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID === undefined)
-      throw new Error("Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID");
-    if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI === undefined)
-      throw new Error("Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI");
-    if (process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES === undefined)
-      throw new Error("Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES");
-
-    azureAdOidcConfig = {
-      authority: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY,
-      clientId: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID ?? "",
-      redirectUri: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI ?? "",
-      scope: process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES ?? "",
-    };
-
-    // Authing oidc config
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY === undefined)
-      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY");
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID === undefined)
-      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID");
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI === undefined)
-      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI");
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES === undefined)
-      throw new Error("Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES");
-
-    authingOidcConfig = {
-      authority: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY,
-      clientId: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID ?? "",
-      redirectUri: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI ?? "",
-      scope: process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES ?? "",
-    };
-    if (process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_SECRET)
-      authingOidcConfig.clientSecret = process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_SECRET;
+  test.beforeAll(() => {
+    azureAdOidcConfig = loadConfig(TestConfigType.AZURE);
+    authingOidcConfig = loadConfig(TestConfigType.AUTHING);
   });
 
-  it("success AzureAD with valid user", async () => {
-    if (process.env.IMJS_TEST_AZUREAD_USER_NAME === undefined)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_NAME");
-    if (process.env.IMJS_TEST_AZUREAD_USER_PASSWORD === undefined)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_PASSWORD");
+  test("success AzureAD with valid user", async () => {
+    const token = await getTestAccessToken(
+      azureAdOidcConfig,
+      TestUsers.azureUser
+    );
+    expect(token).toBeDefined();
+  });
 
-    const validUser = {
-      email: process.env.IMJS_TEST_AZUREAD_USER_NAME,
-      password: process.env.IMJS_TEST_AZUREAD_USER_PASSWORD,
-    };
-    const token = await getTestAccessToken(azureAdOidcConfig, validUser);
-    assert.exists(token);
+  // reached active user limit
+  test.skip("success Authing with valid user", async () => {
+    const token = await getTestAccessToken(
+      authingOidcConfig,
+      TestUsers.authingUser
+    );
+    expect(token).toBeDefined();
   });
 });
