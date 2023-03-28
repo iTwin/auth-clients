@@ -200,6 +200,10 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       const accessToken = await this.getAccessToken();
       return accessToken;
     });
+
+    this.handleIpcMessage(this._ipcChannelNames.signInSilent, async () => {
+      await this.signInSilent();
+    });
   }
 
   /**

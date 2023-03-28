@@ -36,6 +36,10 @@ class ElectronAuthIPC {
     this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenExpirationChanged, callback);
   }
 
+  public async signInSilent(): Promise<void> {
+    return this._ipcSocket.invoke(this._ipcChannelNames.signInSilent);
+  }
+
   constructor(ipcChannelNames: IpcChannelNames, ipcSocket?: IpcSocketFrontend) {
     this._ipcChannelNames = ipcChannelNames;
     if (ipcSocket) {
