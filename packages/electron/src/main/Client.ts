@@ -83,7 +83,11 @@ export interface ElectronMainAuthorizationConfiguration {
 
   /**
    * List of space separated scopes to request access to various resources.
-   * 'offline_access' scope must be included if application wants to receive a refresh token.
+   *
+   * @note 'offline_access' scope is always included by {@link ElectronMainAuthorization} when performing
+   * {@link ElectronMainAuthorization.signIn}, i.e. this library assumes that refresh tokens are always used and retrieved
+   * from the Authorization Server. Note that OIDC Clients need to have refresh tokens enabled in the server side
+   * configuration (for IMS, see https://imsoidcui.bentley.com/clients).
    */
   readonly scopes: string;
 
@@ -133,9 +137,16 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (!config.clientId || !config.scopes || config.redirectUris.length === 0)
       throw new Error("Must specify a valid configuration with a clientId, scopes and redirect URIs when initializing ElectronMainAuthorization");
 
+    // This library assumes that refresh tokens will be used by the Client. 'offline_access' is a special OAuth
+    // defined scope that is required to get a refresh token after successful Authorization.
+    if (!config.scopes.includes("offline_access")) {
+      this._scopes = `${config.scopes} offline_access`;
+    } else {
+      this._scopes = config.scopes;
+    }
+
     this._clientId = config.clientId;
     this._redirectUris = config.redirectUris;
-    this._scopes = config.scopes;
     this._ipcChannelNames = getIpcChannelNames(this._clientId);
     this._ipcSocket = config.ipcSocket;
     this._extras = config.authenticationOptions;
@@ -218,7 +229,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     this.sendIpcMessage(this._ipcChannelNames.onAccessTokenExpirationChanged, expiresAt);
   }
 
-  public get scope() {
+  public get scopes() {
     return this._scopes;
   }
 
