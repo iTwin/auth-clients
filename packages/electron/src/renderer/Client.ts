@@ -110,6 +110,11 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     await this._ipcAuthAPI.signOut();
   }
 
+  /** Called to start the silent sign-in process. Subscribe to onAccessTokenChanged to be notified when silent sign-in completes */
+  public async signInSilent(): Promise<void> {
+    await this._ipcAuthAPI.signInSilent();
+  }
+
   /** Returns a promise that resolves to the AccessToken if signed in.
    * - The token is ensured to be valid *at least* for the buffer of time specified by the configuration.
    * - The token is refreshed if it's possible and necessary.
