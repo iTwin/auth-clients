@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.13.0",
+      "tag": "@itwin/electron-authorization_v0.13.0",
+      "date": "Wed, 29 Mar 2023 09:49:21 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "### Breaking changes:\n- Changes to `ElectronMainAuthorizationConfiguration`:\n  - Property `scope` renamed to `scopes`\n  - Property `redirectUri: string | undefined` changed to `redirectUris: string[]`\n- Parameter `prompt=consent` is no longer unconditionally added to all OIDC Authentication requests\n- Parameter `access_type=offline` is no longer added to OIDC Authentication requests (should have no effect on behavior)\n- `TokenStore` is no longer exposed from `ElectronMainAuthorization`\n- `ElectronRendererAuthorization` constructor now accepts `ElectronRendererAuthorizationConfiguration` with a required `clientId` parameter."
+          }
+        ]
+      }
+    },
+    {
       "version": "0.12.0",
       "tag": "@itwin/electron-authorization_v0.12.0",
       "date": "Tue, 14 Mar 2023 20:05:10 GMT",
