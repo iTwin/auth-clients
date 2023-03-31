@@ -1,6 +1,11 @@
 import { ElectronRendererAuthorization } from "../renderer/Client";
 
-const auth = new ElectronRendererAuthorization();
+if (!process.env.clientId) throw new Error("Please provide a clientId in env");
+
+const auth = new ElectronRendererAuthorization({
+  clientId: process.env.clientId,
+});
+
 auth.onAccessTokenChanged.addListener((token: string) => {
   console.log("token changed");
   console.log(token);

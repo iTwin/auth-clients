@@ -4,44 +4,67 @@
 *--------------------------------------------------------------------------------------------*/
 import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
-import type { AuthorizationClient } from "@itwin/core-common";
+import type { AuthorizationClient, IpcSocketFrontend } from "@itwin/core-common";
+import type { IpcChannelNames } from "../common/IpcChannelNames";
+import { getIpcChannelNames } from "../common/IpcChannelNames";
 import type { ITwinElectronApi } from "./ElectronPreload";
-
-/** @internal */
-export enum ElectronAuthIPCChannelNames {
-  signIn = "itwin.electron.auth.signIn",
-  signOut = "itwin.electron.auth.signOut",
-  getAccessToken = "itwin.electron.auth.getAccessToken",
-  onAccessTokenChanged = "itwin.electron.auth.onAccessTokenChanged",
-  onAccessTokenExpirationChanged = "itwin.electron.auth.onAccessTokenExpirationChanged",
-}
 
 /**
  * Frontend Ipc support for Electron apps.
  */
 class ElectronAuthIPC {
-  private _api: ITwinElectronApi;
+  private _ipcChannelNames: IpcChannelNames;
+  private _ipcSocket: IpcSocketFrontend | ITwinElectronApi;
+
   public async signIn(): Promise<void> {
-    await this._api.invoke(ElectronAuthIPCChannelNames.signIn);
+    return this._ipcSocket.invoke(this._ipcChannelNames.signIn);
   }
+
   public async signOut(): Promise<void> {
-    await this._api.invoke(ElectronAuthIPCChannelNames.signOut);
+    return this._ipcSocket.invoke(this._ipcChannelNames.signOut);
   }
+
   public async getAccessToken(): Promise<AccessToken> {
-    const token = await this._api.invoke(ElectronAuthIPCChannelNames.getAccessToken);
-    return token;
+    return this._ipcSocket.invoke(this._ipcChannelNames.getAccessToken);
   }
+
   public addAccessTokenChangeListener(callback: (event: any, token: string) => void) {
-    this._api.addListener(ElectronAuthIPCChannelNames.onAccessTokenChanged, callback);
+    this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenChanged, callback);
   }
-  public addAccessTokenExpirationChangeListener(callback: (event: any, token: Date) => void) {
-    this._api.addListener(ElectronAuthIPCChannelNames.onAccessTokenExpirationChanged, callback);
+
+  public addAccessTokenExpirationChangeListener(callback: (event: any, expiresAt: Date) => void) {
+    this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenExpirationChanged, callback);
   }
-  constructor() {
-    // use the methods on window.itwinjs exposed by ElectronPreload.ts, or ipcRenderer directly if running with nodeIntegration=true (**only** for tests).
-    // Note that `require("electron")` doesn't work with nodeIntegration=false - that's what it stops
-    this._api = (window as any).itwinjs ?? require("electron").ipcRenderer; // eslint-disable-line @typescript-eslint/no-var-requires
+
+  public async signInSilent(): Promise<void> {
+    return this._ipcSocket.invoke(this._ipcChannelNames.signInSilent);
   }
+
+  constructor(ipcChannelNames: IpcChannelNames, ipcSocket?: IpcSocketFrontend) {
+    this._ipcChannelNames = ipcChannelNames;
+    if (ipcSocket) {
+      this._ipcSocket = ipcSocket;
+    } else {
+      // use the methods on window.itwinjs exposed by ElectronPreload.ts, or ipcRenderer directly if running with nodeIntegration=true (**only** for tests).
+      // Note that `require("electron")` doesn't work with nodeIntegration=false - that's what it stops
+      this._ipcSocket = (window as any).itwinjs ?? require("electron").ipcRenderer; // eslint-disable-line @typescript-eslint/no-var-requires
+    }
+  }
+}
+
+/**
+ * Client configuration to generate OIDC/OAuth tokens for native applications
+ * @beta
+ */
+export interface ElectronRendererAuthorizationConfiguration {
+  /** Client application's identifier as registered with the OIDC/OAuth2 provider. */
+  readonly clientId: string;
+
+  /**
+   * Optional custom implementation of {@link IpcSocketFrontend} to use for IPC communication with the Backend counterpart of
+   * authorization client, see {@link ElectronMainAuthorization}. If not provided, default IPC implementation is used.
+   */
+  readonly ipcSocket?: IpcSocketFrontend;
 }
 
 /**
@@ -59,10 +82,13 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
   public get isAuthorized(): boolean {
     return this.hasSignedIn && !this._hasExpired;
   }
-  private _ipcAuthAPI: ElectronAuthIPC = new ElectronAuthIPC();
+  private _ipcAuthAPI: ElectronAuthIPC;
 
   /** Constructor for ElectronRendererAuthorization. Sets up listeners for when the access token changes both on the frontend and the backend. */
-  public constructor() {
+  public constructor(config: ElectronRendererAuthorizationConfiguration) {
+    const ipcChannelNames = getIpcChannelNames(config.clientId);
+    this._ipcAuthAPI = new ElectronAuthIPC(ipcChannelNames, config.ipcSocket);
+
     this.onAccessTokenChanged.addListener((token: AccessToken) => {
       this._cachedToken = token;
     });
@@ -82,6 +108,11 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
   /** Called to start the sign-out process. Subscribe to onAccessTokenChanged to be notified when sign-out completes */
   public async signOut(): Promise<void> {
     await this._ipcAuthAPI.signOut();
+  }
+
+  /** Called to start the silent sign-in process. Subscribe to onAccessTokenChanged to be notified when silent sign-in completes */
+  public async signInSilent(): Promise<void> {
+    await this._ipcAuthAPI.signInSilent();
   }
 
   /** Returns a promise that resolves to the AccessToken if signed in.

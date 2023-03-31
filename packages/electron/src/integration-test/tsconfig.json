@@ -8,6 +8,6 @@
     "outDir": "../../dist",
     "sourceMap": true
   },
-  "include": ["./index.ts"],
+  "include": ["./index.ts", "../renderer/ElectronPreload.ts"],
   "exclude": ["node_modules"]
 }

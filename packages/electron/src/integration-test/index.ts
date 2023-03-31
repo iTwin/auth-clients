@@ -20,14 +20,14 @@ const createWindow = () => {
 app.whenReady().then(async () => {
   if (!process.env.clientId)
     throw new Error("Please provide a clientId in env");
-  if (!process.env.scope) throw new Error("Please provide a clientId in env");
+  if (!process.env.scopes) throw new Error("Please provide scopes in env");
 
   createWindow();
 
   const client = new ElectronMainAuthorization({
     clientId: process.env.clientId,
-    scope: process.env.scope,
-    redirectUri: "http://localhost:3000/signin-callback",
+    scopes: process.env.scopes,
+    redirectUris: ["http://localhost:3000/signin-callback"],
   });
 
   app.on("activate", () => {
