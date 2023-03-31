@@ -1,4 +1,4 @@
-import { ElectronRendererAuthorization } from "../renderer/Client";
+import { ElectronRendererAuthorization } from "../../renderer/Client";
 
 if (!process.env.clientId) throw new Error("Please provide a clientId in env");
 
