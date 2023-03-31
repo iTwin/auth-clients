@@ -14,6 +14,7 @@ export interface IpcChannelNames {
   readonly getAccessToken: string;
   readonly onAccessTokenChanged: string;
   readonly onAccessTokenExpirationChanged: string;
+  readonly signInSilent: string;
 }
 
 /**
@@ -28,5 +29,6 @@ export function getIpcChannelNames(clientId: string): IpcChannelNames {
     getAccessToken: `itwin.electron.auth.getAccessToken-${clientId}`,
     onAccessTokenChanged: `itwin.electron.auth.onAccessTokenChanged-${clientId}`,
     onAccessTokenExpirationChanged: `itwin.electron.auth.onAccessTokenExpirationChanged-${clientId}`,
+    signInSilent: `itwin.electron.auth.signInSilent-${clientId}`,
   };
 }

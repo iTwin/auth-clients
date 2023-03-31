@@ -36,6 +36,10 @@ class ElectronAuthIPC {
     this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenExpirationChanged, callback);
   }
 
+  public async signInSilent(): Promise<void> {
+    return this._ipcSocket.invoke(this._ipcChannelNames.signInSilent);
+  }
+
   constructor(ipcChannelNames: IpcChannelNames, ipcSocket?: IpcSocketFrontend) {
     this._ipcChannelNames = ipcChannelNames;
     if (ipcSocket) {
@@ -104,6 +108,11 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
   /** Called to start the sign-out process. Subscribe to onAccessTokenChanged to be notified when sign-out completes */
   public async signOut(): Promise<void> {
     await this._ipcAuthAPI.signOut();
+  }
+
+  /** Called to start the silent sign-in process. Subscribe to onAccessTokenChanged to be notified when silent sign-in completes */
+  public async signInSilent(): Promise<void> {
+    await this._ipcAuthAPI.signInSilent();
   }
 
   /** Returns a promise that resolves to the AccessToken if signed in.
