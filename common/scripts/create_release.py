@@ -33,9 +33,10 @@ def getCommitMessage(sha):
 
 def createRelease(tag):
     # for auth-clients, tag has format @itwin/packageName_v0.13.0
-    currentVer = tag.split("_v")[1]
+    tagParts = tag.split("_v")
+    currentVer = tagParts[1]
+    packageName = tagParts[0]
     currentTag = tag.split("/")[1]
-    packageName = currentTag.split("@")[0]
     print("current ver: {0} / currentTag: {1} / packageName: {2}".format(
         currentVer, currentTag, packageName))
     fileName = ""
@@ -99,28 +100,26 @@ def createRelease(tag):
         results = filter(lambda x: not re.search("node_modules", x), results)
         packageBaseDirectory = ""
         for result in results:
-            try:
-                fullPath = os.path.join(os.getcwd(), result)
-                with open(fullPath) as json_file:
-                    packageJson = json.load(json_file)
-                    packageJsonName = packageJson["name"]
+            fullPath = os.path.join(os.getcwd(), result)
+            with open(fullPath) as json_file:
+                packageJson = json.load(json_file)
+                packageJsonName = packageJson["name"]
 
-                    if packageJsonName == packageName:
-                        packageBaseDirectory = os.path.dirname(fullPath)
-                        print(packageBaseDirectory)
-                        fileName = "{0}/release-notes/{1}.md".format(packageBaseDirectory,
-                                                                     currentTag)
-                        break
-            except Exception as e:
-                print(e)
+                if packageJsonName == packageName:
+                    packageBaseDirectory = os.path.dirname(fullPath)
+                    print(packageBaseDirectory)
+                    fileName = "{0}/release-notes/{1}.md".format(packageBaseDirectory,
+                                                                 currentTag)
+                    break
     # Create GitHub release using the markdown file
+
     print("Publishing GitHub release...")
-    print(currentTag)
+
     cmd = ['gh', 'release', 'create', tag, '-F', './' +
            fileName, '-t', '"{0}"'.format(currentTag)]
-    proc = subprocess.Popen(
-        " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
-    proc.wait()
+    # proc = subprocess.Popen(
+    #     " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+    # proc.wait()
 
 
 # Validate arguments
