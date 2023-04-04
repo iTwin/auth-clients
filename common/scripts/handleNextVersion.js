@@ -51,20 +51,23 @@ function determineSemverUpdateType(oldVersion, updatedVersion) {
 }
 
 function addReleaseNotesFromNextVersion(afterProject) {
-  const tag = `${afterProject.name.replace("@itwin/", "")}@${
+  const tag = `${afterProject.name.replace("@itwin/", "")}_v${
     afterProject.version
   }`;
 
   // rename next version to tag
-  const releaseNotesPath = path.resolve(afterProject.fullPath, "release-notes");
-  const nextVersionMdPath = path.resolve(releaseNotesPath, "nextVersion.md");
+  const releaseNotesFolder = path.resolve(
+    afterProject.fullPath,
+    "release-notes"
+  );
+  const nextVersionMdPath = path.resolve(releaseNotesFolder, "nextVersion.md");
   const nextVersionMd = fs.existsSync(nextVersionMdPath);
 
   if (nextVersionMd) {
-    const releaseNotesPath = path.resolve(releaseNotesPath, `${tag}.md`);
+    const releaseNotesPath = path.resolve(releaseNotesFolder, `${tag}.md`);
 
     fs.renameSync(nextVersionMdPath, releaseNotesPath); // rename nextVersion to the release tag and
-    replacePlaceholderHeader(releaseNotesPath);
+    replacePlaceholderHeader(releaseNotesPath, afterProject.version);
     fs.writeFileSync(nextVersionMdPath, "", "utf-8"); // erase current next version
 
     return releaseNotesPath;
@@ -78,5 +81,5 @@ function addReleaseNotesFromNextVersion(afterProject) {
 function replacePlaceholderHeader(filePath, newVersion) {
   let contents = fs.readFileSync(filePath, "utf-8");
   contents = contents.replace("Next Version", `${newVersion} Release Notes`);
-  fs.writeFile(filePath, contents, "utf-8");
+  fs.writeFileSync(filePath, contents, "utf-8");
 }

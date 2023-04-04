@@ -5,18 +5,18 @@ parameters:
 steps:
   - bash: |
       # write pre-bump version info to file
-      node common/scripts/install-run-rush.js list --json > ${{System.DefaultWorkingDirectory}}/versions-before.txt
+      node common/scripts/install-run-rush.js list --json > "$(Agent.TempDirectory)/versions-before.txt"
 
       # bump versions... rush will fail... ignore it
       node common/scripts/install-run-rush.js version --bump
 
       # write post-bump version info to file
-      node common/scripts/install-run-rush.js list --json > ${{System.DefaultWorkingDirectory}}/versions-after.txt
+      node common/scripts/install-run-rush.js list --json > "$(Agent.TempDirectory)/versions-after.txt"
 
       # Next version dance
-      node common/scripts/handleNextVersion.js ${{System.DefaultWorkingDirectory}}/versions-before.txt ${{System.DefaultWorkingDirectory}}/versions-after.txt
+      node common/scripts/handleNextVersion.js "$(Agent.TempDirectory)/versions-before.txt" "$(Agent.TempDirectory)/versions-after.txt"
     displayName: Add Release Notes
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
 
   # While testing dry-run
   # - script: node common/scripts/install-run-rush.js publish --publish -a -b main --set-access-level public
@@ -24,9 +24,9 @@ steps:
   #   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
   #   env:
   #     NPM_AUTH_TOKEN: $(npmToken)
-
-  - script: node common/scripts/install-run-rush.js publish
+  # Testing w/ dry-run
+  - script: node common/scripts/install-run-rush.js publish -a -b main
     displayName: rush publish package
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
-    env:
-      NPM_AUTH_TOKEN: $(npmToken)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
+    # env:
+    #   NPM_AUTH_TOKEN: $(npmToken)
