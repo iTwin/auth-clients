@@ -1,3 +1,5 @@
+# Taken from https://github.com/iTwin/itwinjs-core/blob/master/common/scripts/create_release.py
+# Altered for repositories out of lockstep
 import glob
 import json
 import os
@@ -107,19 +109,23 @@ def createRelease(tag):
 
                 if packageJsonName == packageName:
                     packageBaseDirectory = os.path.dirname(fullPath)
-                    print(packageBaseDirectory)
                     fileName = "{0}/release-notes/{1}.md".format(packageBaseDirectory,
                                                                  currentTag)
-                    break
-    # Create GitHub release using the markdown file
+                    print("Found package.json: {0} matching: {1} at: {2}.".format(
+                        packageJsonName, packageName, packageBaseDirectory))
 
-    print("Publishing GitHub release...")
+                    break
+
+    print("Publishing GitHub release using notes from {0}".format(fileName))
+    if not os.path.exists(fileName):
+        raise Exception(
+            "Attempting to create release with notes from file {0}, but the file does not exist".format(fileName))
 
     cmd = ['gh', 'release', 'create', tag, '-F', './' +
            fileName, '-t', '"{0}"'.format(currentTag)]
-    # proc = subprocess.Popen(
-    #     " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
-    # proc.wait()
+    proc = subprocess.Popen(
+        " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+    proc.wait()
 
 
 # Validate arguments

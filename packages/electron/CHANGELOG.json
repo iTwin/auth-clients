@@ -2,18 +2,6 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
-      "version": "0.14.0",
-      "tag": "@itwin/electron-authorization_v0.14.0",
-      "date": "Tue, 04 Apr 2023 13:39:54 GMT",
-      "comments": {
-        "minor": [
-          {
-            "comment": "Add ability to initiate silentSignIn from ElectronRendererAuthorization"
-          }
-        ]
-      }
-    },
-    {
       "version": "0.13.0",
       "tag": "@itwin/electron-authorization_v0.13.0",
       "date": "Wed, 29 Mar 2023 09:49:21 GMT",
