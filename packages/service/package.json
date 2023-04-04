@@ -6,6 +6,7 @@
   "typings": "lib/cjs/index",
   "scripts": {
     "build": "tsc 1>&2",
+    "docs": "betools docs --includes=../../generated-docs/extract --json=../../generated-docs/core/core-common/file.json --tsIndexFile=./core-common.ts --onlyJson",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
@@ -22,7 +23,8 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/iTwin/auth-clients"
+    "url": "https://github.com/iTwin/auth-clients.git",
+    "directory": "packages/service"
   },
   "dependencies": {
     "jsonwebtoken": "^9.0.0",
@@ -30,7 +32,7 @@
     "openid-client": "^4.7.4"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^3.3.0",
+    "@itwin/build-tools": "^4.0.0-dev.63",
     "@itwin/core-bentley": "^3.3.0",
     "@itwin/core-common": "^3.3.0",
     "@itwin/eslint-plugin": "^3.3.0",

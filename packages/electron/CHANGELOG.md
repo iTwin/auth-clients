@@ -1,6 +1,13 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 29 Mar 2023 09:49:21 GMT and should not be manually modified.
+This log was last generated on Tue, 04 Apr 2023 13:39:54 GMT and should not be manually modified.
+
+## 0.14.0
+Tue, 04 Apr 2023 13:39:54 GMT
+
+### Minor changes
+
+- Add ability to initiate silentSignIn from ElectronRendererAuthorization
 
 ## 0.13.0
 Wed, 29 Mar 2023 09:49:21 GMT

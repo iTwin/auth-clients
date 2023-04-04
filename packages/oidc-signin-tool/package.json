@@ -7,16 +7,17 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/itwin/auth-clients/tree/main/packages/oidc-signin-tool"
+    "url": "https://github.com/itwin/auth-clients.git",
+    "directory": "packages/oidc-signin-tool"
   },
   "scripts": {
     "build": "tsc 1>&2 --outDir lib/cjs",
     "clean": "rimraf lib .rush/temp/package-deps*.json",
+    "docs": "betools docs --includes=../../generated-docs/extract --json=../../generated-docs/core/core-common/file.json --tsIndexFile=./core-common.ts --onlyJson",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
     "test:integration": "playwright test src/test-integration",
-    "docs": "",
     "cover": "nyc npm test",
     "rebuild": "npm run clean && npm run build",
     "postinstall": "node ./installPlaywright.js"
@@ -39,7 +40,7 @@
     "openid-client": "^4.7.4"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^3.3.0",
+    "@itwin/build-tools": "^4.0.0-dev.63",
     "@itwin/core-bentley": "^3.3.0",
     "@itwin/core-common": "^3.3.0",
     "@itwin/eslint-plugin": "^3.3.0",
