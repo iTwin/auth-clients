@@ -1,0 +1,8 @@
+{
+  "$schema": "https://raw.githubusercontent.com/microsoft/rushstack/main/libraries/rush-lib/src/schemas/pnpm-config.schema.json",
+  "useWorkspaces": true,
+  "globalOverrides": {
+    "typedoc": "^0.23.28",
+    "typedoc-plugin-merge-modules": "^4.0.1"
+  }
+}

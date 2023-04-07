@@ -5,7 +5,7 @@
 // Code based on the blog article @ https://authguidance.com
 
 /** @packageDocumentation
- * @module Authentication
+ * @module Main
  */
 
 // cSpell:ignore openid appauth signin Pkce Signout

@@ -6,13 +6,8 @@
   "projectFolderMinDepth": 2,
   "projectFolderMaxDepth": 3,
   "ensureConsistentVersions": false,
-  "pnpmOptions": {
-    "useWorkspaces": true
-  },
   "gitPolicy": {
-    "allowedEmailRegExps": [
-      "[^@]+@users\\.noreply\\.github\\.com"
-    ],
+    "allowedEmailRegExps": ["[^@]+@users\\.noreply\\.github\\.com"],
     "sampleEmail": "mrexample@users.noreply.github.com"
   },
   "repository": {

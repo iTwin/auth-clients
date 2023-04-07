@@ -7,12 +7,12 @@ export * from "./LoggerCategory";
 export * from "./types";
 
 /** @docs-package-description
- * The browser-authorization-client package contains classes and structures relevant to user authentication/authorization in frontend applications, with specific implementations for web browser use-cases.
+ * Provides auth functionality for browser environments using OIDC code flow with PKCE.
  */
 
 /**
  * @docs-group-description Authorization
- * Classes for signing a user in and out of an auth service.
+ * For signing a user in and out of an auth service.
  */
 
 /**

@@ -13,7 +13,7 @@
   "scripts": {
     "build": "tsc 1>&2 --outDir lib/cjs",
     "clean": "rimraf lib .rush/temp/package-deps*.json",
-    "docs": "betools docs --includes=../../generated-docs/extract --json=../../generated-docs/core/core-common/file.json --tsIndexFile=./core-common.ts --onlyJson",
+    "docs": "",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",

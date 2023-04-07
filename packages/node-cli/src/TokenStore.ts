@@ -9,6 +9,7 @@ import { TokenResponse } from "@openid/appauth";
 
 /**
  * Utility to store OIDC AppAuth in secure storage
+ * @internal
  */
 export class TokenStore {
   private readonly _appStorageKey: string;
