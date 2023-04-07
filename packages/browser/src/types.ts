@@ -19,8 +19,8 @@ export interface BrowserAuthorizationClientRedirectState {
  * The internal configuration used by BrowserAuthorizationClient.
  */
 export type BrowserAuthorizationClientConfigurationOptions = MarkRequired<
-  BrowserAuthorizationClientConfiguration,
-  "authority"
+BrowserAuthorizationClientConfiguration,
+"authority"
 >;
 /**
  * @beta
@@ -45,13 +45,13 @@ export interface BrowserAuthorizationClientConfiguration
   readonly scope: string;
   /** The mechanism (or authentication flow) used to acquire auth information from the user through the authority */
   readonly responseType?:
-    | "code"
-    | "id_token"
-    | "id_token token"
-    | "code id_token"
-    | "code token"
-    | "code id_token token"
-    | string;
+  | "code"
+  | "id_token"
+  | "id_token token"
+  | "code id_token"
+  | "code token"
+  | "code id_token token"
+  | string;
   /** if true, do NOT attempt a silent signIn on startup of the application */
   readonly noSilentSignInOnAppStartup?: boolean;
   /** The redirect URL used for silent sign in and renew. If not provided, will default to redirectUri. */
