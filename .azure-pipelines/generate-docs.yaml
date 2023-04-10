@@ -40,11 +40,11 @@ stages:
             git config --local user.name imodeljs-admin
           displayName: Setup git config
 
-        - name: Rush Install
-          run: node common/scripts/install-run-rush.js install
+        - script: node common/scripts/install-run-rush.js install
+          displayName: Rush Install
 
-        - name: Rush Generate Docs
-          run: node common/scripts/install-run-rush.js docs
+        - script: node common/scripts/install-run-rush.js docs
+          displayName: Rush Generate Docs
           env:
             RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
 
