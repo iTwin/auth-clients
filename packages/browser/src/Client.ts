@@ -418,6 +418,11 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     UnexpectedErrors.handle(new Error(errorMessage));
   }
 
+  /**
+   * Configuration-less sign in callback. Useful for when a client instance with configuration is not present
+   * on the page or route where the callback is needed to finish the authentication process. Pulls configuration
+   * from localStorage.
+   */
   public static async handleSignInCallback() {
     const StaticClient = new BrowserAuthorizationClient({} as any);
     this.tryLoadSettingsFromStorage(StaticClient);

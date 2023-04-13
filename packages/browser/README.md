@@ -45,6 +45,14 @@ await client.handleSigninCallback();
 
 to complete the process. Once back on your initial page, the call to `client.signInSilent` will succeed and you should be authorized.
 
+If the callback occurs on a page where the configured `client` is not available, you can use the static method to complete the process:
+
+```typescript
+await BrowserAuthorizationClient.handleSigninCallback()
+```
+
+This will pull the client configuration from localStorage, using the state nonce provided by OIDC to select the proper configuration.
+
 Other notable methods:
 `client.signOutRedirect()` - starts the signout flow via redirect
 `client.signOutPopup()` - starts the signout flow via popup.

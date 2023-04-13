@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "Add static BrowserAuthorizationClient.handleSigninCallback method for configless callback",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}
