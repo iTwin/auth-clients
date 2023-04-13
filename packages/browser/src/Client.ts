@@ -425,11 +425,11 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   public static async handleSignInCallback() {
     const staticClient = new BrowserAuthorizationClient({} as any);
-    this.tryLoadSettingsFromStorage(staticClient);
+    this.loadSettingsFromStorage(staticClient);
     await staticClient.handleSigninCallback();
   }
 
-  private static tryLoadSettingsFromStorage(
+  private static loadSettingsFromStorage(
     client: BrowserAuthorizationClient
   ) {
     const url = new URL(window.location.href);
