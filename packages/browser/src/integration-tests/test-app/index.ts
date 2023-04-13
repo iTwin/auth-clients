@@ -18,8 +18,12 @@ const client = new BrowserAuthorizationClient({
 });
 
 const contentArea = document.querySelector("div[data-testid='content']");
-
+let useStaticCallback = false;
 async function initialize() {
+  if (window.location.search.includes("callbackFromStorage=true")) {
+    useStaticCallback = true;
+  }
+
   if (isSignoutPage()) {
     if (contentArea)
       contentArea.textContent = "Signed Out!";
@@ -37,7 +41,9 @@ async function initialize() {
   }
 
   if (isOidcCallbackPage()) {
-    await client.handleSigninCallback();
+    useStaticCallback
+      ? await BrowserAuthorizationClient.handleSignInCallback()
+      : await client.handleSigninCallback();
   }
 }
 
