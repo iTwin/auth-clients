@@ -39,7 +39,7 @@
     "@types/node": "^16.0.0",
     "chai": "^4.2.22",
     "chai-as-promised": "^7",
-    "electron": "^23.0.0",
+    "electron": "^24.0.0",
     "source-map-support": "^0.5.9",
     "eslint": "^7.32.0",
     "mocha": "^8.2.3",
@@ -50,7 +50,7 @@
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0",
-    "electron": "^23.0.0"
+    "electron": ">=23.0.0 <25.0.0"
   },
   "eslintConfig": {
     "plugins": [
