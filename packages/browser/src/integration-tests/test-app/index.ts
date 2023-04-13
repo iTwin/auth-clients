@@ -18,11 +18,14 @@ const client = new BrowserAuthorizationClient({
 });
 
 const contentArea = document.querySelector("div[data-testid='content']");
-
+let useStaticCallback = false;
 async function initialize() {
+  if (window.location.search.includes("callbackFromStorage=true")) {
+    useStaticCallback = true;
+  }
+
   if (isSignoutPage()) {
-    if (contentArea)
-      contentArea.textContent = "Signed Out!";
+    if (contentArea) contentArea.textContent = "Signed Out!";
   } else if (isSigninViaPopupPage()) {
     const popupButton = document.getElementById("popup");
     if (popupButton)
@@ -37,7 +40,9 @@ async function initialize() {
   }
 
   if (isOidcCallbackPage()) {
-    await client.handleSigninCallback();
+    useStaticCallback
+      ? await BrowserAuthorizationClient.handleSignInCallback()
+      : await client.handleSigninCallback();
   }
 }
 
@@ -57,10 +62,8 @@ async function validateAuthenticated() {
 }
 
 async function signout(popup: boolean) {
-  if (popup)
-    await client.signOutPopup();
-  else
-    await client.signOutRedirect();
+  if (popup) await client.signOutPopup();
+  else await client.signOutRedirect();
 }
 
 function displayAuthorized() {

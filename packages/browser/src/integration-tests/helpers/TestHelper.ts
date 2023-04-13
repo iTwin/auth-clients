@@ -37,8 +37,7 @@ export class TestHelper {
 
     const user = localStorage.find((s) => s.name.startsWith("oidc.user"));
 
-    if (!user)
-      throw new Error("Could not find user in localStorage");
+    if (!user) throw new Error("Could not find user in localStorage");
 
     return User.fromStorageString(user.value);
   }
@@ -53,8 +52,9 @@ export class TestHelper {
     expect(user.access_token).toBeDefined();
 
     let url = `${this._signInOptions.url}/`;
-    if (authType === AuthType.PopUp)
-      url += "signin-via-popup";
+    if (authType === AuthType.PopUp) url += "signin-via-popup";
+    if (authType === AuthType.RedirectStatic)
+      url = "http://localhost:1234/?callbackFromStorage=true";
 
     expect(page.url()).toEqual(url);
   }
@@ -63,7 +63,6 @@ export class TestHelper {
     const consentAcceptButton = page.getByRole("link", {
       name: "Accept",
     });
-    if (consentAcceptButton)
-      await consentAcceptButton.click();
+    if (consentAcceptButton) await consentAcceptButton.click();
   }
 }

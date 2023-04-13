@@ -64,3 +64,16 @@ export interface BrowserAuthorizationClientRequestOptions {
   /** The required action demanded of the user before the authentication request can succeed */
   prompt?: "none" | "login" | "consent" | "select_account" | string;
 }
+
+export interface SettingsInStorage {
+  id: string; // nonce/state
+  authority: string;
+  client_id: string;
+  code_verifier: string;
+  created: number;
+  data: { successRedirectUrl: string };
+  redirect_uri: string;
+  request_type: string;
+  response_mode: string;
+  scope: string;
+}

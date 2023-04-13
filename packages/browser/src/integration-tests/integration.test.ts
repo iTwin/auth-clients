@@ -29,6 +29,15 @@ test("signin redirect", async ({ page }) => {
   await testHelper.validateAuthenticated(page);
 });
 
+test("signin redirect - callback settings from storage", async ({ page }) => {
+  const url = `${signInOptions.url}?callbackFromStorage=true`;
+  await page.goto(url);
+  await testHelper.signIn(page);
+  await page.waitForURL(url);
+
+  await testHelper.validateAuthenticated(page, AuthType.RedirectStatic);
+});
+
 test("signout redirect", async ({ page }) => {
   await page.goto(signInOptions.url);
   await testHelper.signIn(page);

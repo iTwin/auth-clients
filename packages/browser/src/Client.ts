@@ -15,7 +15,7 @@ import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 import { getImsAuthority } from "./utils";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { User, UserManagerSettings } from "oidc-client-ts";
-import type { BrowserAuthorizationClientConfiguration, BrowserAuthorizationClientConfigurationOptions, BrowserAuthorizationClientRedirectState, BrowserAuthorizationClientRequestOptions } from "./types";
+import type { BrowserAuthorizationClientConfiguration, BrowserAuthorizationClientConfigurationOptions, BrowserAuthorizationClientRedirectState, BrowserAuthorizationClientRequestOptions, SettingsInStorage } from "./types";
 
 /** BrowserAuthorization type guard.
  * @beta
@@ -416,5 +416,33 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     errorMessage = `SigninCallback error - failed to process signin request in callback using all known modes of token delivery: ${errorMessage}`;
     UnexpectedErrors.handle(new Error(errorMessage));
+  }
+
+  public static async handleSignInCallback() {
+    const StaticClient = new BrowserAuthorizationClient({} as any);
+    this.tryLoadSettingsFromStorage(StaticClient);
+    await StaticClient.handleSigninCallback();
+  }
+
+  private static tryLoadSettingsFromStorage(
+    client: BrowserAuthorizationClient
+  ) {
+    const url = new URL(window.location.href);
+    const nonce = url.searchParams.get("state");
+
+    const storageEntry = window.localStorage.getItem(`oidc.${nonce}`);
+    if (!storageEntry)
+      throw new Error("Could not load oidc settings from local storage. Ensure the client is configured properly");
+
+    const storageObject: SettingsInStorage = JSON.parse(storageEntry);
+
+    const transformed = {
+      ...storageObject,
+      clientId: storageObject.client_id,
+      redirectUri: storageObject.redirect_uri,
+      authority: storageObject.authority,
+    };
+
+    client._basicSettings = transformed;
   }
 }
