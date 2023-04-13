@@ -422,7 +422,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Configuration-less sign in callback. Useful for when a client instance with configuration is not present
    * on the page or route where the callback is needed to finish the authentication process. Pulls configuration
    * from localStorage.
-   * 
+   *
    * @param store - A Storage object such as sessionStorage which stores configuration. Defaults to localStorage
    * which is also the default stateStore for this library. These stores should match.
    */
