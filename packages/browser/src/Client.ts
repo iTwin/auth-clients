@@ -422,20 +422,24 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Configuration-less sign in callback. Useful for when a client instance with configuration is not present
    * on the page or route where the callback is needed to finish the authentication process. Pulls configuration
    * from localStorage.
+   * 
+   * @param store - A Storage object such as sessionStorage which stores configuration. Defaults to localStorage
+   * which is also the default stateStore for this library. These stores should match.
    */
-  public static async handleSignInCallback() {
+  public static async handleSignInCallback(store: Storage = window.localStorage) {
     const staticClient = new BrowserAuthorizationClient({} as any);
-    this.loadSettingsFromStorage(staticClient);
+    this.loadSettingsFromStorage(staticClient, store);
     await staticClient.handleSigninCallback();
   }
 
   private static loadSettingsFromStorage(
-    client: BrowserAuthorizationClient
+    client: BrowserAuthorizationClient,
+    store: Storage
   ) {
     const url = new URL(window.location.href);
     const nonce = url.searchParams.get("state");
 
-    const storageEntry = window.localStorage.getItem(`oidc.${nonce}`);
+    const storageEntry = store.getItem(`oidc.${nonce}`);
     if (!storageEntry)
       throw new Error("Could not load oidc settings from local storage. Ensure the client is configured properly");
 

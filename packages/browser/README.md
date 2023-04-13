@@ -49,6 +49,11 @@ If the callback occurs on a page where the configured `client` is not available,
 
 ```typescript
 await BrowserAuthorizationClient.handleSigninCallback()
+
+// This library defaults to localStorage for storing state.
+// To use sessionStorage (or another Storage object), you can pass it as an argument.
+// If overriding the default localStorage, also set the stateStore via client.setAdvancedSettings({stateStore: yourStore})
+await BrowserAuthorizationClient.handleSigninCallback(window.sessionStorage)
 ```
 
 This will pull the client configuration from localStorage, using the state nonce provided by OIDC to select the proper configuration.
@@ -56,6 +61,7 @@ This will pull the client configuration from localStorage, using the state nonce
 Other notable methods:
 `client.signOutRedirect()` - starts the signout flow via redirect
 `client.signOutPopup()` - starts the signout flow via popup.
+`client.setAdvancedSettings(userManagerSettings)` - Allows for advanced options to be supplied to the underlying UserManager.
 
 ## Authorization Overview
 
