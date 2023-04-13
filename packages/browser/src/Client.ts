@@ -424,9 +424,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * from localStorage.
    */
   public static async handleSignInCallback() {
-    const StaticClient = new BrowserAuthorizationClient({} as any);
-    this.tryLoadSettingsFromStorage(StaticClient);
-    await StaticClient.handleSigninCallback();
+    const staticClient = new BrowserAuthorizationClient({} as any);
+    this.tryLoadSettingsFromStorage(staticClient);
+    await staticClient.handleSigninCallback();
   }
 
   private static tryLoadSettingsFromStorage(

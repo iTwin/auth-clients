@@ -30,10 +30,10 @@ test("signin redirect", async ({ page }) => {
 });
 
 test("signin redirect - callback settings from storage", async ({ page }) => {
-  const url = `${signInOptions.url}?callbackFromStorage=true`;
-  await page.goto(url);
+  const staticCallbackUrl = `${signInOptions.url}?callbackFromStorage=true`;
+  await page.goto(staticCallbackUrl);
   await testHelper.signIn(page);
-  await page.waitForURL(url);
+  await page.waitForURL(staticCallbackUrl);
 
   await testHelper.validateAuthenticated(page, AuthType.RedirectStatic);
 });

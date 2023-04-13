@@ -68,12 +68,12 @@ export interface BrowserAuthorizationClientRequestOptions {
 export interface SettingsInStorage {
   id: string; // nonce/state
   authority: string;
-  client_id: string;
-  code_verifier: string;
+  client_id: string; // eslint-disable-line @typescript-eslint/naming-convention
+  code_verifier: string; // eslint-disable-line @typescript-eslint/naming-convention
   created: number;
   data: { successRedirectUrl: string };
-  redirect_uri: string;
-  request_type: string;
-  response_mode: string;
+  redirect_uri: string; // eslint-disable-line @typescript-eslint/naming-convention
+  request_type: string; // eslint-disable-line @typescript-eslint/naming-convention
+  response_mode: string; // eslint-disable-line @typescript-eslint/naming-convention
   scope: string;
 }
