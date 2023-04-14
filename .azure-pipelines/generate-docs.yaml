@@ -64,10 +64,6 @@ stages:
         - script: node common/scripts/install-run-rush.js install
           displayName: Rush Install
 
-        - script: node common/scripts/install-run-rush.js docs
-          displayName: Rush Generate Docs
-          env:
-            RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
 
         - ${{ each parameter in parameters }} :
           - script: |
@@ -78,6 +74,7 @@ stages:
               fi
             env:
               RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
+            displayName: "Build ${{parameter.Key}} docs"
 
         - task: CopyFiles@2
           displayName: 'Copy generated docs to: $(Build.StagingDirectory)'
