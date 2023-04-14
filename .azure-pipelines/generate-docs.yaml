@@ -72,7 +72,7 @@ stages:
         - ${{ each parameter in parameters }} :
           - script: |
               if [[ ${{ parameter.Value }} ]]; then
-                echo ${{parameter.Key}} ${{param.Value}}
+                echo ${{parameter.Key}} ${{parameter.Value}}
                 node common/scripts/install-run-rush.js docs --only "${{$parameter.Key}}-authorization"
                 mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{$parameter.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{$parameter.Key}}-authorization"
               fi
