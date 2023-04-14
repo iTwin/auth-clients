@@ -10,9 +10,7 @@
     "useWorkspaces": true
   },
   "gitPolicy": {
-    "allowedEmailRegExps": [
-      "[^@]+@users\\.noreply\\.github\\.com"
-    ],
+    "allowedEmailRegExps": ["[^@]+@users\\.noreply\\.github\\.com"],
     "sampleEmail": "mrexample@users.noreply.github.com"
   },
   "repository": {
@@ -24,32 +22,22 @@
     {
       "packageName": "@itwin/browser-authorization",
       "projectFolder": "packages/browser",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
-    },
-    {
-      "packageName": "@itwin/electron-authorization",
-      "projectFolder": "packages/electron",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
+      "shouldPublish": true
     },
     {
       "packageName": "@itwin/service-authorization",
       "projectFolder": "packages/service",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
+      "shouldPublish": true
     },
     {
       "packageName": "@itwin/node-cli-authorization",
       "projectFolder": "packages/node-cli",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
+      "shouldPublish": true
     },
     {
       "packageName": "@itwin/oidc-signin-tool",
       "projectFolder": "packages/oidc-signin-tool",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
+      "shouldPublish": true
     }
   ]
 }
