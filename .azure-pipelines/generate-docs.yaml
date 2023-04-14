@@ -61,6 +61,19 @@ stages:
             git config --local user.name imodeljs-admin
           displayName: Setup git config
 
+        - task: DownloadPipelineArtifact@2
+          displayName: Download existing docs
+          inputs:
+            buildType: 'specific'
+            project: '2c48216e-e72f-48b4-a4eb-40ff1c04e8e4'
+            definition: '9074'
+            buildVersionToDownload: 'latest'
+            allowPartiallySucceededBuilds: true
+            allowFailedBuilds: true
+            artifactName: 'iTwin-Auth-Clients Docs'
+            itemPattern: '**/*'
+            targetPath: '$(Build.StagingDirectory)/docs'
+
         - script: node common/scripts/install-run-rush.js install
           displayName: Rush Install
 
@@ -81,6 +94,7 @@ stages:
           inputs:
             SourceFolder: $(Build.SourcesDirectory)/generated-docs/auth-clients
             TargetFolder: $(Build.StagingDirectory)/docs
+            OverWrite: true
 
         - task: PublishBuildArtifacts@1
           displayName: 'Publish Artifact: Auth-Clients Docs'
