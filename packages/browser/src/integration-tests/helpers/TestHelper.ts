@@ -55,6 +55,8 @@ export class TestHelper {
     let url = `${this._signInOptions.url}/`;
     if (authType === AuthType.PopUp)
       url += "signin-via-popup";
+    if (authType === AuthType.RedirectStatic)
+      url = "http://localhost:1234/?callbackFromStorage=true";
 
     expect(page.url()).toEqual(url);
   }

@@ -70,7 +70,7 @@ importers:
       '@types/sinon': ^10.0.13
       chai: ^4.2.22
       chai-as-promised: ^7
-      electron: ^23.0.0
+      electron: ^24.0.0
       eslint: ^7.32.0
       keytar: ^7.8.0
       mocha: ^8.2.3
@@ -97,6 +97,7 @@ importers:
       chai: 4.3.7
       chai-as-promised: 7.1.1_chai@4.3.7
       electron: 23.2.2
+      electron: 24.1.0
       eslint: 7.32.0
       mocha: 8.4.0
       nyc: 15.1.0
@@ -3123,12 +3124,15 @@ packages:
 
   /electron/23.2.2:
     resolution: {integrity: sha512-8UfC2NCaqLJvdWoAfzAi56DaF+8cD3QPbnabKMdYNxMhYJ54gAje4ChVRo3sUMD5uSMk6MbPYCdnoMusCrfzrQ==}
+  /electron/24.1.0:
+    resolution: {integrity: sha512-XIAcxBBKIM3S8oYrYmyoXb39CJDpwxrPsSQJmCIzGGNhbKigtRxwlB/TfVCVAyHFsvXQKZKPZ+m0qpqDnDDwCA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true
     dependencies:
       '@electron/get': 2.0.2
       '@types/node': 16.18.23
+      '@types/node': 18.15.0
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
