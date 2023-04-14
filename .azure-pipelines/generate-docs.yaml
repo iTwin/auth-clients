@@ -15,8 +15,8 @@ parameters:
   type: boolean
   default: true
 
-- name: desktop
-  displayName: Desktop Authorization
+- name: electron
+  displayName: Electron Authorization
   type: boolean
   default: true
 
