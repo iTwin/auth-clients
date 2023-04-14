@@ -108,7 +108,7 @@ stages:
           inputs:
             type: 'Build'
             tags: 'hasDocs'
-          condition: and(succeeded())
+          condition: succeeded()
 
   - stage: Validate_Docs
     dependsOn: Generate_Docs
