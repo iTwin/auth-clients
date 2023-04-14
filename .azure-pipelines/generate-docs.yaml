@@ -72,9 +72,8 @@ stages:
             allowPartiallySucceededBuilds: true
             allowFailedBuilds: true
             artifactName: 'iTwin-Auth-Clients Docs'
-            itemPattern: '**/*'
             targetPath: '$(Build.StagingDirectory)/docs'
-          continueOnError: true
+          continueOnError: false
 
         - script: node common/scripts/install-run-rush.js install
           displayName: Rush Install
