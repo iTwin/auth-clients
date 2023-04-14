@@ -68,11 +68,13 @@ stages:
             project: '2c48216e-e72f-48b4-a4eb-40ff1c04e8e4'
             definition: '9074'
             buildVersionToDownload: 'latest'
+            tags: 'hasDocs'
             allowPartiallySucceededBuilds: true
             allowFailedBuilds: true
             artifactName: 'iTwin-Auth-Clients Docs'
             itemPattern: '**/*'
             targetPath: '$(Build.StagingDirectory)/docs'
+          continueOnError: true
 
         - script: node common/scripts/install-run-rush.js install
           displayName: Rush Install
@@ -101,6 +103,12 @@ stages:
           inputs:
             PathtoPublish: '$(Build.StagingDirectory)/docs/'
             ArtifactName: 'iTwin-Auth-Clients Docs'
+        
+        - task: tagBuildOrRelease@0
+          inputs:
+            type: 'Build'
+            tags: 'hasDocs'
+          condition: and(succeeded())
 
   - stage: Validate_Docs
     dependsOn: Generate_Docs
