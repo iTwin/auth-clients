@@ -9,6 +9,27 @@ pr:
     include:
      - main
 
+parameters:
+- name: browser
+  displayName: Browser Authorization
+  type: boolean
+  default: true
+
+- name: desktop
+  displayName: Desktop Authorization
+  type: boolean
+  default: true
+
+- name: service
+  displayName: Service Authorization
+  type: boolean
+  default: true
+
+- name: node-cli
+  displayName: Node CLI
+  type: boolean
+  default: true
+
 resources:
   repositories:
     - repository: itwinjs-core
@@ -48,12 +69,16 @@ stages:
           env:
             RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
 
-        - script: |
-            mv $(Build.SourcesDirectory)/generated-docs/auth-clients/browser $(Build.SourcesDirectory)/generated-docs/auth-clients/browser-authorization
-            mv $(Build.SourcesDirectory)/generated-docs/auth-clients/service $(Build.SourcesDirectory)/generated-docs/auth-clients/service-authorization
-            mv $(Build.SourcesDirectory)/generated-docs/auth-clients/electron $(Build.SourcesDirectory)/generated-docs/auth-clients/electron-authorization
-            mv $(Build.SourcesDirectory)/generated-docs/auth-clients/node-cli $(Build.SourcesDirectory)/generated-docs/auth-clients/node-cli-authorization
-          displayName: "Rename docs package folders"
+        - bash: |
+            for param in ${{ parameters.keys() }}; do
+              if [[ ${{ parameters.$param }} ]]; then
+                echo $param
+                node common/scripts/install-run-rush.js docs --only "${{$param}}-authorization"
+                mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{$param}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{$param}}-authorization"
+              fi
+            done
+          env:
+            RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
 
         - task: CopyFiles@2
           displayName: 'Copy generated docs to: $(Build.StagingDirectory)'
