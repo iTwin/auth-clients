@@ -61,19 +61,19 @@ stages:
             git config --local user.name imodeljs-admin
           displayName: Setup git config
 
-        # - task: DownloadPipelineArtifact@2
-        #   displayName: Download existing docs
-        #   inputs:
-        #     buildType: 'specific'
-        #     project: '2c48216e-e72f-48b4-a4eb-40ff1c04e8e4'
-        #     definition: '9074'
-        #     buildVersionToDownload: 'latest'
-        #     tags: 'hasDocs'
-        #     allowPartiallySucceededBuilds: true
-        #     allowFailedBuilds: true
-        #     artifactName: 'iTwin-Auth-Clients Docs'
-        #     targetPath: '$(Build.StagingDirectory)/docs'
-        #   continueOnError: true
+        - task: DownloadPipelineArtifact@2
+          displayName: Download existing docs
+          inputs:
+            buildType: 'specific'
+            project: '2c48216e-e72f-48b4-a4eb-40ff1c04e8e4'
+            definition: '9074'
+            buildVersionToDownload: 'latest'
+            tags: 'hasDocs'
+            allowPartiallySucceededBuilds: true
+            allowFailedBuilds: true
+            artifactName: 'iTwin-Auth-Clients Docs'
+            targetPath: '$(Build.StagingDirectory)/docs'
+          continueOnError: false
 
         - script: node common/scripts/install-run-rush.js install
           displayName: Rush Install
