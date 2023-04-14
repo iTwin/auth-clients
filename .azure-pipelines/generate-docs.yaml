@@ -69,12 +69,12 @@ stages:
           env:
             RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
 
-        - ${{ each param in parameters }} :
+        - ${{ each parameter in parameters }} :
           - script: |
-              if [[ ${{ param.Value }} ]]; then
-                echo $param.Key $param.Value
-                node common/scripts/install-run-rush.js docs --only "${{$param.Key}}-authorization"
-                mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{$param.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{$param.Key}}-authorization"
+              if [[ ${{ parameter.Value }} ]]; then
+                echo ${{parameter.Key}} ${{param.Value}}
+                node common/scripts/install-run-rush.js docs --only "${{$parameter.Key}}-authorization"
+                mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{$parameter.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{$parameter.Key}}-authorization"
               fi
             env:
               RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
