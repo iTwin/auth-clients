@@ -20,6 +20,7 @@ const afterFilePath = process.argv[3];
 
 const beforeSnapshot = rushOutputToJSON(beforeFilePath);
 const afterSnapshot = rushOutputToJSON(afterFilePath);
+const packagesToPublish = []; // we'll keep track of the packages we're publishing, and set as a vso variable
 
 afterSnapshot.projects.forEach((afterProject) => {
   const beforeProject = beforeSnapshot.projects.find(
@@ -36,11 +37,22 @@ afterSnapshot.projects.forEach((afterProject) => {
       `package ${afterProject.name} has updated (${updateType}) from version ${beforeProject.version} to ${afterProject.version}`
     );
 
+    const shortProjectName = afterProject
+      .replace("@itwin/", "")
+      .replace("-authorization", "");
+    packagesToPublish.push(shortProjectName);
+
     if (updateType === "Minor") {
       addReleaseNotesFromNextVersion(afterProject);
     }
   }
 });
+
+console.log(
+  `##vso[task.setvariable variable=changedPackages;]${packagesToPublish.join(
+    ","
+  )}`
+);
 
 function rushOutputToJSON(fileName) {
   const txtFile = fs.readFileSync(fileName, "utf-8");
