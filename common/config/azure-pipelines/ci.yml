@@ -84,3 +84,10 @@ stages:
       - template: templates/publish-packages.yaml
         parameters:
           shouldPublish: ${{ parameters.shouldPublish }}
+
+      # Publish packages
+      - ${{ if eq(parameters.shouldPublish, true) }}:
+        - template: templates/build-docs.yaml
+          parameters:
+            shouldPublish: true
+

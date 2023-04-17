@@ -1,0 +1,91 @@
+parameters:
+  - name: browser
+    displayName: Browser Authorization
+    type: boolean
+    default: false
+
+  - name: electron
+    displayName: Electron Authorization
+    type: boolean
+    default: false
+
+  - name: service
+    displayName: Service Authorization
+    type: boolean
+    default: false
+
+  - name: node-cli
+    displayName: Node CLI
+    type: boolean
+    default: false
+
+  - name: shouldPublish
+    displayName: Node CLI
+    type: boolean
+    default: false
+
+steps:
+  - checkout: self
+    clean: true
+
+  - task: NodeTool@0
+    displayName: Use Node 18
+    inputs:
+      versionSpec: 18
+      checkLatest: true
+
+  - script: |
+      git config --local user.email imodeljs-admin@users.noreply.github.com
+      git config --local user.name imodeljs-admin
+    displayName: Setup git config
+
+  # Because we may not publish all of our packages at once,
+  # we must add these new docs to the existing artifact.
+  - task: DownloadPipelineArtifact@2
+    displayName: Download existing docs
+    inputs:
+      buildType: "specific"
+      project: "2c48216e-e72f-48b4-a4eb-40ff1c04e8e4"
+      definition: "9074"
+      buildVersionToDownload: "latest"
+      tags: "hasDocs"
+      allowPartiallySucceededBuilds: true
+      allowFailedBuilds: true
+      artifactName: "iTwin-Auth-Clients Docs"
+      targetPath: "$(Build.StagingDirectory)/docs"
+    condition: and(succeeded(), eq(parameters.shouldPublish, true))
+
+  - script: node common/scripts/install-run-rush.js install
+    displayName: Rush Install
+
+  - ${{ each parameter in parameters }}:
+      - script: |
+          if [[ ${{parameter.Value}} = "True" ]]; then
+            echo ${{parameter.Key}} ${{parameter.Value}}
+            node common/scripts/install-run-rush.js docs --only "${{parameter.Key}}-authorization"
+            mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}}-authorization"
+          fi
+        env:
+          RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
+        displayName: "Build ${{parameter.Key}} docs"
+
+  - task: CopyFiles@2
+    displayName: "Copy generated docs to: $(Build.StagingDirectory)"
+    inputs:
+      SourceFolder: $(Build.SourcesDirectory)/generated-docs/auth-clients
+      TargetFolder: $(Build.StagingDirectory)/docs
+      OverWrite: true
+    condition: and(succeeded(), eq(parameters.shouldPublish, true))
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Artifact: Auth-Clients Docs"
+    inputs:
+      PathtoPublish: "$(Build.StagingDirectory)/docs/"
+      ArtifactName: "iTwin-Auth-Clients Docs"
+    condition: and(succeeded(), eq(parameters.shouldPublish, true))
+
+  - task: tagBuildOrRelease@0
+    inputs:
+      type: "Build"
+      tags: "hasDocs"
+    condition: and(succeeded(), eq(parameters.shouldPublish, true))
