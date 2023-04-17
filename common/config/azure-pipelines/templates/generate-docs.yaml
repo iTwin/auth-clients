@@ -1,0 +1,35 @@
+parameters:
+  - name: browser
+    displayName: Browser Authorization
+    type: boolean
+    default: false
+
+  - name: electron
+    displayName: Electron Authorization
+    type: boolean
+    default: false
+
+  - name: service
+    displayName: Service Authorization
+    type: boolean
+    default: false
+
+  - name: node-cli
+    displayName: Node CLI
+    type: boolean
+    default: false
+
+steps:
+  - script: node common/scripts/install-run-rush.js install
+    displayName: Rush Install
+
+  - ${{ each parameter in parameters }}:
+      - script: |
+          if [[ ${{parameter.Value}} = "True" ]]; then
+            echo ${{parameter.Key}} ${{parameter.Value}}
+            node common/scripts/install-run-rush.js docs --only "${{parameter.Key}}-authorization"
+            mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}}-authorization"
+          fi
+        env:
+          RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
+        displayName: "Build ${{parameter.Key}} docs"

@@ -75,20 +75,8 @@ stages:
             targetPath: '$(Build.StagingDirectory)/docs'
           continueOnError: false
 
-        - script: node common/scripts/install-run-rush.js install
-          displayName: Rush Install
+        - template: templates/generate-docs.yaml
 
-
-        - ${{ each parameter in parameters }} :
-          - script: |
-              if [[ ${{parameter.Value}} = "True" ]]; then
-                echo ${{parameter.Key}} ${{parameter.Value}}
-                node common/scripts/install-run-rush.js docs --only "${{parameter.Key}}-authorization"
-                mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}}-authorization"
-              fi
-            env:
-              RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
-            displayName: "Build ${{parameter.Key}} docs"
 
         - task: CopyFiles@2
           displayName: 'Copy generated docs to: $(Build.StagingDirectory)'
@@ -102,7 +90,7 @@ stages:
           inputs:
             PathtoPublish: '$(Build.StagingDirectory)/docs/'
             ArtifactName: 'iTwin-Auth-Clients Docs'
-        
+
         - task: tagBuildOrRelease@0
           inputs:
             type: 'Build'
