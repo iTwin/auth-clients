@@ -57,6 +57,6 @@ stages:
             browser: ${{parameters.browser}}
             service: ${{parameters.service}}
             electron: ${{parameters.electron}}
-            "node-cli": ${{parameters["nodeCli"]}}
+            "node-cli": ${{parameters.nodeCli}}
             shouldPublish: ${{parameters.shouldPublish}}
 
