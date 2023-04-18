@@ -44,7 +44,6 @@ afterSnapshot.projects.forEach((afterProject) => {
     if (updateType === "Minor") {
       addReleaseNotesFromNextVersion(afterProject);
       added = true;
-      return;
     }
   }
 

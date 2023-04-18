@@ -41,9 +41,6 @@ steps:
       targetPath: "$(Build.StagingDirectory)/docs"
     condition: and(succeeded(), ${{ parameters.shouldPublish }})
 
-  - script: node common/scripts/install-run-rush.js install
-    displayName: Rush Install
-
   - ${{ each parameter in parameters }}:
       - ${{ if and(ne(parameter.Key, 'shouldPublish'), eq(parameter.Value, 'True')) }}:
           - script: |

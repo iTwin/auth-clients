@@ -4,13 +4,13 @@ parameters:
 
 steps:
   - bash: |
-      # write pre-bump version info to file
+      echo "creating pre-bump version snapshot"
       node common/scripts/install-run-rush.js list --json > "$(Agent.TempDirectory)/versions-before.txt"
 
-      # bump versions... rush will fail... ignore it
+      echo "bumping versions"
       node common/scripts/install-run-rush.js version --bump
 
-      # write post-bump version info to file
+      echo "creating post-bump version snapshot"
       node common/scripts/install-run-rush.js list --json > "$(Agent.TempDirectory)/versions-after.txt"
 
       # Next version dance

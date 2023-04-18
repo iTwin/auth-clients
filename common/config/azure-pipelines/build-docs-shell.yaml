@@ -66,6 +66,9 @@ stages:
             git config --local user.name imodeljs-admin
           displayName: Setup git config
 
+        - script: node common/scripts/install-run-rush.js install
+          displayName: Rush Install
+
         - template: templates/build-docs.yaml
           parameters:
             browser: ${{parameters.browser}}
