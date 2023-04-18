@@ -90,8 +90,8 @@ stages:
         - template: templates/build-docs.yaml
           parameters:
             shouldPublish: true
-            browser: ${{variables.browser}}
-            service: ${{variables.service}}
-            electron: ${{variables.electron}}
-            "node-cli": ${{variables.nodeCli}}
+            browser: eq(variables['browser'], true)
+            service: eq(variables['service'], true)
+            electron: eq(variables['electron'], true)
+            "node-cli": eq(variables['nodeCli'], true)
 
