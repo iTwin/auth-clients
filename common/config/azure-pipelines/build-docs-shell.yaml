@@ -31,7 +31,7 @@ parameters:
   default: true
 
 - name: shouldPublish
-  displayName: Node CLI
+  displayName: Publish?
   type: boolean
   default: false
 
