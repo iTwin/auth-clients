@@ -20,13 +20,17 @@ const afterFilePath = process.argv[3];
 
 const beforeSnapshot = rushOutputToJSON(beforeFilePath);
 const afterSnapshot = rushOutputToJSON(afterFilePath);
-const packagesToPublish = []; // we'll keep track of the packages we're publishing, and set as a vso variable
 
 afterSnapshot.projects.forEach((afterProject) => {
   const beforeProject = beforeSnapshot.projects.find(
     (p) => p.name === afterProject.name && p.version !== afterProject.version
   );
 
+  const shortProjectName = afterProject
+    .replace("@itwin/", "")
+    .replace("-authorization", "");
+
+  let added = false;
   if (beforeProject) {
     const updateType = determineSemverUpdateType(
       beforeProject.version,
@@ -37,22 +41,15 @@ afterSnapshot.projects.forEach((afterProject) => {
       `package ${afterProject.name} has updated (${updateType}) from version ${beforeProject.version} to ${afterProject.version}`
     );
 
-    const shortProjectName = afterProject
-      .replace("@itwin/", "")
-      .replace("-authorization", "");
-    packagesToPublish.push(shortProjectName);
-
     if (updateType === "Minor") {
       addReleaseNotesFromNextVersion(afterProject);
+      added = true;
+      return;
     }
   }
-});
 
-console.log(
-  `##vso[task.setvariable variable=changedPackages;]${packagesToPublish.join(
-    ","
-  )}`
-);
+  outputVSOVariable(shortProjectName, added ? "True" : "false"); // odd VSO Syntax
+});
 
 function rushOutputToJSON(fileName) {
   const txtFile = fs.readFileSync(fileName, "utf-8");
@@ -103,4 +100,8 @@ function replacePlaceholderHeader(filePath, newVersion) {
   let contents = fs.readFileSync(filePath, "utf-8");
   contents = contents.replace("Next Version", `${newVersion} Release Notes`);
   fs.writeFileSync(filePath, contents, "utf-8");
+}
+
+function outputVSOVariable(variableName, value) {
+  console.log(`##vso[task.setvariable variable=${variableName};]${value}`); // match VSO casing...
 }
