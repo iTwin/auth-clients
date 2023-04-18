@@ -26,7 +26,7 @@ afterSnapshot.projects.forEach((afterProject) => {
     (p) => p.name === afterProject.name && p.version !== afterProject.version
   );
 
-  const shortProjectName = afterProject
+  const shortProjectName = afterProject.name
     .replace("@itwin/", "")
     .replace("-authorization", "");
 
