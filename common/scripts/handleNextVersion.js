@@ -48,7 +48,7 @@ afterSnapshot.projects.forEach((afterProject) => {
     }
   }
 
-  outputVSOVariable(shortProjectName, added ? "True" : "false"); // odd VSO Syntax
+  outputVSOVariable(shortProjectName, added);
 });
 
 function rushOutputToJSON(fileName) {
