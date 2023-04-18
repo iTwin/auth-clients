@@ -13,22 +13,22 @@ parameters:
 - name: browser
   displayName: Browser Authorization
   type: boolean
-  default: true
+  default: false
 
 - name: electron
   displayName: Electron Authorization
   type: boolean
-  default: true
+  default: false
 
 - name: service
   displayName: Service Authorization
   type: boolean
-  default: true
+  default: false
 
 - name: nodeCli
   displayName: Node CLI
   type: boolean
-  default: true
+  default: false
 
 - name: shouldPublish
   displayName: Publish?
@@ -52,6 +52,50 @@ stages:
         clean: all
 
       steps:
+        - checkout: self
+          clean: true
+
+        - task: NodeTool@0
+          displayName: Use Node 18
+          inputs:
+            versionSpec: 18
+            checkLatest: true
+
+        - script: |
+            git config --local user.email imodeljs-admin@users.noreply.github.com
+            git config --local user.name imodeljs-admin
+          displayName: Setup git config
+
+        - bash: |
+            echo "electron is ${{parameters.electron}}"
+            echo "browser is ${{parameters.browser}}"
+            echo "service is ${{parameters.service}}"
+            echo "nodeCli is ${{parameters.nodeCli}}"
+            if [[ ${{ parameters.browser }} = 'True' ]]; then
+              echo "setting browser to true"
+              echo "##vso[task.setvariable variable=browser;isOutput=true;]true"
+            fi
+
+            if [[ ${{ parameters.electron }} = 'True' ]]; then
+              echo "setting electron to true"
+              echo "##vso[task.setvariable variable=electron;isOutput=true;]true"
+            fi
+
+            if [[ ${{ parameters.service }} = 'True' ]]; then
+              echo "setting service to true"
+              echo "##vso[task.setvariable variable=service;isOutput=true;]true"
+            fi
+
+            if [[ ${{ parameters.nodeCli }} = 'True' ]]; then
+              echo "setting node-cli to true"
+              echo "##vso[task.setvariable variable=node-cli;isOutput=true;]true"
+            fi
+          displayName: set variables
+          name: releaseNotes
+
+        - script: node common/scripts/install-run-rush.js install
+          displayName: Rush Install
+
         - template: templates/build-docs.yaml
           parameters:
             browser: ${{parameters.browser}}

@@ -20,13 +20,17 @@ const afterFilePath = process.argv[3];
 
 const beforeSnapshot = rushOutputToJSON(beforeFilePath);
 const afterSnapshot = rushOutputToJSON(afterFilePath);
-const packagesToPublish = []; // we'll keep track of the packages we're publishing, and set as a vso variable
 
 afterSnapshot.projects.forEach((afterProject) => {
   const beforeProject = beforeSnapshot.projects.find(
     (p) => p.name === afterProject.name && p.version !== afterProject.version
   );
 
+  const shortProjectName = afterProject.name
+    .replace("@itwin/", "")
+    .replace("-authorization", "");
+
+  let added = false;
   if (beforeProject) {
     const updateType = determineSemverUpdateType(
       beforeProject.version,
@@ -34,25 +38,17 @@ afterSnapshot.projects.forEach((afterProject) => {
     );
 
     console.log(
-      `package ${afterProject.name} has updated (${updateType}) from version ${beforeProject.version} to ${afterProject.version}`
+      `package ${afterProject.name} has updated (${updateType}) from version ${beforeProject.version} to ${afterProject.version} - short name ${shortProjectName}`
     );
-
-    const shortProjectName = afterProject
-      .replace("@itwin/", "")
-      .replace("-authorization", "");
-    packagesToPublish.push(shortProjectName);
 
     if (updateType === "Minor") {
       addReleaseNotesFromNextVersion(afterProject);
+      added = true;
     }
   }
+  console.log(`Outputting variable for ${shortProjectName} - ${added}`);
+  outputVSOVariable(shortProjectName, added);
 });
-
-console.log(
-  `##vso[task.setvariable variable=changedPackages;]${packagesToPublish.join(
-    ","
-  )}`
-);
 
 function rushOutputToJSON(fileName) {
   const txtFile = fs.readFileSync(fileName, "utf-8");
@@ -103,4 +99,8 @@ function replacePlaceholderHeader(filePath, newVersion) {
   let contents = fs.readFileSync(filePath, "utf-8");
   contents = contents.replace("Next Version", `${newVersion} Release Notes`);
   fs.writeFileSync(filePath, contents, "utf-8");
+}
+
+function outputVSOVariable(variableName, value) {
+  console.log(`##vso[task.setvariable variable=${variableName};isOutput=true]${value}`); // match VSO casing...
 }
