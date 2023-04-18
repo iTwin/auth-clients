@@ -58,4 +58,5 @@ stages:
             service: ${{parameters.service}}
             electron: ${{parameters.electron}}
             "node-cli": ${{parameters["node-cli"]}}
+            shouldPublish: ${{parameters.shouldPublish}}
 
