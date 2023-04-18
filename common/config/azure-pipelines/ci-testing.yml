@@ -39,6 +39,7 @@ stages:
           versionSpec: 18.x
 
       - script: |
+          echo "$(pwd)"
           git config user.email imodeljs-admin@users.noreply.github.com
           git config user.name imodeljs-admin
         displayName: git config
