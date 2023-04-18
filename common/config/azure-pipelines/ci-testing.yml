@@ -4,12 +4,12 @@ parameters:
     type: boolean
     default: false
 
-resources:
-  repositories:
-    - repository: build-pipeline-scripts
-      type: git
-      ref: master
-      name: iModelTechnologies/imodeljs-build-pipeline-scripts
+# resources:
+#   repositories:
+#     - repository: build-pipeline-scripts
+#       type: git
+#       ref: master
+#       name: iModelTechnologies/imodeljs-build-pipeline-scripts
 
 trigger: none
 pr: none
@@ -21,10 +21,10 @@ stages:
     - job: BuildPackages
       strategy:
         matrix:
-          linux:
-            imageName: 'ubuntu-latest'
-          mac:
-            imageName: 'macos-latest'
+          # linux:
+          #   imageName: 'ubuntu-latest'
+          # mac:
+          #   imageName: 'macos-latest'
           windows:
             imageName: 'windows-latest'
       pool:
