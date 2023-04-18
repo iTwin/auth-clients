@@ -59,7 +59,7 @@ steps:
     displayName: Rush Install
 
   - ${{ each parameter in parameters }}:
-      - ${{ if and(ne(parameter.Key, "shouldPublish"), eq(parameter.Value, "True")) }}:
+      - ${{ if and(ne(parameter.Key, 'shouldPublish'), eq(parameter.Value, 'True')) }}:
           - script: |
               echo ${{parameter.Key}} ${{parameter.Value}}
               node common/scripts/install-run-rush.js docs --only "${{parameter.Key}}-authorization"
