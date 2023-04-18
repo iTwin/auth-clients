@@ -15,7 +15,7 @@ const signOutButton = document.getElementById("signOut");
 const signInButton = document.getElementById("signIn");
 
 signOutButton?.addEventListener("click", async () => {
-  console.log("clicked");
+  console.log("clicked sign out");
   try {
     await auth.signOut();
   } catch (error) {
@@ -24,7 +24,7 @@ signOutButton?.addEventListener("click", async () => {
 });
 
 signInButton?.addEventListener("click", async () => {
-  console.log("clicked");
+  console.log("clicked sign in");
   try {
     await auth.signIn();
   } catch (error) {
