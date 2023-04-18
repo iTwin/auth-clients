@@ -53,7 +53,7 @@ steps:
       allowFailedBuilds: true
       artifactName: "iTwin-Auth-Clients Docs"
       targetPath: "$(Build.StagingDirectory)/docs"
-    condition: and(succeeded(), eq(parameters.shouldPublish, true))
+    condition: and(succeeded(), ${{ parameters.shouldPublish }})
 
   - script: node common/scripts/install-run-rush.js install
     displayName: Rush Install
@@ -75,17 +75,17 @@ steps:
       SourceFolder: $(Build.SourcesDirectory)/generated-docs/auth-clients
       TargetFolder: $(Build.StagingDirectory)/docs
       OverWrite: true
-    condition: and(succeeded(), eq(parameters.shouldPublish, true))
+    condition: and(succeeded(), ${{ parameters.shouldPublish }})
 
   - task: PublishBuildArtifacts@1
     displayName: "Publish Artifact: Auth-Clients Docs"
     inputs:
       PathtoPublish: "$(Build.StagingDirectory)/docs/"
       ArtifactName: "iTwin-Auth-Clients Docs"
-    condition: and(succeeded(), eq(parameters.shouldPublish, true))
+    condition: and(succeeded(), ${{ parameters.shouldPublish }} )
 
   - task: tagBuildOrRelease@0
     inputs:
       type: "Build"
       tags: "hasDocs"
-    condition: and(succeeded(), eq(parameters.shouldPublish, true))
+    condition: and(succeeded(), ${{ parameters.shouldPublish }} )
