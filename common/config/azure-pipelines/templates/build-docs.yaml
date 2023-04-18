@@ -1,11 +1,4 @@
 parameters:
-  - name: testObject
-    displayName: test object
-    type: object
-    default:
-      auth1: true
-      auth2: false
-
   - name: browser
     displayName: Browser Authorization
     type: boolean
