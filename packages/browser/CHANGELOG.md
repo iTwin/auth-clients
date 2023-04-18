@@ -1,6 +1,13 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Wed, 22 Mar 2023 18:23:21 GMT and should not be manually modified.
+This log was last generated on Fri, 14 Apr 2023 21:44:37 GMT and should not be manually modified.
+
+## 0.9.0
+Fri, 14 Apr 2023 21:44:37 GMT
+
+### Minor changes
+
+- Add static BrowserAuthorizationClient.handleSigninCallback method for configless callback
 
 ## 0.8.0
 Wed, 22 Mar 2023 18:23:21 GMT
