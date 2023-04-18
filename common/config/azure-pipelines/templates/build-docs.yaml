@@ -59,12 +59,11 @@ steps:
     displayName: Rush Install
 
   - ${{ each parameter in parameters }}:
+    - ${{ if and(ne(parameter.Key, "shouldPublish"), eq(parameter.Value, "True")) }}
       - script: |
-          if [[ ${{parameter.Key}} != "shouldPublish" && ${{parameter.Value}} = "True" ]]; then
-            echo ${{parameter.Key}} ${{parameter.Value}}
-            node common/scripts/install-run-rush.js docs --only "${{parameter.Key}}-authorization"
-            mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}}-authorization"
-          fi
+          echo ${{parameter.Key}} ${{parameter.Value}}
+          node common/scripts/install-run-rush.js docs --only "${{parameter.Key}}-authorization"
+          mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}}-authorization"
         env:
           RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
         displayName: "Build ${{parameter.Key}} docs"
