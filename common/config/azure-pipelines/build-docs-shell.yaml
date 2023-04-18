@@ -25,7 +25,7 @@ parameters:
   type: boolean
   default: true
 
-- name: node-cli
+- name: nodeCli
   displayName: Node CLI
   type: boolean
   default: true
@@ -57,6 +57,6 @@ stages:
             browser: ${{parameters.browser}}
             service: ${{parameters.service}}
             electron: ${{parameters.electron}}
-            "node-cli": ${{parameters["node-cli"]}}
+            "node-cli": ${{parameters["nodeCli"]}}
             shouldPublish: ${{parameters.shouldPublish}}
 
