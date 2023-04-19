@@ -19,7 +19,7 @@ steps:
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
 
   - bash: |
-      echo $electron
+      echo "$(electron)""
     displayName: Test Variable Sets
   # - script: node common/scripts/install-run-rush.js publish --publish -a -b main --set-access-level public
   #   displayName: rush publish package
