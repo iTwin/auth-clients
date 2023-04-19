@@ -5,4 +5,5 @@ steps:
 
   - bash: |
       echo "varOne is: $(varOne)"
+      echo "and through this ${{variables.varOne}}"
     displayName: Test Variable Sets
