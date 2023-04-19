@@ -7,4 +7,3 @@ steps:
       echo "varone is $(varOne)"
       echo "paramOne is ${{parameters.paramOne}}"
     displayName: Add Release Notes
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
