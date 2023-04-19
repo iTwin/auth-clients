@@ -2,9 +2,21 @@ parameters:
   - name: paramOne # name of the parameter; required
     type: boolean # data type of the parameter; required
     default: false
+  - name: paramTwo # name of the parameter; required
+    type: boolean # data type of the parameter; required
+    default: false
+  - name: paramThree # name of the parameter; required
+    type: boolean # data type of the parameter; required
+    default: false
+  - name: paramFour # name of the parameter; required
+    type: boolean # data type of the parameter; required
+    default: false
 
 steps:
   - bash: |
       echo "varone is $(varOne)"
       echo "paramOne is ${{parameters.paramOne}}"
+      echo "paramTwo is ${{parameters.paramTwo}}"
+      echo "paramThree is ${{parameters.paramThree}}"
+      echo "paramFour is ${{parameters.paramFour}}"
     displayName: get variable
