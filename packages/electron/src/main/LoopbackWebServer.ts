@@ -21,18 +21,15 @@ class AuthorizationState {
   private static _stateEventsMap = [] as StateEventsPair[];
 
   public addState(state: string, authEvents: ElectronAuthorizationEvents): void {
-    console.log("addState")
     AuthorizationState._stateEventsMap.push([state, authEvents]);
   }
 
   public removeState(state: string): void {
-    console.log("removeState")
     AuthorizationState._stateEventsMap = AuthorizationState._stateEventsMap.filter((se) => se[0] !== state);
   }
 
   // Get events for a received login response
   public getEvents(state: string): ElectronAuthorizationEvents | null {
-    console.log("getEvent");
     const stateEventsPair = AuthorizationState._stateEventsMap.find((se) => se[0] === state);
     if (stateEventsPair) {
       return stateEventsPair[1];
@@ -52,7 +49,6 @@ export class LoopbackWebServer {
 
   /** Start a web server to listen to the browser requests */
   public static async start(redirectUri: string): Promise<void> {
-    console.log("starting listen");
     if (LoopbackWebServer._httpServer)
       return;
     this._redirectUri = redirectUri;
@@ -62,7 +58,6 @@ export class LoopbackWebServer {
       server.on("error", reject);
 
       const urlParts: URL = new URL(this._redirectUri);
-      console.log("url parts: ", urlParts);
       server.listen(urlParts.port, () => {
         LoopbackWebServer._httpServer = server;
         resolve();
@@ -85,7 +80,6 @@ export class LoopbackWebServer {
       else
         LoopbackWebServer._httpServer = undefined
     });
-
   }
 
   /** Listen/Handle browser events */

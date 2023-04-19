@@ -11,20 +11,16 @@ export function loadConfig() {
 
   if (
     !process.env.IMJS_TEST_REGULAR_USER_NAME ||
-    !process.env.IMJS_TEST_REGULAR_USER_PASSWORD ||
-    !process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL ||
-    !process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID
+    !process.env.IMJS_TEST_REGULAR_USER_PASSWORD
   ) {
     throw new Error(
-      "Please expose IMJS_TEST_REGULAR_USER_NAME, IMJS_TEST_REGULAR_USER_PASSWORD, BASE_URL, and CLIENT_ID as env variables"
+      "Please expose IMJS_TEST_REGULAR_USER_NAME and IMJS_TEST_REGULAR_USER_PASSWORD as env variables"
     );
   }
 
   return {
     email: process.env.IMJS_TEST_REGULAR_USER_NAME,
     password: process.env.IMJS_TEST_REGULAR_USER_PASSWORD,
-    url: process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL,
-    clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID,
     envPrefix: process.env.IMJS_URL_PREFIX || "",
   };
 }

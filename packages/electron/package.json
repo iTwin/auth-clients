@@ -44,8 +44,6 @@
     "chai": "^4.2.22",
     "chai-as-promised": "^7",
     "electron": "^23.0.0",
-    "electron-playwright-helpers": "^1.2.2",
-    "jimp": "^0.16.2",
     "playwright": "~1.31.2",
     "source-map-support": "^0.5.9",
     "eslint": "^7.32.0",

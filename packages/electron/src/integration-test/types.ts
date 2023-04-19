@@ -1,8 +1,6 @@
 export interface SignInOptions {
   email: string;
   password: string;
-  url: string;
-  clientId: string;
   envPrefix: string;
 }
 
