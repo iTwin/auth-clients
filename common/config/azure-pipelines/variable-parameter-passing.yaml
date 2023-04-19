@@ -30,6 +30,6 @@ stages:
       - template: templates/get-variable.yaml
         parameters:
           paramOne:  ${{ eq(variables.varOne, true) }}
-          paramTwo:   $[eq(variables.varOne, true)]
-          paramThree:  ${{ eq(variables.varOne, 'true') }}
-          paramFour:  $[eq(variables.varOne, 'true')]
+          paramTwo:  ${{ eq(variables.varOne, 'true') }}
+          paramThree:  ${{ eq(variables.varOne, true) }}
+          paramFour:  ${{ eq(variables.varOne, 'true') }}
