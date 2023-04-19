@@ -4,6 +4,6 @@ steps:
     displayName: Set variable
 
   - bash: |
-      echo "varOne is: $(varOne)"
-      echo "and through this ${{variables.varOne}}"
+      echo "varOne is: $(electron)"
+      echo "and through this ${{variables.electron}}"
     displayName: Test Variable Sets

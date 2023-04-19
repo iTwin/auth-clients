@@ -11,6 +11,7 @@ parameters:
 
 steps:
   - ${{ each parameter in parameters }}:
+      - bash: echo "${{parameter.Key}} is ${{parameter.Value}}"
       - ${{ if eq(variables[parameter.Key], 'true')}}:
           - bash: |
               echo "${{parameter.Key}} is: ${{parameter.Value}}"
@@ -18,5 +19,6 @@ steps:
             displayName: Test Variable Sets
 
   - bash: |
-      echo "varone is $(varOne)"
+      echo "${{variables["electron"]}}"
+      echo "${{parameters[variables]}}"
     displayName: reconcile parameters and variables
