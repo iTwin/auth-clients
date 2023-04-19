@@ -2,9 +2,9 @@ steps:
   - bash: |
       echo "##vso[task.setvariable variable=electron;isoutput=true]true"
     displayName: Set variable
+    name: setVars
 
   - bash: |
-      echo "varOne is: $(electron)"
-      echo "and through this ${{variables.electron}}"
-      echo "and bracket ${{variables['electron']}}"
+      echo "and through this $(setVars.electron)"
+      echo "and bracket $(setVars['electron'])"
     displayName: Test Variable Sets

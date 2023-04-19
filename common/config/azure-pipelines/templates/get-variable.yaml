@@ -12,13 +12,12 @@ parameters:
 steps:
   - ${{ each parameter in parameters }}:
       - bash: echo "${{parameter.Key}} is ${{parameter.Value}}"
-      - ${{ if eq(variables[parameter.Key], 'true')}}:
+      - ${{ if eq(setVars[parameter.Key], 'true')}}:
           - bash: |
               echo "${{parameter.Key}} is: ${{parameter.Value}}"
-              echo "variables attempt ${{variables[parameter.Key]}}"
+              echo "variables attempt $(setVars[parameter.Key])"
             displayName: Test Variable Sets
 
   - bash: |
-      echo "$(variables['electron'])"
-      echo "${{parameters['electron']}}"
+      echo "$(setVars['electron'])"
     displayName: reconcile parameters and variables
