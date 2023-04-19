@@ -1,0 +1,29 @@
+## Testing how to set a variable inside of a template using vso.setTask
+## and then access that in a sibling template as a parameter.
+
+parameters:
+  - name: shouldPublish
+    displayName: Publish packages
+    type: boolean
+    default: false
+
+trigger: none
+pr: none
+
+stages:
+- stage: Build
+  displayName: Build
+  jobs:
+    - job: BuildPackages
+      strategy:
+        matrix:
+          windows:
+            imageName: 'windows-latest'
+      pool:
+        vmImage: $(imageName)
+      steps:
+      - template: templates/set-variable.yaml
+
+      - template: templates/get-variable.yaml
+        parameters:
+          paramOne: $(varOne)

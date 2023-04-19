@@ -1,0 +1,9 @@
+steps:
+  - bash: |
+      echo "##vso[task.setvariable variable=varOne;]true"
+    displayName: Add Release Notes
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
+
+  - bash: |
+      echo "varOne is: $(varOne)"
+    displayName: Test Variable Sets
