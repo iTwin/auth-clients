@@ -29,4 +29,4 @@ stages:
 
       - template: templates/get-variable.yaml
         parameters:
-          paramOne:  ${{ eq(variables.varOne, 'true') }}
+          paramOne:  ${{ eq(variables.varOne, true) }}
