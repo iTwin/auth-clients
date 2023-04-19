@@ -86,6 +86,9 @@ stages:
         parameters:
           shouldPublish: ${{ parameters.shouldPublish }}
 
+      - bash: |
+            echo $electron
+        displayName: Test Variable Sets outer
       # Publish documentation
       - ${{ if eq(parameters.shouldPublish, true) }}:
         - template: templates/build-docs.yaml

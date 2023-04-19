@@ -38,7 +38,7 @@ afterSnapshot.projects.forEach((afterProject) => {
     );
 
     console.log(
-      `package ${afterProject.name} has updated (${updateType}) from version ${beforeProject.version} to ${afterProject.version}`
+      `package ${afterProject.name} has updated (${updateType}) from version ${beforeProject.version} to ${afterProject.version} - short name ${shortProjectName}`
     );
 
     if (updateType === "Minor") {
@@ -46,7 +46,7 @@ afterSnapshot.projects.forEach((afterProject) => {
       added = true;
     }
   }
-
+  console.log(`Outputting variable for ${shortProjectName} - ${added}`);
   outputVSOVariable(shortProjectName, added);
 });
 

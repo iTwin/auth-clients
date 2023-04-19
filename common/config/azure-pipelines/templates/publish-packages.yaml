@@ -18,8 +18,12 @@ steps:
     displayName: Add Release Notes
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
 
+ - bash: |
+      echo $electron
+   displayName: Test Variable Sets
   # - script: node common/scripts/install-run-rush.js publish --publish -a -b main --set-access-level public
   #   displayName: rush publish package
   #   condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
   #   env:
   #     NPM_AUTH_TOKEN: $(npmToken)
+
