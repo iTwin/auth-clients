@@ -1,6 +1,6 @@
 steps:
   - bash: |
-      echo "##vso[task.setvariable variable=varOne;]true"
+      echo "##vso[task.setvariable variable=electron;]true"
     displayName: Set variable
 
   - bash: |

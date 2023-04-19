@@ -28,8 +28,3 @@ stages:
       - template: templates/set-variable.yaml
 
       - template: templates/get-variable.yaml
-        parameters:
-          paramOne:  ${{ eq(variables['varOne'], 'true') }}
-          paramTwo:  ${{ eq(variables['varTwo'], 'true') }}
-          paramThree:  ${{ eq(variables.varOne, true) }}
-          paramFour:  ${{ eq('true', 'true') }}

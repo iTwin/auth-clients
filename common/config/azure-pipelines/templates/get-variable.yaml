@@ -1,18 +1,22 @@
 parameters:
-  - name: paramOne # name of the parameter; required
+  - name: electron # name of the parameter; required
     type: boolean # data type of the parameter; required
-  - name: paramTwo # name of the parameter; required
+    default: false
+  - name: service # name of the parameter; required
     type: boolean # data type of the parameter; required
-  - name: paramThree # name of the parameter; required
+    default: false
+  - name: browser # name of the parameter; required
     type: boolean # data type of the parameter; required
-  - name: paramFour # name of the parameter; required
-    type: boolean # data type of the parameter; required
+    default: false
 
 steps:
+  - ${{ each parameter in parameters }}:
+      - ${{ if eq(variables[parameter.Key], 'true')}}:
+          - bash: |
+              echo "${{parameter.Key}} is: ${{parameter.Value}}"
+              echo "variables attempt ${{variables[parameter.Key]}}"
+            displayName: Test Variable Sets
+
   - bash: |
       echo "varone is $(varOne)"
-      echo "paramOne is ${{parameters.paramOne}}"
-      echo "paramTwo is ${{parameters.paramTwo}}"
-      echo "paramThree is ${{parameters.paramThree}}"
-      echo "paramFour is ${{parameters.paramFour}}"
-    displayName: get variable
+    displayName: reconcile parameters and variables
