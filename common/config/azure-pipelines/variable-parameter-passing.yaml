@@ -8,7 +8,7 @@ parameters:
     default: false
 
 variables:
-  varOne: false
+  varTwo: 'true'
 
 trigger: none
 pr: none
@@ -30,6 +30,6 @@ stages:
       - template: templates/get-variable.yaml
         parameters:
           paramOne:  ${{ eq(variables['varOne'], 'true') }}
-          paramTwo:  ${{ eq(variables.varOne, 'true') }}
+          paramTwo:  ${{ eq(variables['varTwo'], 'true') }}
           paramThree:  ${{ eq(variables.varOne, true) }}
           paramFour:  ${{ eq('true', 'true') }}
