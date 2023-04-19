@@ -46,7 +46,7 @@ steps:
     condition: and(succeeded(), ${{ parameters.shouldPublish }})
 
   - ${{ each parameter in parameters }}:
-      - ${{ if and(ne(parameter.Key, 'shouldPublish'), or(eq(parameter.Value, 'True'), eq(variables[parmeter.Key], 'true'))) }}:
+      - ${{ if and(ne(parameter.Key, 'shouldPublish'), or(eq(parameter.Value, 'True'), eq(variables[parameter.Key], 'true'))) }}:
           - script: |
               echo ${{parameter.Key}} ${{parameter.Value}}
               node common/scripts/install-run-rush.js docs --only "${{parameter.Key}}-authorization"
