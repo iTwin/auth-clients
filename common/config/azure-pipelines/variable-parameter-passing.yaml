@@ -7,10 +7,6 @@ parameters:
     type: boolean
     default: false
 
-variables:
-  - name: varOne
-    type: boolean
-
 trigger: none
 pr: none
 
