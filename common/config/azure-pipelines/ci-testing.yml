@@ -87,7 +87,7 @@ stages:
           shouldPublish: ${{ parameters.shouldPublish }}
 
       - bash: |
-            echo "$(electron)"
+            echo "electron is: $(electron)"
         displayName: Test Variable Sets outer
       # Publish documentation
       - ${{ if eq(parameters.shouldPublish, true) }}:

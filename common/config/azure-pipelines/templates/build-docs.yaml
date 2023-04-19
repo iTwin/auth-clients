@@ -27,6 +27,10 @@ parameters:
 steps:
   # Because we may not publish all of our packages at once,
   # we must add these new docs to the existing artifact.
+
+  - bash: |
+      echo "electron is: $(electron)"
+      echo "electron param is: ${{parameters.electron}}"
   - task: DownloadPipelineArtifact@2
     displayName: Download existing docs
     inputs:
