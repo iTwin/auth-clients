@@ -19,6 +19,6 @@ steps:
             displayName: Test Variable Sets
 
   - bash: |
-      echo "${{variables["electron"]}}"
-      echo "${{parameters[variables]}}"
+      echo "$(variables['electron'])"
+      echo "${{parameters['electron']}}"
     displayName: reconcile parameters and variables
