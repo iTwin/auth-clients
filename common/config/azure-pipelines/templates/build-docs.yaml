@@ -54,6 +54,10 @@ steps:
             env:
               RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
             displayName: "Build ${{parameter.Key}} docs"
+      - script: |
+          echo ${{parameter.Key}} ${{parameter.Value}}
+          echo variables[${{parameter.Key}}]
+        displayName: Debugging
 
   - task: CopyFiles@2
     displayName: "Copy generated docs to: $(Build.StagingDirectory)"
