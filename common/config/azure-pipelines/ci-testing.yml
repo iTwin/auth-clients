@@ -94,8 +94,7 @@ stages:
         - template: templates/build-docs.yaml
           parameters:
             shouldPublish: true
-            ${{ if eq(variables.browser, true) }}:
-              browser: true
+            browser: ${{variables.electron}}
             ${{ if eq(variables.electron, true) }}:
               electron: true
             ${{ if eq(variables.service, true) }}:
