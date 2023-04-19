@@ -1,9 +1,10 @@
 parameters:
   - name: paramOne # name of the parameter; required
     type: string # data type of the parameter; required
+    default: false
 
 steps:
   - bash: |
       echo "varone is $(varOne)"
       echo "paramOne is ${{parameters.paramOne}}"
-    displayName: Add Release Notes
+    displayName: get variable
