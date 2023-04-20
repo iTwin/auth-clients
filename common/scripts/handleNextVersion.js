@@ -102,5 +102,5 @@ function replacePlaceholderHeader(filePath, newVersion) {
 }
 
 function outputVSOVariable(variableName, value) {
-  console.log(`##vso[task.setvariable variable=${variableName};]${value}`); // match VSO casing...
+  console.log(`##vso[task.setvariable variable=${variableName};isOutput=true]${value}`); // match VSO casing...
 }

@@ -16,4 +16,5 @@ steps:
       # Next version dance
       node common/scripts/handleNextVersion.js "$(Agent.TempDirectory)/versions-before.txt" "$(Agent.TempDirectory)/versions-after.txt"
     displayName: Add Release Notes
+    name: releaseNotes
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
