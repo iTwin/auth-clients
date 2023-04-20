@@ -1,36 +1,12 @@
 parameters:
-  - name: browser
-    displayName: Browser Authorization
-    type: boolean
-    default: false
-
-  - name: electron
-    displayName: Electron Authorization
-    type: boolean
-    default: false
-
-  - name: service
-    displayName: Service Authorization
-    type: boolean
-    default: false
-
-  - name: node-cli
-    displayName: Node CLI
-    type: boolean
-    default: false
-
   - name: shouldPublish
-    displayName: Node CLI
+    displayName: publish?
     type: boolean
     default: false
 
 steps:
   # Because we may not publish all of our packages at once,
   # we must add these new docs to the existing artifact.
-
-  - bash: |
-      echo "electron is: $(electron)"
-      echo "electron param is: ${{parameters.electron}}"
   - task: DownloadPipelineArtifact@2
     displayName: Download existing docs
     inputs:
@@ -45,19 +21,37 @@ steps:
       targetPath: "$(Build.StagingDirectory)/docs"
     condition: and(succeeded(), ${{ parameters.shouldPublish }})
 
-  - ${{ each parameter in parameters }}:
-      - ${{ if and(ne(parameter.Key, 'shouldPublish'), or(eq(parameter.Value, 'True'), eq(variables[parameter.Key], 'true'))) }}:
-          - script: |
-              echo ${{parameter.Key}} ${{parameter.Value}}
-              node common/scripts/install-run-rush.js docs --only "${{parameter.Key}}-authorization"
-              mv $(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}} "$(Build.SourcesDirectory)/generated-docs/auth-clients/${{parameter.Key}}-authorization"
-            env:
-              RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
-            displayName: "Build ${{parameter.Key}} docs"
+  - ${{ if or(eq(variables.electron, 'true') }}:
       - script: |
-          echo ${{parameter.Key}} ${{parameter.Value}}
-          echo variables[${{parameter.Key}}]
-        displayName: Debugging
+          node common/scripts/install-run-rush.js docs --only electron-authorization
+          mv $(Build.SourcesDirectory)/generated-docs/auth-clients/electron "$(Build.SourcesDirectory)/generated-docs/auth-clients/electron-authorization"
+        env:
+          RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
+        displayName: "Build electron-authorization docs"
+
+  - ${{ if or(eq(variables.service, 'true') }}:
+      - script: |
+          node common/scripts/install-run-rush.js docs --only service-authorization
+          mv $(Build.SourcesDirectory)/generated-docs/auth-clients/service "$(Build.SourcesDirectory)/generated-docs/auth-clients/service-authorization"
+        env:
+          RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
+        displayName: "Build service-authorization docs"
+
+  - ${{ if or(eq(variables['node-cli'], 'true') }}:
+      - script: |
+          node common/scripts/install-run-rush.js docs --only electron-authorization
+          mv $(Build.SourcesDirectory)/generated-docs/auth-clients/node-cli "$(Build.SourcesDirectory)/generated-docs/auth-clients/node-cli-authorization"
+        env:
+          RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
+        displayName: "Build node-cli-authorization docs"
+
+  - ${{ if or(eq(variables.browser, 'true') }}:
+      - script: |
+          node common/scripts/install-run-rush.js docs --only browser-authorization
+          mv $(Build.SourcesDirectory)/generated-docs/auth-clients/browser "$(Build.SourcesDirectory)/generated-docs/auth-clients/browser-authorization"
+        env:
+          RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
+        displayName: "Build browser-authorization docs"
 
   - task: CopyFiles@2
     displayName: "Copy generated docs to: $(Build.StagingDirectory)"
