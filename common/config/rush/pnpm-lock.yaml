@@ -97,6 +97,7 @@ importers:
       chai: 4.3.7
       chai-as-promised: 7.1.1_chai@4.3.7
       electron: 24.1.2
+      electron: 24.1.2
       eslint: 7.32.0
       mocha: 8.4.0
       nyc: 15.1.0
@@ -3100,6 +3101,8 @@ packages:
     resolution: {integrity: sha512-e2aeCAixCj9M7nJxdB/wDjO6mbYX+lJJxSJCXDzlr5YPGYVofuJwGN9nKg2o6wWInjX6XmxRinn3AeJMK81ltw==}
     dev: true
 
+  /electron/24.1.2:
+    resolution: {integrity: sha512-V0isWbyLYiXrSCcB4lrSVhS/U56NFGfuqHyc+yEPkyhhvY+h4F85cYGdEiZlXp6XjHT+/CLHmw0ltK54g9lvDw==}
   /electron/24.1.2:
     resolution: {integrity: sha512-V0isWbyLYiXrSCcB4lrSVhS/U56NFGfuqHyc+yEPkyhhvY+h4F85cYGdEiZlXp6XjHT+/CLHmw0ltK54g9lvDw==}
     engines: {node: '>= 12.20.55'}
