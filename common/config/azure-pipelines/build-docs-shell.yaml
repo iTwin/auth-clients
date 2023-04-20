@@ -98,9 +98,5 @@ stages:
 
         - template: templates/build-docs.yaml
           parameters:
-            browser: ${{parameters.browser}}
-            service: ${{parameters.service}}
-            electron: ${{parameters.electron}}
-            "node-cli": ${{parameters.nodeCli}}
             shouldPublish: ${{parameters.shouldPublish}}
 

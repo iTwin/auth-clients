@@ -1,24 +1,4 @@
 parameters:
-  - name: browser
-    displayName: Browser Authorization
-    type: boolean
-    default: false
-
-  - name: electron
-    displayName: Electron Authorization
-    type: boolean
-    default: false
-
-  - name: service
-    displayName: Service Authorization
-    type: boolean
-    default: false
-
-  - name: node-cli
-    displayName: Node CLI
-    type: boolean
-    default: false
-
   - name: shouldPublish
     displayName: Node CLI
     type: boolean
@@ -27,10 +7,6 @@ parameters:
 steps:
   # Because we may not publish all of our packages at once,
   # we must add these new docs to the existing artifact.
-
-  - bash: |
-      echo "electron is: $(electron)"
-      echo "electron param is: ${{parameters.electron}}"
   - task: DownloadPipelineArtifact@2
     displayName: Download existing docs
     inputs:
