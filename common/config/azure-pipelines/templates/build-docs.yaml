@@ -21,7 +21,7 @@ steps:
       targetPath: "$(Build.StagingDirectory)/docs"
     condition: and(succeeded(), ${{ parameters.shouldPublish }})
 
-  - ${{ if or(eq(variables.electron, 'true') }}:
+  - ${{ if eq(variables.electron, 'true') }}:
       - script: |
           node common/scripts/install-run-rush.js docs --only electron-authorization
           mv $(Build.SourcesDirectory)/generated-docs/auth-clients/electron "$(Build.SourcesDirectory)/generated-docs/auth-clients/electron-authorization"
@@ -29,7 +29,7 @@ steps:
           RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
         displayName: "Build electron-authorization docs"
 
-  - ${{ if or(eq(variables.service, 'true') }}:
+  - ${{ if eq(variables.service, 'true') }}:
       - script: |
           node common/scripts/install-run-rush.js docs --only service-authorization
           mv $(Build.SourcesDirectory)/generated-docs/auth-clients/service "$(Build.SourcesDirectory)/generated-docs/auth-clients/service-authorization"
@@ -37,7 +37,7 @@ steps:
           RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
         displayName: "Build service-authorization docs"
 
-  - ${{ if or(eq(variables['node-cli'], 'true') }}:
+  - ${{ if eq(variables['node-cli'], 'true') }}:
       - script: |
           node common/scripts/install-run-rush.js docs --only electron-authorization
           mv $(Build.SourcesDirectory)/generated-docs/auth-clients/node-cli "$(Build.SourcesDirectory)/generated-docs/auth-clients/node-cli-authorization"
@@ -45,7 +45,7 @@ steps:
           RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
         displayName: "Build node-cli-authorization docs"
 
-  - ${{ if or(eq(variables.browser, 'true') }}:
+  - ${{ if eq(variables.browser, 'true') }}:
       - script: |
           node common/scripts/install-run-rush.js docs --only browser-authorization
           mv $(Build.SourcesDirectory)/generated-docs/auth-clients/browser "$(Build.SourcesDirectory)/generated-docs/auth-clients/browser-authorization"
