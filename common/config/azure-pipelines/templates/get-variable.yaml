@@ -12,10 +12,10 @@ parameters:
 steps:
   - ${{ each parameter in parameters }}:
       - bash: |
-        echo "##vso[task.setvariable variable=electronCombined;isoutput=true]setVars.${{parameterKey}}"
-        echo $(electronCombined)
-        echo ${{variables[$(electronCombined)]}}
-        echo "${{parameter.Key}} is ${{parameter.Value}}"
+          echo "##vso[task.setvariable variable=electronCombined;isoutput=true]setVars.${{parameterKey}}"
+          echo $(electronCombined)
+          echo ${{variables[$(electronCombined)]}}
+          echo "${{parameter.Key}} is ${{parameter.Value}}"
       - ${{ if eq(variables[parameter.Key], 'true')}}:
           - bash: |
               echo "${{parameter.Key}} is: ${{parameter.Value}}"
