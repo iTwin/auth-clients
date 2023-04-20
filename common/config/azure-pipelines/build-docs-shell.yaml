@@ -13,22 +13,22 @@ parameters:
 - name: browser
   displayName: Browser Authorization
   type: boolean
-  default: false
+  default: true
 
 - name: electron
   displayName: Electron Authorization
   type: boolean
-  default: false
+  default: true
 
 - name: service
   displayName: Service Authorization
   type: boolean
-  default: false
+  default: true
 
 - name: nodeCli
   displayName: Node CLI
   type: boolean
-  default: false
+  default: true
 
 - name: shouldPublish
   displayName: Publish?
