@@ -12,7 +12,7 @@ parameters:
 steps:
   - ${{ each parameter in parameters }}:
       - bash: |
-          echo "##vso[task.setvariable variable=electronCombined;isoutput=true]setVars.${{parameterKey}}"
+          echo "##vso[task.setvariable variable=electronCombined;isoutput=true]'setVars.${{parameter.Key}}'"
           echo $(electronCombined)
           echo ${{variables[$(electronCombined)]}}
           echo "${{parameter.Key}} is ${{parameter.Value}}"
