@@ -25,7 +25,6 @@ export class TestHelper {
   }
 
   public async signIn(page: Page, url: string) {
-    console.log(`got url: "${url}"`);
     expect(url).toBeTruthy();
     page.goto(url);
     await page.getByLabel("Email address").fill(this._signInOptions.email);

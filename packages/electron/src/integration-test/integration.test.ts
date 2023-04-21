@@ -28,6 +28,8 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
   return `iTwinJs:${clientId}:${issuerUrl}`;
 }
 
+test.describe.configure({ mode: 'serial', retries: 2 });
+
 test.beforeAll(async () => {
   try {
     await tokenStore.delete();
@@ -54,21 +56,37 @@ test('buttons exist', async () => {
 });
 
 test('sign in successful', async ({ browser }) => {
-  const urlWhenClicked = electronApp.evaluate<string>(async ({ shell }) => {
-    return new Promise((resolve) => {
-      shell.openExternal = async (url: string) => {
-        return resolve(url);
-      };
-    });
-    // This runs in the main Electron process, parameter here is always
-    // the result of the require('electron') in the main app script.
-  });
+  const urlWhenClicked = Promise.race([
+    electronApp.evaluate<string>(async ({ shell }) => {
+      return new Promise((resolve) => {
+        shell.openExternal = async (url: string) => {
+          return resolve(url);
+        };
+      });
+      // This runs in the main Electron process, parameter here is always
+      // the result of the require('electron') in the main app script.
+    }),
+    new Promise<string>((resolve) => {
+      setTimeout(() => {
+        resolve("");
+      }, 3000);
+    }),
+  ]);
 
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await urlWhenClicked);
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(500);
   const accessToken = await tokenStore.load();
   expect(accessToken).toBeDefined();
+  page.close();
+});
+
+test('sign out successful', async ({ browser }) => {
+  const page = await browser.newPage();
+  await testHelper.clickSignOut(electronPage);
+  await page.waitForTimeout(500);
+  const accessToken = await tokenStore.load();
+  expect(accessToken).toBeUndefined();
   page.close();
 });
