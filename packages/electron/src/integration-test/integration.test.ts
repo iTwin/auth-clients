@@ -3,6 +3,7 @@ import { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
 import { TestHelper } from "./helpers/TestHelper";
 import { _electron as electron, chromium } from 'playwright';
+import { RefreshTokenStore } from "../main/TokenStore";
 
 const { clientId, envPrefix, email, password } = loadConfig();
 
@@ -16,9 +17,20 @@ const signInOptions: SignInOptions = {
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
+const tokenStore = new RefreshTokenStore(getTokenStoreKey(clientId));
+
+function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
+  const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
+  if (envPrefix && !issuerUrl) {
+    authority.hostname = envPrefix + authority.hostname;
+  }
+  issuerUrl = authority.href.replace(/\/$/, "");
+  return `iTwinJs:${clientId}:${issuerUrl}`;
+}
 
 test.beforeAll(async () => {
   try {
+    await tokenStore.delete();
     electronApp = await electron.launch({
       args: ["./dist/integration-test/test-app/index.js"],
     });
@@ -56,5 +68,7 @@ test('sign in successful', async ({ browser }) => {
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await urlWhenClicked);
   await page.waitForTimeout(1000);
+  const accessToken = await tokenStore.load();
+  expect(accessToken).toBeDefined();
   page.close();
 });

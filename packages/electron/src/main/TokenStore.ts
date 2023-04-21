@@ -31,8 +31,14 @@ export class RefreshTokenStore {
   }
 
   private async getUserName(): Promise<string | undefined> {
-    if (!this._userName)
-      this._userName = await OperatingSystemUserName();
+    if (!this._userName) {
+      try {
+        this._userName = await OperatingSystemUserName();
+      }
+      catch {
+        this._userName = OperatingSystemUserName.sync();
+      }
+    }
 
     return this._userName;
   }
