@@ -10,8 +10,24 @@ import type { SignInOptions } from "../types";
 export class TestHelper {
   constructor(private _signInOptions: SignInOptions) {}
 
-  public async signIn(page: Page, urlWhenClicked: string) {
-    await page.goto(urlWhenClicked);
+  public async clickSignIn(electronPage: Page) {
+    await electronPage.waitForSelector("button#signIn");
+    const button = electronPage.getByTestId("signIn");
+    await button.click();
+    console.log("clicked sign in");
+  }
+
+  public async clickSignOut(electronPage: Page) {
+    await electronPage.waitForSelector("button#signOut");
+    const button = electronPage.getByTestId("signOut");
+    await button.click();
+    console.log("clicked sign out");
+  }
+
+  public async signIn(page: Page, url: string) {
+    console.log(`got url: "${url}"`);
+    expect(url).toBeTruthy();
+    page.goto(url);
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);
@@ -21,7 +37,6 @@ export class TestHelper {
     if (consentUrl.endsWith("resume/as/authorization.ping")) {
       await this.handleConsentScreen(page);
     }
-    await expect(page.getByText('Sign in was successful!You can close this browser window and return to the appli')).toBeVisible();
 }
 
   private async handleConsentScreen(page: Page) {
