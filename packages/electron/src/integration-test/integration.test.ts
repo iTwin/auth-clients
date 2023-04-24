@@ -30,7 +30,7 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
 
 test.describe.configure({ mode: 'serial' });
 
-test.beforeAll(async () => {
+test.beforeEach(async () => {
   try {
     await tokenStore.delete();
     electronApp = await electron.launch({
@@ -42,7 +42,7 @@ test.beforeAll(async () => {
   }
 });
 
-test.afterAll(async () => {
+test.afterEach(async () => {
   // Exit app.
   await electronApp.close();
 });
@@ -56,27 +56,21 @@ test('buttons exist', async () => {
 });
 
 test('sign in successful', async ({ browser }) => {
-  const urlWhenClicked = Promise.race([
-    electronApp.evaluate<string>(async ({ shell }) => {
-      return new Promise((resolve) => {
-        shell.openExternal = async (url: string) => {
-          return resolve(url);
-        };
-      });
-      // This runs in the main Electron process, parameter here is always
-      // the result of the require('electron') in the main app script.
-    }),
-    new Promise<void>((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 3000);
-    }),
-  ]);
+  const urlWhenClicked = electronApp.evaluate<string>(async ({ shell }) => {
+    return new Promise((resolve) => {
+      shell.openExternal = async (url: string) => {
+        return resolve(url);
+      };
+    });
+    // This runs in the main Electron process, parameter here is always
+    // the result of the require('electron') in the main app script.
+  });
 
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await urlWhenClicked);
-  await page.waitForTimeout(500);
+  // await page.waitForSelector('h1:has-text("Sign in was successful!", { substring: true })');
+  await page.waitForLoadState('networkidle');
   const accessToken = await tokenStore.load();
   expect(accessToken).toBeDefined();
   page.close();
@@ -85,7 +79,7 @@ test('sign in successful', async ({ browser }) => {
 test('sign out successful', async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignOut(electronPage);
-  await page.waitForTimeout(500);
+  await page.waitForLoadState('networkidle');
   const accessToken = await tokenStore.load();
   expect(accessToken).toBeUndefined();
   page.close();

@@ -24,9 +24,9 @@ export class TestHelper {
     console.log("clicked sign out");
   }
 
-  public async signIn(page: Page, url: string | void) {
+  public async signIn(page: Page, url: string) {
     expect(url).toBeDefined();
-    page.goto(url ?? "");
+    page.goto(url);
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);
