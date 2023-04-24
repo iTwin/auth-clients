@@ -28,7 +28,7 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
   return `iTwinJs:${clientId}:${issuerUrl}`;
 }
 
-test.describe.configure({ mode: 'serial', retries: 2 });
+test.describe.configure({ mode: 'serial' });
 
 test.beforeAll(async () => {
   try {
@@ -66,9 +66,9 @@ test('sign in successful', async ({ browser }) => {
       // This runs in the main Electron process, parameter here is always
       // the result of the require('electron') in the main app script.
     }),
-    new Promise<string>((resolve) => {
+    new Promise<void>((resolve) => {
       setTimeout(() => {
-        resolve("");
+        resolve();
       }, 3000);
     }),
   ]);
