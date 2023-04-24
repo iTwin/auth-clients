@@ -69,7 +69,6 @@ test('sign in successful', async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await urlWhenClicked);
-  // await page.waitForSelector('h1:has-text("Sign in was successful!", { substring: true })');
   await page.waitForLoadState('networkidle');
   const accessToken = await tokenStore.load();
   expect(accessToken).toBeDefined();
