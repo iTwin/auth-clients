@@ -80,7 +80,7 @@ export class LoopbackWebServer {
       else
         LoopbackWebServer._httpServer = undefined
     });
-
+    
   }
 
   /** Listen/Handle browser events */
