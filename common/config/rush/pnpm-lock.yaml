@@ -15,6 +15,10 @@ importers:
       '@itwin/core-bentley': ^3.0.0
       '@itwin/core-common': ^3.0.0
       '@itwin/eslint-plugin': ^3.0.0
+      '@itwin/build-tools': ^3.7.0
+      '@itwin/core-bentley': ^3.7.0
+      '@itwin/core-common': ^3.7.0
+      '@itwin/eslint-plugin': ^3.7.0
       '@playwright/test': ~1.31.2
       '@types/chai': ^4.2.22
       '@types/mocha': ^8.2.3
@@ -36,6 +40,10 @@ importers:
       oidc-client-ts: 2.2.2
     devDependencies:
       '@itwin/build-tools': 4.0.0-dev.81_@types+node@18.15.12
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
+      '@itwin/build-tools': 3.7.3
       '@itwin/core-bentley': 3.7.3
       '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
@@ -111,6 +119,10 @@ importers:
       '@itwin/core-bentley': ^3.3.0
       '@itwin/core-common': ^3.3.0
       '@itwin/eslint-plugin': ^3.3.0
+      '@itwin/build-tools': ^3.7.0
+      '@itwin/core-bentley': ^3.7.0
+      '@itwin/core-common': ^3.7.0
+      '@itwin/eslint-plugin': ^3.7.0
       '@openid/appauth': ^1.3.1
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7
@@ -137,6 +149,10 @@ importers:
       '@itwin/core-bentley': 3.7.3
       '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
+      '@itwin/build-tools': 3.7.3
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
       '@types/mocha': 8.2.3
@@ -157,6 +173,11 @@ importers:
       '@itwin/core-bentley': ^3.3.0
       '@itwin/core-common': ^3.3.0
       '@itwin/eslint-plugin': ^3.3.0
+      '@itwin/build-tools': ^3.7.0
+      '@itwin/certa': ^3.7.0
+      '@itwin/core-bentley': ^3.7.0
+      '@itwin/core-common': ^3.7.0
+      '@itwin/eslint-plugin': ^3.7.0
       '@playwright/test': ~1.31.2
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7
@@ -185,6 +206,10 @@ importers:
       '@itwin/core-bentley': 3.7.3
       '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
+      '@itwin/build-tools': 3.7.3
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
       '@types/mocha': 8.2.3
@@ -205,6 +230,10 @@ importers:
       '@itwin/core-bentley': ^3.3.0
       '@itwin/core-common': ^3.3.0
       '@itwin/eslint-plugin': ^3.3.0
+      '@itwin/build-tools': ^3.7.0
+      '@itwin/core-bentley': ^3.7.0
+      '@itwin/core-common': ^3.7.0
+      '@itwin/eslint-plugin': ^3.7.0
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7
       '@types/jsonwebtoken': ^8.5.9
@@ -228,6 +257,10 @@ importers:
       openid-client: 4.9.1
     devDependencies:
       '@itwin/build-tools': 4.0.0-dev.81
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
+      '@itwin/build-tools': 3.7.3
       '@itwin/core-bentley': 3.7.3
       '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
@@ -620,6 +653,31 @@ packages:
 
   /@itwin/certa/3.7.3:
     resolution: {integrity: sha512-ZPwE74OZWanoYJqPX7AYnHP1H9LrxuwaXXrslbMPYcRZwy8VL5x0Vsn3wsE+/Td3UDSfnhBKD3sf1l7EynKMgQ==}
+  /@itwin/build-tools/3.7.3:
+    resolution: {integrity: sha512-iKOiwxsJeUE+dhATSmwEsoGDuQfprv/nWkxSQ1bYv4/ZKxJtGS/24pEss42SgTFL6LYF5gIaD1ajZANOGFyILg==}
+    hasBin: true
+    dependencies:
+      '@microsoft/api-extractor': 7.23.2
+      chalk: 3.0.0
+      cpx2: 3.0.2
+      cross-spawn: 7.0.3
+      fs-extra: 8.1.0
+      glob: 7.2.3
+      mocha: 10.2.0
+      mocha-junit-reporter: 2.2.0_mocha@10.2.0
+      rimraf: 3.0.2
+      tree-kill: 1.2.2
+      typedoc: 0.22.18_typescript@4.4.4
+      typedoc-plugin-merge-modules: 3.1.0_typedoc@0.22.18
+      typescript: 4.4.4
+      wtfnode: 0.9.1
+      yargs: 17.7.1
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@itwin/certa/3.7.3:
+    resolution: {integrity: sha512-ZPwE74OZWanoYJqPX7AYnHP1H9LrxuwaXXrslbMPYcRZwy8VL5x0Vsn3wsE+/Td3UDSfnhBKD3sf1l7EynKMgQ==}
     hasBin: true
     peerDependencies:
       electron: '>=14.0.0 <18.0.0 || >=22.0.0 <24.0.0'
@@ -652,10 +710,26 @@ packages:
 
   /@itwin/core-bentley/3.7.3:
     resolution: {integrity: sha512-R9sHLEC/B0OmxhJm4KbOFSrzIeV2UnmuoL8d+QB/HfPI/OXTLZ5j3Q3QT1iTiRtPtqcM/XLHJpFgxSALkSwjyQ==}
+  /@itwin/cloud-agnostic-core/1.6.0:
+    resolution: {integrity: sha512-IKj3lxaVQqGezz7bkFjKEf9g7Bk4i2cu2aCJsd9HnV2gn79lo8oU0UiPJ+kuVtMsEcN/yRq/EXk/IR/VnNkLKA==}
+    engines: {node: '>=12.20 <19.0.0'}
+    dependencies:
+      inversify: 5.0.5
+      reflect-metadata: 0.1.13
+    dev: true
+
+  /@itwin/core-bentley/3.6.1:
+    resolution: {integrity: sha512-GfCKBOuiVKuJYztJo9tZe3ZJTWeZ7mMOPtkPz0HVzRO1Xsl6wjCeP/cOUij5DamsmRySRNA8rKuxtYOw0Rq/ZA==}
     dev: true
 
   /@itwin/core-common/3.7.3_@itwin+core-bentley@3.7.3:
     resolution: {integrity: sha512-LakJIV0Df5Gq4jOHnQrqQvlKTTqssyhe6eLg4Xi9Ro9+0rM6fvXhMNPrPbMsUI+7Enn8LbVqZcv1VY/y6sisKg==}
+  /@itwin/core-bentley/3.7.3:
+    resolution: {integrity: sha512-R9sHLEC/B0OmxhJm4KbOFSrzIeV2UnmuoL8d+QB/HfPI/OXTLZ5j3Q3QT1iTiRtPtqcM/XLHJpFgxSALkSwjyQ==}
+    dev: true
+
+  /@itwin/core-common/3.6.1_@itwin+core-bentley@3.6.1:
+    resolution: {integrity: sha512-2CiU+Vk5SFuaOGmQfZoz4WFxAN1Dr3/K3yu9rhCnJj0CTj8DVIi7LSlv5cTXhfA96J0Tza7BPEWfZugeawGRZw==}
     peerDependencies:
       '@itwin/core-bentley': ^3.7.3
       '@itwin/core-geometry': ^3.7.3
@@ -671,6 +745,23 @@ packages:
 
   /@itwin/eslint-plugin/3.7.3_eslint@7.32.0+typescript@4.3.5:
     resolution: {integrity: sha512-PCBRiRu6wbNG4y2HDCL90T0ltrvHE6ziWBasK0n7DcQhEWpijU45L5NVFK3blrztF6tOGDmMsTjHPxUqn67orA==}
+  /@itwin/core-common/3.7.3_@itwin+core-bentley@3.7.3:
+    resolution: {integrity: sha512-LakJIV0Df5Gq4jOHnQrqQvlKTTqssyhe6eLg4Xi9Ro9+0rM6fvXhMNPrPbMsUI+7Enn8LbVqZcv1VY/y6sisKg==}
+    peerDependencies:
+      '@itwin/core-bentley': ^3.7.3
+      '@itwin/core-geometry': ^3.7.3
+    dependencies:
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/object-storage-core': 1.6.0
+      flatbuffers: 1.12.0
+      js-base64: 3.7.5
+      semver: 7.3.8
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
+  /@itwin/eslint-plugin/3.6.1_eslint@7.32.0+typescript@4.3.5:
+    resolution: {integrity: sha512-kqsjp318uc9CgB1XgZWAigTKFIVJhgQ72WnR4YsveZ0gfRFWfXz5/n8SslQOaQhRiy13AW13pKURM/q6/PQMWA==}
     hasBin: true
     peerDependencies:
       eslint: ^7.0.0
@@ -698,6 +789,35 @@ packages:
   /@itwin/object-storage-core/1.6.0:
     resolution: {integrity: sha512-6X6YZ5E/kSJJlKQm7+xluzBGBGPILlEmEfzBgEcDqEwABS214OcKU74kW5mfrB6AiNXKZ2RkxfafW/ZpYi24fg==}
     engines: {node: '>=12.20 <19.0.0'}
+  /@itwin/eslint-plugin/3.7.3_eslint@7.32.0+typescript@4.3.5:
+    resolution: {integrity: sha512-PCBRiRu6wbNG4y2HDCL90T0ltrvHE6ziWBasK0n7DcQhEWpijU45L5NVFK3blrztF6tOGDmMsTjHPxUqn67orA==}
+    hasBin: true
+    peerDependencies:
+      eslint: ^7.0.0
+      typescript: ^3.7.0 || ^4.0.0
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 4.31.2_1ff229bad5b3f782209b865beb048324
+      '@typescript-eslint/parser': 4.31.2_eslint@7.32.0+typescript@4.3.5
+      eslint: 7.32.0
+      eslint-import-resolver-node: 0.3.4
+      eslint-import-resolver-typescript: 2.7.1_ee2ddb12623c985c36290f985ad5559c
+      eslint-plugin-deprecation: 1.2.1_eslint@7.32.0+typescript@4.3.5
+      eslint-plugin-import: 2.23.4_eslint@7.32.0
+      eslint-plugin-jam3: 0.2.3
+      eslint-plugin-jsdoc: 35.1.3_eslint@7.32.0
+      eslint-plugin-jsx-a11y: 6.4.1_eslint@7.32.0
+      eslint-plugin-prefer-arrow: 1.2.3_eslint@7.32.0
+      eslint-plugin-react: 7.32.2_eslint@7.32.0
+      eslint-plugin-react-hooks: 4.6.0_eslint@7.32.0
+      require-dir: 1.2.0
+      typescript: 4.3.5
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@itwin/object-storage-core/1.4.0:
+    resolution: {integrity: sha512-ixAgmeLuz3y34SyIDZbNNAfJBgfyqLjQZP0g8maLMd5TGcpU7ZNykA9Gtx1chSJcxUM+J3U7uaLBjULPkTtr7g==}
+    engines: {node: '>=12.20 <17.0.0'}
     dependencies:
       '@itwin/cloud-agnostic-core': 1.6.0
       axios: 0.27.2
@@ -709,6 +829,20 @@ packages:
 
   /@jridgewell/gen-mapping/0.3.3:
     resolution: {integrity: sha512-HLhSWOLRi875zjjMG/r+Nv0oCW8umGb0BgEhyX3dDX3egwZtB8PqLnjz3yedt8R5StBrzcg4aBpnh8UA9D1BoQ==}
+  /@itwin/object-storage-core/1.6.0:
+    resolution: {integrity: sha512-6X6YZ5E/kSJJlKQm7+xluzBGBGPILlEmEfzBgEcDqEwABS214OcKU74kW5mfrB6AiNXKZ2RkxfafW/ZpYi24fg==}
+    engines: {node: '>=12.20 <19.0.0'}
+    dependencies:
+      '@itwin/cloud-agnostic-core': 1.6.0
+      axios: 0.27.2
+      inversify: 5.0.5
+      reflect-metadata: 0.1.13
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
+  /@jridgewell/gen-mapping/0.1.1:
+    resolution: {integrity: sha512-sQXCasFk+U8lWYEe66WxRDOE9PjVz4vSM51fTu3Hw+ClTpUSQb718772vH3pyS5pShp6lvQM7SxgIDXXXmOX7w==}
     engines: {node: '>=6.0.0'}
     dependencies:
       '@jridgewell/set-array': 1.1.2
@@ -2316,6 +2450,16 @@ packages:
       get-intrinsic: 1.2.0
     dev: true
 
+  /array.prototype.tosorted/1.1.1:
+    resolution: {integrity: sha512-pZYPXPRl2PqWcsUs6LOMn+1f1532nEoPTYowBtqLwAW+W8vSVhkIGnmOX1t/UQjD6YGI0vcD2B1U7ZFGQH9jnQ==}
+    dependencies:
+      call-bind: 1.0.2
+      define-properties: 1.2.0
+      es-abstract: 1.21.1
+      es-shim-unscopables: 1.0.0
+      get-intrinsic: 1.2.0
+    dev: true
+
   /assertion-error/1.1.0:
     resolution: {integrity: sha512-jgsaNduz+ndvGyFt3uSuWqvy4lCnIJiovtouQN5JZHOKCS2QuhEdbcQHFhVksz2N2U9hXJo8odG7ETyWlEeuDw==}
     dev: true
@@ -3410,6 +3554,41 @@ packages:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
     dependencies:
       eslint: 7.32.0
+    dev: true
+
+  /eslint-plugin-react/7.32.2_eslint@7.32.0:
+    resolution: {integrity: sha512-t2fBMa+XzonrrNkyVirzKlvn5RXzzPwRHtMvLAtVZrt8oxgnTQaYbU6SXTOO1mwQgp1y5+toMSKInnzGr0Knqg==}
+  /eslint-plugin-react-hooks/4.6.0_eslint@7.32.0:
+    resolution: {integrity: sha512-oFc7Itz9Qxh2x4gNHStv3BqJq54ExXmfC+a1NjAta66IAN87Wu0R/QArgIS9qKzX3dXKPI9H5crl9QchNMY9+g==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0
+    dependencies:
+      eslint: 7.32.0
+    dev: true
+
+  /eslint-plugin-react/7.24.0_eslint@7.32.0:
+    resolution: {integrity: sha512-KJJIx2SYx7PBx3ONe/mEeMz4YE0Lcr7feJTCMyyKb/341NcjuAgim3Acgan89GfPv7nxXK2+0slu0CWXYM4x+Q==}
+    engines: {node: '>=4'}
+    peerDependencies:
+      eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
+    dependencies:
+      array-includes: 3.1.6
+      array.prototype.flatmap: 1.3.1
+      array.prototype.tosorted: 1.1.1
+      doctrine: 2.1.0
+      eslint: 7.32.0
+      estraverse: 5.3.0
+      jsx-ast-utils: 3.3.3
+      minimatch: 3.1.2
+      object.entries: 1.1.6
+      object.fromentries: 2.0.6
+      object.hasown: 1.1.2
+      object.values: 1.1.6
+      prop-types: 15.8.1
+      resolve: 2.0.0-next.4
+      semver: 6.3.0
+      string.prototype.matchall: 4.0.8
     dev: true
 
   /eslint-plugin-react/7.32.2_eslint@7.32.0:
@@ -5393,6 +5572,13 @@ packages:
     dependencies:
       define-properties: 1.2.0
       es-abstract: 1.21.2
+    dev: true
+
+  /object.hasown/1.1.2:
+    resolution: {integrity: sha512-B5UIT3J1W+WuWIU55h0mjlwaqxiE5vYENJXIXZ4VFe05pNYrkKuK0U/6aFcb0pKywYJh7IhfoqUfKVmrJJHZHw==}
+    dependencies:
+      define-properties: 1.2.0
+      es-abstract: 1.21.1
     dev: true
 
   /object.values/1.1.6:
