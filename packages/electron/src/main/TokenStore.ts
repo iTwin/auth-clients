@@ -37,6 +37,7 @@ export class RefreshTokenStore {
       }
       catch {
         // errors occur in testing when using asynchronous call
+        // https://github.com/iTwin/auth-clients/issues/163
         this._userName = OperatingSystemUserName.sync();
       }
     }
