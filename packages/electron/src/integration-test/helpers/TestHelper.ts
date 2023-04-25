@@ -24,8 +24,17 @@ export class TestHelper {
     console.log("clicked sign out");
   }
 
+  public async checkStatus(electronPage: Page, expected: boolean) {
+    await electronPage.waitForSelector("button#getStatus");
+    const button = electronPage.getByTestId("getStatus");
+    await button.click();
+    await electronPage.waitForSelector("h2#status");
+    const status = await electronPage.getByTestId("status").innerText();
+    expect(status).toContain(expected ? "signed in" : "signed out");
+    console.log(status);
+  }
+
   public async signIn(page: Page, url: string) {
-    expect(url).toBeDefined();
     page.goto(url);
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
@@ -36,7 +45,7 @@ export class TestHelper {
     if (consentUrl.endsWith("resume/as/authorization.ping")) {
       await this.handleConsentScreen(page);
     }
-}
+  }
 
   private async handleConsentScreen(page: Page) {
     const consentAcceptButton = page.getByRole("link", {

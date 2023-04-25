@@ -54,8 +54,10 @@ test('buttons exist', async () => {
   electronPage.waitForLoadState('domcontentloaded');
   const signInButton = electronPage.getByTestId('signIn');
   const signOutButton = electronPage.getByTestId('signOut');
+  const getStatusButton = electronPage.getByTestId('getStatus');
   await expect(signInButton).toBeVisible();
   await expect(signOutButton).toBeVisible();
+  await expect(getStatusButton).toBeVisible();
 });
 
 test('sign in successful', async ({ browser }) => {
@@ -73,8 +75,7 @@ test('sign in successful', async ({ browser }) => {
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await urlWhenClicked);
   await page.waitForLoadState('networkidle');
-  const accessToken = await tokenStore.load();
-  expect(accessToken).toBeDefined();
+  await testHelper.checkStatus(electronPage, true);
   page.close();
 });
 
@@ -82,7 +83,6 @@ test('sign out successful', async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignOut(electronPage);
   await page.waitForLoadState('networkidle');
-  const accessToken = await tokenStore.load();
-  expect(accessToken).toBeUndefined();
+  await testHelper.checkStatus(electronPage, false);
   page.close();
 });

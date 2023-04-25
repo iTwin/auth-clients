@@ -13,6 +13,7 @@ auth.onAccessTokenChanged.addListener((token: string) => {
 
 const signOutButton = document.getElementById("signOut");
 const signInButton = document.getElementById("signIn");
+const getStatusButton = document.getElementById("getStatus");
 
 signOutButton?.addEventListener("click", async () => {
   console.log("clicked sign out");
@@ -30,4 +31,11 @@ signInButton?.addEventListener("click", async () => {
   } catch (error) {
     console.log(error);
   }
+});
+
+getStatusButton?.addEventListener("click", async () => {
+  console.log("clicked token status");
+  const message: HTMLElement | null = document.getElementById('status');
+  if (message)
+    message.textContent = `Status: signed ${auth.isAuthorized ? "in" : "out"}`;
 });
