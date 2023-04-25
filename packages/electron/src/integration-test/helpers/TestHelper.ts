@@ -24,13 +24,13 @@ export class TestHelper {
     console.log("clicked sign out");
   }
 
-  public async checkStatus(electronPage: Page, expected: boolean) {
+  public async checkStatus(electronPage: Page, expectedStatus: boolean) {
     await electronPage.waitForSelector("button#getStatus");
     const button = electronPage.getByTestId("getStatus");
     await button.click();
     await electronPage.waitForSelector("h2#status");
     const status = await electronPage.getByTestId("status").innerText();
-    expect(status).toContain(expected ? "signed in" : "signed out");
+    expect(status).toContain(expectedStatus ? "signed in" : "signed out");
     console.log(status);
   }
 

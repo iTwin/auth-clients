@@ -16,7 +16,7 @@ const signInOptions: SignInOptions = {
   clientId,
   email,
   password,
-  envPrefix: envPrefix || "",
+  envPrefix
 };
 
 let electronApp: ElectronApplication;
@@ -31,6 +31,18 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
   }
   issuerUrl = authority.href.replace(/\/$/, "");
   return `iTwinJs:${clientId}:${issuerUrl}`;
+}
+
+async function getUrl(electronApp: ElectronApplication): Promise<string> {
+  return await electronApp.evaluate<string>(async ({ shell }) => {
+    return new Promise((resolve) => {
+      shell.openExternal = async (url: string) => {
+        return resolve(url);
+      };
+    });
+    // This runs in the main Electron process, parameter here is always
+    // the result of the require('electron') in the main app script.
+  });
 }
 
 test.beforeEach(async () => {
@@ -61,19 +73,9 @@ test('buttons exist', async () => {
 });
 
 test('sign in successful', async ({ browser }) => {
-  const urlWhenClicked = electronApp.evaluate<string>(async ({ shell }) => {
-    return new Promise((resolve) => {
-      shell.openExternal = async (url: string) => {
-        return resolve(url);
-      };
-    });
-    // This runs in the main Electron process, parameter here is always
-    // the result of the require('electron') in the main app script.
-  });
-
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
-  await testHelper.signIn(page, await urlWhenClicked);
+  await testHelper.signIn(page, await getUrl(electronApp));
   await page.waitForLoadState('networkidle');
   await testHelper.checkStatus(electronPage, true);
   page.close();
@@ -81,6 +83,11 @@ test('sign in successful', async ({ browser }) => {
 
 test('sign out successful', async ({ browser }) => {
   const page = await browser.newPage();
+  await testHelper.clickSignIn(electronPage);
+  await testHelper.signIn(page, await getUrl(electronApp));
+  await page.waitForLoadState('networkidle');
+  await testHelper.checkStatus(electronPage, true);
+
   await testHelper.clickSignOut(electronPage);
   await page.waitForLoadState('networkidle');
   await testHelper.checkStatus(electronPage, false);

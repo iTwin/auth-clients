@@ -36,6 +36,7 @@ export class RefreshTokenStore {
         this._userName = await OperatingSystemUserName();
       }
       catch {
+        // errors occur in testing when using asynchronous call
         this._userName = OperatingSystemUserName.sync();
       }
     }
