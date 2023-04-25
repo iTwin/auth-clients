@@ -1,3 +1,8 @@
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
+
 import { ElectronApplication, Page, expect, test } from "@playwright/test";
 import { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
