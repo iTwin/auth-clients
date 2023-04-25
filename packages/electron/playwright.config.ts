@@ -9,6 +9,7 @@ const config: PlaywrightTestConfig = {
   testDir: './src/integration-test',
   timeout: 60000,
   maxFailures: 2,
+  workers: 1,
   use: {
     screenshot: "only-on-failure",
   },

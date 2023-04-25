@@ -33,8 +33,6 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
   return `iTwinJs:${clientId}:${issuerUrl}`;
 }
 
-test.describe.configure({ mode: 'serial' });
-
 test.beforeEach(async () => {
   try {
     await tokenStore.delete();
