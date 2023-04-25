@@ -59,6 +59,7 @@ importers:
       '@itwin/core-common': ^3.3.0
       '@itwin/eslint-plugin': ^3.3.0
       '@openid/appauth': ^1.3.1
+      '@playwright/test': ~1.31.2
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7
       '@types/mocha': ^8.2.3
@@ -74,6 +75,7 @@ importers:
       nyc: ^15.1.0
       parcel: ~2.8.3
       path-browserify: ~1.0.1
+      playwright: ~1.31.2
       process: ~0.11.10
       rimraf: ^3.0.2
       sinon: ^15.0.1
@@ -89,6 +91,7 @@ importers:
       '@itwin/core-bentley': 3.6.1
       '@itwin/core-common': 3.6.1_@itwin+core-bentley@3.6.1
       '@itwin/eslint-plugin': 3.6.1_eslint@7.32.0+typescript@4.3.5
+      '@playwright/test': 1.31.2
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
       '@types/mocha': 8.2.3
@@ -103,6 +106,7 @@ importers:
       nyc: 15.1.0
       parcel: 2.8.3
       path-browserify: 1.0.1
+      playwright: 1.31.2
       process: 0.11.10
       rimraf: 3.0.2
       sinon: 15.0.1
@@ -5483,6 +5487,15 @@ packages:
     resolution: {integrity: sha512-a1dFgCNQw4vCsG7bnojZjDnPewZcw7tZUNFN0ZkcLYKj+mPmXvg4MpaaKZ5SgqPsOmqIf2YsVRkgqiRDxD+fDQ==}
     engines: {node: '>=14'}
     hasBin: true
+
+  /playwright/1.31.2:
+    resolution: {integrity: sha512-jpC47n2PKQNtzB7clmBuWh6ftBRS/Bt5EGLigJ9k2QAKcNeYXZkEaDH5gmvb6+AbcE0DO6GnXdbl9ogG6Eh+og==}
+    engines: {node: '>=14'}
+    hasBin: true
+    requiresBuild: true
+    dependencies:
+      playwright-core: 1.31.2
+    dev: true
 
   /postcss-value-parser/4.2.0:
     resolution: {integrity: sha512-1NNCs6uurfkVbeXG4S8JFT9t19m45ICnif8zWLd5oPSZ50QnwMfK+H3jv408d4jw/7Bttv5axS5IiHoLaVNHeQ==}

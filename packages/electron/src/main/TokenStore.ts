@@ -31,8 +31,16 @@ export class RefreshTokenStore {
   }
 
   private async getUserName(): Promise<string | undefined> {
-    if (!this._userName)
-      this._userName = await OperatingSystemUserName();
+    if (!this._userName) {
+      try {
+        this._userName = await OperatingSystemUserName();
+      }
+      catch {
+        // errors occur in testing when using asynchronous call
+        // https://github.com/iTwin/auth-clients/issues/163
+        this._userName = OperatingSystemUserName.sync();
+      }
+    }
 
     return this._userName;
   }
