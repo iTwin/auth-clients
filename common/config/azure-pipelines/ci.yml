@@ -85,16 +85,9 @@ stages:
         parameters:
           shouldPublish: ${{ parameters.shouldPublish }}
 
-      # Publish documentation
-      - ${{ if eq(parameters.shouldPublish, true) }}:
-        - template: templates/build-docs.yaml
-          parameters:
-            shouldPublish: true
-
       # Build and publish documentation as pipeline artifacts
       # This relies on variables set from within the publish template above,
       # one for each package published.
-      - ${{ if eq(parameters.shouldPublish, true) }}:
-        - template: templates/build-docs.yaml
-          parameters:
-            shouldPublish: true
+      - template: templates/build-docs.yaml
+        parameters:
+          shouldPublish: ${{ parameters.shouldPublish }}
