@@ -19,7 +19,6 @@ steps:
       allowFailedBuilds: true
       artifactName: "iTwin-Auth-Clients Docs"
       targetPath: "$(Build.StagingDirectory)/docs"
-    condition: and(succeeded())
 
   - script: |
       node common/scripts/install-run-rush.js docs --only service-authorization
