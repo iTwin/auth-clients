@@ -10,8 +10,7 @@
     "lint": "echo NOTE: use 'rush lint' instead",
     "test": "echo NOTE: use 'rush test' instead",
     "test:integration": "echo NOTE: use 'rush test:integration' instead",
-    "preinstall": "echo ERROR: use 'rush install' instead && exit 1",
-    "docs:copy:core": "cp "
+    "preinstall": "echo ERROR: use 'rush install' instead && exit 1"
   },
   "keywords": [
     "Bentley",

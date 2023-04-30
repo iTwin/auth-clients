@@ -17,4 +17,10 @@ steps:
       node common/scripts/handleNextVersion.js "$(Agent.TempDirectory)/versions-before.txt" "$(Agent.TempDirectory)/versions-after.txt"
     displayName: Add Release Notes
     name: releaseNotes
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
+
+  - script: node common/scripts/install-run-rush.js publish --publish -a -b main --set-access-level public
+    displayName: rush publish package
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
+    env:
+      NPM_AUTH_TOKEN: $(npmToken)
