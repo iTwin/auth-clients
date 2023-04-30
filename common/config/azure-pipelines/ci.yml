@@ -90,10 +90,6 @@ stages:
         - template: templates/build-docs.yaml
           parameters:
             shouldPublish: true
-            browser: ${{variables.browser}}
-            service: ${{variables.service}}
-            electron: ${{variables.electron}}
-            "node-cli": ${{variables.nodeCli}}
 
       # Build and publish documentation as pipeline artifacts
       # This relies on variables set from within the publish template above,
