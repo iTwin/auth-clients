@@ -1,5 +1,4 @@
-# Taken from https://github.com/iTwin/itwinjs-core/blob/master/common/scripts/create_release.py
-# Altered for repositories out of lockstep
+# Adapted from https://github.com/iTwin/itwinjs-core/blob/master/common/scripts/create_release.py
 import glob
 import json
 import os
@@ -53,15 +52,12 @@ def createRelease(tag):
         releaseType = "Major"
 
     print("Generating {0} release notes".format(releaseType.lower()))
+    latest_changes = ""
 
     if releaseType == "Patch":
         # Write release to file to preview
-        fileName = currentTag + ".md"
-        if os.path.exists(fileName):
-            os.remove(fileName)
 
-        f = open(fileName, "w")
-        f.write("# Release notes\n\n")
+        latest_changes += "# Release notes\n\n"
 
         # Determine previous tag and version
         cmd = ['git', 'describe', '--abbrev=0', '--tags', tag + '~1']
@@ -86,14 +82,12 @@ def createRelease(tag):
         commits = proc.communicate()[0].decode("utf-8").split()[1:]
 
         # Write commit messages to release notes
-        f.write("## Changes\n\n")
+        latest_changes += "## Changes\n\n"
         for commit in commits[::-1]:
-            f.write("- {0}\n".format(getCommitMessage(commit)))
-        f.write("\n")
-        f.write("**Full changelog:** [{0}...{1}](https://github.com/iTwin/auth-clients/compare/{2}...{3})\n".format(
-            previousVer, currentVer, previousTag, tag))
-
-        f.close()
+            latest_changes += "- {0}\n".format(getCommitMessage(commit))
+        latest_changes += "\n"
+        latest_changes += "**Full changelog:** [{0}...{1}](https://github.com/iTwin/auth-clients/compare/{2}...{3})\n".format(
+            previousVer, currentVer, previousTag, tag)
 
     else:
         # If not in lockstep, we need to identify the folder with the package we're interested in
@@ -109,9 +103,8 @@ def createRelease(tag):
 
                 if packageJsonName == packageName:
                     packageBaseDirectory = os.path.dirname(fullPath)
-                    fileName = "{0}/release-notes/{1}.md".format(packageBaseDirectory,
-                                                                 currentTag)
-                    print("Found package.json: {0} matching: {1} at: {2}.".format(
+                    fileName = "{0}/changelog.md".format(packageBaseDirectory)
+                    print("Found changelog.md: {0} matching: {1} at: {2}.".format(
                         packageJsonName, packageName, packageBaseDirectory))
 
                     break
@@ -121,8 +114,21 @@ def createRelease(tag):
         raise Exception(
             "Attempting to create release with notes from file {0}, but the file does not exist".format(fileName))
 
-    cmd = ['gh', 'release', 'create', tag, '-F', './' +
-           fileName, '-t', '"{0}"'.format(currentTag)]
+    with open(fileName, 'r') as file:
+        changelog = file.read()
+
+        # Find the latest version and changes
+        latest_version = re.findall(r'## (\d+\.\d+\.\d+)\n', changelog)[0]
+        latest_changes = re.findall(
+            r'## ' + latest_version + r'([\s\S]*?)(?=## \d+\.\d+\.\d+|\Z)', changelog)[0]
+
+        # Print the latest version and changes
+        print("Latest Version: " + latest_version)
+        print("Latest Changes:\n" + latest_changes)
+
+    cmd = ['gh', 'release', 'create', tag, '-n',
+           latest_changes, '-t', '"{0}"'.format(currentTag)]
+
     proc = subprocess.Popen(
         " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
     proc.wait()

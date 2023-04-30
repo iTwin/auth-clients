@@ -13,8 +13,8 @@ steps:
       echo "creating post-bump version snapshot"
       node common/scripts/install-run-rush.js list --json > "$(Agent.TempDirectory)/versions-after.txt"
 
-      # Next version dance
-      node common/scripts/handleNextVersion.js "$(Agent.TempDirectory)/versions-before.txt" "$(Agent.TempDirectory)/versions-after.txt"
+      # outputs vso variables for each package published
+      node common/scripts/determinePublishedPackages.js "$(Agent.TempDirectory)/versions-before.txt" "$(Agent.TempDirectory)/versions-after.txt"
     displayName: Add Release Notes
     name: releaseNotes
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
