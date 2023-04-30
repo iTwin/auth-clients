@@ -15,7 +15,7 @@ import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 import { getImsAuthority } from "./utils";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { User, UserManagerSettings } from "oidc-client-ts";
-import type { BrowserAuthorizationClientConfiguration, BrowserAuthorizationClientConfigurationOptions, BrowserAuthorizationClientRedirectState, BrowserAuthorizationClientRequestOptions } from "./types";
+import type { BrowserAuthorizationClientConfiguration, BrowserAuthorizationClientConfigurationOptions, BrowserAuthorizationClientRedirectState, BrowserAuthorizationClientRequestOptions, SettingsInStorage } from "./types";
 
 /** BrowserAuthorization type guard.
  * @beta
@@ -416,5 +416,42 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     errorMessage = `SigninCallback error - failed to process signin request in callback using all known modes of token delivery: ${errorMessage}`;
     UnexpectedErrors.handle(new Error(errorMessage));
+  }
+
+  /**
+   * Configuration-less sign in callback. Useful for when a client instance with configuration is not present
+   * on the page or route where the callback is needed to finish the authentication process. Pulls configuration
+   * from localStorage.
+   *
+   * @param store - A Storage object such as sessionStorage which stores configuration. Defaults to localStorage
+   * which is also the default stateStore for this library. These stores should match.
+   */
+  public static async handleSignInCallback(store: Storage = window.localStorage) {
+    const staticClient = new BrowserAuthorizationClient({} as any);
+    this.loadSettingsFromStorage(staticClient, store);
+    await staticClient.handleSigninCallback();
+  }
+
+  private static loadSettingsFromStorage(
+    client: BrowserAuthorizationClient,
+    store: Storage
+  ) {
+    const url = new URL(window.location.href);
+    const nonce = url.searchParams.get("state");
+
+    const storageEntry = store.getItem(`oidc.${nonce}`);
+    if (!storageEntry)
+      throw new Error("Could not load oidc settings from local storage. Ensure the client is configured properly");
+
+    const storageObject: SettingsInStorage = JSON.parse(storageEntry);
+
+    const transformed = {
+      ...storageObject,
+      clientId: storageObject.client_id,
+      redirectUri: storageObject.redirect_uri,
+      authority: storageObject.authority,
+    };
+
+    client._basicSettings = transformed;
   }
 }
