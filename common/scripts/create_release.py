@@ -40,81 +40,36 @@ def createRelease(tag):
     currentTag = tag.split("/")[1]
     print("current ver: {0} / currentTag: {1} / packageName: {2}".format(
         currentVer, currentTag, packageName))
-    fileName = ""
-    parsedVer = [int(i) for i in currentVer.split(".")]
+    changeLogFileName = ""
 
-    # Determine release type
-    if parsedVer[2] > 0:
-        releaseType = "Patch"
-    elif parsedVer[1] > 0:
-        releaseType = "Minor"
-    else:
-        releaseType = "Major"
+    # If not in lockstep, we need to identify the folder with the package we're interested in
+    # Look for all package.json files and find the one with a name which matches the input tag
+    results = glob.glob("**/package.json", recursive=True)
+    results = filter(lambda x: not re.search("node_modules", x), results)
+    packageBaseDirectory = ""
+    for result in results:
+        fullPath = os.path.join(os.getcwd(), result)
+        with open(fullPath) as json_file:
+            packageJson = json.load(json_file)
+            packageJsonName = packageJson["name"]
 
-    print("Generating {0} release notes".format(releaseType.lower()))
-    latest_changes = ""
+            if packageJsonName == packageName:
+                packageBaseDirectory = os.path.dirname(fullPath)
+                changeLogFileName = "{0}/changelog.md".format(
+                    packageBaseDirectory)
+                print("Found changelog.md: {0} matching: {1} at: {2}.".format(
+                    packageJsonName, packageName, packageBaseDirectory))
 
-    if releaseType == "Patch":
-        # Write release to file to preview
+                break
 
-        latest_changes += "# Release notes\n\n"
-
-        # Determine previous tag and version
-        cmd = ['git', 'describe', '--abbrev=0', '--tags', tag + '~1']
-        proc = subprocess.Popen(
-            " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
-        previousTag = proc.communicate()[0].decode("utf-8").strip()
-        if (len(previousTag) == 0):
-            sys.exit("Could not find previous tag for " + tag)
-
-        previousVer = previousTag.split("/")[1]
-
-        # Get SHAs for both tags
-        previousSHA = getSHAFromTag(previousTag)
-        currentSHA = getSHAFromTag(tag)
-
-        # Get all commit SHAs between tags
-        cmd = ['git', 'rev-list', '--ancestry-path',
-               previousSHA + '..' + currentSHA]
-        proc = subprocess.Popen(
-            " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
-        # Remove first commit from this list as it will always be a version bump commit
-        commits = proc.communicate()[0].decode("utf-8").split()[1:]
-
-        # Write commit messages to release notes
-        latest_changes += "## Changes\n\n"
-        for commit in commits[::-1]:
-            latest_changes += "- {0}\n".format(getCommitMessage(commit))
-        latest_changes += "\n"
-        latest_changes += "**Full changelog:** [{0}...{1}](https://github.com/iTwin/auth-clients/compare/{2}...{3})\n".format(
-            previousVer, currentVer, previousTag, tag)
-
-    else:
-        # If not in lockstep, we need to identify the folder with the package we're interested in
-        # Look for all package.json files and find the one with a name which matches the input tag
-        results = glob.glob("**/package.json", recursive=True)
-        results = filter(lambda x: not re.search("node_modules", x), results)
-        packageBaseDirectory = ""
-        for result in results:
-            fullPath = os.path.join(os.getcwd(), result)
-            with open(fullPath) as json_file:
-                packageJson = json.load(json_file)
-                packageJsonName = packageJson["name"]
-
-                if packageJsonName == packageName:
-                    packageBaseDirectory = os.path.dirname(fullPath)
-                    fileName = "{0}/changelog.md".format(packageBaseDirectory)
-                    print("Found changelog.md: {0} matching: {1} at: {2}.".format(
-                        packageJsonName, packageName, packageBaseDirectory))
-
-                    break
-
-    print("Publishing GitHub release using notes from {0}".format(fileName))
-    if not os.path.exists(fileName):
+    print("Publishing GitHub release using notes from {0}".format(
+        changeLogFileName))
+    if not os.path.exists(changeLogFileName):
         raise Exception(
-            "Attempting to create release with notes from file {0}, but the file does not exist".format(fileName))
+            "Attempting to create release with notes from file {0}, but the file does not exist".format(changeLogFileName))
 
-    with open(fileName, 'r') as file:
+    latest_changes = ""
+    with open(changeLogFileName, 'r') as file:
         changelog = file.read()
 
         # Find the latest version and changes
@@ -127,7 +82,7 @@ def createRelease(tag):
         print("Latest Changes:\n" + latest_changes)
 
     cmd = ['gh', 'release', 'create', tag, '-n',
-           latest_changes, '-t', '"{0}"'.format(currentTag)]
+           '"{0}"'.format(latest_changes), '-t', '"{0}"'.format(currentTag)]
 
     proc = subprocess.Popen(
         " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
