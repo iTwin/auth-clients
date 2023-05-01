@@ -4,10 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-/** @packageDocumentation
- * @module Authentication
- */
-
 import * as Http from "http";
 import type { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import type { ElectronAuthorizationEvents } from "./Events";

@@ -4,10 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-/** @packageDocumentation
- * @module Authentication
- */
-
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 

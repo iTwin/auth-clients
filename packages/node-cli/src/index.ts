@@ -3,19 +3,12 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 export * from "./Client";
-export * from "./LoggerCategory";
-export * from "./types";
 
 /** @docs-package-description
- * Provides auth functionality for browser environments using OIDC code flow with PKCE.
+ * Provides auth functionality for node command-line applications.
  */
 
 /**
  * @docs-group-description Authorization
- * For signing a user in and out of an auth service.
- */
-
-/**
- * @docs-group-description Logging
- * Logger categories used by this package.
+ * Classes for signing a user in and out from the command line.
  */

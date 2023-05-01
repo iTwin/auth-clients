@@ -4,10 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-/** @packageDocumentation
- * @module Authentication
- */
-
 import { Logger } from "@itwin/core-bentley";
 import type { AuthorizationErrorJson, AuthorizationRequest, AuthorizationRequestResponse,
   AuthorizationResponseJson, AuthorizationServiceConfiguration} from "@openid/appauth";

@@ -4,6 +4,10 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
+/** @packageDocumentation
+ * @module Authorization
+ */
+
 import * as Http from "http";
 import * as open from "open";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";

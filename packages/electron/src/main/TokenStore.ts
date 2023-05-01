@@ -4,10 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-/** @packageDocumentation
- * @module Authentication
- */
-
 import * as OperatingSystemUserName from "username";
 import { deletePassword, getPassword, setPassword } from "keytar";
 
