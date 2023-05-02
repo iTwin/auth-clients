@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/node-cli-authorization",
+      "comment": "move @itwin/core packages to dependencies",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/node-cli-authorization"
+}

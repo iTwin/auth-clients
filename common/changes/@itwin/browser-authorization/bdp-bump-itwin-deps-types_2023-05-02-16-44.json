@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "move @itwin/core packages to dependencies; 1.0 release",
+      "type": "major"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}

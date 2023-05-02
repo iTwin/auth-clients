@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "comment": "move @itwin/core packages to dependencies",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool"
+}

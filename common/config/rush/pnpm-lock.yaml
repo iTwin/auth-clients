@@ -11,9 +11,9 @@ importers:
 
   ../../packages/browser:
     specifiers:
-      '@itwin/build-tools': ^4.0.0-dev.63
-      '@itwin/core-bentley': ^3.7.0
-      '@itwin/core-common': ^3.7.0
+      '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/core-bentley': 3.0.0 - 4
+      '@itwin/core-common': 3.0.0 - 4
       '@itwin/eslint-plugin': ^3.7.0
       '@playwright/test': ~1.31.2
       '@types/chai': ^4.2.22
@@ -33,11 +33,11 @@ importers:
       sinon: ^15.0.1
       typescript: ~4.3.5
     dependencies:
-      oidc-client-ts: 2.2.3
-    devDependencies:
-      '@itwin/build-tools': 4.0.0-dev.86_@types+node@18.16.0
       '@itwin/core-bentley': 3.7.3
       '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      oidc-client-ts: 2.2.3
+    devDependencies:
+      '@itwin/build-tools': 4.0.0-dev.94_@types+node@18.16.0
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
       '@playwright/test': 1.31.2
       '@types/chai': 4.3.4
@@ -58,9 +58,9 @@ importers:
 
   ../../packages/electron:
     specifiers:
-      '@itwin/build-tools': ^4.0.0-dev.63
-      '@itwin/core-bentley': ^3.3.0
-      '@itwin/core-common': ^3.3.0
+      '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/core-bentley': 3.0.0 - 4
+      '@itwin/core-common': 3.0.0 - 4
       '@itwin/eslint-plugin': ^3.3.0
       '@openid/appauth': ^1.3.1
       '@types/chai': ^4.2.22
@@ -81,13 +81,13 @@ importers:
       typescript: ~4.3.5
       username: ^5.1.0
     dependencies:
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
       '@openid/appauth': 1.3.1
       keytar: 7.9.0
       username: 5.1.0
     devDependencies:
-      '@itwin/build-tools': 4.0.0-dev.86_@types+node@16.18.24
-      '@itwin/core-bentley': 3.7.3
-      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      '@itwin/build-tools': 4.0.0-dev.94_@types+node@16.18.24
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
@@ -107,9 +107,9 @@ importers:
 
   ../../packages/node-cli:
     specifiers:
-      '@itwin/build-tools': ^4.0.0-dev.63
-      '@itwin/core-bentley': ^3.7.0
-      '@itwin/core-common': ^3.7.0
+      '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/core-bentley': 3.0.0 - 4
+      '@itwin/core-common': 3.0.0 - 4
       '@itwin/eslint-plugin': ^3.7.0
       '@openid/appauth': ^1.3.1
       '@types/chai': ^4.2.22
@@ -128,14 +128,14 @@ importers:
       typescript: ~4.3.5
       username: ^5.1.0
     dependencies:
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
       '@openid/appauth': 1.3.1
       keytar: 7.9.0
       open: 8.4.2
       username: 5.1.0
     devDependencies:
-      '@itwin/build-tools': 4.0.0-dev.86_@types+node@18.16.0
-      '@itwin/core-bentley': 3.7.3
-      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      '@itwin/build-tools': 4.0.0-dev.94_@types+node@18.16.0
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
@@ -152,10 +152,10 @@ importers:
 
   ../../packages/oidc-signin-tool:
     specifiers:
-      '@itwin/build-tools': ^4.0.0-dev.63
+      '@itwin/build-tools': ^4.0.0-dev.93
       '@itwin/certa': ^3.7.0
-      '@itwin/core-bentley': ^3.7.0
-      '@itwin/core-common': ^3.7.0
+      '@itwin/core-bentley': 3.0.0 - 4
+      '@itwin/core-common': 3.0.0 - 4
       '@itwin/eslint-plugin': ^3.7.0
       '@playwright/test': ~1.31.2
       '@types/chai': ^4.2.22
@@ -176,14 +176,14 @@ importers:
       typescript: ~4.3.5
     dependencies:
       '@itwin/certa': 3.7.3
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
       '@playwright/test': 1.31.2
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
       openid-client: 4.9.1
     devDependencies:
-      '@itwin/build-tools': 4.0.0-dev.86_@types+node@18.16.0
-      '@itwin/core-bentley': 3.7.3
-      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      '@itwin/build-tools': 4.0.0-dev.94_@types+node@18.16.0
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
@@ -201,9 +201,9 @@ importers:
 
   ../../packages/service:
     specifiers:
-      '@itwin/build-tools': ^4.0.0-dev.63
-      '@itwin/core-bentley': ^3.7.0
-      '@itwin/core-common': ^3.7.0
+      '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/core-bentley': 3.0.0 - 4
+      '@itwin/core-common': 3.0.0 - 4
       '@itwin/eslint-plugin': ^3.7.0
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7
@@ -223,13 +223,13 @@ importers:
       source-map-support: ^0.5.9
       typescript: ~4.3.5
     dependencies:
+      '@itwin/core-bentley': 3.7.3
+      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
       jsonwebtoken: 9.0.0
       jwks-rsa: 2.1.5
       openid-client: 4.9.1
     devDependencies:
-      '@itwin/build-tools': 4.0.0-dev.86
-      '@itwin/core-bentley': 3.7.3
-      '@itwin/core-common': 3.7.3_@itwin+core-bentley@3.7.3
+      '@itwin/build-tools': 4.0.0-dev.94
       '@itwin/eslint-plugin': 3.7.3_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.4
       '@types/chai-as-promised': 7.1.5
@@ -546,8 +546,8 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
-  /@itwin/build-tools/4.0.0-dev.86:
-    resolution: {integrity: sha512-+B/7VzusoYTVZdH0AODsqS0+Yy7P8p7ZqXylKDELRsuYmJHrcdVHdo3Pr+iUJCqmms3dH7oata0wbv5NmCm0HQ==}
+  /@itwin/build-tools/4.0.0-dev.94:
+    resolution: {integrity: sha512-F17W3+II0qwCrZ3htqUAl8b8cKIM3i5m60dMePAWdzd7CBJdjDkbpk/Jei0pI3/aJ0U1TjiYNkfhqzz3auitug==}
     hasBin: true
     dependencies:
       '@microsoft/api-extractor': 7.34.4
@@ -570,8 +570,8 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/build-tools/4.0.0-dev.86_@types+node@16.18.24:
-    resolution: {integrity: sha512-+B/7VzusoYTVZdH0AODsqS0+Yy7P8p7ZqXylKDELRsuYmJHrcdVHdo3Pr+iUJCqmms3dH7oata0wbv5NmCm0HQ==}
+  /@itwin/build-tools/4.0.0-dev.94_@types+node@16.18.24:
+    resolution: {integrity: sha512-F17W3+II0qwCrZ3htqUAl8b8cKIM3i5m60dMePAWdzd7CBJdjDkbpk/Jei0pI3/aJ0U1TjiYNkfhqzz3auitug==}
     hasBin: true
     dependencies:
       '@microsoft/api-extractor': 7.34.4_@types+node@16.18.24
@@ -594,8 +594,8 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/build-tools/4.0.0-dev.86_@types+node@18.16.0:
-    resolution: {integrity: sha512-+B/7VzusoYTVZdH0AODsqS0+Yy7P8p7ZqXylKDELRsuYmJHrcdVHdo3Pr+iUJCqmms3dH7oata0wbv5NmCm0HQ==}
+  /@itwin/build-tools/4.0.0-dev.94_@types+node@18.16.0:
+    resolution: {integrity: sha512-F17W3+II0qwCrZ3htqUAl8b8cKIM3i5m60dMePAWdzd7CBJdjDkbpk/Jei0pI3/aJ0U1TjiYNkfhqzz3auitug==}
     hasBin: true
     dependencies:
       '@microsoft/api-extractor': 7.34.4_@types+node@18.16.0
@@ -648,11 +648,11 @@ packages:
     dependencies:
       inversify: 5.0.5
       reflect-metadata: 0.1.13
-    dev: true
+    dev: false
 
   /@itwin/core-bentley/3.7.3:
     resolution: {integrity: sha512-R9sHLEC/B0OmxhJm4KbOFSrzIeV2UnmuoL8d+QB/HfPI/OXTLZ5j3Q3QT1iTiRtPtqcM/XLHJpFgxSALkSwjyQ==}
-    dev: true
+    dev: false
 
   /@itwin/core-common/3.7.3_@itwin+core-bentley@3.7.3:
     resolution: {integrity: sha512-LakJIV0Df5Gq4jOHnQrqQvlKTTqssyhe6eLg4Xi9Ro9+0rM6fvXhMNPrPbMsUI+7Enn8LbVqZcv1VY/y6sisKg==}
@@ -667,7 +667,7 @@ packages:
       semver: 7.5.0
     transitivePeerDependencies:
       - debug
-    dev: true
+    dev: false
 
   /@itwin/eslint-plugin/3.7.3_eslint@7.32.0+typescript@4.3.5:
     resolution: {integrity: sha512-PCBRiRu6wbNG4y2HDCL90T0ltrvHE6ziWBasK0n7DcQhEWpijU45L5NVFK3blrztF6tOGDmMsTjHPxUqn67orA==}
@@ -705,7 +705,7 @@ packages:
       reflect-metadata: 0.1.13
     transitivePeerDependencies:
       - debug
-    dev: true
+    dev: false
 
   /@jridgewell/gen-mapping/0.3.3:
     resolution: {integrity: sha512-HLhSWOLRi875zjjMG/r+Nv0oCW8umGb0BgEhyX3dDX3egwZtB8PqLnjz3yedt8R5StBrzcg4aBpnh8UA9D1BoQ==}
@@ -2331,6 +2331,7 @@ packages:
 
   /asynckit/0.4.0:
     resolution: {integrity: sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q==}
+    dev: false
 
   /available-typed-arrays/1.0.5:
     resolution: {integrity: sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==}
@@ -2349,7 +2350,7 @@ packages:
       form-data: 4.0.0
     transitivePeerDependencies:
       - debug
-    dev: true
+    dev: false
 
   /axobject-query/3.1.1:
     resolution: {integrity: sha512-goKlv8DZrK9hUh975fnHzhNIO4jUnFCfv/dszV5VwUGDFjI6vQ2VwoyjYjYNEbBE8AH87TduWP5uyDR1D+Iteg==}
@@ -2681,6 +2682,7 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
+    dev: false
 
   /commander/2.20.3:
     resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
@@ -2967,6 +2969,7 @@ packages:
   /delayed-stream/1.0.0:
     resolution: {integrity: sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==}
     engines: {node: '>=0.4.0'}
+    dev: false
 
   /depd/2.0.0:
     resolution: {integrity: sha512-g7nH6P6dyDioJogAAGprGpCtVImJhpPk/roCzdb3fIh61/s/nPsfR6onyMwkCAR/OlC3yBC0lESvUoQEAssIrw==}
@@ -3743,7 +3746,7 @@ packages:
 
   /flatbuffers/1.12.0:
     resolution: {integrity: sha512-c7CZADjRcl6j0PlvFy0ZqXQ67qSEZfrVPynmnL+2zPc+NtMvrF8Y0QceMo7QqnSPc7+uWjUIAbvCQ5WIKlMVdQ==}
-    dev: true
+    dev: false
 
   /flatted/3.2.7:
     resolution: {integrity: sha512-5nqDSxl8nn5BSNxyR3n4I6eDmbolI6WT+QqR547RwxQapgjQBmtktdP+HTBb/a/zLsbzERTONyUB5pefh5TtjQ==}
@@ -3757,6 +3760,7 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
+    dev: false
 
   /for-each/0.3.3:
     resolution: {integrity: sha512-jqYfLp7mo9vIyQf8ykW2v7A+2N4QjeCeI5+Dz9XraiO1ign81wjiH7Fb9vSOWvQfNtmSa4H2RoQTrrXivdUZmw==}
@@ -3779,6 +3783,7 @@ packages:
       asynckit: 0.4.0
       combined-stream: 1.0.8
       mime-types: 2.1.35
+    dev: false
 
   /forwarded/0.2.0:
     resolution: {integrity: sha512-buRG0fpBtRHSTCOASe6hD258tEubFoRLb4ZNA6NxMVHNw2gOcwHo9wyablzMzOA5z9xA9L1KNjk/Nt6MT9aYow==}
@@ -4229,7 +4234,7 @@ packages:
 
   /inversify/5.0.5:
     resolution: {integrity: sha512-60QsfPz8NAU/GZqXu8hJ+BhNf/C/c+Hp0eDc6XMIJTxBiP36AQyyQKpBkOVTLWBFDQWYVHpbbEuIsHu9dLuJDA==}
-    dev: true
+    dev: false
 
   /ipaddr.js/1.9.1:
     resolution: {integrity: sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g==}
@@ -4529,7 +4534,7 @@ packages:
 
   /js-base64/3.7.5:
     resolution: {integrity: sha512-3MEt5DTINKqfScXKfJFrRbxkrnk2AxPWGBL/ycjz4dK8iqiSJ06UxD8jh8xuh6p10TX4t2+7FsBYVxxQbMg+qA==}
-    dev: true
+    dev: false
 
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -5014,12 +5019,14 @@ packages:
   /mime-db/1.52.0:
     resolution: {integrity: sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==}
     engines: {node: '>= 0.6'}
+    dev: false
 
   /mime-types/2.1.35:
     resolution: {integrity: sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==}
     engines: {node: '>= 0.6'}
     dependencies:
       mime-db: 1.52.0
+    dev: false
 
   /mime/1.6.0:
     resolution: {integrity: sha512-x0Vn8spI+wuJ1O6S7gnbaQg8Pxh4NNHb7KSINmEWKiPE4RKOplvijn+NkmYmmRgP68mc70j2EbeTFRsrswaQeg==}
@@ -5865,7 +5872,7 @@ packages:
 
   /reflect-metadata/0.1.13:
     resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
-    dev: true
+    dev: false
 
   /regenerator-runtime/0.13.11:
     resolution: {integrity: sha512-kY1AZVr2Ra+t+piVaJ4gxaFaReZVH40AKNo7UCX6W+dEwBo/2oZJzqfuN1qLq1oL45o56cPaTXELwrTh8Fpggg==}
