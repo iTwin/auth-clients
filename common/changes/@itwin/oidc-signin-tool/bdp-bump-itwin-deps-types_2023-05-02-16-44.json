@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@itwin/oidc-signin-tool",
-      "comment": "move @itwin/core packages to dependencies",
+      "comment": "add core-common as peer dep",
       "type": "minor"
     }
   ],
