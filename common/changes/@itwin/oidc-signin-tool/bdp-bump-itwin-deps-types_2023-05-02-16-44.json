@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/oidc-signin-tool",
       "comment": "add core-common as peer dep",
-      "type": "minor"
+      "type": "major"
     }
   ],
   "packageName": "@itwin/oidc-signin-tool"

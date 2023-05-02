@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/service-authorization",
       "comment": "add core-common as peer dep",
-      "type": "minor"
+      "type": "major"
     }
   ],
   "packageName": "@itwin/service-authorization"
