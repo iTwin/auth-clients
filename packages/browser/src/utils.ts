@@ -3,6 +3,10 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
+/** @packageDocumentation
+ * @module Authorization
+ */
+
 /**
  * Returns the IMS authority URL.
  * A prefix will be prepended based on the value of the IMJS_URL_PREFIX environment variable.

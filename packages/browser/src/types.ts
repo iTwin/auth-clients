@@ -1,7 +1,8 @@
-import type { MarkRequired } from "@itwin/core-bentley";
 /** @packageDocumentation
  * @module Authorization
  */
+
+import type { MarkRequired } from "@itwin/core-bentley";
 
 /**
  * Contains information related to the previous application state, as specified in the original auth request.
@@ -17,7 +18,10 @@ export interface BrowserAuthorizationClientRedirectState {
  * @internal
  * The internal configuration used by BrowserAuthorizationClient.
  */
-export type BrowserAuthorizationClientConfigurationOptions = MarkRequired<BrowserAuthorizationClientConfiguration, "authority">;
+export type BrowserAuthorizationClientConfigurationOptions = MarkRequired<
+BrowserAuthorizationClientConfiguration,
+"authority"
+>;
 /**
  * @beta
  */

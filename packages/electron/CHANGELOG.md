@@ -135,4 +135,3 @@ Mon, 29 Nov 2021 15:30:19 GMT
 ### Minor changes
 
 - Changed ElectronAuthorizationBackend name to ElectronAuthorizationMain and ElectronAppAuthorization to ElectronAuthorizationRenderer
-

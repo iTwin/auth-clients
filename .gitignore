@@ -7,12 +7,14 @@ pnpm-lock.yaml
 
 /**/lib
 packages/browser/dist
+dist
 
 # testing
 .nyc_output
 .parcel-cache
 junit_results.xml
 /**/test-results/**/*
+generated-docs
 
 # pnpm
 .pnpm-debug.log
@@ -28,4 +30,3 @@ pnpm-debug.log
 *.build.error.log
 
 .env
-dist
