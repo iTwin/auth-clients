@@ -23,7 +23,6 @@ import type {
   TokenRequestHandler,
   TokenRequestJson,
   TokenResponse,
-  TokenTypeHint,
 } from "@openid/appauth";
 import {
   AuthorizationNotifier,
@@ -504,7 +503,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    */
   public async signOut(): Promise<void> {
     await this.makeRevokeTokenRequest();
-    await electron.shell.openExternal(this._configuration?.endSessionEndpoint!);
+    if (this._configuration?.endSessionEndpoint)
+      await electron.shell.openExternal(this._configuration.endSessionEndpoint);
   }
 
   private async processTokenResponse(

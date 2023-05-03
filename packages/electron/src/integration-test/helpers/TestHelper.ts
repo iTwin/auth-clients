@@ -25,11 +25,11 @@ export class TestHelper {
     await electronPage.waitForSelector("button#getStatus");
     const button = electronPage.getByTestId("getStatus");
     await button.click();
-    await electronPage.getByText(expectedStatus ? "signed in" : "signed out");
+    electronPage.getByText(expectedStatus ? "signed in" : "signed out");
   }
 
   public async signIn(page: Page, url: string) {
-    page.goto(url);
+    await page.goto(url);
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);

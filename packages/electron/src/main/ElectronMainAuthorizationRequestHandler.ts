@@ -5,8 +5,10 @@
 // Code based on the blog article @ https://authguidance.com
 
 import { Logger } from "@itwin/core-bentley";
-import type { AuthorizationErrorJson, AuthorizationRequest, AuthorizationRequestResponse,
-  AuthorizationResponseJson, AuthorizationServiceConfiguration} from "@openid/appauth";
+import type {
+  AuthorizationErrorJson, AuthorizationRequest, AuthorizationRequestResponse,
+  AuthorizationResponseJson, AuthorizationServiceConfiguration,
+} from "@openid/appauth";
 import {
   AuthorizationError, AuthorizationRequestHandler, AuthorizationResponse, BasicQueryStringUtils,
 } from "@openid/appauth";
@@ -61,7 +63,6 @@ export class ElectronMainAuthorizationRequestHandler extends AuthorizationReques
     try {
       await shell.openExternal(authUrl);
     } catch (error) {
-      console.log(error);
       if (error)
         Logger.logError(electronAuthLoggerCategory, JSON.stringify(error));
     }

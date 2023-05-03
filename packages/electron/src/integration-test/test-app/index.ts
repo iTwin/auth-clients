@@ -13,21 +13,21 @@ const createWindow = () => {
     },
   });
 
-  win.loadFile("./index.html");
+  void win.loadFile("./index.html");
   // win.webContents.openDevTools();
 };
 
-app.whenReady().then(async () => {
-  if (!process.env.clientId)
+void app.whenReady().then(async () => {
+  if (!process.env.IMJS_TEST_ELECTRON_CLIENT_ID)
     throw new Error("Please provide a clientId in env");
-  if (!process.env.scopes)
+  if (!process.env.IMJS_TEST_ELECTRON_SCOPES)
     throw new Error("Please provide scopes in env");
 
   createWindow();
 
-  const client = new ElectronMainAuthorization({
-    clientId: process.env.clientId,
-    scopes: process.env.scopes,
+  new ElectronMainAuthorization({
+    clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
+    scopes: process.env.IMJS_TEST_ELECTRON_SCOPES,
     redirectUris: ["http://localhost:3000/signin-callback"],
   });
 

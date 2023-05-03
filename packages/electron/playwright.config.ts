@@ -10,6 +10,7 @@ const config: PlaywrightTestConfig = {
   timeout: 60000,
   use: {
     screenshot: "only-on-failure",
+    headless: true
   },
   expect: {
     timeout: 10000,
