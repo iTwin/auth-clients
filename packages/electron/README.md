@@ -18,13 +18,13 @@ During initialization, this package will start an express.js loopback server. Th
 
 1. Setup Main Process (Skip if using @itwin/core-electron`)
 
-- Add the `@itwin/browser-authorization/renderer/ElectronPreload` script as a preload to your renderer window.
+- Add the `@itwin/electron-authorization/renderer/ElectronPreload` script as a preload to your renderer window.
 
 ```typescript
 const win = new BrowserWindow({
   webPreferences: {
     preload: require.resolve(
-      "@itwin/browser-authorization/renderer/ElectronPreload"
+      "@itwin/electron-authorization/renderer/ElectronPreload"
     ),
   },
 });
@@ -47,7 +47,7 @@ await client.signIn(); // sign in from the main process
 - Register a listener to the `ElectronRendererAuthorization.onAccessTokenChanged` which is a `BeEvent` and wait for a token.
 
 ```typescript
-import { ElectronRendererAuthorization } from "@itwin/browser-authorization";
+import { ElectronRendererAuthorization } from "@itwin/electron-authorization";
 
 const client = new ElectronRendererAuthorization();
 
