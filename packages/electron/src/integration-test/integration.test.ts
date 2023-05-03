@@ -3,11 +3,12 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import { ElectronApplication, Page, expect, test } from "@playwright/test";
-import { SignInOptions } from "./types";
+import type { ElectronApplication, Page} from "@playwright/test";
+import { expect, test } from "@playwright/test";
+import type { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
 import { TestHelper } from "./helpers/TestHelper";
-import { _electron as electron } from 'playwright';
+import { _electron as electron } from "playwright";
 import { RefreshTokenStore } from "../main/TokenStore";
 
 const { clientId, envPrefix, email, password } = loadConfig();
@@ -16,7 +17,7 @@ const signInOptions: SignInOptions = {
   clientId,
   email,
   password,
-  envPrefix
+  envPrefix,
 };
 
 let electronApp: ElectronApplication;
@@ -36,7 +37,7 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
 async function getUrl(electronApp: ElectronApplication): Promise<string> {
   // evaluates in the context of the main process
   // TODO: consider writing a helper to make this easier
-  return await electronApp.evaluate<string>(async ({ shell }) => {
+  return electronApp.evaluate<string>(async ({ shell }) => {
     return new Promise((resolve) => {
       shell.openExternal = async (url: string) => {
         return resolve(url);
@@ -61,33 +62,33 @@ test.afterEach(async () => {
   await electronApp.close();
 });
 
-test('buttons exist', async () => {
-  electronPage.waitForLoadState('domcontentloaded');
-  const signInButton = electronPage.getByTestId('signIn');
-  const signOutButton = electronPage.getByTestId('signOut');
-  const getStatusButton = electronPage.getByTestId('getStatus');
+test("buttons exist", async () => {
+  electronPage.waitForLoadState("domcontentloaded");
+  const signInButton = electronPage.getByTestId("signIn");
+  const signOutButton = electronPage.getByTestId("signOut");
+  const getStatusButton = electronPage.getByTestId("getStatus");
   await expect(signInButton).toBeVisible();
   await expect(signOutButton).toBeVisible();
   await expect(getStatusButton).toBeVisible();
 });
 
-test('sign in successful', async ({ browser }) => {
+test("sign in successful", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await getUrl(electronApp));
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, true);
   await page.close();
 });
 
-test('sign out successful', async ({ browser }) => {
+test("sign out successful", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await getUrl(electronApp));
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, true);
   await testHelper.clickSignOut(electronPage);
-  await page.waitForLoadState('networkidle');
+  await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, false);
   await page.close();
 });

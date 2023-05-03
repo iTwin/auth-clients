@@ -1,6 +1,7 @@
 import { ElectronRendererAuthorization } from "../../renderer/Client";
 
-if (!process.env.clientId) throw new Error("Please provide a clientId in env");
+if (!process.env.clientId)
+  throw new Error("Please provide a clientId in env");
 
 const auth = new ElectronRendererAuthorization({
   clientId: process.env.clientId,
@@ -34,7 +35,7 @@ signInButton?.addEventListener("click", async () => {
 
 getStatusButton?.addEventListener("click", async () => {
   console.log("clicked token status");
-  const message: HTMLElement | null = document.getElementById('status');
+  const message: HTMLElement | null = document.getElementById("status");
   if (message)
     message.textContent = `Status: signed ${auth.isAuthorized ? "in" : "out"}`;
 });

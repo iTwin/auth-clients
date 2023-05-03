@@ -72,11 +72,11 @@ export class LoopbackWebServer {
       return;
     LoopbackWebServer._httpServer.close((err) => {
       if (err)
-        Logger.logWarning(loggerCategory, "Could not close the loopback server", () => err)
+        Logger.logWarning(loggerCategory, "Could not close the loopback server", () => err);
       else
-        LoopbackWebServer._httpServer = undefined
+        LoopbackWebServer._httpServer = undefined;
     });
-    
+
   }
 
   /** Listen/Handle browser events */

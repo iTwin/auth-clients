@@ -145,7 +145,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private _extras?: AuthenticationOptions;
 
   public static readonly onUserStateChanged = new BeEvent<
-    (token: AccessToken) => void
+  (token: AccessToken) => void
   >();
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
@@ -178,7 +178,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     }
     this._issuerUrl = authority.href.replace(/\/$/, "");
 
-    if (config.expiryBuffer) this._expiryBuffer = config.expiryBuffer;
+    if (config.expiryBuffer)
+      this._expiryBuffer = config.expiryBuffer;
 
     const appStorageKey = `iTwinJs:${this._clientId}:${this._issuerUrl}`;
     this._refreshTokenStore = new RefreshTokenStore(appStorageKey);
@@ -275,7 +276,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   }
 
   private setAccessToken(token: AccessToken) {
-    if (token === this._accessToken) return;
+    if (token === this._accessToken)
+      return;
 
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
@@ -295,7 +297,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    */
   private async loadAccessToken(): Promise<AccessToken> {
     const refreshToken = await this._refreshTokenStore.load();
-    if (!refreshToken) return "";
+    if (!refreshToken)
+      return "";
 
     try {
       return await this.refreshAccessToken(refreshToken);
@@ -335,7 +338,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     // Attempt to load the access token from store
     const token = await this.loadAccessToken();
-    if (token) return this.setAccessToken(token);
+    if (token)
+      return this.setAccessToken(token);
 
     // Start an HTTP server to listen for browser requests. Due to possible port collisions, iterate over given
     // redirectUris until we successfully bind the HTTP listener to a port.
@@ -413,7 +417,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
         if (tokenResponse)
           // await this.saveRefreshToken(tokenResponse);
           await this.processTokenResponse(tokenResponse);
-        else await this.clearTokenCache();
+        else
+          await this.clearTokenCache();
       }
     );
 
@@ -530,7 +535,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   }
 
   private get _hasExpired(): boolean {
-    if (!this._expiresAt) return false;
+    if (!this._expiresAt)
+      return false;
 
     return this._expiresAt.getTime() - Date.now() <= this._expiryBuffer * 1000; // Consider this.expireSafety's amount of time early as expired
   }

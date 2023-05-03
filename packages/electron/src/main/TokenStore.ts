@@ -30,8 +30,7 @@ export class RefreshTokenStore {
     if (!this._userName) {
       try {
         this._userName = await OperatingSystemUserName();
-      }
-      catch {
+      } catch {
         // errors occur in testing when using asynchronous call
         // https://github.com/iTwin/auth-clients/issues/163
         this._userName = OperatingSystemUserName.sync();

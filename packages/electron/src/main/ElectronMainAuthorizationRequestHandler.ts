@@ -62,7 +62,7 @@ export class ElectronMainAuthorizationRequestHandler extends AuthorizationReques
       await shell.openExternal(authUrl);
     } catch (error) {
       console.log(error);
-    if (error)
+      if (error)
         Logger.logError(electronAuthLoggerCategory, JSON.stringify(error));
     }
   }

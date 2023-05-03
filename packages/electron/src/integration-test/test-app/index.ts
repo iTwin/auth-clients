@@ -1,4 +1,4 @@
-import { ElectronMainAuthorization } from "../../ElectronMain";
+import { ElectronMainAuthorization } from "../../main/Client";
 import { app, BrowserWindow } from "electron";
 import { config } from "dotenv";
 
@@ -20,7 +20,8 @@ const createWindow = () => {
 app.whenReady().then(async () => {
   if (!process.env.clientId)
     throw new Error("Please provide a clientId in env");
-  if (!process.env.scopes) throw new Error("Please provide scopes in env");
+  if (!process.env.scopes)
+    throw new Error("Please provide scopes in env");
 
   createWindow();
 
@@ -31,10 +32,12 @@ app.whenReady().then(async () => {
   });
 
   app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+    if (BrowserWindow.getAllWindows().length === 0)
+      createWindow();
   });
 });
 
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") app.quit();
+  if (process.platform !== "darwin")
+    app.quit();
 });
