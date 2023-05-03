@@ -78,7 +78,7 @@ jobs:
   - script: node common/scripts/install-run-rush.js install
     displayName: Rush Install
 
-  - script: node common/scripts/install-run-rush.js build -v --to oidc-signin-tool
+  - script: node common/scripts/install-run-rush.js build -v
     displayName: Rush Build
 
   - script: node common/scripts/install-run-rush.js test:integration

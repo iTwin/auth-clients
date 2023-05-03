@@ -25,7 +25,6 @@ signOutButton?.addEventListener("click", async () => {
 });
 
 signInButton?.addEventListener("click", async () => {
-  console.log("clicked sign in");
   try {
     await auth.signIn();
   } catch (error) {

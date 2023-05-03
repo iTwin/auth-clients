@@ -34,14 +34,14 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
 }
 
 async function getUrl(electronApp: ElectronApplication): Promise<string> {
+  // evaluates in the context of the main process
+  // TODO: consider writing a helper to make this easier
   return await electronApp.evaluate<string>(async ({ shell }) => {
     return new Promise((resolve) => {
       shell.openExternal = async (url: string) => {
         return resolve(url);
       };
     });
-    // This runs in the main Electron process, parameter here is always
-    // the result of the require('electron') in the main app script.
   });
 }
 
@@ -58,7 +58,6 @@ test.beforeEach(async () => {
 });
 
 test.afterEach(async () => {
-  // Exit app.
   await electronApp.close();
 });
 
@@ -78,7 +77,7 @@ test('sign in successful', async ({ browser }) => {
   await testHelper.signIn(page, await getUrl(electronApp));
   await page.waitForLoadState('networkidle');
   await testHelper.checkStatus(electronPage, true);
-  page.close();
+  await page.close();
 });
 
 test('sign out successful', async ({ browser }) => {
@@ -87,9 +86,8 @@ test('sign out successful', async ({ browser }) => {
   await testHelper.signIn(page, await getUrl(electronApp));
   await page.waitForLoadState('networkidle');
   await testHelper.checkStatus(electronPage, true);
-
   await testHelper.clickSignOut(electronPage);
   await page.waitForLoadState('networkidle');
   await testHelper.checkStatus(electronPage, false);
-  page.close();
+  await page.close();
 });
