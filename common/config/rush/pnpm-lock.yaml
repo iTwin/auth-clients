@@ -12,6 +12,7 @@ importers:
   ../../packages/browser:
     specifiers:
       '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/core-bentley': ^3.7.0
       '@itwin/core-common': '>=3.7.0'
       '@itwin/eslint-plugin': ^3.7.0
       '@playwright/test': ~1.31.2
@@ -32,10 +33,11 @@ importers:
       sinon: ^15.0.1
       typescript: ~4.3.5
     dependencies:
-      '@itwin/core-common': 3.7.4
+      '@itwin/core-common': 3.7.4_@itwin+core-bentley@3.7.4
       oidc-client-ts: 2.2.3
     devDependencies:
       '@itwin/build-tools': 4.0.0-dev.96_@types+node@18.16.3
+      '@itwin/core-bentley': 3.7.4
       '@itwin/eslint-plugin': 3.7.4_eslint@7.32.0+typescript@4.3.5
       '@playwright/test': 1.31.2
       '@types/chai': 4.3.5
@@ -57,6 +59,7 @@ importers:
   ../../packages/electron:
     specifiers:
       '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/core-bentley': ^3.7.0
       '@itwin/core-common': '>=3.3.0'
       '@itwin/eslint-plugin': ^3.3.0
       '@openid/appauth': ^1.3.1
@@ -84,12 +87,13 @@ importers:
       typescript: ~4.3.5
       username: ^5.1.0
     dependencies:
-      '@itwin/core-common': 3.7.4
+      '@itwin/core-common': 3.7.4_@itwin+core-bentley@3.7.4
       '@openid/appauth': 1.3.1
       keytar: 7.9.0
       username: 5.1.0
     devDependencies:
       '@itwin/build-tools': 4.0.0-dev.96_@types+node@16.18.25
+      '@itwin/core-bentley': 3.7.4
       '@itwin/eslint-plugin': 3.7.4_eslint@7.32.0+typescript@4.3.5
       '@playwright/test': 1.31.2
       '@types/chai': 4.3.5
@@ -116,6 +120,7 @@ importers:
   ../../packages/node-cli:
     specifiers:
       '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/core-bentley': ^3.7.0
       '@itwin/core-common': '>=3.3.0'
       '@itwin/eslint-plugin': ^3.7.0
       '@openid/appauth': ^1.3.1
@@ -135,13 +140,14 @@ importers:
       typescript: ~4.3.5
       username: ^5.1.0
     dependencies:
-      '@itwin/core-common': 3.7.4
+      '@itwin/core-common': 3.7.4_@itwin+core-bentley@3.7.4
       '@openid/appauth': 1.3.1
       keytar: 7.9.0
       open: 8.4.2
       username: 5.1.0
     devDependencies:
       '@itwin/build-tools': 4.0.0-dev.96_@types+node@18.16.3
+      '@itwin/core-bentley': 3.7.4
       '@itwin/eslint-plugin': 3.7.4_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.5
       '@types/chai-as-promised': 7.1.5
@@ -160,6 +166,7 @@ importers:
     specifiers:
       '@itwin/build-tools': ^4.0.0-dev.93
       '@itwin/certa': ^3.7.0
+      '@itwin/core-bentley': ^3.7.0
       '@itwin/core-common': '>=3.3.0'
       '@itwin/eslint-plugin': ^3.7.0
       '@playwright/test': ~1.31.2
@@ -181,13 +188,14 @@ importers:
       typescript: ~4.3.5
     dependencies:
       '@itwin/certa': 3.7.4
-      '@itwin/core-common': 3.7.4
+      '@itwin/core-common': 3.7.4_@itwin+core-bentley@3.7.4
       '@playwright/test': 1.31.2
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
       openid-client: 4.9.1
     devDependencies:
       '@itwin/build-tools': 4.0.0-dev.96_@types+node@18.16.3
+      '@itwin/core-bentley': 3.7.4
       '@itwin/eslint-plugin': 3.7.4_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.5
       '@types/chai-as-promised': 7.1.5
@@ -206,6 +214,7 @@ importers:
   ../../packages/service:
     specifiers:
       '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/core-bentley': ^3.7.0
       '@itwin/core-common': '>=3.3.0'
       '@itwin/eslint-plugin': ^3.7.0
       '@types/chai': ^4.2.22
@@ -226,12 +235,13 @@ importers:
       source-map-support: ^0.5.9
       typescript: ~4.3.5
     dependencies:
-      '@itwin/core-common': 3.7.4
+      '@itwin/core-common': 3.7.4_@itwin+core-bentley@3.7.4
       jsonwebtoken: 9.0.0
       jwks-rsa: 2.1.5
       openid-client: 4.9.1
     devDependencies:
       '@itwin/build-tools': 4.0.0-dev.96
+      '@itwin/core-bentley': 3.7.4
       '@itwin/eslint-plugin': 3.7.4_eslint@7.32.0+typescript@4.3.5
       '@types/chai': 4.3.5
       '@types/chai-as-promised': 7.1.5
@@ -652,12 +662,16 @@ packages:
       reflect-metadata: 0.1.13
     dev: false
 
-  /@itwin/core-common/3.7.4:
+  /@itwin/core-bentley/3.7.4:
+    resolution: {integrity: sha512-GYZA3pFf4tkNyPUNVKgR59GXaopaTWIG9UILwYaNimYh7JjSGS9QA8fSAzYvkkSQiAHtmAA0yFzRoVniPu6OSw==}
+
+  /@itwin/core-common/3.7.4_@itwin+core-bentley@3.7.4:
     resolution: {integrity: sha512-vQCWseUwFxNSTD4R2dKgZdDkgRyLjlIiNt2fYsdXRzlBkD265OLrU6x4gY5scAeoXJ3rTlIfhqjOiDqJWqic4w==}
     peerDependencies:
       '@itwin/core-bentley': ^3.7.4
       '@itwin/core-geometry': ^3.7.4
     dependencies:
+      '@itwin/core-bentley': 3.7.4
       '@itwin/object-storage-core': 1.6.0
       flatbuffers: 1.12.0
       js-base64: 3.7.5

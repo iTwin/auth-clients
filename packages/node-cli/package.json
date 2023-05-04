@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "@itwin/build-tools": "^4.0.0-dev.93",
+    "@itwin/core-bentley": "^3.7.0",
     "@itwin/eslint-plugin": "^3.7.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
