@@ -87,13 +87,22 @@ jobs:
       # Couldn't get this variable to be ingested in the steps above, but this works
       IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
       IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
+
+  - script: xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' node common/scripts/install-run-rush.js test:integration
+    displayName: Rush test:integration Linux
+    env:
+      # Couldn't get this variable to be ingested in the steps above, but this works
+      IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+      IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
   - task: PublishTestResults@2
     displayName: "Publish Integration Test Results"
     inputs:
       testResultsFiles: "packages/**/junit_results.xml"
       testRunTitle: "Tools - auth-clients - $(Agent.OS)"
-    condition: succeededOrFailed()
+    condition: succeededOrFailed
 
   - task: PublishBuildArtifacts@1
     inputs:
