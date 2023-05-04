@@ -1,7 +1,7 @@
 {
-  "name": "@itwin/service-authorization",
+  "name": "@itwin/base-openid-client",
   "version": "0.8.0",
-  "description": "Service authorization client for iTwin platform",
+  "description": "Base OpenID client for iTwin platform authorization clients",
   "main": "lib/cjs/index.js",
   "typings": "lib/cjs/index",
   "scripts": {
@@ -25,19 +25,14 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "dependencies": {
-    "@itwin/base-openid-client": "workspace:*",
-    "got": "^11.8.6",
-    "jsonwebtoken": "^9.0.0",
-    "jwks-rsa": "^2.0.4"
+    "got": "^11.8.6"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^3.7.0",
-    "@itwin/core-bentley": "^3.7.0",
-    "@itwin/core-common": "^3.7.0",
-    "@itwin/eslint-plugin": "^3.7.0",
+    "@itwin/build-tools": "^3.3.0",
+    "@itwin/eslint-plugin": "^3.3.0",
+    "@itwin/core-common": "^3.3.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
-    "@types/jsonwebtoken": "^8.5.9",
     "@types/mocha": "^8.2.3",
     "@types/sinon": "^10.0.13",
     "eslint": "^7.32.0",
@@ -51,7 +46,7 @@
     "typescript": "~4.9.0"
   },
   "peerDependencies": {
-    "@itwin/core-bentley": ">=3.3.0"
+    "@itwin/core-bentley": "^3.3.0"
   },
   "eslintConfig": {
     "plugins": [

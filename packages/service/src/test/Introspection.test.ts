@@ -8,10 +8,9 @@ import { assert, use as chaiUse, expect } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as jwt from "jsonwebtoken";
 import * as jwks from "jwks-rsa";
-import type { Client as OpenIdClient } from "openid-client";
-import { Issuer } from "openid-client";
 import * as sinon from "sinon";
 import { IntrospectionClient } from "../introspection/IntrospectionClient";
+import { OIDCDiscoveryClient, OIDCConfig } from "@itwin/base-openid-client";
 chaiUse(chaiAsPromised);
 
 describe("IntrospectionClient", () => {
@@ -19,39 +18,8 @@ describe("IntrospectionClient", () => {
     sinon.restore();
   });
 
-  const testAuthority = "https://test.authority.com";
-  it("should use config authority without prefix", async () => {
-    process.env.IMJS_URL_PREFIX = "";
-    const client = new IntrospectionClient({ issuerUrl: testAuthority });
-    expect(client.url).equals(testAuthority);
-  });
-
-  it("should use config authority and ignore prefix", async () => {
-    process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = new IntrospectionClient({ issuerUrl: testAuthority });
-    expect(client.url).equals(testAuthority);
-  });
-
-  it("should use default authority without prefix", async () => {
-    process.env.IMJS_URL_PREFIX = "";
-    const client = new IntrospectionClient();
-    expect(client.url).equals("https://ims.bentley.com");
-  });
-
-  it("should use default authority with prefix", async () => {
-    process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = new IntrospectionClient();
-    expect(client.url).equals("https://prefix-ims.bentley.com");
-  });
-
-  it("should reroute dev prefix to qa if on default ", async () => {
-    process.env.IMJS_URL_PREFIX = "dev-";
-    const client = new IntrospectionClient();
-    expect(client.url).equals("https://qa-ims.bentley.com");
-  });
-
   it("should throw if issuer does not support JWKS", async () => {
-    sinon.stub(Issuer, "discover").resolves({ metadata: {} } as Issuer<OpenIdClient>);
+    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({} as OIDCConfig);
     const logStub = sinon.stub(Logger, "logError");
 
     const token = jwt.sign({ scope: ["scope1", "scope2"] }, "very secret");
@@ -70,11 +38,9 @@ describe("IntrospectionClient", () => {
   });
 
   it("should throw if scope claim is missing", async () => {
-    sinon.stub(Issuer, "discover").resolves({
-      metadata: {
-        jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
-      },
-    } as Issuer<OpenIdClient>);
+    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+    } as OIDCConfig);
     const logStub = sinon.stub(Logger, "logError");
     sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
       getPublicKey: () => "fake key",
@@ -92,11 +58,9 @@ describe("IntrospectionClient", () => {
   });
 
   it("should throw if scope claim is invalid", async () => {
-    sinon.stub(Issuer, "discover").resolves({
-      metadata: {
-        jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
-      },
-    } as Issuer<OpenIdClient>);
+    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+    } as OIDCConfig);
     const logStub = sinon.stub(Logger, "logError");
     sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
       getPublicKey: () => "fake key",
@@ -114,11 +78,9 @@ describe("IntrospectionClient", () => {
   });
 
   it("should cache signing key", async () => {
-    sinon.stub(Issuer, "discover").resolves({
-      metadata: {
-        jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
-      },
-    } as Issuer<OpenIdClient>);
+    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+    } as OIDCConfig);
     const fakeKey1 = { getPublicKey: () => "fake key1" };
     const fakeKey2 = { getPublicKey: () => "fake key2" };
     const payload = { scope: ["scope1", "scope2"] };
@@ -183,11 +145,9 @@ describe("IntrospectionClient", () => {
   it("should return active:false if token is expired", async () => {
     // this token expired in 2018
     const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwic2NvcGUiOlsic2NvcGUxIiwic2NvcGUyIl0sImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQyNjIyfQ.YZAIAcRq6vwTB3jjAMQogxfRzwDv4RoKzqaKlzFucNg";
-    sinon.stub(Issuer, "discover").resolves({
-      metadata: {
-        jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
-      },
-    } as Issuer<OpenIdClient>);
+    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+    } as OIDCConfig);
     sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
       getPublicKey: () => ")H@McQfThWmZq4t7w!z%C*F-JaNdRgUk",
     });
@@ -200,11 +160,9 @@ describe("IntrospectionClient", () => {
   it("should return active:true if token is not expired", async () => {
     // this token will expire on Wed Apr 01 2303 21:30:22 GMT+0300
     const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwic2NvcGUiOlsic2NvcGUxIiwic2NvcGUyIl0sImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxMDUxNjI0MjYyMn0.yYZvLAlx2zwTufGHsTg4GeOlWe35XTWfHeR8W_gTwzM";
-    sinon.stub(Issuer, "discover").resolves({
-      metadata: {
-        jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
-      },
-    } as Issuer<OpenIdClient>);
+    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+    } as OIDCConfig);
     sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
       getPublicKey: () => ")H@McQfThWmZq4t7w!z%C*F-JaNdRgUk",
     });

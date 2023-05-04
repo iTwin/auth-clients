@@ -5,17 +5,12 @@
 import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import type {
-  AuthorizationParameters,
-  Client,
-  ClientMetadata,
-  HttpOptions,
-  OpenIDCallbackChecks,
-} from "openid-client";
-import { custom, generators, Issuer } from "openid-client";
-import * as os from "os";
+import * as os from "node:os";
+import * as crypto from "node:crypto";
 import { chromium } from "@playwright/test";
 import type { LaunchOptions, Page, Request } from "@playwright/test";
+import { OIDCDiscoveryClient } from "@itwin/base-openid-client";
+import { UserManager } from "oidc-client-ts";
 import type {
   TestBrowserAuthorizationClientConfiguration,
   TestUserCredentials,
@@ -30,9 +25,7 @@ import { testSelectors } from "./TestSelectors";
  * @alpha
  */
 export class TestBrowserAuthorizationClient implements AuthorizationClient {
-  private _client!: Client;
-  private _issuer!: Issuer<Client>;
-  private _authorityUrl: string = "https://ims.bentley.com";
+  private _discoveryClient: OIDCDiscoveryClient;
   private readonly _config: TestBrowserAuthorizationClientConfiguration;
   private readonly _user: TestUserCredentials;
   private _accessToken: AccessToken = "";
@@ -49,40 +42,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     this._config = config;
     this._user = user;
 
-    let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._config.authority ?? this._authorityUrl);
-    if (prefix && !this._config.authority) {
-      prefix = prefix === "dev-" ? "qa-" : prefix;
-      authority.hostname = prefix + authority.hostname;
-    }
-    this._authorityUrl = authority.href.replace(/\/$/, "");
-  }
-
-  private async initialize() {
-    // Keep a list of http defaults
-    const httpOptionsDefaults: HttpOptions = {
-      timeout: 10000,
-      retry: 3,
-    };
-
-    // AzureAD needs to have the origin header to allow CORS
-    if (-1 !== this._authorityUrl.indexOf("microsoftonline"))
-      httpOptionsDefaults.headers = { Origin: "http://localhost" }; // eslint-disable-line @typescript-eslint/naming-convention
-
-    // Due to issues with a timeout or failed request to the authorization service increasing the standard timeout and adding retries.
-    // Docs for this option here, https://github.com/panva/node-openid-client/tree/master/docs#customizing-http-requests
-    custom.setHttpOptionsDefaults(httpOptionsDefaults);
-
-    this._issuer = await Issuer.discover(this._authorityUrl);
-    const clientMetadata: ClientMetadata = {
-      client_id: this._config.clientId, // eslint-disable-line @typescript-eslint/naming-convention
-      token_endpoint_auth_method: "none", // eslint-disable-line @typescript-eslint/naming-convention
-    };
-    if (this._config.clientSecret) {
-      clientMetadata.client_secret = this._config.clientSecret;
-      clientMetadata.token_endpoint_auth_method = "client_secret_basic";
-    }
-    this._client = new this._issuer.Client(clientMetadata); // eslint-disable-line @typescript-eslint/naming-convention
+    this._discoveryClient = new OIDCDiscoveryClient(config.authority);
   }
 
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
@@ -143,16 +103,16 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   public async signIn(): Promise<void> {
-    if (this._client === undefined)
-      await this.initialize();
+    const config = await this._discoveryClient.getConfig();
 
     // eslint-disable-next-line no-console
     console.log(`Starting OIDC signin for ${this._user.email} ...`);
 
-    const [authParams, callbackChecks] = this.createAuthParams(
+    const authParams = this.createAuthParams(
       this._config.scope
     );
-    const authorizationUrl = this._client.authorizationUrl(authParams);
+    const authorizationUrl = new URL(config.authorization_endpoint);
+    authorizationUrl.search = authParams.toString();
 
     const page = await this.launchBrowser();
 
@@ -169,7 +129,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       // This varies depending on the type of user, so start
       // waiting now and resolve at the end of the "sign in pipeline"
 
-      await page.goto(authorizationUrl);
+      await page.goto(authorizationUrl.href);
 
       try {
         await this.handleErrorPage(page);
@@ -199,11 +159,11 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
       const callbackUrl = await waitForCallbackUrl;
       if (callbackUrl) {
-        const tokenSet = await this._client.oauthCallback(
-          this._config.redirectUri,
-          this._client.callbackParams(callbackUrl.url()),
-          callbackChecks
-        );
+        const tokenSet = await new UserManager({
+          redirect_uri: this._config.redirectUri,
+          authority: config.issuer,
+          client_id: this._config.clientId,
+        }).signinRedirectCallback(callbackUrl.url());
 
         this._accessToken = `Bearer ${tokenSet.access_token}`;
         if (tokenSet.expires_at)
@@ -222,26 +182,18 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
   private createAuthParams(
     scope: string
-  ): [AuthorizationParameters, OpenIDCallbackChecks] {
-    const verifier = generators.codeVerifier();
-    const state = generators.state();
+  ): URLSearchParams {
+    const verifier = crypto.randomBytes(32).toString('base64url')
+    const state = crypto.randomBytes(32).toString('base64url')
 
-    const authParams: AuthorizationParameters = {
+    return new URLSearchParams({
       redirect_uri: this._config.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
       response_type: "code", // eslint-disable-line @typescript-eslint/naming-convention
-      code_challenge: generators.codeChallenge(verifier), // eslint-disable-line @typescript-eslint/naming-convention
+      code_challenge: crypto.createHash("sha256").update(verifier).digest().toString('base64url'), // eslint-disable-line @typescript-eslint/naming-convention
       code_challenge_method: "S256", // eslint-disable-line @typescript-eslint/naming-convention
       scope,
       state,
-    };
-
-    const callbackChecks: OpenIDCallbackChecks = {
-      state,
-      response_type: "code", // eslint-disable-line @typescript-eslint/naming-convention
-      code_verifier: verifier, // eslint-disable-line @typescript-eslint/naming-convention
-    };
-
-    return [authParams, callbackChecks];
+    });
   }
 
   private async handleErrorPage(page: Page): Promise<void> {
@@ -260,7 +212,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async handleLoginPage(page: Page): Promise<void> {
-    const loginUrl = new URL("/IMS/Account/Login", this._authorityUrl);
+    const config = await this._discoveryClient.getConfig();
+    const loginUrl = new URL("/IMS/Account/Login", config.issuer);
     if (page.url().startsWith(loginUrl.toString())) {
       await page.waitForSelector(testSelectors.imsEmail);
       await page.type(testSelectors.imsEmail, this._user.email);
@@ -276,9 +229,10 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async handlePingLoginPage(page: Page): Promise<void> {
+    const config = await this._discoveryClient.getConfig();
     if (
-      undefined === this._issuer.metadata.authorization_endpoint ||
-      !page.url().startsWith(this._issuer.metadata.authorization_endpoint) ||
+      undefined === config.authorization_endpoint ||
+      !page.url().startsWith(config.authorization_endpoint) ||
       -1 === page.url().indexOf("ims")
     )
       return;
@@ -407,8 +361,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
   // Authing specific login.
   private async handleAuthingSignin(page: Page): Promise<void> {
+    const config = await this._discoveryClient.getConfig();
     if (
-      undefined === this._issuer.metadata.authorization_endpoint ||
+      undefined === config.authorization_endpoint ||
       -1 === page.url().indexOf("authing")
     )
       return;
@@ -441,7 +396,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     if ((await page.title()) === "localhost")
       return; // we're done
 
-    const consentUrl = new URL("/consent", this._issuer.issuer as string);
+    const config = await this._discoveryClient.getConfig();
+
+    const consentUrl = new URL("/consent", config.issuer as string);
     if (page.url().startsWith(consentUrl.toString()))
       await page.click("button[value=yes]");
 
