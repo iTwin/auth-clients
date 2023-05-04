@@ -52,6 +52,16 @@
       "allowWarningsInSuccessfulBuild": true
     },
     {
+      "name": "lint:fix",
+      "commandKind": "bulk",
+      "summary": "Run lint rules on each package, fixing where possible",
+      "description": "Iterates through each package in the monorepo and runs the 'lint' script with the --fix flag",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
       "name": "clean",
       "commandKind": "bulk",
       "summary": "Cleans each package's build directory",
