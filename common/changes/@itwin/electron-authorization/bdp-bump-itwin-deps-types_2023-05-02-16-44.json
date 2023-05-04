@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/electron-authorization",
-      "comment": "add core-common as peer dep",
-      "type": "major"
+      "comment": "add core-common as direct dep (types); 1.0 release",
+      "type": "minor"
     }
   ],
   "packageName": "@itwin/electron-authorization"

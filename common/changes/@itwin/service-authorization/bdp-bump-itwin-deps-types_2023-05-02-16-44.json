@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/service-authorization",
-      "comment": "add core-common as peer dep",
-      "type": "major"
+      "comment": "add core-common as direct dep (types)",
+      "type": "minor"
     }
   ],
   "packageName": "@itwin/service-authorization"

@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@itwin/browser-authorization",
-      "comment": "add core-common as peer dep; 1.0 release",
+      "comment": "add core-common as direct dep (types); 1.0 release",
       "type": "major"
     }
   ],
