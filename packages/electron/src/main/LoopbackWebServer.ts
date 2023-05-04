@@ -7,6 +7,8 @@
 import * as Http from "http";
 import type { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import type { ElectronAuthorizationEvents } from "./Events";
+import { Logger } from "@itwin/core-bentley";
+const loggerCategory = "electron-auth";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 
@@ -68,8 +70,13 @@ export class LoopbackWebServer {
   private static stop() {
     if (!LoopbackWebServer._httpServer)
       return;
-    LoopbackWebServer._httpServer.close();
-    LoopbackWebServer._httpServer = undefined;
+    LoopbackWebServer._httpServer.close((err) => {
+      if (err)
+        Logger.logWarning(loggerCategory, "Could not close the loopback server", () => err);
+      else
+        LoopbackWebServer._httpServer = undefined;
+    });
+
   }
 
   /** Listen/Handle browser events */
