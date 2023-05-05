@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "Update peer deps to use >= for core-bentley",
+      "type": "patch",
+      "packageName": "@itwin/oidc-signin-tool"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool",
+  "email": "aruniverse@users.noreply.github.com"
+}
