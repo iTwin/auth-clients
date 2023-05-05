@@ -13,6 +13,7 @@ import { ElectronMainAuthorization } from "../main/Client";
 import { ElectronMainAuthorizationRequestHandler } from "../main/ElectronMainAuthorizationRequestHandler";
 import { LoopbackWebServer } from "../main/LoopbackWebServer";
 import { RefreshTokenStore } from "../main/TokenStore";
+import * as keytar from "keytar";
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert = chai.assert;
 const expect = chai.expect;
@@ -43,6 +44,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
+    sinon.stub(keytar, "deletePassword") // ideally would not stub more than needed, but deletePassword throws "unknown error" randomly... replacing keytar soon anyway
   });
 
   it("Should throw if not signed in", async () => {
