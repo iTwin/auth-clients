@@ -7,9 +7,10 @@
  */
 
 import type { AuthorizationClient } from "@itwin/core-common";
-import { OIDCDiscoveryClient, } from "@itwin/base-openid-client";
+import { OIDCDiscoveryClient } from "@itwin/base-openid-client";
 import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
-import got, { Options as GotOptions } from "got";
+import type { Options as GotOptions } from "got";
+import got from "got";
 
 /**
   * Utility to generate OIDC/OAuth tokens for service or service applications
@@ -25,7 +26,7 @@ import got, { Options as GotOptions } from "got";
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected _configuration: ServiceAuthorizationClientConfiguration;
   private _discoveryClient: OIDCDiscoveryClient;
-  private _gotOptions: Pick<GotOptions, "retry" | "timeout">
+  private _gotOptions: Pick<GotOptions, "retry" | "timeout">;
 
   private _accessToken: string = "";
   private _expiresAt?: Date;
@@ -38,7 +39,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
       },
       timeout: {
         lookup: 500, // DNS
-        connect: 50, // socket connected
+        connect: 200, // socket connected
         send: 1000, // writing data to socket
         response: 10000, // starts when request has been flushed, ends when the headers are received.
         request: 12000, // global timeout
