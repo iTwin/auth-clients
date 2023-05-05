@@ -10,7 +10,7 @@ import * as crypto from "node:crypto";
 import { chromium } from "@playwright/test";
 import type { LaunchOptions, Page, Request } from "@playwright/test";
 import { OIDCDiscoveryClient } from "@itwin/base-openid-client";
-import { UserManager } from "oidc-client-ts";
+import { InMemoryWebStorage, OidcClient, WebStorageStateStore } from "oidc-client-ts";
 import type {
   TestBrowserAuthorizationClientConfiguration,
   TestUserCredentials,
@@ -108,28 +108,37 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     // eslint-disable-next-line no-console
     console.log(`Starting OIDC signin for ${this._user.email} ...`);
 
-    const authParams = this.createAuthParams(
-      this._config.scope
-    );
-    const authorizationUrl = new URL(config.authorization_endpoint);
-    authorizationUrl.search = authParams.toString();
+    /* eslint-disable @typescript-eslint/naming-convention */
+    const oidcClient = new OidcClient({
+      redirect_uri: this._config.redirectUri,
+      authority: config.issuer,
+      client_id: this._config.clientId,
+      stateStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
+      scope: this._config.scope,
+    });
+
+    // this is only async because it _could_ use AsyncStorage browser API.
+    // We replaced it with InMemoryWebStorage so everything is synchronous under the hood.
+    const signInRequest = await oidcClient.createSigninRequest({
+      request_type: "si:r",
+    });
+    /* eslint-enable @typescript-eslint/naming-convention */
 
     const page = await this.launchBrowser();
 
     const controller = new AbortController();
     const { signal } = controller;
 
+    // Eventually, we'll get a redirect to the callback url
+    // including the params we need to retrieve a token
+    // This varies depending on the type of user, so start
+    // waiting now and resolve at the end of the "sign in pipeline"
     const waitForCallbackUrl = page.waitForRequest((req: Request) => {
       return req.url().startsWith(this._config.redirectUri) || signal.aborted;
     });
 
     try {
-      // Eventually, we'll get a redirect to the callback url
-      // including the params we need to retrieve a token
-      // This varies depending on the type of user, so start
-      // waiting now and resolve at the end of the "sign in pipeline"
-
-      await page.goto(authorizationUrl.href);
+      await page.goto(signInRequest.url);
 
       try {
         await this.handleErrorPage(page);
@@ -159,12 +168,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
       const callbackUrl = await waitForCallbackUrl;
       if (callbackUrl) {
-        const tokenSet = await new UserManager({
-          redirect_uri: this._config.redirectUri,
-          authority: config.issuer,
-          client_id: this._config.clientId,
-        }).signinRedirectCallback(callbackUrl.url());
-
+        (global as any).window = { location: { origin: "a:" } }; // the URL doesn't matter, it's only used to get the query params from URL object
+        const tokenSet = await oidcClient.processSigninResponse(callbackUrl.url());
+        delete (global as any).window;
         this._accessToken = `Bearer ${tokenSet.access_token}`;
         if (tokenSet.expires_at)
           this._expiresAt = new Date(tokenSet.expires_at * 1000);
@@ -178,22 +184,6 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   public async signOut(): Promise<void> {
     this._accessToken = "";
     this.onAccessTokenChanged.raiseEvent(this._accessToken);
-  }
-
-  private createAuthParams(
-    scope: string
-  ): URLSearchParams {
-    const verifier = crypto.randomBytes(32).toString('base64url')
-    const state = crypto.randomBytes(32).toString('base64url')
-
-    return new URLSearchParams({
-      redirect_uri: this._config.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
-      response_type: "code", // eslint-disable-line @typescript-eslint/naming-convention
-      code_challenge: crypto.createHash("sha256").update(verifier).digest().toString('base64url'), // eslint-disable-line @typescript-eslint/naming-convention
-      code_challenge_method: "S256", // eslint-disable-line @typescript-eslint/naming-convention
-      scope,
-      state,
-    });
   }
 
   private async handleErrorPage(page: Page): Promise<void> {
@@ -398,7 +388,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     const config = await this._discoveryClient.getConfig();
 
-    const consentUrl = new URL("/consent", config.issuer as string);
+    const consentUrl = new URL("/consent", config.issuer);
     if (page.url().startsWith(consentUrl.toString()))
       await page.click("button[value=yes]");
 
