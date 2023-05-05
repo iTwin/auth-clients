@@ -51,24 +51,9 @@ function assertOIDCConfig(obj: any): asserts obj is OIDCConfig {
   * @internal
   */
 export class OIDCDiscoveryClient {
-  private _gotOptions: Pick<GotOptions, "retry" | "timeout">
   public url = "https://ims.bentley.com";
 
   constructor(authority?: string) {
-    this._gotOptions = {
-      retry: {
-        limit: 3,
-        methods: ["GET", "POST"],
-      },
-      timeout: {
-        lookup: 500, // DNS
-        connect: 50, // socket connected
-        send: 1000, // writing data to socket
-        response: 10000, // starts when request has been flushed, ends when the headers are received.
-        request: 12000, // global timeout
-      },
-    };
-
     let prefix = process.env.IMJS_URL_PREFIX;
     const authUrl = new URL(authority ?? this.url);
     if (prefix && !authority) {

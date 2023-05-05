@@ -45,8 +45,8 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
         request: 12000, // global timeout
       },
     };
-    this._discoveryClient = new OIDCDiscoveryClient(serviceConfiguration.authority);
 
+    this._discoveryClient = new OIDCDiscoveryClient(serviceConfiguration.authority);
     this._configuration = serviceConfiguration;
   }
 
