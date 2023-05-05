@@ -7,7 +7,7 @@
  */
 
 import type { AuthorizationClient } from "@itwin/core-common";
-import { OIDCDiscoveryClient, } from "@itwin/base-openid-client";
+import { OIDCDiscoveryClient, defaultGotOptions, } from "@itwin/base-openid-client";
 import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
 import got, { Options as GotOptions } from "got";
 
@@ -25,7 +25,7 @@ import got, { Options as GotOptions } from "got";
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected _configuration: ServiceAuthorizationClientConfiguration;
   private _discoveryClient: OIDCDiscoveryClient;
-  private _gotOptions: Pick<GotOptions, "retry" | "timeout">
+  private _gotOptions: Pick<GotOptions, "retry" | "timeout">;
 
   private _accessToken: string = "";
   private _expiresAt?: Date;
@@ -44,8 +44,8 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
         request: 12000, // global timeout
       },
     };
-    this._discoveryClient = new OIDCDiscoveryClient(serviceConfiguration.authority);
 
+    this._discoveryClient = new OIDCDiscoveryClient(serviceConfiguration.authority);
     this._configuration = serviceConfiguration;
   }
 
