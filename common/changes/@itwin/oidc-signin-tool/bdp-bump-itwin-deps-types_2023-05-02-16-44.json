@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/oidc-signin-tool",
       "comment": "add core-common as direct dep (types);",
-      "type": "minor"
+      "type": "patch"
     }
   ],
   "packageName": "@itwin/oidc-signin-tool"

@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/service-authorization",
       "comment": "add core-common as direct dep (types)",
-      "type": "minor"
+      "type": "patch"
     }
   ],
   "packageName": "@itwin/service-authorization"

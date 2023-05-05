@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/electron-authorization",
       "comment": "add core-common as direct dep (types); 1.0 release",
-      "type": "minor"
+      "type": "patch"
     }
   ],
   "packageName": "@itwin/electron-authorization"
