@@ -1,6 +1,17 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Fri, 14 Apr 2023 21:44:37 GMT and should not be manually modified.
+This log was last generated on Fri, 05 May 2023 17:45:56 GMT and should not be manually modified.
+
+## 1.0.0
+Fri, 05 May 2023 17:45:56 GMT
+
+### Breaking changes
+
+- add core-common as direct dep (types); 1.0 release
+
+### Patches
+
+- Update peer deps to use >= for core-bentley
 
 ## 0.9.0
 Fri, 14 Apr 2023 21:44:37 GMT
