@@ -1,14 +1,6 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Fri, 05 May 2023 17:45:56 GMT and should not be manually modified.
-
-## 3.7.2
-Fri, 05 May 2023 17:45:56 GMT
-
-### Patches
-
-- add core-common as direct dep (types);
-- Update peer deps to use >= for core-bentley
+This log was last generated on Thu, 16 Mar 2023 01:23:39 GMT and should not be manually modified.
 
 ## 3.7.1
 Thu, 16 Mar 2023 01:23:39 GMT
