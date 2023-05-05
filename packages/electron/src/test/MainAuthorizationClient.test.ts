@@ -44,7 +44,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
-    sinon.stub(keytar, "deletePassword") // ideally would not stub more than needed, but deletePassword throws "unknown error" randomly... replacing keytar soon anyway
+    sinon.stub(keytar, "deletePassword"); // ideally would not stub more than needed, but deletePassword throws "unknown error" randomly... replacing keytar soon anyway
   });
 
   it("Should throw if not signed in", async () => {
