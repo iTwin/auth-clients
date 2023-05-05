@@ -91,3 +91,4 @@ stages:
       - template: templates/build-docs.yaml
         parameters:
           shouldPublish: ${{ parameters.shouldPublish }}
+        condition: eq(variables['Agent.OS'], 'Windows_NT')
