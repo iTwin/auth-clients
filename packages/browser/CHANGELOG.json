@@ -2,6 +2,23 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "version": "1.0.0",
+      "tag": "@itwin/browser-authorization_v1.0.0",
+      "date": "Fri, 05 May 2023 18:56:53 GMT",
+      "comments": {
+        "major": [
+          {
+            "comment": "add core-common as direct dep (types); 1.0 release"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "Update peer deps to use >= for core-bentley"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.9.0",
       "tag": "@itwin/browser-authorization_v0.9.0",
       "date": "Fri, 14 Apr 2023 21:44:37 GMT",
