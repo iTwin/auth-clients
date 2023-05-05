@@ -23,24 +23,6 @@
       "versionPolicyName": "individual-versioning"
     },
     {
-      "packageName": "@itwin/electron-authorization",
-      "projectFolder": "packages/electron",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
-    },
-    {
-      "packageName": "@itwin/service-authorization",
-      "projectFolder": "packages/service",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
-    },
-    {
-      "packageName": "@itwin/node-cli-authorization",
-      "projectFolder": "packages/node-cli",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
-    },
-    {
       "packageName": "@itwin/oidc-signin-tool",
       "projectFolder": "packages/oidc-signin-tool",
       "shouldPublish": true,
