@@ -88,7 +88,7 @@ stages:
       # Build and publish documentation as pipeline artifacts
       # This relies on variables set from within the publish template above,
       # one for each package published.
-      - template: templates/build-docs.yaml
-        parameters:
-          shouldPublish: ${{ parameters.shouldPublish }}
-        condition: eq(variables['Agent.OS'], 'Windows_NT')
+      - ${{ if eq(variables['Agent.OS'], 'WindowsNT') }}:
+        - template: templates/build-docs.yaml
+          parameters:
+            shouldPublish: ${{ parameters.shouldPublish }}
