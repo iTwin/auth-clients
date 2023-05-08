@@ -1,6 +1,6 @@
 {
   "name": "@itwin/base-openid-client",
-  "version": "0.8.0",
+  "version": "0.1.0",
   "description": "Base OpenID client for iTwin platform authorization clients",
   "main": "lib/cjs/index.js",
   "typings": "lib/cjs/index",

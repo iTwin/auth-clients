@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/base-openid-client",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@itwin/base-openid-client"
+}

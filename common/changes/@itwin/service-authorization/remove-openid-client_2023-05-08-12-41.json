@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/service-authorization",
+      "comment": "",
+      "type": "none"
+    }
+  ],
+  "packageName": "@itwin/service-authorization"
+}
