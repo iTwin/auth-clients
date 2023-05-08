@@ -3,4 +3,3 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 export * from "./OIDCDiscoveryClient";
-export * from "./GotOptions";
