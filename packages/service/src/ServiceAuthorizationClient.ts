@@ -3,7 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 /** @packageDocumentation
- * @module Authentication
+ * @module Authorization
  */
 
 import type { AuthorizationClient } from "@itwin/core-common";

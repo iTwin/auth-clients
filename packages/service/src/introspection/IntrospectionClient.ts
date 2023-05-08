@@ -2,9 +2,6 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-/** @packageDocumentation
- * @module Introspection
- */
 
 import type { IntrospectionResponse } from "./IntrospectionResponse";
 import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
@@ -14,6 +11,7 @@ import * as jwt from "jsonwebtoken";
 import { OIDCDiscoveryClient } from "@itwin/base-openid-client";
 
 /**
+ * @alpha
  * @param issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
  */
 export interface IntrospectionClientConfiguration {

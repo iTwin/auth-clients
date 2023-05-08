@@ -22,6 +22,16 @@
       "allowWarningsInSuccessfulBuild": true
     },
     {
+      "name": "docs",
+      "commandKind": "bulk",
+      "summary": "Extracts reference documentation via typedoc json API",
+      "description": "Iterates through each package in the monorepo and runs the 'docs' script",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
       "name": "test:integration",
       "commandKind": "bulk",
       "summary": "Run test:integration script for each package",
@@ -36,6 +46,16 @@
       "commandKind": "bulk",
       "summary": "Run lint rules on each package",
       "description": "Iterates through each package in the monorepo and runs the 'lint' script",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
+      "name": "lint:fix",
+      "commandKind": "bulk",
+      "summary": "Run lint rules on each package, fixing where possible",
+      "description": "Iterates through each package in the monorepo and runs the 'lint' script with the --fix flag",
       "enableParallelism": true,
       "ignoreMissingScript": false,
       "ignoreDependencyOrder": true,

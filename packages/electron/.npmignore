@@ -6,4 +6,4 @@
 !lib/**/*.js.map
 !*.md
 
-lib/**/test/**
+lib/**/*test*/**/*

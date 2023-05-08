@@ -4,13 +4,11 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-/** @packageDocumentation
- * @module Authentication
- */
-
 import { Logger } from "@itwin/core-bentley";
-import type { AuthorizationErrorJson, AuthorizationRequest, AuthorizationRequestResponse,
-  AuthorizationResponseJson, AuthorizationServiceConfiguration} from "@openid/appauth";
+import type {
+  AuthorizationErrorJson, AuthorizationRequest, AuthorizationRequestResponse,
+  AuthorizationResponseJson, AuthorizationServiceConfiguration,
+} from "@openid/appauth";
 import {
   AuthorizationError, AuthorizationRequestHandler, AuthorizationResponse, BasicQueryStringUtils,
 } from "@openid/appauth";
@@ -62,9 +60,12 @@ export class ElectronMainAuthorizationRequestHandler extends AuthorizationReques
 
     // Compose the request and invoke in the browser
     const authUrl = this.buildRequestUrl(serviceConfiguration, authRequest);
-    const error = await shell.openPath(authUrl);
-    if (error)
-      Logger.logError(electronAuthLoggerCategory, error);
+    try {
+      await shell.openExternal(authUrl);
+    } catch (error) {
+      if (error)
+        Logger.logError(electronAuthLoggerCategory, JSON.stringify(error));
+    }
   }
 
   /**

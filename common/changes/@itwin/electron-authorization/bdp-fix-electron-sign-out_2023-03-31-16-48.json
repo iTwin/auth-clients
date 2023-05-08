@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "logout now triggers endsession url in system browser; switch to shell.openExternal to ensure urls open on macso; ",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}

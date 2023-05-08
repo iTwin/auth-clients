@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/node-cli-authorization",
+      "comment": "add core-common as direct dep (types)",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/node-cli-authorization"
+}
