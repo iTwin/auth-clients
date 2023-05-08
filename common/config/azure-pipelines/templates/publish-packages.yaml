@@ -19,7 +19,7 @@ steps:
     name: releaseNotes
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/publish'), ${{ parameters.shouldPublish }} )
 
-  - script: node common/scripts/install-run-rush.js publish --publish -a -b main --set-access-level public
+  - script: node common/scripts/install-run-rush.js publish --publish --include-all -a -b main --set-access-level public
     displayName: rush publish package
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/publish'), ${{ parameters.shouldPublish }} )
     env:
