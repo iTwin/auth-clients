@@ -27,7 +27,6 @@
     "directory": "packages/service"
   },
   "dependencies": {
-    "@itwin/base-openid-client": "workspace:*",
     "@itwin/core-common": ">=3.3.0",
     "got": "^11.8.6",
     "jsonwebtoken": "^9.0.0",

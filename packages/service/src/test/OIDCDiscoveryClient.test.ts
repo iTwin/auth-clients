@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as chai from "chai";
-import { OIDCDiscoveryClient, OIDCConfig } from "../OIDCDiscoveryClient.js";
+import { OIDCDiscoveryClient, OIDCConfig } from "../OIDCDiscoveryClient";
 
 
 describe("BaseOpenidClient", () => {

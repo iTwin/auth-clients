@@ -7,7 +7,7 @@
  */
 
 import { URL } from "node:url";
-import got, { Options as GotOptions } from "got";
+import got from "got";
 
 const requiredProperties = ["issuer", "authorization_endpoint", "jwks_uri", "response_types_supported", "subject_types_supported", "id_token_signing_alg_values_supported"] as const;
 const stringProperties = ["issuer", "authorization_endpoint", "jwks_uri", "token_endpoint",

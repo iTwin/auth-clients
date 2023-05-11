@@ -7,7 +7,9 @@
   "projectFolderMaxDepth": 3,
   "ensureConsistentVersions": false,
   "gitPolicy": {
-    "allowedEmailRegExps": ["[^@]+@users\\.noreply\\.github\\.com"],
+    "allowedEmailRegExps": [
+      "[^@]+@users\\.noreply\\.github\\.com"
+    ],
     "sampleEmail": "mrexample@users.noreply.github.com"
   },
   "repository": {
@@ -25,12 +27,6 @@
     {
       "packageName": "@itwin/electron-authorization",
       "projectFolder": "packages/electron",
-      "shouldPublish": true,
-      "versionPolicyName": "individual-versioning"
-    },
-    {
-      "packageName": "@itwin/base-openid-client",
-      "projectFolder": "packages/base-openid-client",
       "shouldPublish": true,
       "versionPolicyName": "individual-versioning"
     },

@@ -5,11 +5,10 @@
 import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
+import { OIDCDiscoveryClient } from "@itwin/service-authorization";
 import * as os from "node:os";
-import * as crypto from "node:crypto";
 import { chromium } from "@playwright/test";
 import type { LaunchOptions, Page, Request } from "@playwright/test";
-import { OIDCDiscoveryClient } from "@itwin/base-openid-client";
 import { InMemoryWebStorage, OidcClient, WebStorageStateStore } from "oidc-client-ts";
 import type {
   TestBrowserAuthorizationClientConfiguration,

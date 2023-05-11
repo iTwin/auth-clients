@@ -10,7 +10,7 @@ import * as jwt from "jsonwebtoken";
 import * as jwks from "jwks-rsa";
 import * as sinon from "sinon";
 import { IntrospectionClient } from "../introspection/IntrospectionClient";
-import { OIDCDiscoveryClient, OIDCConfig } from "@itwin/base-openid-client";
+import { OIDCConfig, OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 chaiUse(chaiAsPromised);
 
 describe("IntrospectionClient", () => {

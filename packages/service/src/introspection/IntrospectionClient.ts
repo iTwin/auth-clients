@@ -8,7 +8,7 @@ import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
 import { BentleyError, BentleyStatus, Logger } from "@itwin/core-bentley";
 import * as jwks from "jwks-rsa";
 import * as jwt from "jsonwebtoken";
-import { OIDCDiscoveryClient } from "@itwin/base-openid-client";
+import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 
 /**
  * @alpha

@@ -7,10 +7,10 @@
  */
 
 import type { AuthorizationClient } from "@itwin/core-common";
-import { OIDCDiscoveryClient } from "@itwin/base-openid-client";
 import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
 import type { Options as GotOptions } from "got";
 import got from "got";
+import { OIDCDiscoveryClient } from "./OIDCDiscoveryClient";
 
 /**
   * Utility to generate OIDC/OAuth tokens for service or service applications
