@@ -272,6 +272,10 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     let allow = page.locator(testSelectors.pingAllowSubmit);
     await allow.click();
 
+    // Cut out for federated sign-in
+    if (-1 !== page.url().indexOf("microsoftonline"))
+      return;
+
     await page.waitForSelector(testSelectors.pingPassword);
     await page.type(testSelectors.pingPassword, this._user.password);
 
