@@ -39,7 +39,7 @@ jobs:
         run: node common/scripts/install-run-rush.js change -v
 
       - name: Rush Build
-        run: node common/scripts/install-run-rush.js build -v -p max
+        run: node common/scripts/install-run-rush.js build -v
 
       - name: Rush Lint
         run: node common/scripts/install-run-rush.js lint

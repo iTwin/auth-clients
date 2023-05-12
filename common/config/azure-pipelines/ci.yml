@@ -48,7 +48,7 @@ stages:
 
       - script: node common/scripts/install-run-rush.js change -v
 
-      - script: node common/scripts/install-run-rush.js build -v -p max
+      - script: node common/scripts/install-run-rush.js build -v
         displayName: Rush Build
 
       - script: node common/scripts/install-run-rush.js lint
