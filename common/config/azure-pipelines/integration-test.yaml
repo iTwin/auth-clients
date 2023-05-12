@@ -112,6 +112,7 @@ jobs:
 
   - task: PublishTestResults@2
     displayName: "Publish Integration Test Results"
+    condition: always()
     inputs:
       testResultsFiles: "packages/**/junit_results.xml"
       testRunTitle: "Tools - auth-clients - $(Agent.OS)"
