@@ -70,30 +70,3 @@ test.describe("TestUsers utility (#integration)", () => {
     expect(token).toBeDefined();
   });
 });
-
-test.describe("Authing and AzureAD (#integration)", () => {
-  let azureAdOidcConfig: TestBrowserAuthorizationClientConfiguration;
-  let authingOidcConfig: TestBrowserAuthorizationClientConfiguration;
-
-  test.beforeAll(() => {
-    azureAdOidcConfig = loadConfig(TestConfigType.AZURE);
-    authingOidcConfig = loadConfig(TestConfigType.AUTHING);
-  });
-
-  test("success AzureAD with valid user", async () => {
-    const token = await getTestAccessToken(
-      azureAdOidcConfig,
-      TestUsers.azureUser
-    );
-    expect(token).toBeDefined();
-  });
-
-  // reached active user limit
-  test.skip("success Authing with valid user", async () => {
-    const token = await getTestAccessToken(
-      authingOidcConfig,
-      TestUsers.authingUser
-    );
-    expect(token).toBeDefined();
-  });
-});

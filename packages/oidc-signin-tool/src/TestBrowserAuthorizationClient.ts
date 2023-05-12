@@ -9,7 +9,6 @@ import type {
   AuthorizationParameters,
   Client,
   ClientMetadata,
-  HttpOptions,
   OpenIDCallbackChecks,
 } from "openid-client";
 import { custom, generators, Issuer } from "openid-client";
@@ -59,29 +58,18 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   private async initialize() {
-    // Keep a list of http defaults
-    const httpOptionsDefaults: HttpOptions = {
-      timeout: 10000,
-      retry: 3,
-    };
-
-    // AzureAD needs to have the origin header to allow CORS
-    if (-1 !== this._authorityUrl.indexOf("microsoftonline"))
-      httpOptionsDefaults.headers = { Origin: "http://localhost" }; // eslint-disable-line @typescript-eslint/naming-convention
-
     // Due to issues with a timeout or failed request to the authorization service increasing the standard timeout and adding retries.
     // Docs for this option here, https://github.com/panva/node-openid-client/tree/master/docs#customizing-http-requests
-    custom.setHttpOptionsDefaults(httpOptionsDefaults);
+    custom.setHttpOptionsDefaults({
+      timeout: 10000,
+      retry: 3,
+    });
 
     this._issuer = await Issuer.discover(this._authorityUrl);
     const clientMetadata: ClientMetadata = {
       client_id: this._config.clientId, // eslint-disable-line @typescript-eslint/naming-convention
       token_endpoint_auth_method: "none", // eslint-disable-line @typescript-eslint/naming-convention
     };
-    if (this._config.clientSecret) {
-      clientMetadata.client_secret = this._config.clientSecret;
-      clientMetadata.token_endpoint_auth_method = "client_secret_basic";
-    }
     this._client = new this._issuer.Client(clientMetadata); // eslint-disable-line @typescript-eslint/naming-convention
   }
 
@@ -180,12 +168,6 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
         // Handle federated sign-in
         await this.handleFederatedSignin(page);
-
-        // Handle AzureAD sign-in
-        await this.handleAzureADSignin(page);
-
-        // Handle Authing sign-in
-        await this.handleAuthingSignin(page);
       } catch (err) {
         controller.abort();
         throw new Error(`Failed OIDC signin for ${this._user.email}.\n${err}`);
@@ -290,10 +272,6 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     let allow = page.locator(testSelectors.pingAllowSubmit);
     await allow.click();
 
-    // Cut out for federated sign-in
-    if (-1 !== page.url().indexOf("microsoftonline"))
-      return;
-
     await page.waitForSelector(testSelectors.pingPassword);
     await page.type(testSelectors.pingPassword, this._user.password);
 
@@ -360,81 +338,6 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       const msSubmit = await page.waitForSelector(testSelectors.msSubmit);
       await msSubmit.click();
     }
-  }
-
-  // AzureAD specific login.
-  private async handleAzureADSignin(page: Page): Promise<void> {
-    await page.waitForLoadState("networkidle");
-
-    if (-1 === page.url().indexOf("microsoftonline"))
-      return;
-
-    // Verify username selector exists
-    const username = page.locator(testSelectors.msUserNameField);
-    const exists = await username.count();
-
-    if (!exists)
-      throw new Error("Username field does not exist");
-
-    await username.type(this._user.email);
-
-    const next = await page.waitForSelector(testSelectors.msSubmit);
-    await next.click();
-
-    const errorInvalidUsername = page.locator("#usernameError");
-    if (await errorInvalidUsername.count()) {
-      throw new Error("Invalid username during AzureAD sign in");
-    }
-
-    const submitSignIn = await page.waitForSelector(
-      testSelectors.msSubmitSignIn
-    );
-
-    const password = page.locator(testSelectors.msPasswordField);
-    const passwordExists = await password.count();
-
-    if (!passwordExists)
-      throw new Error("Password field does not exist");
-
-    // Type password and wait for navigation\
-    await password.type(this._user.password);
-    await submitSignIn.click();
-
-    // Accept stay signed-in page and complete sign in
-    const submitYes = await page.waitForSelector(testSelectors.msSubmitYes);
-    await submitYes.click();
-  }
-
-  // Authing specific login.
-  private async handleAuthingSignin(page: Page): Promise<void> {
-    if (
-      undefined === this._issuer.metadata.authorization_endpoint ||
-      -1 === page.url().indexOf("authing")
-    )
-      return;
-
-    // Verify username selector exists
-    if (!(await this.checkSelectorExists(page, "#identity")))
-      throw new Error("Username field does not exist");
-
-    // Verify password selector exists
-    if (!(await this.checkSelectorExists(page, testSelectors.pingPassword)))
-      throw new Error("Password field does not exist");
-
-    // Verify log in button exists
-    const button = page.locator(
-      "xpath=//button[contains(@class,'authing-login-btn')]"
-    );
-    if (!button || (await button.all()).length === 0)
-      throw new Error("Log in button does not exist");
-
-    // Type username and password
-    await page.type("#identity", this._user.email);
-    await page.type(testSelectors.pingPassword, this._user.password);
-
-    // Log in and navigate
-    await page.waitForLoadState("networkidle");
-    await button.first().click();
   }
 
   private async handleConsentPage(page: Page): Promise<void> {
