@@ -28,9 +28,9 @@
   },
   "dependencies": {
     "@itwin/core-common": ">=3.3.0",
+    "got": "^11.8.6",
     "jsonwebtoken": "^9.0.0",
-    "jwks-rsa": "^2.0.4",
-    "openid-client": "^4.7.4"
+    "jwks-rsa": "^2.0.4"
   },
   "devDependencies": {
     "@itwin/build-tools": "^4.0.0-dev.93",

@@ -7,9 +7,10 @@
  */
 
 import type { AuthorizationClient } from "@itwin/core-common";
-import type { ClientMetadata, GrantBody, Client as OpenIdClient, TokenSet } from "openid-client";
-import { custom, Issuer } from "openid-client";
 import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
+import type { Options as GotOptions } from "got";
+import got from "got";
+import { OIDCDiscoveryClient } from "./OIDCDiscoveryClient";
 
 /**
   * Utility to generate OIDC/OAuth tokens for service or service applications
@@ -24,83 +25,62 @@ import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthoriza
   */
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected _configuration: ServiceAuthorizationClientConfiguration;
+  private _discoveryClient: OIDCDiscoveryClient;
+  private _gotOptions: Pick<GotOptions, "retry" | "timeout">;
 
   private _accessToken: string = "";
   private _expiresAt?: Date;
 
-  public url = "https://ims.bentley.com";
-
-  private _client?: OpenIdClient;
-
   constructor(serviceConfiguration: ServiceAuthorizationClientConfiguration) {
-    custom.setHttpOptionsDefaults({
-      timeout: 10000,
-      retry: 4,
-    });
-
-    this._configuration = serviceConfiguration;
-
-    let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._configuration.authority ?? this.url);
-    if (prefix && !this._configuration.authority){
-      prefix = prefix === "dev-" ? "qa-" : prefix;
-      authority.hostname = prefix + authority.hostname;
-    }
-    this.url = authority.href.replace(/\/$/, "");
-  }
-
-  private _issuer?: Issuer<OpenIdClient>;
-  private async getIssuer(): Promise<Issuer<OpenIdClient>> {
-    if (this._issuer)
-      return this._issuer;
-
-    this._issuer = await Issuer.discover(this.url);
-    return this._issuer;
-  }
-
-  /**
-  * Discover the endpoints of the service
-  */
-  public async discoverEndpoints(): Promise<Issuer<OpenIdClient>> {
-    return this.getIssuer();
-  }
-
-  protected async getClient(): Promise<OpenIdClient> {
-    if (this._client)
-      return this._client;
-
-    const clientConfiguration: ClientMetadata = {
-      client_id: this._configuration.clientId, // eslint-disable-line @typescript-eslint/naming-convention
-      client_secret: this._configuration.clientSecret, // eslint-disable-line @typescript-eslint/naming-convention
+    this._gotOptions = {
+      retry: {
+        limit: 3,
+        methods: ["GET", "POST"],
+      },
+      timeout: {
+        lookup: 500, // DNS
+        connect: 200, // socket connected
+        send: 1000, // writing data to socket
+        response: 10000, // starts when request has been flushed, ends when the headers are received.
+        request: 12000, // global timeout
+      },
     };
 
-    const issuer = await this.getIssuer();
-    this._client = new issuer.Client(clientConfiguration);
-
-    return this._client;
+    this._discoveryClient = new OIDCDiscoveryClient(serviceConfiguration.authority);
+    this._configuration = serviceConfiguration;
   }
 
   private async generateAccessToken(): Promise<string> {
-    const scope = this._configuration.scope;
-    if (scope.includes("openid") || scope.includes("email") || scope.includes("profile") || scope.includes("organization"))
-      throw new Error("Authorization error: Scopes for an service cannot include 'openid email profile organization'");
+    const scopes = this._configuration.scope.split(/\s+/);
+    if (scopes.includes("openid") || scopes.includes("email") || scopes.includes("profile") || scopes.includes("organization"))
+      throw new Error("Authorization error: Scopes for a service cannot include 'openid email profile organization'");
 
-    const grantParams: GrantBody = {
+    const issuer = await this._discoveryClient.getConfig();
+    if (!issuer.token_endpoint)
+      throw new Error("Issuer does not support client credentials");
+
+    const body = {
       grant_type: "client_credentials", // eslint-disable-line @typescript-eslint/naming-convention
-      scope,
+      scope: scopes.join(" "),
     };
 
-    let tokenSet: TokenSet;
-    const client = await this.getClient();
-    try {
-      tokenSet = await client.grant(grantParams);
-    } catch (error: any) {
-      throw new Error(`Authorization error: ${error.message}`);
-    }
+    const encoded = `${encodeURIComponent(this._configuration.clientId)}:${encodeURIComponent(this._configuration.clientSecret)}`.replace("%20", "+");
+    const authHeader = `Basic ${Buffer.from(encoded).toString("base64")}`;
 
-    this._accessToken = `Bearer ${tokenSet.access_token}`;
-    if (tokenSet.expires_at)
-      this._expiresAt = new Date(tokenSet.expires_at * 1000);
+    const tokenSet = await got.post(issuer.token_endpoint, {
+      ...this._gotOptions,
+      headers: {
+        /* eslint-disable @typescript-eslint/naming-convention */
+        "Content-Type": "application/x-www-form-urlencoded",
+        "Authorization": authHeader,
+        /* eslint-enable @typescript-eslint/naming-convention */
+      },
+      form: body,
+    }).json<any>();
+
+    this._accessToken = `${tokenSet.token_type} ${tokenSet.access_token}`;
+    if (tokenSet.expires_in)
+      this._expiresAt = new Date(Date.now() + tokenSet.expires_in * 1000);
     return this._accessToken;
   }
 
