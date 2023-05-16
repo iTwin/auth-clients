@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/service-authorization",
       "comment": "",
-      "type": "none"
+      "type": "major"
     }
   ],
   "packageName": "@itwin/service-authorization"

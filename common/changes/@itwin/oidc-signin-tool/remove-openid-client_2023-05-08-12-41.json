@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/oidc-signin-tool",
       "comment": "",
-      "type": "none"
+      "type": "major"
     }
   ],
   "packageName": "@itwin/oidc-signin-tool"
