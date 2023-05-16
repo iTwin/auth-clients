@@ -300,10 +300,10 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     await this.checkErrorOnPage(page, ".ping-error");
   }
 
-  // Bentley-specific federated login.  This will get called if a redirect to a url including "wsfed".
+  // Bentley-specific federated login.  This will get called if a redirect to a url including "microsoftonline".
   private async handleFederatedSignin(page: Page): Promise<void> {
     await page.waitForLoadState("networkidle");
-    if (-1 === page.url().indexOf("wsfed"))
+    if (-1 === page.url().indexOf("microsoftonline"))
       return;
 
     if (await this.checkSelectorExists(page, testSelectors.msUserNameField)) {

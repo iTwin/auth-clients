@@ -45,7 +45,7 @@ test.describe("Sign in (#integration)", () => {
     await expect(
       getTestAccessToken(oidcConfig, TestUsers.federatedInvalid)
     ).rejects.toThrowError(
-      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: Invalid username during AzureAD sign in`
+      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: Enter a valid email address, phone number, or Skype name.`
     );
   });
 

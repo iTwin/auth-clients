@@ -79,30 +79,6 @@ export class TestUsers {
     };
   }
 
-  public static get azureUser(): TestUserCredentials {
-    if (!process.env.IMJS_TEST_AZUREAD_USER_NAME)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_NAME");
-    if (!process.env.IMJS_TEST_AZUREAD_USER_PASSWORD)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_PASSWORD");
-
-    return {
-      email: process.env.IMJS_TEST_AZUREAD_USER_NAME,
-      password: process.env.IMJS_TEST_AZUREAD_USER_PASSWORD,
-    };
-  }
-
-  public static get authingUser(): TestUserCredentials {
-    if (!process.env.IMJS_TEST_AUTHING_USER_NAME)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_NAME");
-    if (!process.env.IMJS_TEST_AUTHING_USER_PASSWORD)
-      throw new Error("Could not find IMJS_TEST_AZUREAD_USER_PASSWORD");
-
-    return {
-      email: process.env.IMJS_TEST_AUTHING_USER_NAME,
-      password: process.env.IMJS_TEST_AUTHING_USER_PASSWORD,
-    };
-  }
-
   /**
    * Gets the default iModel.js OIDC SPA client registration available at the config variables:
    *
