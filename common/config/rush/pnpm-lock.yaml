@@ -184,7 +184,7 @@ importers:
       eslint: ^7.32.0
       mocha: ^8.2.3
       nyc: ^15.1.0
-      oidc-client-ts: ^2.2.3
+      oidc-client-ts: ^2.2.4
       rimraf: ^3.0.2
       sinon: ^15.0.1
       typescript: ~4.9.0
@@ -195,7 +195,7 @@ importers:
       '@playwright/test': 1.31.2
       dotenv: 10.0.0
       dotenv-expand: 5.1.0
-      oidc-client-ts: 2.2.3
+      oidc-client-ts: 2.2.4
     devDependencies:
       '@itwin/build-tools': 4.0.0-dev.100_@types+node@18.15.0
       '@itwin/core-bentley': 3.7.3
@@ -5586,8 +5586,8 @@ packages:
       jwt-decode: 3.1.2
     dev: false
 
-  /oidc-client-ts/2.2.3:
-    resolution: {integrity: sha512-nheMI8kSJu8L+Pmg7E4ra+LJ7lOTK60IfyblFmyx5qaJwwDpc1zkzFyH9eyERAQ92xUTF1uaB8WiaVxXATjLGA==}
+  /oidc-client-ts/2.2.4:
+    resolution: {integrity: sha512-nOZwIomju+AmXObl5Oq5PjrES/qTt8bLsENJCIydVgi9TEWk7SCkOU6X3RNkY7yfySRM1OJJvDKdREZdmnDT2g==}
     engines: {node: '>=12.13.0'}
     dependencies:
       crypto-js: 4.1.1

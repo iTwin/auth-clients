@@ -167,9 +167,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
       const callbackUrl = await waitForCallbackUrl;
       if (callbackUrl) {
-        (global as any).window = { location: { origin: "a:" } }; // the URL doesn't matter, it's only used to get the query params from URL object
         const tokenSet = await oidcClient.processSigninResponse(callbackUrl.url());
-        delete (global as any).window;
         this._accessToken = `Bearer ${tokenSet.access_token}`;
         if (tokenSet.expires_at)
           this._expiresAt = new Date(tokenSet.expires_at * 1000);
