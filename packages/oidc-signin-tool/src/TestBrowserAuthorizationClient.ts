@@ -148,12 +148,6 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
         // Handle federated sign-in
         await this.handleFederatedSignin(page);
-
-        // Handle AzureAD sign-in
-        await this.handleAzureADSignin(page);
-
-        // Handle Authing sign-in
-        await this.handleAuthingSignin(page);
       } catch (err) {
         controller.abort();
         throw new Error(`Failed OIDC signin for ${this._user.email}.\n${err}`);
@@ -259,10 +253,10 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     await this.checkErrorOnPage(page, ".ping-error");
   }
 
-  // Bentley-specific federated login.  This will get called if a redirect to a url including "wsfed".
+  // Bentley-specific federated login.  This will get called if a redirect to a url including "microsoftonline".
   private async handleFederatedSignin(page: Page): Promise<void> {
     await page.waitForLoadState("networkidle");
-    if (-1 === page.url().indexOf("wsfed"))
+    if (-1 === page.url().indexOf("microsoftonline"))
       return;
 
     if (await this.checkSelectorExists(page, testSelectors.msUserNameField)) {
@@ -301,82 +295,6 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       const msSubmit = await page.waitForSelector(testSelectors.msSubmit);
       await msSubmit.click();
     }
-  }
-
-  // AzureAD specific login.
-  private async handleAzureADSignin(page: Page): Promise<void> {
-    await page.waitForLoadState("networkidle");
-
-    if (-1 === page.url().indexOf("microsoftonline"))
-      return;
-
-    // Verify username selector exists
-    const username = page.locator(testSelectors.msUserNameField);
-    const exists = await username.count();
-
-    if (!exists)
-      throw new Error("Username field does not exist");
-
-    await username.type(this._user.email);
-
-    const next = await page.waitForSelector(testSelectors.msSubmit);
-    await next.click();
-
-    const errorInvalidUsername = page.locator("#usernameError");
-    if (await errorInvalidUsername.count()) {
-      throw new Error("Invalid username during AzureAD sign in");
-    }
-
-    const submitSignIn = await page.waitForSelector(
-      testSelectors.msSubmitSignIn
-    );
-
-    const password = page.locator(testSelectors.msPasswordField);
-    const passwordExists = await password.count();
-
-    if (!passwordExists)
-      throw new Error("Password field does not exist");
-
-    // Type password and wait for navigation\
-    await password.type(this._user.password);
-    await submitSignIn.click();
-
-    // Accept stay signed-in page and complete sign in
-    const submitYes = await page.waitForSelector(testSelectors.msSubmitYes);
-    await submitYes.click();
-  }
-
-  // Authing specific login.
-  private async handleAuthingSignin(page: Page): Promise<void> {
-    const config = await this._discoveryClient.getConfig();
-    if (
-      undefined === config.authorization_endpoint ||
-      -1 === page.url().indexOf("authing")
-    )
-      return;
-
-    // Verify username selector exists
-    if (!(await this.checkSelectorExists(page, "#identity")))
-      throw new Error("Username field does not exist");
-
-    // Verify password selector exists
-    if (!(await this.checkSelectorExists(page, testSelectors.pingPassword)))
-      throw new Error("Password field does not exist");
-
-    // Verify log in button exists
-    const button = page.locator(
-      "xpath=//button[contains(@class,'authing-login-btn')]"
-    );
-    if (!button || (await button.all()).length === 0)
-      throw new Error("Log in button does not exist");
-
-    // Type username and password
-    await page.type("#identity", this._user.email);
-    await page.type(testSelectors.pingPassword, this._user.password);
-
-    // Log in and navigate
-    await page.waitForLoadState("networkidle");
-    await button.first().click();
   }
 
   private async handleConsentPage(page: Page): Promise<void> {
