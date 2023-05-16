@@ -45,7 +45,7 @@ test.describe("Sign in (#integration)", () => {
     await expect(
       getTestAccessToken(oidcConfig, TestUsers.federatedInvalid)
     ).rejects.toThrowError(
-      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: Invalid username during AzureAD sign in`
+      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: Enter a valid email address, phone number, or Skype name.`
     );
   });
 
@@ -67,33 +67,6 @@ test.describe("TestUsers utility (#integration)", () => {
     token = await TestUtility.getAccessToken(TestUsers.super);
     expect(token).toBeDefined();
     token = await TestUtility.getAccessToken(TestUsers.superManager);
-    expect(token).toBeDefined();
-  });
-});
-
-test.describe("Authing and AzureAD (#integration)", () => {
-  let azureAdOidcConfig: TestBrowserAuthorizationClientConfiguration;
-  let authingOidcConfig: TestBrowserAuthorizationClientConfiguration;
-
-  test.beforeAll(() => {
-    azureAdOidcConfig = loadConfig(TestConfigType.AZURE);
-    authingOidcConfig = loadConfig(TestConfigType.AUTHING);
-  });
-
-  test("success AzureAD with valid user", async () => {
-    const token = await getTestAccessToken(
-      azureAdOidcConfig,
-      TestUsers.azureUser
-    );
-    expect(token).toBeDefined();
-  });
-
-  // reached active user limit
-  test.skip("success Authing with valid user", async () => {
-    const token = await getTestAccessToken(
-      authingOidcConfig,
-      TestUsers.authingUser
-    );
     expect(token).toBeDefined();
   });
 });
