@@ -4,8 +4,8 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as chai from "chai";
-import { OIDCDiscoveryClient, OIDCConfig } from "../OIDCDiscoveryClient";
-
+import type { OIDCConfig } from "../OIDCDiscoveryClient";
+import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 
 describe("BaseOpenidClient", () => {
   const testAuthority = "https://test.authority.com";

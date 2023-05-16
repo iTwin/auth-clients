@@ -3,6 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
+/* eslint-disable @typescript-eslint/naming-convention */
 /** @alpha */
 export interface IntrospectionResponse {
   active: boolean;
@@ -19,3 +20,4 @@ export interface IntrospectionResponse {
   nbf?: number;
   token_type?: string;
 }
+/* eslint-enable @typescript-eslint/naming-convention */
