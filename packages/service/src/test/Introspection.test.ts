@@ -3,6 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
+/* eslint-disable @typescript-eslint/dot-notation */
+
 import { Logger } from "@itwin/core-bentley";
 import { assert, use as chaiUse, expect } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
