@@ -52,7 +52,7 @@
     "typescript": "~5.0.2"
   },
   "peerDependencies": {
-    "@itwin/core-bentley": ">=3.3.0"
+    "@itwin/core-bentley": "^3.3.0 || ^4.0.0"
   },
   "eslintConfig": {
     "plugins": [
