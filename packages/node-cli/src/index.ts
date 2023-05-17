@@ -10,7 +10,7 @@ export * from "./Client";
 
 ## Usage:
 
-The node-cli-authorization client works by opening a system browser for users to supply credentials, then completes the auth flow by starting a node server to complete the callback.
+The **@itwin/node-cli-authorization** package contains a Node.js command-line based client for authorization with the iTwin Platform by default and is configurable to work with any OAuth2.0 based provider.
 
 ```ts
 const authClient = new NodeCliAuthorizationClient({

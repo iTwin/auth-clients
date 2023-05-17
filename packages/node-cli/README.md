@@ -8,7 +8,7 @@ The **@itwin/node-cli-authorization** package contains a Node.js command-line ba
 
 ## How it works
 
-The node-cli-authorization client works by opening a system browser for users to supply credentials, then completes the auth flow by starting a node server to complete the callback.
+The node-cli-authorization client works by opening a system browser for users to supply credentials, then completes the flow by starting a local node server to facilitate the callback from the identity server.
 
 ```ts
 const authClient = new NodeCliAuthorizationClient({
