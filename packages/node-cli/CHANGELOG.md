@@ -1,6 +1,18 @@
 # Change Log - @itwin/node-cli-authorization
 
-This log was last generated on Tue, 14 Mar 2023 20:05:10 GMT and should not be manually modified.
+This log was last generated on Wed, 17 May 2023 20:26:35 GMT and should not be manually modified.
+
+## 1.0.0
+Wed, 17 May 2023 20:26:35 GMT
+
+### Breaking changes
+
+- Release v1.0
+
+### Patches
+
+- add core-common as direct dep (types)
+- Update peer deps to use >= for core-bentley
 
 ## 0.11.0
 Tue, 14 Mar 2023 20:05:10 GMT
