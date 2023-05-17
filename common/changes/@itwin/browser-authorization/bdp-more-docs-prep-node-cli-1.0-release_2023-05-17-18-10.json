@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "readme",
+      "type": "none"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}
