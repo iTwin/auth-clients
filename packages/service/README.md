@@ -4,7 +4,7 @@ Copyright © Bentley Systems, Incorporated. All rights reserved. See LICENSE.md 
 
 ## Description
 
-The **@itwin/service-authorization** package contains a service based client for authorization with the iTwin platform using the OIDC client credentials flow.
+The **@itwin/service-authorization** package contains a service based client for authorization with the iTwin platform using OIDC client credentials flow.
 
 ## Usage
 
