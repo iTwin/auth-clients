@@ -48,12 +48,12 @@ to complete the process. Once back on your initial page, the call to `client.sig
 If the callback occurs on a page where the configured `client` is not available, you can use the static method to complete the process:
 
 ```typescript
-await BrowserAuthorizationClient.handleSigninCallback()
+await BrowserAuthorizationClient.handleSigninCallback();
 
 // This library defaults to localStorage for storing state.
 // To use sessionStorage (or another Storage object), you can pass it as an argument.
 // If overriding the default localStorage, also set the stateStore via client.setAdvancedSettings({stateStore: yourStore})
-await BrowserAuthorizationClient.handleSigninCallback(window.sessionStorage)
+await BrowserAuthorizationClient.handleSigninCallback(window.sessionStorage);
 ```
 
 This will pull the client configuration from localStorage, using the state nonce provided by OIDC to select the proper configuration.
