@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/oidc-signin-tool",
+      "comment": "Remove AzureAD and Authing support",
+      "type": "major"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool"
+}

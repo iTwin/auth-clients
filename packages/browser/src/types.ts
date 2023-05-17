@@ -1,7 +1,8 @@
-import type { MarkRequired } from "@itwin/core-bentley";
 /** @packageDocumentation
  * @module Authorization
  */
+
+import type { MarkRequired } from "@itwin/core-bentley";
 
 /**
  * Contains information related to the previous application state, as specified in the original auth request.
@@ -17,7 +18,10 @@ export interface BrowserAuthorizationClientRedirectState {
  * @internal
  * The internal configuration used by BrowserAuthorizationClient.
  */
-export type BrowserAuthorizationClientConfigurationOptions = MarkRequired<BrowserAuthorizationClientConfiguration, "authority">;
+export type BrowserAuthorizationClientConfigurationOptions = MarkRequired<
+BrowserAuthorizationClientConfiguration,
+"authority"
+>;
 /**
  * @beta
  */
@@ -63,4 +67,17 @@ export interface BrowserAuthorizationClientConfiguration
 export interface BrowserAuthorizationClientRequestOptions {
   /** The required action demanded of the user before the authentication request can succeed */
   prompt?: "none" | "login" | "consent" | "select_account" | string;
+}
+
+export interface SettingsInStorage {
+  id: string; // nonce/state
+  authority: string;
+  client_id: string; // eslint-disable-line @typescript-eslint/naming-convention
+  code_verifier: string; // eslint-disable-line @typescript-eslint/naming-convention
+  created: number;
+  data: { successRedirectUrl: string };
+  redirect_uri: string; // eslint-disable-line @typescript-eslint/naming-convention
+  request_type: string; // eslint-disable-line @typescript-eslint/naming-convention
+  response_mode: string; // eslint-disable-line @typescript-eslint/naming-convention
+  scope: string;
 }

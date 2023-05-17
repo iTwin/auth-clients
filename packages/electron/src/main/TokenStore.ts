@@ -4,63 +4,63 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-/** @packageDocumentation
- * @module Authentication
- */
-
 import * as OperatingSystemUserName from "username";
-import type { TokenResponseJson } from "@openid/appauth";
-import { TokenResponse } from "@openid/appauth";
 import { deletePassword, getPassword, setPassword } from "keytar";
 
 /**
- * Utility to store OIDC AppAuth in secure storage
+ * Utility class used to store and read OAuth refresh tokens.
  * @internal
  */
-export class ElectronTokenStore {
+export class RefreshTokenStore {
+  /**
+   * Key that will be used to store and read refresh token from OS level secure credential store,
+   * see {@link setPassword}, {@link getPassword}.
+   */
   private _appStorageKey: string;
+  /**
+   * Cached name of the currently logged in system (OS) user.
+   */
+  private _userName?: string;
 
   public constructor(appStorageKey: string) {
     this._appStorageKey = appStorageKey;
   }
 
-  private _userName?: string; // Cached user name
   private async getUserName(): Promise<string | undefined> {
-    if (!this._userName)
-      this._userName = await OperatingSystemUserName();
+    if (!this._userName) {
+      try {
+        this._userName = await OperatingSystemUserName();
+      } catch {
+        // errors occur in testing when using asynchronous call
+        // https://github.com/iTwin/auth-clients/issues/163
+        this._userName = OperatingSystemUserName.sync();
+      }
+    }
+
     return this._userName;
   }
 
-  /** Load token if available */
-  public async load(): Promise<TokenResponse | undefined> {
+  /** Load refresh token if available */
+  public async load(): Promise<string | undefined> {
     const userName = await this.getUserName();
     if (!userName)
-      return;
-
-    const tokenResponseStr = await getPassword(this._appStorageKey, userName);
-    if (!tokenResponseStr) {
       return undefined;
-    }
 
-    const tokenResponseJson = JSON.parse(tokenResponseStr) as TokenResponseJson;
-    return new TokenResponse(tokenResponseJson);
+    const refreshToken = await getPassword(this._appStorageKey, userName);
+
+    return refreshToken || undefined;
   }
 
-  /** Save token after signin */
-  public async save(tokenResponse: TokenResponse): Promise<void> {
+  /** Save refresh token after signin */
+  public async save(refreshToken: string): Promise<void> {
     const userName = await this.getUserName();
     if (!userName)
       return;
 
-    const tokenResponseObj = new TokenResponse(tokenResponse.toJson()); // Workaround for 'stub received bad data' error on windows - see https://github.com/atom/node-keytar/issues/112
-    tokenResponseObj.accessToken = "";
-    tokenResponseObj.idToken = "";
-
-    const tokenResponseStr = JSON.stringify(tokenResponseObj.toJson());
-    await setPassword(this._appStorageKey, userName, tokenResponseStr);
+    await setPassword(this._appStorageKey, userName, refreshToken);
   }
 
-  /** Delete token after signout */
+  /** Delete refresh token after signout */
   public async delete(): Promise<void> {
     const userName = await this.getUserName();
     if (!userName)

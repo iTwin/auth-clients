@@ -2,19 +2,16 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-/** @packageDocumentation
- * @module Introspection
- */
 
-import type { Client as OpenIdClient } from "openid-client";
-import { custom, Issuer } from "openid-client";
 import type { IntrospectionResponse } from "./IntrospectionResponse";
 import { ServiceClientLoggerCategory } from "../ServiceClientLoggerCategory";
 import { BentleyError, BentleyStatus, Logger } from "@itwin/core-bentley";
 import * as jwks from "jwks-rsa";
 import * as jwt from "jsonwebtoken";
+import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 
 /**
+ * @alpha
  * @param issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
  */
 export interface IntrospectionClientConfiguration {
@@ -30,30 +27,10 @@ function removeAccessTokenPrefix(accessToken: string): string {
 
 /** @alpha */
 export class IntrospectionClient {
-  public url = "https://ims.bentley.com";
+  private _discoveryClient: OIDCDiscoveryClient;
 
   public constructor(protected _config: IntrospectionClientConfiguration = {}) {
-    let prefix = process.env.IMJS_URL_PREFIX;
-    const authority = new URL(this._config.issuerUrl ?? this.url);
-    if (prefix && !this._config.issuerUrl) {
-      prefix = prefix === "dev-" ? "qa-" : prefix;
-      authority.hostname = prefix + authority.hostname;
-    }
-    this.url = authority.href.replace(/\/$/, "");
-  }
-
-  private _issuer?: Issuer<OpenIdClient>;
-  protected async getIssuer(): Promise<Issuer<OpenIdClient>> {
-    if (this._issuer)
-      return this._issuer;
-
-    custom.setHttpOptionsDefaults({
-      timeout: 10000,
-      retry: 4,
-    });
-
-    this._issuer = await Issuer.discover(this.url);
-    return this._issuer;
+    this._discoveryClient = new OIDCDiscoveryClient(_config.issuerUrl);
   }
 
   private _jwks?: jwks.JwksClient;
@@ -61,7 +38,7 @@ export class IntrospectionClient {
     if (this._jwks)
       return this._jwks;
 
-    const jwksUri = (await this.getIssuer()).metadata.jwks_uri;
+    const jwksUri = (await this._discoveryClient.getConfig()).jwks_uri;
     if (!jwksUri) {
       Logger.logError(ServiceClientLoggerCategory.Introspection, "Issuer does not support JWKS");
       throw new Error("Issuer does not support JWKS");

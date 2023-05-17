@@ -1,22 +1,23 @@
 {
   "name": "@itwin/oidc-signin-tool",
-  "version": "3.7.1",
+  "version": "3.7.2",
   "description": "OIDC Signin Helper",
   "main": "lib/cjs/index.js",
   "typings": "lib/cjs/index",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/itwin/auth-clients/tree/main/packages/oidc-signin-tool"
+    "url": "https://github.com/itwin/auth-clients.git",
+    "directory": "packages/oidc-signin-tool"
   },
   "scripts": {
     "build": "tsc 1>&2 --outDir lib/cjs",
     "clean": "rimraf lib .rush/temp/package-deps*.json",
+    "docs": "",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
     "test:integration": "playwright test src/test-integration",
-    "docs": "",
     "cover": "nyc npm test",
     "rebuild": "npm run clean && npm run build",
     "postinstall": "node ./installPlaywright.js"
@@ -32,19 +33,21 @@
     "url": "http://www.bentley.com"
   },
   "dependencies": {
-    "@itwin/certa": "^3.3.0",
+    "@itwin/certa": "^3.7.0",
+    "@itwin/core-common": ">=3.3.0",
+    "@itwin/service-authorization": "workspace:*",
     "@playwright/test": "~1.31.2",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
-    "openid-client": "^4.7.4"
+    "oidc-client-ts": "^2.2.4"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^3.3.0",
-    "@itwin/core-bentley": "^3.3.0",
-    "@itwin/core-common": "^3.3.0",
-    "@itwin/eslint-plugin": "^3.3.0",
+    "@itwin/build-tools": "^4.0.0-dev.93",
+    "@itwin/core-bentley": "^3.7.0",
+    "@itwin/eslint-plugin": "^3.7.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7",
+    "@types/jsonwebtoken": "^9.0.1",
     "@types/mocha": "^8.2.3",
     "@types/node": "^18.11.5",
     "@types/sinon": "^10.0.13",
@@ -58,7 +61,7 @@
     "typescript": "~4.3.5"
   },
   "peerDependencies": {
-    "@itwin/core-bentley": "^3.3.0"
+    "@itwin/core-bentley": ">=3.3.0"
   },
   "eslintConfig": {
     "plugins": [

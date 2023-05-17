@@ -6,7 +6,7 @@
       "commandKind": "bulk",
       "summary": "Run build script for each package",
       "description": "Runs the 'build' script for each package in the monorepo.",
-      "enableParallelism": true,
+      "enableParallelism": false,
       "ignoreMissingScript": false,
       "ignoreDependencyOrder": true,
       "allowWarningsInSuccessfulBuild": true
@@ -16,6 +16,16 @@
       "commandKind": "bulk",
       "summary": "Run cover script for each package",
       "description": "Iterates through each package in the monorepo and runs the 'cover' script",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
+      "name": "docs",
+      "commandKind": "bulk",
+      "summary": "Extracts reference documentation via typedoc json API",
+      "description": "Iterates through each package in the monorepo and runs the 'docs' script",
       "enableParallelism": true,
       "ignoreMissingScript": false,
       "ignoreDependencyOrder": true,
@@ -36,6 +46,16 @@
       "commandKind": "bulk",
       "summary": "Run lint rules on each package",
       "description": "Iterates through each package in the monorepo and runs the 'lint' script",
+      "enableParallelism": true,
+      "ignoreMissingScript": false,
+      "ignoreDependencyOrder": true,
+      "allowWarningsInSuccessfulBuild": true
+    },
+    {
+      "name": "lint:fix",
+      "commandKind": "bulk",
+      "summary": "Run lint rules on each package, fixing where possible",
+      "description": "Iterates through each package in the monorepo and runs the 'lint' script with the --fix flag",
       "enableParallelism": true,
       "ignoreMissingScript": false,
       "ignoreDependencyOrder": true,

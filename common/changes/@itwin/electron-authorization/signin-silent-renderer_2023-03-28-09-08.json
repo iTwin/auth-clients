@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "Add ability to initiate silentSignIn from ElectronRendererAuthorization",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}

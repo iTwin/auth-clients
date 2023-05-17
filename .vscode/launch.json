@@ -44,12 +44,23 @@
       "name": "OIDC Signin Tool Integration Tests",
       "type": "pwa-node",
       "request": "launch",
-      "program": "${workspaceFolder}/packages/oidc-signin-tool",
+      "cwd": "${workspaceFolder}/packages/oidc-signin-tool",
       "runtimeExecutable": "npm",
       "runtimeArgs": [
         "run",
         "test:integration"
       ]
-    }
+    },
+    {
+      "name": "Electron integration tests - Main",
+      "program": "${workspaceFolder}/packages/electron/dist/integration-test/index.js",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/packages/electron/node_modules/.bin/electron",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "type": "node",
+      "cwd": "${workspaceFolder}/packages/electron"
+    },
   ]
 }

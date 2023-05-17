@@ -1,6 +1,31 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Tue, 14 Mar 2023 20:05:10 GMT and should not be manually modified.
+This log was last generated on Fri, 05 May 2023 18:56:53 GMT and should not be manually modified.
+
+## 1.0.0
+Fri, 05 May 2023 18:56:53 GMT
+
+### Breaking changes
+
+- add core-common as direct dep (types); 1.0 release
+
+### Patches
+
+- Update peer deps to use >= for core-bentley
+
+## 0.9.0
+Fri, 14 Apr 2023 21:44:37 GMT
+
+### Minor changes
+
+- Add static BrowserAuthorizationClient.handleSigninCallback method for configless callback
+
+## 0.8.0
+Wed, 22 Mar 2023 18:23:21 GMT
+
+### Minor changes
+
+- Consolidate BrowserAuthCallbackHandler into BrowserAuthorizationClient
 
 ## 0.7.0
 Tue, 14 Mar 2023 20:05:10 GMT

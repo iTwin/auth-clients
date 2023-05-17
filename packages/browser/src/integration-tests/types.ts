@@ -9,4 +9,5 @@ export interface SignInOptions {
 export enum AuthType {
   Redirect,
   PopUp,
+  RedirectStatic,
 }
