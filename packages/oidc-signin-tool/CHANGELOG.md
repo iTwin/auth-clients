@@ -1,6 +1,13 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Fri, 05 May 2023 18:56:53 GMT and should not be manually modified.
+This log was last generated on Wed, 17 May 2023 20:26:35 GMT and should not be manually modified.
+
+## 4.0.0
+Wed, 17 May 2023 20:26:35 GMT
+
+### Breaking changes
+
+- Remove AzureAD and Authing support
 
 ## 3.7.2
 Fri, 05 May 2023 18:56:53 GMT

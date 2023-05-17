@@ -1,6 +1,19 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 29 Mar 2023 09:49:21 GMT and should not be manually modified.
+This log was last generated on Wed, 17 May 2023 20:26:35 GMT and should not be manually modified.
+
+## 0.14.0
+Wed, 17 May 2023 20:26:35 GMT
+
+### Minor changes
+
+- Add support for Electron 24.
+- Add ability to initiate silentSignIn from ElectronRendererAuthorization
+
+### Patches
+
+- add core-common as direct dep (types); 1.0 release
+- logout now triggers endsession url in system browser; switch to shell.openExternal to ensure urls open on macso; 
 
 ## 0.13.0
 Wed, 29 Mar 2023 09:49:21 GMT
@@ -135,3 +148,4 @@ Mon, 29 Nov 2021 15:30:19 GMT
 ### Minor changes
 
 - Changed ElectronAuthorizationBackend name to ElectronAuthorizationMain and ElectronAppAuthorization to ElectronAuthorizationRenderer
+
