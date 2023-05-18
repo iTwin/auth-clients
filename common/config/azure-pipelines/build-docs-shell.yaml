@@ -9,6 +9,9 @@ pr:
     include:
      - main
 
+pool:
+  vmImage: "windows-latest" # used because we publish from windows agents
+
 parameters:
 - name: browser
   displayName: Browser Authorization

@@ -55,9 +55,9 @@ def createRelease(tag):
 
             if packageJsonName == packageName:
                 packageBaseDirectory = os.path.dirname(fullPath)
-                changeLogFileName = "{0}/changelog.md".format(
+                changeLogFileName = "{0}/CHANGELOG.md".format(
                     packageBaseDirectory)
-                print("Found changelog.md: {0} matching: {1} at: {2}.".format(
+                print("Found CHANGELOG.md: {0} matching: {1} at: {2}".format(
                     packageJsonName, packageName, packageBaseDirectory))
 
                 break
@@ -82,7 +82,7 @@ def createRelease(tag):
         print("Latest Changes:\n" + latest_changes)
 
     cmd = ['gh', 'release', 'create', tag, '-n',
-           '"{0}"'.format(latest_changes), '-t', '"{0}"'.format(currentTag)]
+           '"{0}"'.format(latest_changes), '-t', '"{0}"'.format(tag)]
 
     proc = subprocess.Popen(
         " ".join(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
