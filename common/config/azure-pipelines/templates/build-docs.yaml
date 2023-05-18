@@ -19,34 +19,35 @@ steps:
       allowFailedBuilds: true
       artifactName: "iTwin-Auth-Clients Docs"
       targetPath: "$(Build.StagingDirectory)/docs"
+    condition: eq(variables['Agent.OS'], 'Windows_NT')
 
   - script: |
       node common/scripts/install-run-rush.js docs --only service-authorization
     env:
       RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
     displayName: "Build electron-authorization docs"
-    condition: eq(variables['releaseNotes.electron'], 'true')
+    condition: and(eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['releaseNotes.electron'], 'true'))
 
   - script: |
       node common/scripts/install-run-rush.js docs --only service-authorization
     env:
       RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
     displayName: "Build service-authorization docs"
-    condition: eq(variables['releaseNotes.service'], 'true')
+    condition: and(eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['releaseNotes.service'], 'true'))
 
   - script: |
       node common/scripts/install-run-rush.js docs --only node-cli-authorization
     env:
       RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
     displayName: "Build node-cli-authorization docs"
-    condition: eq(variables['releaseNotes.node-cli'], 'true')
+    condition: and(eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['releaseNotes.node-cli'], 'true'))
 
   - script: |
       node common/scripts/install-run-rush.js docs --only browser-authorization
     env:
       RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
     displayName: "Build browser-authorization docs"
-    condition: eq(variables['releaseNotes.browser'], 'true')
+    condition: and(eq(variables['Agent.OS'], 'Windows_NT'), eq(variables['releaseNotes.browser'], 'true'))
 
   - task: CopyFiles@2
     displayName: "Copy generated docs to: $(Build.StagingDirectory)"
@@ -54,17 +55,17 @@ steps:
       SourceFolder: $(Build.SourcesDirectory)/generated-docs/auth-clients
       TargetFolder: $(Build.StagingDirectory)/docs
       OverWrite: true
-    condition: and(succeeded(), ${{ parameters.shouldPublish }})
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }})
 
   - task: PublishBuildArtifacts@1
     displayName: "Publish Artifact: Auth-Clients Docs"
     inputs:
       PathtoPublish: "$(Build.StagingDirectory)/docs/"
       ArtifactName: "iTwin-Auth-Clients Docs"
-    condition: and(succeeded(), ${{ parameters.shouldPublish }} )
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
 
   - task: tagBuildOrRelease@0
     inputs:
       type: "Build"
       tags: "hasDocs"
-    condition: and(succeeded(), ${{ parameters.shouldPublish }} )
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
