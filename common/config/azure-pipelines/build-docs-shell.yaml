@@ -103,3 +103,12 @@ stages:
           parameters:
             shouldPublish: ${{parameters.shouldPublish}}
 
+  - stage: Validate_Docs
+    dependsOn: Generate_Docs
+    condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'PullRequest', 'Manual'))
+    jobs:
+    - template: common/config/azure-pipelines/jobs/docs-build.yaml@itwinjs-core
+      parameters:
+        checkout: itwinjs-core
+        useCurrentAuthClientsDocsArtifact: true
+        ignoreAudit: true
