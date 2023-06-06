@@ -2,10 +2,6 @@
 * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
-/** @packageDocumentation
- * @module Authentication
- */
-
 import { URL } from "node:url";
 import got from "got";
 
@@ -19,6 +15,12 @@ const arrayProperties = ["scopes_supported", "response_types_supported", "respon
   "request_object_signing_alg_values_supported", "request_object_encryption_alg_values_supported", "request_object_encryption_enc_values_supported", "token_endpoint_auth_methods_supported",
   "token_endpoint_auth_signing_alg_values_supported", "display_values_supported", "claim_types_supported", "claims_supported", "claims_locales_supported", "ui_locales_supported"] as const;
 const booleanProperties = ["claims_parameter_supported", "request_parameter_supported", "request_uri_parameter_supported", "require_request_uri_registration"] as const;
+
+/**
+  * Supports the OpenID Connect Discovery 1.0 specification.
+  * @internal
+  */
+
 export type OIDCConfig =
   { [x in typeof stringProperties[number]]: string | undefined } &
   { [x in typeof arrayProperties[number]]: string[] | undefined } &

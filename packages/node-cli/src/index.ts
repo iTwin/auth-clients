@@ -39,7 +39,7 @@ const authClient = new NodeCliAuthorizationClient({
 
 // start the authorization processs:
 await authClient.signIn();
- * /
+*/
 
 /**
  * @docs-group-description Authorization
