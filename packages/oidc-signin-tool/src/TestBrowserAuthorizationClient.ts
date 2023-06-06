@@ -114,6 +114,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       client_id: this._config.clientId,
       stateStore: new WebStorageStateStore({ store: new InMemoryWebStorage() }),
       scope: this._config.scope,
+      metadata: config,
     });
 
     // this is only async because it _could_ use AsyncStorage browser API.
