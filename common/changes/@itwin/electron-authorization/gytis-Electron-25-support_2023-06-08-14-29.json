@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "Add support for Electron 25",
+      "type": "patch"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
