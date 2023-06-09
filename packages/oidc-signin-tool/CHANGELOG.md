@@ -1,6 +1,13 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Wed, 17 May 2023 20:26:35 GMT and should not be manually modified.
+This log was last generated on Fri, 09 Jun 2023 17:20:04 GMT and should not be manually modified.
+
+## 4.0.1
+Fri, 09 Jun 2023 17:20:04 GMT
+
+### Patches
+
+- Fix issue with OIDC signin tool not working without fetch API
 
 ## 4.0.0
 Wed, 17 May 2023 20:26:35 GMT
