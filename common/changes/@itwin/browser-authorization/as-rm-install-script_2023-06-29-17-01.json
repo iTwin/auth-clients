@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/browser-authorization",
+      "comment": "Upgrade @playwright/test to 1.35.1",
+      "type": "none"
+    }
+  ],
+  "packageName": "@itwin/browser-authorization"
+}

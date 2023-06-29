@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "Upgrade @playwright/test to 1.35.1 and remove playwright as dependency",
+      "type": "none"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}

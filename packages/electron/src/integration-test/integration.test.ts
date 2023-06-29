@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { ElectronApplication, Page } from "@playwright/test";
-import { expect, test, _electron as electron } from "@playwright/test";
+import { _electron as electron, expect, test } from "@playwright/test";
 import type { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
 import { TestHelper } from "./helpers/TestHelper";
