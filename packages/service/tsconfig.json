@@ -3,7 +3,7 @@
   "compilerOptions": {
     "target": "ES2021",
     "outDir": "./lib/cjs",
-    "moduleResolution": "Node16"
+    "moduleResolution": "NodeNext"
   },
   "include": [
     "./src/**/*.ts"
