@@ -28,7 +28,7 @@
   },
   "dependencies": {
     "@itwin/core-common": ">=3.3.0",
-    "got": "^11.8.6",
+    "got": "^12.6.1",
     "jsonwebtoken": "^9.0.0",
     "jwks-rsa": "^2.0.4"
   },
