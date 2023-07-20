@@ -10,6 +10,11 @@ resources:
       type: git
       ref: master
       name: iModelTechnologies/imodeljs-build-pipeline-scripts
+    - repository: itwinjs-core
+      type: github
+      endpoint: iModelJs
+      name: iTwin/itwinjs-core
+      ref: refs/heads/master
 
 trigger: none
 pr: none
