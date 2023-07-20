@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "fix dependency version ranges",
+      "type": "patch",
+      "packageName": "@itwin/oidc-signin-tool"
+    }
+  ],
+  "packageName": "@itwin/oidc-signin-tool",
+  "email": "66480813+paulius-valiunas@users.noreply.github.com"
+}

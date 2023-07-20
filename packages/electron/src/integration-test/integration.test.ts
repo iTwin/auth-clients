@@ -4,11 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { ElectronApplication, Page } from "@playwright/test";
-import { expect, test } from "@playwright/test";
+import { _electron as electron, expect, test } from "@playwright/test";
 import type { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
 import { TestHelper } from "./helpers/TestHelper";
-import { _electron as electron } from "playwright";
 import { RefreshTokenStore } from "../main/TokenStore";
 
 const { clientId, envPrefix, email, password } = loadConfig();

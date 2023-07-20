@@ -20,7 +20,7 @@
     "test:integration": "playwright test src/test-integration",
     "cover": "nyc npm test",
     "rebuild": "npm run clean && npm run build",
-    "postinstall": "node ./installPlaywright.js"
+    "postinstall": "npx playwright install chromium"
   },
   "keywords": [
     "Bentley",
@@ -34,9 +34,9 @@
   },
   "dependencies": {
     "@itwin/certa": "^3.7.0",
-    "@itwin/core-common": ">=3.3.0",
+    "@itwin/core-common": "^3.3.0 || ^4.0.0",
     "@itwin/service-authorization": "workspace:*",
-    "@playwright/test": "~1.31.2",
+    "@playwright/test": "~1.35.1",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
     "oidc-client-ts": "^2.2.4"
