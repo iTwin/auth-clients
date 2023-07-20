@@ -2,8 +2,8 @@
   "changes": [
     {
       "packageName": "@itwin/oidc-signin-tool",
-      "comment": "Fix issue with OIDC signin tool not working without fetch API",
-      "type": "patch"
+      "comment": "",
+      "type": "none"
     }
   ],
   "packageName": "@itwin/oidc-signin-tool"
