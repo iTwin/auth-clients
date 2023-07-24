@@ -39,8 +39,8 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
         methods: ["GET", "POST"],
       },
       timeout: {
-        lookup: 500, // DNS
-        connect: 200, // socket connected
+        lookup: 1000, // DNS
+        connect: 1000, // socket connected
         send: 1000, // writing data to socket
         response: 10000, // starts when request has been flushed, ends when the headers are received.
         request: 12000, // global timeout
