@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "",
+      "type": "none",
+      "packageName": "@itwin/service-authorization"
+    }
+  ],
+  "packageName": "@itwin/service-authorization",
+  "email": "aruniverse@users.noreply.github.com"
+}

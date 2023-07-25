@@ -1,0 +1,11 @@
+{
+  "changes": [
+    {
+      "comment": "",
+      "type": "none",
+      "packageName": "@itwin/node-cli-authorization"
+    }
+  ],
+  "packageName": "@itwin/node-cli-authorization",
+  "email": "aruniverse@users.noreply.github.com"
+}
