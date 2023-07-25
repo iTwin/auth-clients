@@ -2,6 +2,18 @@
   "name": "@itwin/node-cli-authorization",
   "entries": [
     {
+      "version": "1.0.1",
+      "tag": "@itwin/node-cli-authorization_v1.0.1",
+      "date": "Tue, 25 Jul 2023 14:33:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "fix dependency version ranges"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.0",
       "tag": "@itwin/node-cli-authorization_v1.0.0",
       "date": "Wed, 17 May 2023 20:26:35 GMT",

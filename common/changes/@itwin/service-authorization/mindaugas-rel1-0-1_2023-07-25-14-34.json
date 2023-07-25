@@ -1,11 +1,11 @@
 {
   "changes": [
     {
-      "comment": "fix dependency version ranges",
+      "comment": "",
       "type": "patch",
       "packageName": "@itwin/service-authorization"
     }
   ],
   "packageName": "@itwin/service-authorization",
-  "email": "66480813+paulius-valiunas@users.noreply.github.com"
+  "email": "aruniverse@users.noreply.github.com"
 }

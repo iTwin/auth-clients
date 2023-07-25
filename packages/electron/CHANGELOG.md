@@ -1,6 +1,14 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 17 May 2023 20:26:35 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jul 2023 14:33:09 GMT and should not be manually modified.
+
+## 0.14.1
+Tue, 25 Jul 2023 14:33:09 GMT
+
+### Patches
+
+- Upgrade @playwright/test to 1.35.1 and remove playwright as dependency
+- fix dependency version ranges
 
 ## 0.14.0
 Wed, 17 May 2023 20:26:35 GMT
