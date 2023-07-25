@@ -2,6 +2,18 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "version": "1.0.2",
+      "tag": "@itwin/service-authorization_v1.0.2",
+      "date": "Tue, 25 Jul 2023 14:33:09 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "increase timeout"
+          }
+        ]
+      }
+    },
+    {
       "version": "1.0.1",
       "tag": "@itwin/service-authorization_v1.0.1",
       "date": "Fri, 21 Jul 2023 10:59:14 GMT",

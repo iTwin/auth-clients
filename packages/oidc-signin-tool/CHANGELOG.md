@@ -1,6 +1,17 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Fri, 09 Jun 2023 17:20:04 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jul 2023 14:33:09 GMT and should not be manually modified.
+
+## 4.1.0
+Tue, 25 Jul 2023 14:33:09 GMT
+
+### Minor changes
+
+- Upgrade @playwright/test to 1.35.1 and remove installScript.js file
+
+### Patches
+
+- fix dependency version ranges
 
 ## 4.0.1
 Fri, 09 Jun 2023 17:20:04 GMT

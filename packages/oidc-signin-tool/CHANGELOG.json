@@ -2,6 +2,28 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "version": "4.1.0",
+      "tag": "@itwin/oidc-signin-tool_v4.1.0",
+      "date": "Tue, 25 Jul 2023 14:33:09 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Upgrade @playwright/test to 1.35.1 and remove installScript.js file"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix dependency version ranges"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@itwin/service-authorization\" to `1.0.2`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.0.1",
       "tag": "@itwin/oidc-signin-tool_v4.0.1",
       "date": "Fri, 09 Jun 2023 17:20:04 GMT",

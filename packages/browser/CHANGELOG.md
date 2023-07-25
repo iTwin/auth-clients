@@ -1,6 +1,14 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Fri, 05 May 2023 18:56:53 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jul 2023 14:33:09 GMT and should not be manually modified.
+
+## 1.0.1
+Tue, 25 Jul 2023 14:33:09 GMT
+
+### Patches
+
+- Upgrade @playwright/test to 1.35.1
+- fix dependency version ranges
 
 ## 1.0.0
 Fri, 05 May 2023 18:56:53 GMT
