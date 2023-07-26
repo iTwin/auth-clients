@@ -1,6 +1,11 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 25 Jul 2023 14:33:09 GMT and should not be manually modified.
+This log was last generated on Tue, 25 Jul 2023 15:42:36 GMT and should not be manually modified.
+
+## 4.1.1
+Tue, 25 Jul 2023 15:42:36 GMT
+
+_Version update only_
 
 ## 4.1.0
 Tue, 25 Jul 2023 14:33:09 GMT
