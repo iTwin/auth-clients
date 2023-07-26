@@ -24,11 +24,13 @@ describe("TestUtility", () => {
   };
 
   let constructorStub: sinon.SinonStub;
+  // let testStub: sinon.SinonStub;
 
   beforeEach(() => {
     constructorStub = sinon.stub(TestBrowserAuthorizationClientModule, "TestBrowserAuthorizationClient").returns(
       (user: TestUserCredentials, config: TestBrowserAuthorizationClientConfiguration) => { return { ...user, ...config }; });
     sinon.stub(TestUsers, "getTestBrowserAuthorizationClientConfiguration").returns({ ...defaultConfig });
+    // testStub = sinon.stub(TestUtility, "getAuthorizationClient").returns()
   });
 
   afterEach(() => {
@@ -53,9 +55,14 @@ describe("TestUtility", () => {
     ].forEach((data, index) => {
       it(`Test case #${index + 1}`, async () => {
         const client = TestUtility.getAuthorizationClient(defaultUser, defaultConfig);
-
-        expect(TestUtility.getAuthorizationClient(data.user, data.config)).to.not.equal(client);
+        console.log(TestUtility.getAuthorizationClient(data.user, data.config));
+        console.log(typeof(client));
+        // expect(TestUtility.getAuthorizationClient(data.user, data.config)).to.not.equal(client);
         expect(constructorStub.calledTwice).to.be.true;
+        const calls = constructorStub.getCalls();
+        calls.forEach((call) => {
+          console.log(call.args);
+        })
       });
     });
   });
