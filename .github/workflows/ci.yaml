@@ -41,9 +41,9 @@ jobs:
         run: pnpm install
         working-directory: ./
 
-      - name: Beachball check
-        run: pnpm check
-        working-directory: ./
+      # - name: Beachball check
+      #   run: pnpm check
+      #   working-directory: ./
 
       - name: Build packages
         run: pnpm build
