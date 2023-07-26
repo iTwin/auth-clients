@@ -10,6 +10,7 @@
     "lint": "lage lint",
     "test": "lage test",
     "test:integration": "lage test:integration",
+    "cover": "lage cover",
     "change": "beachball change",
     "check": "beachball check",
     "version-bump": "beachball bump",

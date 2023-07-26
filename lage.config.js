@@ -9,7 +9,8 @@ module.exports = {
     "test": [
       "build"
     ],
-    "test:integration": []
+    "test:integration": [],
+    "cover": ["build"]
   },
   "npmClient": "pnpm"
 };
