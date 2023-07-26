@@ -37,7 +37,7 @@ jobs:
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
-          languages: ubuntu-latest
+          languages: javascript
 
       - name: Build packages
         run: pnpm build
@@ -46,4 +46,4 @@ jobs:
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@v2
         with:
-          category: "/language:ubuntu-latest"
+          category: "/language:javascript"
