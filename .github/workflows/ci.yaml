@@ -70,8 +70,10 @@ jobs:
           "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
            xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm cover --verbose"
         if: runner.os == 'Linux'
+        working-directory: ./
 
       - name: pnpm cover - Windows/Mac
         run: pnpm cover --verbose
         if: runner.os == 'Windows' || runner.os == 'macOS'
+        working-directory: ./
 
