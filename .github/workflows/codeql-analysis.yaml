@@ -34,12 +34,12 @@ jobs:
         with:
           version: 7
 
-      - name: Build packages
-        run: pnpm build
-        working-directory: ./
-
       - name: Install packages
         run: pnpm install
+        working-directory: ./
+
+      - name: Build packages
+        run: pnpm build
         working-directory: ./
 
       - name: Initialize CodeQL
