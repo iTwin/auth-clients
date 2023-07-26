@@ -24,6 +24,24 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
+
+      - name: Build packages
+        run: pnpm build
+        working-directory: ./
+
+      - name: Install packages
+        run: pnpm install
+        working-directory: ./
+
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v2
         with:
