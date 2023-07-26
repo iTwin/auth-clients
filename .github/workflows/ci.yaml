@@ -53,10 +53,6 @@ jobs:
         run: pnpm lint
         working-directory: ./
 
-      - name: Test packages
-        run: pnpm test
-        working-directory: ./
-
       # Necessary for running linux tests in a dbus session
       #   See packages/electron/README.md for more details
       - name: Install Packages - Linux
@@ -65,6 +61,20 @@ jobs:
           sudo apt-get install -y dbus-x11
           sudo apt-get install -y gnome-keyring
         if: runner.os == 'Linux'
+
+      - name: Test packages - windows/mac
+        run: pnpm test
+        working-directory: ./
+        if: runner.os == 'Windows' || runner.os == 'macOS'
+
+      - name: Test packages - linux
+        run: >-
+          dbus-run-session -- sh -c
+          "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
+           xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm test"
+        if: runner.os == 'Linux'
+        working-directory: ./
+
 
       # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
       #   See packages/electron/README.md for more details
