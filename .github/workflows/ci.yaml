@@ -53,6 +53,10 @@ jobs:
         run: pnpm lint
         working-directory: ./
 
+      - name: Test packages
+        run: pnpm test
+        working-directory: ./
+
       # Necessary for running linux tests in a dbus session
       #   See packages/electron/README.md for more details
       - name: Install Packages - Linux
