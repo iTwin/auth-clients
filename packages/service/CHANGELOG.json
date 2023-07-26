@@ -2,6 +2,12 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "version": "1.0.3",
+      "tag": "@itwin/service-authorization_v1.0.3",
+      "date": "Tue, 25 Jul 2023 15:42:36 GMT",
+      "comments": {}
+    },
+    {
       "version": "1.0.2",
       "tag": "@itwin/service-authorization_v1.0.2",
       "date": "Tue, 25 Jul 2023 14:33:09 GMT",
