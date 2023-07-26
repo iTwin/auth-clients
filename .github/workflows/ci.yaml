@@ -41,8 +41,9 @@ jobs:
         run: pnpm install
         working-directory: ./
 
-      # - name: Rush Change
-      #   run: node common/scripts/install-run-rush.js change -v
+      - name: Beachball check
+        run: pnpm check
+        working-directory: ./
 
       - name: Build packages
         run: pnpm build

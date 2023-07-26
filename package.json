@@ -31,10 +31,8 @@
     "type": "git",
     "url": "https://github.com/iTwin/auth-clients"
   },
-  "peerDependencies": {},
   "devDependencies": {
-    "lage": "latest",
-    "beachball": "^2.33.3"
-  },
-  "dependencies": {}
+    "beachball": "^2.35.0",
+    "lage": "latest"
+  }
 }

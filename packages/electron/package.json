@@ -43,7 +43,7 @@
     "@types/chai-as-promised": "^7",
     "@types/mocha": "^8.2.3",
     "@types/sinon": "^10.0.13",
-    "@types/node": "^16.18.0",
+    "@types/node": "^16.0.0",
     "chai": "^4.2.22",
     "chai-as-promised": "^7",
     "dotenv": "~16.0.3",
