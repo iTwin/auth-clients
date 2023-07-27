@@ -41,23 +41,27 @@ stages:
       - task: NodeTool@0
         displayName: Use Node 18
         inputs:
-          versionSpec: 18.x
+          versionSpec: 18.12.0
+
+      - script: npm install -g pnpm@7.27.0
+        displayName: Install pnpm
 
       - script: |
           git config user.email imodeljs-admin@users.noreply.github.com
           git config user.name imodeljs-admin
         displayName: git config
 
-      - script: node common/scripts/install-run-rush.js install
-        displayName: Rush Install
+      - name: Install packages
+        run: pnpm install
 
-      - script: node common/scripts/install-run-rush.js change -v
+      # - name: Beachball check
+      #   run: pnpm check
 
-      - script: node common/scripts/install-run-rush.js build -v
-        displayName: Rush Build
+      - name: Build packages
+        run: pnpm build
 
-      - script: node common/scripts/install-run-rush.js lint
-        displayName: Rush Lint
+      - name: Lint packages
+        run: pnpm lint
 
       # Necessary for running linux tests in a dbus session
       #   See packages/electron/README.md for more details
@@ -74,13 +78,13 @@ stages:
       - script: >-
           dbus-run-session -- sh -c
           "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
-           xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' node common/scripts/install-run-rush.js cover --verbose"
-        displayName: Rush Cover - Linux
+           xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm cover --verbose"
+        displayName: pnpm cover - Linux
         condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
       # MacOS and Windows agents work without any virtual display
-      - script: node common/scripts/install-run-rush.js cover --verbose
-        displayName: Rush Cover - Windows/Mac
+      - script: pnpm cover --verbose
+        displayName: pnpm cover - Windows/Mac
         condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
 
       - template: templates/publish-test-results.yaml

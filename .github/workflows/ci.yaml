@@ -39,19 +39,15 @@ jobs:
 
       - name: Install packages
         run: pnpm install
-        working-directory: ./
 
-      # - name: Beachball check
-      #   run: pnpm check
-      #   working-directory: ./
+      - name: Beachball check
+        run: pnpm check
 
       - name: Build packages
         run: pnpm build
-        working-directory: ./
 
       - name: Lint packages
         run: pnpm lint
-        working-directory: ./
 
       # Necessary for running linux tests in a dbus session
       #   See packages/electron/README.md for more details
@@ -62,20 +58,6 @@ jobs:
           sudo apt-get install -y gnome-keyring
         if: runner.os == 'Linux'
 
-      - name: Test packages - windows/mac
-        run: pnpm test
-        working-directory: ./
-        if: runner.os == 'Windows' || runner.os == 'macOS'
-
-      - name: Test packages - linux
-        run: >-
-          dbus-run-session -- sh -c
-          "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
-           xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm test"
-        if: runner.os == 'Linux'
-        working-directory: ./
-
-
       # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
       #   See packages/electron/README.md for more details
       - name: pnpm cover - Linux
@@ -84,10 +66,7 @@ jobs:
           "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
            xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm cover --verbose"
         if: runner.os == 'Linux'
-        working-directory: ./
 
       - name: pnpm cover - Windows/Mac
         run: pnpm cover --verbose
         if: runner.os == 'Windows' || runner.os == 'macOS'
-        working-directory: ./
-
