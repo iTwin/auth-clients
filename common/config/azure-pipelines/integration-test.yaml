@@ -78,11 +78,11 @@ jobs:
       git config user.name imodeljs-admin
     displayName: git config
 
-  - displayName: Install packages
-    script: pnpm install
+  - script: pnpm install
+    displayName: Install packages
 
-  - displayName: Build packages
-    script: pnpm build
+  - script: pnpm build
+    displayName: Build packages
 
   - script: |
           sudo apt-get install -y libsecret-1-dev
