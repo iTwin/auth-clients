@@ -2,6 +2,18 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "version": "4.1.1",
+      "tag": "@itwin/oidc-signin-tool_v4.1.1",
+      "date": "Tue, 25 Jul 2023 15:42:36 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@itwin/service-authorization\" to `1.0.3`"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.1.0",
       "tag": "@itwin/oidc-signin-tool_v4.1.0",
       "date": "Tue, 25 Jul 2023 14:33:09 GMT",
