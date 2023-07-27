@@ -54,7 +54,7 @@ importers:
       parcel: 2.8.3
       process: 0.11.10
       rimraf: 3.0.2
-      sinon: 15.2.0
+      sinon: 15.0.4
       typescript: 4.3.5
 
   packages/electron:
@@ -112,7 +112,7 @@ importers:
       path-browserify: 1.0.1
       process: 0.11.10
       rimraf: 3.0.2
-      sinon: 15.2.0
+      sinon: 15.0.4
       source-map-support: 0.5.21
       typescript: 4.3.5
 
@@ -257,7 +257,7 @@ importers:
       mocha: 8.4.0
       nyc: 15.1.0
       rimraf: 3.0.2
-      sinon: 15.2.0
+      sinon: 15.0.4
       source-map-support: 0.5.21
       typescript: 5.0.4
 
@@ -688,7 +688,7 @@ packages:
       eslint: 7.32.0
       eslint-import-resolver-node: 0.3.4
       eslint-import-resolver-typescript: 2.7.1_4heylg5ce4zxl5r7mnxe6vqlki
-      eslint-plugin-deprecation: 1.4.1_cgdknpc562nnyruteofhkegnom
+      eslint-plugin-deprecation: 1.5.0_cgdknpc562nnyruteofhkegnom
       eslint-plugin-import: 2.27.5_v35z5nwcdf5szdrauumy3vmgsm
       eslint-plugin-jam3: 0.2.3
       eslint-plugin-jsdoc: 35.5.1_eslint@7.32.0
@@ -715,7 +715,7 @@ packages:
       eslint: 7.32.0
       eslint-import-resolver-node: 0.3.4
       eslint-import-resolver-typescript: 2.7.1_4heylg5ce4zxl5r7mnxe6vqlki
-      eslint-plugin-deprecation: 1.4.1_cl6qtdo3npn4kngw26aibg642e
+      eslint-plugin-deprecation: 1.5.0_cl6qtdo3npn4kngw26aibg642e
       eslint-plugin-import: 2.27.5_v35z5nwcdf5szdrauumy3vmgsm
       eslint-plugin-jam3: 0.2.3
       eslint-plugin-jsdoc: 35.5.1_eslint@7.32.0
@@ -872,7 +872,7 @@ packages:
       colors: 1.2.5
       lodash: 4.17.21
       resolve: 1.22.2
-      semver: 7.3.8
+      semver: 7.4.0
       source-map: 0.6.1
       typescript: 4.8.4
     transitivePeerDependencies:
@@ -892,7 +892,7 @@ packages:
       colors: 1.2.5
       lodash: 4.17.21
       resolve: 1.22.2
-      semver: 7.3.8
+      semver: 7.4.0
       source-map: 0.6.1
       typescript: 4.8.4
     transitivePeerDependencies:
@@ -912,7 +912,7 @@ packages:
       colors: 1.2.5
       lodash: 4.17.21
       resolve: 1.22.2
-      semver: 7.3.8
+      semver: 7.4.0
       source-map: 0.6.1
       typescript: 4.8.4
     transitivePeerDependencies:
@@ -3667,8 +3667,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-deprecation/1.4.1_cgdknpc562nnyruteofhkegnom:
-    resolution: {integrity: sha512-4vxTghWzxsBukPJVQupi6xlTuDc8Pyi1QlRCrFiLgwLPMJQW3cJCNaehJUKQqQFvuue5m4W27e179Y3Qjzeghg==}
+  /eslint-plugin-deprecation/1.5.0_cgdknpc562nnyruteofhkegnom:
+    resolution: {integrity: sha512-mRcssI/tLROueBQ6yf4LnnGTijbMsTCPIpbRbPj5R5wGYVCpk1zDmAS0SEkgcUDXOPc22qMNFR24Qw7vSPrlTA==}
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
       typescript: ^3.7.5 || ^4.0.0 || ^5.0.0
@@ -3682,8 +3682,8 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-deprecation/1.4.1_cl6qtdo3npn4kngw26aibg642e:
-    resolution: {integrity: sha512-4vxTghWzxsBukPJVQupi6xlTuDc8Pyi1QlRCrFiLgwLPMJQW3cJCNaehJUKQqQFvuue5m4W27e179Y3Qjzeghg==}
+  /eslint-plugin-deprecation/1.5.0_cl6qtdo3npn4kngw26aibg642e:
+    resolution: {integrity: sha512-mRcssI/tLROueBQ6yf4LnnGTijbMsTCPIpbRbPj5R5wGYVCpk1zDmAS0SEkgcUDXOPc22qMNFR24Qw7vSPrlTA==}
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
       typescript: ^3.7.5 || ^4.0.0 || ^5.0.0
@@ -6592,6 +6592,14 @@ packages:
       lru-cache: 6.0.0
     dev: true
 
+  /semver/7.4.0:
+    resolution: {integrity: sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw==}
+    engines: {node: '>=10'}
+    hasBin: true
+    dependencies:
+      lru-cache: 6.0.0
+    dev: true
+
   /semver/7.5.4:
     resolution: {integrity: sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==}
     engines: {node: '>=10'}
@@ -6720,17 +6728,6 @@ packages:
 
   /sinon/15.0.4:
     resolution: {integrity: sha512-uzmfN6zx3GQaria1kwgWGeKiXSSbShBbue6Dcj0SI8fiCNFbiUDqKl57WFlY5lyhxZVUKmXvzgG2pilRQCBwWg==}
-    dependencies:
-      '@sinonjs/commons': 3.0.0
-      '@sinonjs/fake-timers': 10.3.0
-      '@sinonjs/samsam': 8.0.0
-      diff: 5.1.0
-      nise: 5.1.4
-      supports-color: 7.2.0
-    dev: true
-
-  /sinon/15.2.0:
-    resolution: {integrity: sha512-nPS85arNqwBXaIsFCkolHjGIkFo+Oxu9vbgmBJizLAhqe6P2o3Qmj3KCUoRkfhHtvgDhZdWD3risLHAUJ8npjw==}
     dependencies:
       '@sinonjs/commons': 3.0.0
       '@sinonjs/fake-timers': 10.3.0
