@@ -35,7 +35,7 @@ jobs:
       versionSpec: 18.x
 
   - script: npm install -g pnpm@7.27.0
-        displayName: Install pnpm
+    displayName: Install pnpm
 
   - bash: |
      echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
