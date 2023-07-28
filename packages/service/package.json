@@ -6,7 +6,7 @@
   "typings": "lib/cjs/index",
   "scripts": {
     "build": "tsc 1>&2",
-    "docs": "betools docs --includes=../../generated-docs/extract --json=../../generated-docs/auth-clients/service-authorization/file.json --tsIndexFile=./index.ts --onlyJson",
+    "docs": "cross-env RUSHSTACK_FILE_ERROR_BASE_FOLDER='../..' betools docs --includes=../../generated-docs/extract --json=../../generated-docs/auth-clients/service-authorization/file.json --tsIndexFile=./index.ts --onlyJson",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
@@ -44,6 +44,7 @@
     "eslint": "^7.32.0",
     "chai": "^4.2.22",
     "chai-as-promised": "^7",
+    "cross-env": "^7.0.3",
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
