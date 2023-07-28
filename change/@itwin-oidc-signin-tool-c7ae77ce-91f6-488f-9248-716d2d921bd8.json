@@ -1,7 +1,16 @@
-{
-  "type": "minor",
-  "comment": "upgrade to typescript 5",
-  "packageName": "@itwin/oidc-signin-tool",
-  "email": "Jake-Screen@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
+[
+  {
+    "type": "minor",
+    "comment": "upgrade to typescript 5",
+    "packageName": "@itwin/oidc-signin-tool",
+    "email": "Jake-Screen@users.noreply.github.com",
+    "dependentChangeType": "patch"
+  },
+  {
+    "type": "none",
+    "comment": "",
+    "packageName": "@itwin/oidc-signin-tool",
+    "email": "aruniverse@users.noreply.github.com",
+    "dependentChangeType": "none"
+  }
+]
