@@ -54,14 +54,14 @@ stages:
       - name: Install packages
         run: pnpm install
 
-      # - name: Beachball check
-      #   run: pnpm check
+      # - script: pnpm check
+      #   displayName: Beachball check
 
-      - name: Build packages
-        run: pnpm build
+      - script: pnpm install
+        displayName: Install packages
 
-      - name: Lint packages
-        run: pnpm lint
+      - script: pnpm build
+        displayName: Build packages
 
       # Necessary for running linux tests in a dbus session
       #   See packages/electron/README.md for more details

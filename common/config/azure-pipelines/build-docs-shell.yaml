@@ -64,6 +64,9 @@ stages:
             versionSpec: 18
             checkLatest: true
 
+        - script: npm install -g pnpm@7.27.0
+          displayName: Install pnpm
+
         - script: |
             git config --local user.email imodeljs-admin@users.noreply.github.com
             git config --local user.name imodeljs-admin
@@ -96,8 +99,8 @@ stages:
           displayName: set variables
           name: releaseNotes
 
-        - script: node common/scripts/install-run-rush.js install
-          displayName: Rush Install
+        - script: pnpm install
+          displayName: Install packages
 
         - template: templates/build-docs.yaml
           parameters:

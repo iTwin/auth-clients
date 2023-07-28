@@ -14,7 +14,7 @@ steps:
       pnpm recursive list --depth -1 --filter "./packages/**" --json > "$(Agent.TempDirectory)/versions-after.txt"
 
       # outputs vso variables for each package published
-      node azure-pipelines/scripts/determinePublishedPackages.js "$(Agent.TempDirectory)/versions-before.txt" "$(Agent.TempDirectory)/versions-after.txt"
+      node common/config/azure-pipelines/scripts/determinePublishedPackages.js "$(Agent.TempDirectory)/versions-before.txt" "$(Agent.TempDirectory)/versions-after.txt"
     displayName: Add Release Notes
     name: releaseNotes
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )

@@ -24,8 +24,8 @@ const afterFilePath = process.argv[3];
 const beforeSnapshot = rushOutputToJSON(beforeFilePath);
 const afterSnapshot = rushOutputToJSON(afterFilePath);
 
-afterSnapshot.projects.forEach((afterProject) => {
-  const beforeProject = beforeSnapshot.projects.find(
+afterSnapshot.forEach((afterProject) => {
+  const beforeProject = beforeSnapshot.find(
     (p) => p.name === afterProject.name && p.version !== afterProject.version
   );
 
