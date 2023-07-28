@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "upgrade to typescript 5",
+  "packageName": "@itwin/node-cli-authorization",
+  "email": "Jake-Screen@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}

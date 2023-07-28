@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "upgrade to typescript 5",
+  "packageName": "@itwin/browser-authorization",
+  "email": "Jake-Screen@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
