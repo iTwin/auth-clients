@@ -20,7 +20,7 @@ steps:
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
 
   - script: pnpm publish-packages --publish -b main
-    displayName: rush publish package
+    displayName: Publish packages
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
     env:
       NPM_AUTH_TOKEN: $(npmToken)
