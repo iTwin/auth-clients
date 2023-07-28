@@ -84,7 +84,7 @@ function appendButton(
   testId: string,
   popup: boolean = false
 ) {
-  const button = document.createElement("button"); // eslint-disable-line deprecation/deprecation
+  const button = document.createElement("button");
   button.textContent = text;
   button.setAttribute("data-testid", testId);
   button.addEventListener("click", async () => {
