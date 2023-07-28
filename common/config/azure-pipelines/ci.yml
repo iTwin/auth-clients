@@ -54,8 +54,8 @@ stages:
       - name: Install packages
         run: pnpm install
 
-      # - script: pnpm check
-      #   displayName: Beachball check
+      - script: pnpm check
+        displayName: Beachball check
 
       - script: pnpm install
         displayName: Install packages
