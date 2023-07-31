@@ -22,6 +22,6 @@ jobs:
           git config --local user.name imodeljs-admin
 
       - name: Create release
-        run: pnpm run publish-packages
+        run: pnpm run publish-packages --publish --push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
