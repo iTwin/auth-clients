@@ -22,6 +22,7 @@ jobs:
           git config --local user.name imodeljs-admin
 
       - name: Create release
-        run: pnpm run publish-packages --publish --push
+        run: pnpm run publish-packages --publish --push --message "applying package updates [skip ci]" -b main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.npmToken }}

@@ -19,7 +19,7 @@ steps:
     name: releaseNotes
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
 
-  - script: pnpm publish-packages --publish -b main
+  - script: pnpm run publish-packages --publish --push --message "applying package updates [skip ci]" -b main
     displayName: Publish packages
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
     env:
