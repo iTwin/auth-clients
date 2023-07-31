@@ -14,7 +14,7 @@
     "change": "beachball change",
     "check": "beachball check",
     "version-bump": "beachball bump",
-    "publish-packages": "beachball publish"
+    "publish-packages": "beachball publish --access public"
   },
   "keywords": [
     "Bentley",
