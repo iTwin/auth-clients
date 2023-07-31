@@ -90,9 +90,11 @@ stages:
       - template: templates/publish-test-results.yaml
 
       # Publish packages
-      - template: templates/publish-packages.yaml
-        parameters:
-          shouldPublish: ${{ parameters.shouldPublish }}
+      - script: pnpm run publish-packages --publish --push --message "applying package updates [skip ci]" -b main
+        displayName: Publish packages
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
+        env:
+          NPM_AUTH_TOKEN: $(npmToken)
 
       # Build and publish documentation as pipeline artifacts
       # This relies on variables set from within the publish template above,
