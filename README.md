@@ -23,15 +23,15 @@ There is also an [authorization client for command-line developer tools](./packa
 ## Prerequisites
 
 - [Node](https://nodejs.org/en/): an installation of the latest security patch of Node 18. The Node installation also includes the **npm** package manager.
-- [Rush](https://github.com/Microsoft/web-build-tools/wiki/Rush): to install `npm install -g @microsoft/rush`
+- [pnpm](https://pnpm.io/): to install `npm install -g pnpm`
 
 ## Build Instructions
 
 1. Clone repository (first time) with `git clone` or pull updates to the repository (subsequent times) with `git pull`
-2. Install dependencies: `rush update` or `rush install`
-3. Build source: `rush build`
-4. Run tests: `rush cover`
+2. Install dependencies: `pnpm update` or `pnpm install`
+3. Build source: `pnpm build`
+4. Run tests: `pnpm cover`
 
 ## Extract Documentation
 
-`rush docs`
+`pnpm run docs`
