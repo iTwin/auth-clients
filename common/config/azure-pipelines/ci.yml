@@ -51,8 +51,8 @@ stages:
           git config user.name imodeljs-admin
         displayName: git config
 
-      - name: Install packages
-        run: pnpm install
+      - script: pnpm install --no-frozen-lockfile
+        displayName: Install packages
 
       - script: pnpm check
         displayName: Beachball check
