@@ -74,5 +74,8 @@
       "no-duplicate-imports": "off",
       "@typescript-eslint/consistent-type-imports": "error"
     }
+  },
+  "alias": {
+    "process": false
   }
 }
