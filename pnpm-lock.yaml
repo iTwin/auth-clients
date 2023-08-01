@@ -82,6 +82,7 @@ importers:
       mocha: ^8.2.3
       nyc: ^15.1.0
       parcel: ~2.8.3
+      path: 0.12.7
       path-browserify: ~1.0.1
       process: ~0.11.10
       rimraf: ^3.0.2
@@ -113,6 +114,7 @@ importers:
       mocha: 8.4.0
       nyc: 15.1.0
       parcel: 2.8.3
+      path: 0.12.7
       path-browserify: 1.0.1
       process: 0.11.10
       rimraf: 3.0.2
@@ -853,7 +855,7 @@ packages:
       colors: 1.2.5
       lodash: 4.17.21
       resolve: 1.22.2
-      semver: 7.4.0
+      semver: 7.3.8
       source-map: 0.6.1
       typescript: 4.8.4
     transitivePeerDependencies:
@@ -873,7 +875,7 @@ packages:
       colors: 1.2.5
       lodash: 4.17.21
       resolve: 1.22.2
-      semver: 7.4.0
+      semver: 7.3.8
       source-map: 0.6.1
       typescript: 4.8.4
     transitivePeerDependencies:
@@ -893,7 +895,7 @@ packages:
       colors: 1.2.5
       lodash: 4.17.21
       resolve: 1.22.2
-      semver: 7.4.0
+      semver: 7.3.8
       source-map: 0.6.1
       typescript: 4.8.4
     transitivePeerDependencies:
@@ -4595,6 +4597,10 @@ packages:
       once: 1.4.0
       wrappy: 1.0.2
 
+  /inherits/2.0.3:
+    resolution: {integrity: sha512-x00IRNXNy63jwGkJmzPigoySHbaqpNuzKbBOmzK+g2OdZpQ9w+sxCN+VSB3ja7IAge2OP2qpfxTjeNcyjmW1uw==}
+    dev: true
+
   /inherits/2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
 
@@ -6033,6 +6039,13 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /path/0.12.7:
+    resolution: {integrity: sha512-aXXC6s+1w7otVF9UletFkFcDsJeO7lSZBPUQhtb5O0xJe8LtYhj/GxldoL09bBj9+ZmE2hNoHqQSFMN5fikh4Q==}
+    dependencies:
+      process: 0.11.10
+      util: 0.10.4
+    dev: true
+
   /pathval/1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
     dev: true
@@ -6467,14 +6480,6 @@ packages:
 
   /semver/7.3.8:
     resolution: {integrity: sha512-NB1ctGL5rlHrPJtFDVIVzTyQylMLu9N9VICA6HSFJo8MCGVTMW6gfpicwKmmK/dAjTOrqu5l63JJOpDSrAis3A==}
-    engines: {node: '>=10'}
-    hasBin: true
-    dependencies:
-      lru-cache: 6.0.0
-    dev: true
-
-  /semver/7.4.0:
-    resolution: {integrity: sha512-RgOxM8Mw+7Zus0+zcLEUn8+JfoLpj/huFTItQy2hsM4khuC1HYRDp0cU482Ewn/Fcy6bCjufD8vAj7voC66KQw==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
@@ -7160,6 +7165,12 @@ packages:
   /util-deprecate/1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
     dev: false
+
+  /util/0.10.4:
+    resolution: {integrity: sha512-0Pm9hTQ3se5ll1XihRic3FDIku70C+iHUdT/W926rSgHV5QgXsYbKZN8MSC3tJtSkhuROzvsQjAaFENRXr+19A==}
+    dependencies:
+      inherits: 2.0.3
+    dev: true
 
   /utility-types/3.10.0:
     resolution: {integrity: sha512-O11mqxmi7wMKCo6HKFt5AhO4BwY3VV68YU07tgxfz8zJTIxr4BpsezN49Ffwy9j3ZpwwJp4fkRwjRzq3uWE6Rg==}
