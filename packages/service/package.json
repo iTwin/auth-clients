@@ -12,7 +12,7 @@
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
     "test:integration": "",
     "cover": "nyc npm test",
-    "clean": "rimraf lib .rush/temp/package-deps*.json",
+    "clean": "rimraf lib",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
   },
