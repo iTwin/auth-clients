@@ -90,7 +90,7 @@ stages:
       - template: templates/publish-test-results.yaml
 
       # Publish packages
-      - script: pnpm run publish-packages --publish --push --message "applying package updates [skip ci]" -b main
+      - script: pnpm run publish-packages --publish --push --message "applying package updates [skip ci]" -b main --token $(npmToken)
         displayName: Publish packages
         condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), startsWith(variables['Build.SourceBranch'], 'refs/heads/main'), ${{ parameters.shouldPublish }} )
         env:

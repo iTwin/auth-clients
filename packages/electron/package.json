@@ -14,7 +14,7 @@
     "test:integration": "npm run test:integration:build && npx playwright test",
     "test:integration:start": "npm run test:integration:build && electron dist/integration-test/test-app/index.js",
     "test:integration:build": "npm run test:integration:parcel && tsc -p ./src/integration-test/",
-    "test:integration:parcel": "parcel build src/integration-test/test-app/index.html --dist-dir dist/integration-test/test-app --public-url ./ --no-optimize",
+    "test:integration:parcel": "parcel build src/integration-test/test-app/index.html --dist-dir dist/integration-test/test-app --public-url ./",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
   },
