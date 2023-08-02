@@ -22,7 +22,7 @@ const client = new BrowserAuthorizationClient({
 });
 ```
 
-> Important! The above `postSignoutRedirectUri` will not fully work if the url ends with /logout and https is not supported on your site. We suggest using /logout-local if you run into this issue.
+> Important! The above `postSignoutRedirectUri` will not fully work if the url ends with /logout and https is not supported on your site. For local development where https is less common, we suggest using /logout-local for the url path.
 
 The most common way to use an instance of `BrowserAuthorizationClient` will depend on your specific application and workflow. Here's one common way:
 
