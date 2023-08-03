@@ -5,8 +5,9 @@
 // Code based on the blog article @ https://authguidance.com
 
 import * as OperatingSystemUserName from "username";
-import { deletePassword, getPassword, setPassword } from "keytar";
-
+import * as keytar from "keytar";
+import { safeStorage } from "electron";
+const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
 /**
  * Utility class used to store and read OAuth refresh tokens.
  * @internal
@@ -21,9 +22,10 @@ export class RefreshTokenStore {
    * Cached name of the currently logged in system (OS) user.
    */
   private _userName?: string;
-
+  private _store: typeof Store;
   public constructor(appStorageKey: string) {
     this._appStorageKey = appStorageKey;
+    this._store = new Store();
   }
 
   private async getUserName(): Promise<string | undefined> {
@@ -40,15 +42,39 @@ export class RefreshTokenStore {
     return this._userName;
   }
 
+  private async migrate(oldKeytarRefreshToken: string): Promise<void> {
+    await this.delete();
+    await this.save(oldKeytarRefreshToken);
+  }
+
+  private encryptRefreshToken(token: string): Buffer {
+    return safeStorage.encryptString(token);
+  }
+
+  private decryptRefreshToken(encryptedToken: Buffer): string {
+    return safeStorage.decryptString(Buffer.from(encryptedToken));
+  }
+
   /** Load refresh token if available */
   public async load(): Promise<string | undefined> {
     const userName = await this.getUserName();
     if (!userName)
       return undefined;
 
-    const refreshToken = await getPassword(this._appStorageKey, userName);
 
-    return refreshToken || undefined;
+    // If existing refresh token from keytar was found, perform migration from keytar to electron's safeStorage
+    const keytarRefreshToken = await keytar.getPassword(this._appStorageKey, userName);
+    if (keytarRefreshToken) {
+      await this.migrate(keytarRefreshToken);
+    }
+
+    const key = `${this._appStorageKey}${userName}`;
+    if (!this._store.has(key)) {
+      return undefined;
+    }
+    const encryptedToken = this._store.get(key);
+    const refreshToken = this.decryptRefreshToken(encryptedToken);
+    return refreshToken;
   }
 
   /** Save refresh token after signin */
@@ -56,8 +82,9 @@ export class RefreshTokenStore {
     const userName = await this.getUserName();
     if (!userName)
       return;
-
-    await setPassword(this._appStorageKey, userName, refreshToken);
+    const encryptedToken = this.encryptRefreshToken(refreshToken);
+    const key = `${this._appStorageKey}${userName}`;
+    this._store.set(key, encryptedToken);
   }
 
   /** Delete refresh token after signout */
@@ -66,6 +93,8 @@ export class RefreshTokenStore {
     if (!userName)
       return;
 
-    await deletePassword(this._appStorageKey, userName);
+    const isDeleted = await keytar.deletePassword(this._appStorageKey, userName);
+    const key = `${this._appStorageKey}${userName}`;
+    await this._store.delete(key);
   }
 }

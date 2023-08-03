@@ -71,9 +71,12 @@ describe("ElectronMainAuthorization Token Logic", () => {
     };
     const mockTokenResponse = new TokenResponse(mockTokenResponseJson);
 
+    const refreshToken = "old refresh token";
+    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(refreshToken));
+    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(refreshToken);
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreKey(config.clientId));
-    await tokenStore.save("old refresh token");
+    await tokenStore.save(refreshToken);
 
     // Mock auth request
     const spy = sinon.fake();
@@ -106,6 +109,9 @@ describe("ElectronMainAuthorization Token Logic", () => {
         expires_in: "60000",
       });
 
+    const refreshToken = "old refresh token";
+    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(mockTokenResponse.refreshToken!));
+    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(mockTokenResponse.refreshToken);
     // Clear token store
     const tokenStore = new RefreshTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.delete();
@@ -154,9 +160,12 @@ describe("ElectronMainAuthorization Token Logic", () => {
         expires_in: "60000",
       });
 
+    const refreshToken = "old refresh token";
+    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(refreshToken));
+    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(refreshToken);
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreKey(config.clientId));
-    await tokenStore.save("old refresh token");
+    await tokenStore.save(refreshToken);
 
     // Mock auth request
     sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
