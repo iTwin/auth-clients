@@ -75,7 +75,7 @@ test("sign in successful", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.checkStatus(electronPage, false);
   await testHelper.clickSignIn(electronPage);
-  if (!testHelper.isSignedIn(electronPage)) { // Silent sign in wasn't successful.
+  if (!(await testHelper.isSignedIn(electronPage))) { // Silent sign in wasn't successful.
     await testHelper.signIn(page, await getUrl(electronApp));
     await page.waitForLoadState("networkidle");
     await testHelper.checkStatus(electronPage, true);
@@ -86,7 +86,7 @@ test("sign in successful", async ({ browser }) => {
 test("sign out successful", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
-  if (!testHelper.isSignedIn(electronPage)) { // Silent sign in wasn't successful.
+  if (!(await testHelper.isSignedIn(electronPage))) { // Silent sign in wasn't successful.
     await testHelper.signIn(page, await getUrl(electronApp));
     await page.waitForLoadState("networkidle");
     await testHelper.checkStatus(electronPage, true);

@@ -7,6 +7,7 @@
 import * as OperatingSystemUserName from "username";
 import * as keytar from "keytar";
 import { safeStorage } from "electron";
+// eslint-disable-next-line @typescript-eslint/naming-convention
 const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
 /**
  * Utility class used to store and read OAuth refresh tokens.
@@ -27,7 +28,7 @@ export class RefreshTokenStore {
     this._appStorageKey = appStorageKey;
     this._store = new Store({
       name: this._appStorageKey, // specifies storage file name.
-      encryptionKey: "iTwin" // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
+      encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
     });
   }
 
@@ -63,7 +64,6 @@ export class RefreshTokenStore {
     const userName = await this.getUserName();
     if (!userName)
       return undefined;
-
 
     // If existing refresh token from keytar was found, perform migration from keytar to electron's safeStorage
     const keytarRefreshToken = await keytar.getPassword(this._appStorageKey, userName);

@@ -109,7 +109,6 @@ describe("ElectronMainAuthorization Token Logic", () => {
         expires_in: "60000",
       });
 
-    const refreshToken = "old refresh token";
     sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(mockTokenResponse.refreshToken!));
     sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(mockTokenResponse.refreshToken);
     // Clear token store
