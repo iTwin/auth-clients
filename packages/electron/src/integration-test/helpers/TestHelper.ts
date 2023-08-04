@@ -22,6 +22,8 @@ export class TestHelper {
   }
 
   public async isSignedIn(electronPage: Page) {
+    const button = electronPage.getByTestId("getStatus");
+    await button.click();
     const locator = electronPage.getByText("signed in");
     return locator.isVisible();
   }
