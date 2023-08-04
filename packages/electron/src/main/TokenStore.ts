@@ -25,7 +25,10 @@ export class RefreshTokenStore {
   private _store: typeof Store;
   public constructor(appStorageKey: string) {
     this._appStorageKey = appStorageKey;
-    this._store = new Store();
+    this._store = new Store({
+      name: this._appStorageKey, // specifies storage file name.
+      encryptionKey: "iTwin" // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
+    });
   }
 
   private async getUserName(): Promise<string | undefined> {
@@ -93,7 +96,7 @@ export class RefreshTokenStore {
     if (!userName)
       return;
 
-    const isDeleted = await keytar.deletePassword(this._appStorageKey, userName);
+    await keytar.deletePassword(this._appStorageKey, userName);
     const key = `${this._appStorageKey}${userName}`;
     await this._store.delete(key);
   }
