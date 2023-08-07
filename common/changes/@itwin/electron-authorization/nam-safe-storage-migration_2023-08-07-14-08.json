@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "move away from node-keytar to SafeStorage",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
