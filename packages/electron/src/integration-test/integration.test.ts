@@ -33,8 +33,8 @@ function getTokenStoreKey(_clientId: string, issuerUrl?: string): string {
   return `iTwinJs:${_clientId}:${issuerUrl}`;
 }
 
-function getTokenStoreFileName(clientId: string): string {
-  return `iTwinJs:${clientId}`;
+function getTokenStoreFileName(_clientId: string): string {
+  return `iTwinJs:${_clientId}`;
 }
 
 async function getUrl(app: ElectronApplication): Promise<string> {
