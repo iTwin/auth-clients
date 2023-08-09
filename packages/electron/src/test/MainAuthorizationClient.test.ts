@@ -38,7 +38,7 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
 }
 
 function getTokenStoreFileName(clientId: string): string {
-  return `iTwinJs:${clientId}`;
+  return `iTwinJs_${clientId}`;
 }
 
 describe("ElectronMainAuthorization Token Logic", () => {

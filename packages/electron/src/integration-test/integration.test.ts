@@ -30,11 +30,11 @@ function getTokenStoreKey(_clientId: string, issuerUrl?: string): string {
     authority.hostname = envPrefix + authority.hostname;
   }
   issuerUrl = authority.href.replace(/\/$/, "");
-  return `iTwinJs:${_clientId}:${issuerUrl}`;
+  return `${getTokenStoreFileName}:${issuerUrl}`;
 }
 
 function getTokenStoreFileName(_clientId: string): string {
-  return `iTwinJs:${_clientId}`;
+  return `iTwinJs_${_clientId}`;
 }
 
 async function getUrl(app: ElectronApplication): Promise<string> {
