@@ -22,7 +22,7 @@ const signInOptions: SignInOptions = {
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
-const tokenStore = new RefreshTokenStore(getTokenStoreKey(clientId));
+const tokenStore = new RefreshTokenStore(getTokenStoreFileName(clientId),getTokenStoreKey(clientId));
 
 function getTokenStoreKey(_clientId: string, issuerUrl?: string): string {
   const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
@@ -31,6 +31,10 @@ function getTokenStoreKey(_clientId: string, issuerUrl?: string): string {
   }
   issuerUrl = authority.href.replace(/\/$/, "");
   return `iTwinJs:${_clientId}:${issuerUrl}`;
+}
+
+function getTokenStoreFileName(clientId: string): string {
+  return `iTwinJs:${clientId}`;
 }
 
 async function getUrl(app: ElectronApplication): Promise<string> {

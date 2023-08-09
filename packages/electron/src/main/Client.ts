@@ -180,8 +180,9 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (config.expiryBuffer)
       this._expiryBuffer = config.expiryBuffer;
 
-    const appStorageKey = `iTwinJs:${this._clientId}:${this._issuerUrl}`;
-    this._refreshTokenStore = new RefreshTokenStore(appStorageKey);
+    const configFileName =  `iTwinJs:${this._clientId}`;
+    const appStorageKey = `${configFileName}:${this._issuerUrl}`;
+    this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey);
   }
 
   /**

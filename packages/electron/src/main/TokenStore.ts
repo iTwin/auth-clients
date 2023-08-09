@@ -24,12 +24,13 @@ export class RefreshTokenStore {
    */
   private _userName?: string;
   private _store: typeof Store;
-  public constructor(appStorageKey: string) {
+  public constructor(configFileName: string, appStorageKey: string) {
     this._appStorageKey = appStorageKey;
     this._store = new Store({
-      name: this._appStorageKey, // specifies storage file name.
+      name: configFileName, // specifies storage file name.
       encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
     });
+
   }
 
   private async getUserName(): Promise<string | undefined> {
@@ -59,6 +60,11 @@ export class RefreshTokenStore {
     return safeStorage.decryptString(Buffer.from(encryptedToken));
   }
 
+  private async getKey(): Promise<string> {
+    const userName = await this.getUserName();
+    return `${this._appStorageKey}${userName}`;
+  }
+
   /** Load refresh token if available */
   public async load(): Promise<string | undefined> {
     const userName = await this.getUserName();
@@ -71,7 +77,7 @@ export class RefreshTokenStore {
       await this.migrate(keytarRefreshToken);
     }
 
-    const key = `${this._appStorageKey}${userName}`;
+    const key = await this.getKey();
     if (!this._store.has(key)) {
       return undefined;
     }
@@ -86,7 +92,7 @@ export class RefreshTokenStore {
     if (!userName)
       return;
     const encryptedToken = this.encryptRefreshToken(refreshToken);
-    const key = `${this._appStorageKey}${userName}`;
+    const key = await this.getKey();
     this._store.set(key, encryptedToken);
   }
 
@@ -97,7 +103,7 @@ export class RefreshTokenStore {
       return;
 
     await keytar.deletePassword(this._appStorageKey, userName);
-    const key = `${this._appStorageKey}${userName}`;
+    const key = await this.getKey();
     await this._store.delete(key);
   }
 }
