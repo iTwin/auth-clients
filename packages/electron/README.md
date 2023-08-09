@@ -61,6 +61,8 @@ await client.signIn(); // sign in from the renderer process
 
 > You probably only want to trigger an initial sign in from one of the processes; both are listed above for sake of completeness.
 
+> If your app is running into errors caused by `node-keytar`, you can add a `DISABLE_KEYTAR` variable to your `.env` like so: `DISABLE_KEYTAR=True` to disable usage and import of `node-keytar` within `ElectronMainAuthorization`.
+
 ## Linux Compatibility
 
 `ElectronMainAuthorization` uses the node package [Keytar](https://www.npmjs.com/package/keytar) to securely persist refresh tokens on disk. This allows the client to automatically sign-in and receive a new access token between sessions. In order to use keytar on linux, specifically Debian/Ubuntu, `libsecret-1-dev` must be installed.

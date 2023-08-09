@@ -5,7 +5,6 @@
 // Code based on the blog article @ https://authguidance.com
 
 import * as OperatingSystemUserName from "username";
-import * as keytar from "keytar";
 import { safeStorage } from "electron";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
@@ -23,13 +22,18 @@ export class RefreshTokenStore {
    * Cached name of the currently logged in system (OS) user.
    */
   private _userName?: string;
+    /**
+   * Used for conditional dynamic importing of node-keytar
+   */
+  private _disableKeytar: boolean;
   private _store: typeof Store;
-  public constructor(configFileName: string, appStorageKey: string) {
+  public constructor(configFileName: string, appStorageKey: string, disableKeytar: boolean = false) {
     this._appStorageKey = appStorageKey;
     this._store = new Store({
       name: configFileName, // specifies storage file name.
       encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
     });
+    this._disableKeytar = disableKeytar;
 
   }
 
@@ -71,11 +75,15 @@ export class RefreshTokenStore {
     if (!userName)
       return undefined;
 
+    if (!this._disableKeytar) {
+      const keytar = await import("keytar");
     // If existing refresh token from keytar was found, perform migration from keytar to electron's safeStorage
-    const keytarRefreshToken = await keytar.getPassword(this._appStorageKey, userName);
-    if (keytarRefreshToken) {
-      await this.migrate(keytarRefreshToken);
+      const keytarRefreshToken = await keytar.getPassword(this._appStorageKey, userName);
+      if (keytarRefreshToken) {
+        await this.migrate(keytarRefreshToken);
+      }
     }
+
 
     const key = await this.getKey();
     if (!this._store.has(key)) {
@@ -102,7 +110,10 @@ export class RefreshTokenStore {
     if (!userName)
       return;
 
-    await keytar.deletePassword(this._appStorageKey, userName);
+    if (!this._disableKeytar) {
+      const keytar = await import("keytar");
+      await keytar.deletePassword(this._appStorageKey, userName);
+    }
     const key = await this.getKey();
     await this._store.delete(key);
   }
