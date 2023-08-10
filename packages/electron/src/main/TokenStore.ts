@@ -22,7 +22,7 @@ export class RefreshTokenStore {
    * Cached name of the currently logged in system (OS) user.
    */
   private _userName?: string;
-    /**
+  /**
    * Used for conditional dynamic importing of node-keytar
    */
   private _disableKeytar: boolean;
@@ -77,13 +77,12 @@ export class RefreshTokenStore {
 
     if (!this._disableKeytar) {
       const keytar = await import("keytar");
-    // If existing refresh token from keytar was found, perform migration from keytar to electron's safeStorage
+      // If existing refresh token from keytar was found, perform migration from keytar to electron's safeStorage
       const keytarRefreshToken = await keytar.getPassword(this._appStorageKey, userName);
       if (keytarRefreshToken) {
         await this.migrate(keytarRefreshToken);
       }
     }
-
 
     const key = await this.getKey();
     if (!this._store.has(key)) {
