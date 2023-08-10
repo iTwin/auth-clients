@@ -14,8 +14,6 @@ import { ElectronMainAuthorizationRequestHandler } from "../main/ElectronMainAut
 import { LoopbackWebServer } from "../main/LoopbackWebServer";
 import { RefreshTokenStore } from "../main/TokenStore";
 import * as keytar from "keytar";
-// eslint-disable-next-line @typescript-eslint/naming-convention
-const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert = chai.assert;
 const expect = chai.expect;
@@ -245,8 +243,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
 
     const token = await client.getAccessToken();
     assert.equal(token, `bearer ${mockTokenResponse.accessToken}`);
-    assert.isTrue(migrateSpy.calledOnceWith(mockedKeytarPassword))
-  })
+    assert.isTrue(migrateSpy.calledOnceWith(mockedKeytarPassword));
+  });
 
   it("should save new refresh token after signIn() when no keytar or electron-store token is present", async () => {
     const config: ElectronMainAuthorizationConfiguration = {
@@ -298,7 +296,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const token = await client.getAccessToken();
     assert.equal(token, `bearer ${mockTokenResponse.accessToken}`);
     assert.isTrue(saveSpy.calledOnce);
-  })
+  });
 
   it("should load and decrypt refresh token on signIn() given an existing refresh token in electron-store", async () => {
     const config: ElectronMainAuthorizationConfiguration = {
