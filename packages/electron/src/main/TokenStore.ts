@@ -28,11 +28,7 @@ export class RefreshTokenStore {
     this._appStorageKey = appStorageKey
       .replace(/[.]/g, "%2E") // Replace all '.' with UTF-8 representation
       .replace(/[\/]/g, "%2F"); // Replace all '.' with UTF-8 representation
-    this._store = new Store({
-      name: configFileName, // specifies storage file name.
-      encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
-    });
-
+    this._store = new Store();
   }
 
   private async getUserName(): Promise<string | undefined> {
@@ -95,5 +91,5 @@ export class RefreshTokenStore {
 
     const key = await this.getKey();
     await this._store.delete(key);
-  }
+      }
 }
