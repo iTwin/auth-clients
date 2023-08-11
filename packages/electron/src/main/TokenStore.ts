@@ -22,18 +22,14 @@ export class RefreshTokenStore {
    * Cached name of the currently logged in system (OS) user.
    */
   private _userName?: string;
-  /**
-   * Used for conditional dynamic importing of node-keytar
-   */
-  private _disableKeytar: boolean;
+
   private _store: typeof Store;
-  public constructor(configFileName: string, appStorageKey: string, disableKeytar: boolean = false) {
+  public constructor(configFileName: string, appStorageKey: string) {
     this._appStorageKey = appStorageKey;
     this._store = new Store({
       name: configFileName, // specifies storage file name.
       encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
     });
-    this._disableKeytar = disableKeytar;
 
   }
 
@@ -49,11 +45,6 @@ export class RefreshTokenStore {
     }
 
     return this._userName;
-  }
-
-  private async migrate(oldKeytarRefreshToken: string): Promise<void> {
-    await this.delete();
-    await this.save(oldKeytarRefreshToken);
   }
 
   private encryptRefreshToken(token: string): Buffer {
@@ -74,15 +65,6 @@ export class RefreshTokenStore {
     const userName = await this.getUserName();
     if (!userName)
       return undefined;
-
-    if (!this._disableKeytar) {
-      const keytar = await import("keytar");
-      // If existing refresh token from keytar was found, perform migration from keytar to electron's safeStorage
-      const keytarRefreshToken = await keytar.getPassword(this._appStorageKey, userName);
-      if (keytarRefreshToken) {
-        await this.migrate(keytarRefreshToken);
-      }
-    }
 
     const key = await this.getKey();
     if (!this._store.has(key)) {
@@ -109,10 +91,6 @@ export class RefreshTokenStore {
     if (!userName)
       return;
 
-    if (!this._disableKeytar) {
-      const keytar = await import("keytar");
-      await keytar.deletePassword(this._appStorageKey, userName);
-    }
     const key = await this.getKey();
     await this._store.delete(key);
   }

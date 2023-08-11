@@ -182,8 +182,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     const configFileName =  `iTwinJs_${this._clientId}`;
     const appStorageKey = `${configFileName}:${this._issuerUrl}`;
-    const disableKeytar = process.env.DISABLE_KEYTAR ? true : false;
-    this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey, disableKeytar);
+    this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey);
   }
 
   /**
