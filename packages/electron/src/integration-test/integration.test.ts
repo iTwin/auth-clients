@@ -33,8 +33,6 @@ function getTokenStoreKey(_clientId: string, issuerUrl?: string): string {
   return `iTwinJs_${_clientId}:${issuerUrl}`;
 }
 
-
-
 async function getUrl(app: ElectronApplication): Promise<string> {
   // evaluates in the context of the main process
   // TODO: consider writing a helper to make this easier
@@ -55,7 +53,6 @@ test.beforeEach(async () => {
     });
     electronPage = await electronApp.firstWindow();
   } catch (error) {
-    
   }
 });
 

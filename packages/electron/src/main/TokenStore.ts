@@ -26,8 +26,8 @@ export class RefreshTokenStore {
   private _store: typeof Store;
   public constructor(appStorageKey: string) {
     this._appStorageKey = appStorageKey
-    .replace(/[.]/g, "%2E") // Replace all '.' with UTF-8 representation
-    .replace(/[\/]/g, "%2F") // Replace all '.' with UTF-8 representation
+      .replace(/[.]/g, "%2E") // Replace all '.' with UTF-8 representation
+      .replace(/[\/]/g, "%2F"); // Replace all '.' with UTF-8 representation
     this._store = new Store({
       name: this._appStorageKey, // specifies storage file name.
       encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.

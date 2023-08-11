@@ -36,7 +36,6 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
   return `iTwinJs_${clientId}:${issuerUrl}`;
 }
 
-
 describe("ElectronMainAuthorization Token Logic", () => {
   beforeEach(function () {
     sinon.restore();
