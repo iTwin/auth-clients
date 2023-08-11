@@ -33,12 +33,9 @@ function getTokenStoreKey(clientId: string, issuerUrl?: string): string {
     authority.hostname = prefix + authority.hostname;
   }
   issuerUrl = authority.href.replace(/\/$/, "");
-  return `${getTokenStoreFileName(clientId)}:${issuerUrl}`;
+  return `iTwinJs_${clientId}:${issuerUrl}`;
 }
 
-function getTokenStoreFileName(clientId: string): string {
-  return `iTwinJs_${clientId}`;
-}
 
 describe("ElectronMainAuthorization Token Logic", () => {
   beforeEach(function () {
@@ -77,7 +74,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(refreshToken));
     sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(refreshToken);
     // Load refresh token into token store - use clientId
-    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
+    const tokenStore = new RefreshTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
 
     // Mock auth request
@@ -114,7 +111,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(mockTokenResponse.refreshToken!));
     sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(mockTokenResponse.refreshToken);
     // Clear token store
-    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
+    const tokenStore = new RefreshTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.delete();
 
     // Mock auth request
@@ -165,7 +162,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(refreshToken));
     sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(refreshToken);
     // Load refresh token into token store - use clientId
-    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
+    const tokenStore = new RefreshTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
 
     // Mock auth request
@@ -207,7 +204,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(mockTokenResponse.refreshToken!));
     sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(mockTokenResponse.refreshToken);
     // Clear token store
-    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
+    const tokenStore = new RefreshTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.delete();
 
     // Mock auth request
@@ -260,7 +257,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(refreshToken));
     const decryptSpy = sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(refreshToken);
     // Load refresh token into token store - use clientId
-    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
+    const tokenStore = new RefreshTokenStore(getTokenStoreKey(config.clientId));
     await tokenStore.delete();
     await tokenStore.save(refreshToken);
 
