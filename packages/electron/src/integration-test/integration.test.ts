@@ -19,10 +19,26 @@ const signInOptions: SignInOptions = {
   envPrefix,
 };
 
+// Get the user data path that would be returned in app.getPath('userData') if ran in main process.
+const getElectronUserDataPath = (): string => {
+  switch (process.platform) {
+    case "darwin": // For MacOS
+      return `${process.env.HOME}/Library/Application Support/Electron`;
+    case "win32": // For Windows
+      return process.env.APPDATA!;
+    case "linux": // For Linux
+      return `${process.env.HOME}/.local/share`;
+    default:
+      return process.cwd();
+  }
+};
+
+const userDataPath = getElectronUserDataPath();
+
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
-const tokenStore = new RefreshTokenStore(getTokenStoreFileName(clientId),getTokenStoreKey(clientId));
+const tokenStore = new RefreshTokenStore(getTokenStoreFileName(clientId),getTokenStoreKey(clientId), userDataPath);
 
 function getTokenStoreKey(_clientId: string, issuerUrl?: string): string {
   const authority = new URL(issuerUrl ?? "https://ims.bentley.com");

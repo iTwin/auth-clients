@@ -5,7 +5,7 @@
 // Code based on the blog article @ https://authguidance.com
 
 import * as OperatingSystemUserName from "username";
-import { safeStorage } from "electron";
+import { app, safeStorage } from "electron";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
 /**
@@ -24,11 +24,15 @@ export class RefreshTokenStore {
   private _userName?: string;
 
   private _store: typeof Store;
-  public constructor(configFileName: string, appStorageKey: string) {
+  public constructor(configFileName: string, appStorageKey: string, dir?: string) {
     this._appStorageKey = appStorageKey
       .replace(/[.]/g, "%2E") // Replace all '.' with UTF-8 representation
       .replace(/[\/]/g, "%2F"); // Replace all '.' with UTF-8 representation
-    this._store = new Store();
+    this._store = new Store({
+      name: configFileName, // specifies storage file name.
+      encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
+      cwd: dir ?? app.getPath("userData"),
+    });
   }
 
   private async getUserName(): Promise<string | undefined> {
@@ -91,5 +95,5 @@ export class RefreshTokenStore {
 
     const key = await this.getKey();
     await this._store.delete(key);
-      }
+  }
 }
