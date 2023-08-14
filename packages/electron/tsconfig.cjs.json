@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./lib/cjs",
+    "module": "commonjs",
+
+    // reverting this back because not supported in CJS
+    "verbatimModuleSyntax": false,
+  }
+}
