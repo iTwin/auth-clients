@@ -19,22 +19,21 @@ const signInOptions: SignInOptions = {
   envPrefix,
 };
 
-// Get the user data path that would be returned in app.getPath('userData') if ran in main process.
-const getElectronUserDataPath = (): string => {
+// Get the user data path that would be returned in app.getPath('userData') if ran in main electron process.
+const getElectronUserDataPath = (): string | undefined => {
   switch (process.platform) {
     case "darwin": // For MacOS
       return `${process.env.HOME}/Library/Application Support/Electron`;
     case "win32": // For Windows
-      return process.env.APPDATA!;
+      return `${process.env.APPDATA!}/Electron`;
     case "linux": // For Linux
-      return `${process.env.HOME}/.local/share`;
+      return undefined; // Linux uses the same path for both main and renderer processes, no need to manually resolve path.
     default:
       return process.cwd();
   }
 };
 
 const userDataPath = getElectronUserDataPath();
-
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
