@@ -121,6 +121,11 @@ export interface ElectronMainAuthorizationConfiguration {
    * Additional options to use for every OIDC authentication request made by {@link ElectronMainAuthorization}.
    */
   readonly authenticationOptions?: AuthenticationOptions;
+
+  /**
+   * Directory path that overrides where the refresh token is stored, see {@link RefreshTokenStore}
+   */
+    readonly tokenStorePath?: string;
 }
 
 /**
@@ -182,7 +187,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     const configFileName =  `iTwinJs_${this._clientId}`;
     const appStorageKey = `${configFileName}:${this._issuerUrl}`;
-    this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey);
+    this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey, config.tokenStorePath);
   }
 
   /**

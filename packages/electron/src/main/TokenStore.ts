@@ -32,7 +32,7 @@ export class RefreshTokenStore {
     this._store = new Store({
       name: configFileName, // specifies storage file name.
       encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
-      cwd: dir ?? null,
+      cwd: dir ?? null, // specifies where to the storage file will be saved.
     });
   }
 
