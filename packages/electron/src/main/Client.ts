@@ -125,7 +125,7 @@ export interface ElectronMainAuthorizationConfiguration {
   /**
    * Directory path that overrides where the refresh token is stored, see {@link RefreshTokenStore}
    */
-    readonly tokenStorePath?: string;
+  readonly tokenStorePath?: string;
 }
 
 /**
