@@ -31,12 +31,16 @@ void app.whenReady().then(async () => {
     redirectUris: ["http://localhost:3000/signin-callback"],
   });
 
+  // TODO: revisit this lint problem later
+  // eslint-disable-next-line deprecation/deprecation
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0)
       createWindow();
   });
 });
 
+// TODO: revisit this lint problem later
+// eslint-disable-next-line deprecation/deprecation
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin")
     app.quit();
