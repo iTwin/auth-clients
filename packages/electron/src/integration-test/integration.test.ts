@@ -37,19 +37,19 @@ const userDataPath = getElectronUserDataPath();
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
-const tokenStore = new RefreshTokenStore(getTokenStoreFileName(clientId),getTokenStoreKey(clientId), userDataPath);
+const tokenStore = new RefreshTokenStore(getTokenStoreFileName(),getTokenStoreKey(), userDataPath);
 
-function getTokenStoreKey(_clientId: string, issuerUrl?: string): string {
+function getTokenStoreKey(issuerUrl?: string): string {
   const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
   if (envPrefix && !issuerUrl) {
     authority.hostname = envPrefix + authority.hostname;
   }
   issuerUrl = authority.href.replace(/\/$/, "");
-  return `${getTokenStoreFileName(_clientId)}:${issuerUrl}`;
+  return `${getTokenStoreFileName()}:${issuerUrl}`;
 }
 
-function getTokenStoreFileName(_clientId: string): string {
-  return `iTwinJs_${_clientId}`;
+function getTokenStoreFileName(): string {
+  return `iTwinJs_${clientId}`;
 }
 
 async function getUrl(app: ElectronApplication): Promise<string> {
