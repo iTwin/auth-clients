@@ -2,7 +2,7 @@
   "changes": [
     {
       "packageName": "@itwin/electron-authorization",
-      "comment": "Add support for Electron 25",
+      "comment": "Add support for Electron 25 & 26",
       "type": "minor"
     }
   ],
