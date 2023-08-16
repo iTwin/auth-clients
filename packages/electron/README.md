@@ -55,7 +55,7 @@ new ElectronMainAuthorization({
 - Register a listener to the `ElectronRendererAuthorization.onAccessTokenChanged` which is a `BeEvent` and wait for a token.
 
 ```typescript
-import { ElectronRendererAuthorization } from "@itwin/electron-authorization";
+import { ElectronRendererAuthorization } from "@itwin/electron-authorization/Renderer";
 
 const client = new ElectronRendererAuthorization();
 
@@ -68,6 +68,10 @@ await client.signIn(); // sign in from the renderer process
 ```
 
 > You probably only want to trigger an initial sign in from one of the processes; both are listed above for sake of completeness.
+
+> **Note**: If you're using `moduleResolution: node16/nodenext`, you can import using the pattern above.
+>
+> If not, you can import it like this instead: `import { ElectronRendererAuthorization } from "@itwin/electron-authorization/lib/esm/ElectronRenderer";`
 
 ## Linux Compatibility
 
