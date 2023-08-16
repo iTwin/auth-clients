@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "Update README",
+      "type": "none"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
