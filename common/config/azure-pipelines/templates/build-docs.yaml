@@ -55,14 +55,14 @@ steps:
       SourceFolder: $(Build.SourcesDirectory)/generated-docs/auth-clients
       TargetFolder: $(Build.StagingDirectory)/docs
       OverWrite: true
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }})
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - task: PublishBuildArtifacts@1
     displayName: "Publish Artifact: Auth-Clients Docs"
     inputs:
       PathtoPublish: "$(Build.StagingDirectory)/docs/"
       ArtifactName: "iTwin-Auth-Clients Docs"
-    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'), ${{ parameters.shouldPublish }} )
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - task: tagBuildOrRelease@0
     inputs:

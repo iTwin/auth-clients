@@ -8,8 +8,9 @@
 
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
-import type { Options as GotOptions } from "got";
-import got from "got";
+// @ts-expect-error -- this is a type-only import, it won't break the resulting .js file.
+// It also won't show up in the resulting .d.ts file because we don't re-export this type.
+import type { Options as GotOptions } from "got" assert { "resolution-mode": "import" };
 import { OIDCDiscoveryClient } from "./OIDCDiscoveryClient";
 
 /**
@@ -38,8 +39,8 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
         methods: ["GET", "POST"],
       },
       timeout: {
-        lookup: 500, // DNS
-        connect: 200, // socket connected
+        lookup: 1000, // DNS
+        connect: 1000, // socket connected
         send: 1000, // writing data to socket
         response: 10000, // starts when request has been flushed, ends when the headers are received.
         request: 12000, // global timeout
@@ -67,7 +68,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     const encoded = `${encodeURIComponent(this._configuration.clientId)}:${encodeURIComponent(this._configuration.clientSecret)}`.replace("%20", "+");
     const authHeader = `Basic ${Buffer.from(encoded).toString("base64")}`;
 
-    const tokenSet = await got.post(issuer.token_endpoint, {
+    const tokenSet = await (await import("got")).default.post(issuer.token_endpoint, {
       ...this._gotOptions,
       headers: {
         /* eslint-disable @typescript-eslint/naming-convention */

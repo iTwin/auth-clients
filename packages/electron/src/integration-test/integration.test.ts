@@ -4,11 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { ElectronApplication, Page } from "@playwright/test";
-import { expect, test } from "@playwright/test";
+import { _electron as electron, expect, test } from "@playwright/test";
 import type { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
 import { TestHelper } from "./helpers/TestHelper";
-import { _electron as electron } from "playwright";
 import { RefreshTokenStore } from "../main/TokenStore";
 
 const { clientId, envPrefix, email, password } = loadConfig();
@@ -20,18 +19,37 @@ const signInOptions: SignInOptions = {
   envPrefix,
 };
 
+// Get the user data path that would be returned in app.getPath('userData') if ran in main electron process.
+const getElectronUserDataPath = (): string | undefined => {
+  switch (process.platform) {
+    case "darwin": // For MacOS
+      return `${process.env.HOME}/Library/Application Support/Electron`;
+    case "win32": // For Windows
+      return `${process.env.APPDATA!}/Electron`;
+    case "linux": // For Linux
+      return undefined; // Linux uses the same path for both main and renderer processes, no need to manually resolve path.
+    default:
+      return process.cwd();
+  }
+};
+
+const userDataPath = getElectronUserDataPath();
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
-const tokenStore = new RefreshTokenStore(getTokenStoreKey(clientId));
+const tokenStore = new RefreshTokenStore(getTokenStoreFileName(),getTokenStoreKey(), userDataPath);
 
-function getTokenStoreKey(_clientId: string, issuerUrl?: string): string {
+function getTokenStoreKey(issuerUrl?: string): string {
   const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
   if (envPrefix && !issuerUrl) {
     authority.hostname = envPrefix + authority.hostname;
   }
   issuerUrl = authority.href.replace(/\/$/, "");
-  return `iTwinJs:${_clientId}:${issuerUrl}`;
+  return `${getTokenStoreFileName()}:${issuerUrl}`;
+}
+
+function getTokenStoreFileName(): string {
+  return `iTwinJs_${clientId}`;
 }
 
 async function getUrl(app: ElectronApplication): Promise<string> {
@@ -54,7 +72,6 @@ test.beforeEach(async () => {
     });
     electronPage = await electronApp.firstWindow();
   } catch (error) {
-
   }
 });
 
@@ -74,6 +91,7 @@ test("buttons exist", async () => {
 
 test("sign in successful", async ({ browser }) => {
   const page = await browser.newPage();
+  await testHelper.checkStatus(electronPage, false);
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await getUrl(electronApp));
   await page.waitForLoadState("networkidle");

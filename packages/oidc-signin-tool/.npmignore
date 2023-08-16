@@ -3,4 +3,3 @@
 !lib/**/*.d.ts
 !lib/**/*.js
 lib/**/test/**
-!installPlaywright.js

@@ -16,11 +16,13 @@ const client = new BrowserAuthorizationClient({
   redirectUri: // find/set at developer.bentley.com
   scope: // find/set at developer.bentley.com
   authority: // ims.bentley.com
-  postSignoutRedirectUri: // find/set at developer.bentley.com
+  postSignoutRedirectUri: // find/set at developer.bentley.com (see note below)
   responseType: "code",
   silentRedirectUri: // find/set at developer.bentley.com
 });
 ```
+
+> Important! The above `postSignoutRedirectUri` will not fully work if the url ends with /logout and https is not supported on your site. For local development where https is less common, we suggest using /logout-local for the url path.
 
 The most common way to use an instance of `BrowserAuthorizationClient` will depend on your specific application and workflow. Here's one common way:
 
@@ -70,7 +72,6 @@ For information about the browser authorization workflow please visit the [Autho
 ## Running integration tests
 
 - Ensure you've run `rush update` (or `rush install`) and `rush build`
-- Install playwright binaries - `npx install playwright`
 - Create an .env file based on .env.example - ask Arun G or Ben P for the values.
 - `rush test:integration` will run integration tests for the entire repo.
 - `rushx test:integration` runs the tests only in the Browser package.

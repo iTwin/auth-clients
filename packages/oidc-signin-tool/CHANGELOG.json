@@ -2,6 +2,58 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "version": "4.1.2",
+      "tag": "@itwin/oidc-signin-tool_v4.1.2",
+      "date": "Wed, 16 Aug 2023 15:07:40 GMT",
+      "comments": {}
+    },
+    {
+      "version": "4.1.1",
+      "tag": "@itwin/oidc-signin-tool_v4.1.1",
+      "date": "Tue, 25 Jul 2023 15:42:36 GMT",
+      "comments": {
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@itwin/service-authorization\" to `1.0.3`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "4.1.0",
+      "tag": "@itwin/oidc-signin-tool_v4.1.0",
+      "date": "Tue, 25 Jul 2023 14:33:09 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "Upgrade @playwright/test to 1.35.1 and remove installScript.js file"
+          }
+        ],
+        "patch": [
+          {
+            "comment": "fix dependency version ranges"
+          }
+        ],
+        "dependency": [
+          {
+            "comment": "Updating dependency \"@itwin/service-authorization\" to `1.0.2`"
+          }
+        ]
+      }
+    },
+    {
+      "version": "4.0.1",
+      "tag": "@itwin/oidc-signin-tool_v4.0.1",
+      "date": "Fri, 09 Jun 2023 17:20:04 GMT",
+      "comments": {
+        "patch": [
+          {
+            "comment": "Fix issue with OIDC signin tool not working without fetch API"
+          }
+        ]
+      }
+    },
+    {
       "version": "4.0.0",
       "tag": "@itwin/oidc-signin-tool_v4.0.0",
       "date": "Wed, 17 May 2023 20:26:35 GMT",
