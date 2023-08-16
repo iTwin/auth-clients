@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/electron-authorization",
+      "comment": "Added package.json export field and export ElectronMain cjs and ElectronRenderer esm subpath",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/electron-authorization"
+}
