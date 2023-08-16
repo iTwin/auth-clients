@@ -21,6 +21,12 @@ export class TestHelper {
     await button.click();
   }
 
+  public async isSignedIn(electronPage: Page) {
+    const button = electronPage.getByTestId("getStatus");
+    await button.click();
+    const locator = electronPage.getByText("signed in");
+    return locator.isVisible();
+  }
   public async checkStatus(electronPage: Page, expectedStatus: boolean) {
     await electronPage.waitForSelector("button#getStatus");
     const button = electronPage.getByTestId("getStatus");
@@ -30,6 +36,7 @@ export class TestHelper {
 
   public async signIn(page: Page, url: string) {
     await page.goto(url);
+    await page.waitForSelector("#identifierInput", {timeout: 5000});
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);
