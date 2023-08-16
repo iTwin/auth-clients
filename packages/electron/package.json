@@ -3,11 +3,11 @@
   "version": "0.14.1",
   "description": "Electron authorization client for iTwin platform",
   "exports": {
-    "./ElectronMain": {
+    "./Main": {
       "types": "./lib/cjs/ElectronMain.d.ts",
       "require": "./lib/cjs/ElectronMain.js"
     },
-    "./ElectronRenderer": {
+    "./Renderer": {
       "types": "./lib/esm/ElectronRenderer.d.ts",
       "import": "./lib/esm/ElectronRenderer.js"
     }
