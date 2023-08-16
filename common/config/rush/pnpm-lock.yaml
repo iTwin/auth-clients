@@ -83,7 +83,7 @@ importers:
       rimraf: ^3.0.2
       sinon: ^15.0.1
       source-map-support: ^0.5.9
-      typescript: ~4.3.5
+      typescript: ~5.0.2
       username: ^5.1.0
     dependencies:
       '@itwin/core-common': 3.7.6_@itwin+core-bentley@3.7.6
@@ -93,7 +93,7 @@ importers:
     devDependencies:
       '@itwin/build-tools': 4.1.0_@types+node@16.18.31
       '@itwin/core-bentley': 3.7.6
-      '@itwin/eslint-plugin': 3.7.6_eslint@7.32.0+typescript@4.3.5
+      '@itwin/eslint-plugin': 3.7.6_eslint@7.32.0+typescript@5.0.4
       '@playwright/test': 1.35.1
       '@types/chai': 4.3.5
       '@types/chai-as-promised': 7.1.5
@@ -113,7 +113,7 @@ importers:
       rimraf: 3.0.2
       sinon: 15.0.4
       source-map-support: 0.5.21
-      typescript: 4.3.5
+      typescript: 5.0.4
 
   ../../packages/node-cli:
     specifiers:
