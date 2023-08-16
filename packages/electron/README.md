@@ -40,7 +40,15 @@ const client = new ElectronMainAuthorization({
 
 await client.signIn(); // sign in from the main process
 ```
+<blockquote> If your app has its own directory to store config files, you can override the default path the refresh token is stored by specifying an optional field in the constructor object, like so:
 
+```typescript
+new ElectronMainAuthorization({
+  ...
+  tokenStorePath: yourOwnDirectoryAbsolutePath
+})
+```
+</blockquote>
 2. Setup Renderer Process
 
 - Import the `ElectronRendererAuthorization` class and create a new instance
@@ -63,7 +71,7 @@ await client.signIn(); // sign in from the renderer process
 
 ## Linux Compatibility
 
-`ElectronMainAuthorization` uses the node package [Keytar](https://www.npmjs.com/package/keytar) to securely persist refresh tokens on disk. This allows the client to automatically sign-in and receive a new access token between sessions. In order to use keytar on linux, specifically Debian/Ubuntu, `libsecret-1-dev` must be installed.
+`ElectronMainAuthorization` uses Electron's [safeStorage](https://www.electronjs.org/docs/latest/api/safe-storage) to securely encrypt and decrypt refresh tokens on disk. This allows the client to automatically sign-in and receive a new access token between sessions. In order to use safeStorage on linux, specifically Debian/Ubuntu, `libsecret-1-dev` must be installed.
 
 If keytar is being used in a headless environment additional steps need to be taken. The following packages will need to be installed:
 
