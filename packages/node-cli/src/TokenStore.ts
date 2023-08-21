@@ -6,7 +6,7 @@
 import type { TokenResponseJson } from "@openid/appauth";
 import * as OperatingSystemUserName from "username";
 import { TokenResponse } from "@openid/appauth";
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "crypto";
+import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
 import * as path from "node:path";
 import * as NodePersist from "node-persist";
 
@@ -24,7 +24,7 @@ export class TokenStore {
     // We make the storage key a combination of clientId and issuing authority so that keys can stay cached when switching
     // between PROD and QA environments.
     // We store the scopes in our password blob so we know if a new token is required due to updated scopes.
-    const configFileName = `itwinJs_${namedArgs.clientId}`;
+    const configFileName = `iTwinJs_${namedArgs.clientId}`;
     this._appStorageKey = `${configFileName}_${namedArgs.issuerUrl}`
       .replace(/[.]/g, "%2E") // Replace all '.' with URL Percent-encoding representation
       .replace(/[\/]/g, "%2F"); // Replace all '/' with URL Percent-encoding representation;
