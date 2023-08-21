@@ -34,6 +34,6 @@
   },
   "devDependencies": {
     "beachball": "^2.36.0",
-    "lage": "latest"
+    "lage": "^2.7.6"
   }
 }
