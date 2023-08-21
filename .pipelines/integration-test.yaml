@@ -78,7 +78,7 @@ jobs:
       git config user.name imodeljs-admin
     displayName: git config
 
-  - script: pnpm install --no-frozen-lockfile
+  - script: pnpm install
     displayName: Install packages
 
   - script: pnpm build

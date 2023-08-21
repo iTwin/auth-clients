@@ -19,7 +19,7 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v2.2.4
         with:
-          version: 8.6.2
+          version: ^7.33.5
 
       - name: Use Node.js 18
         uses: actions/setup-node@v3

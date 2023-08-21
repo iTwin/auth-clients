@@ -23,7 +23,6 @@ importers:
       '@types/sinon': ^10.0.13
       buffer: ~6.0.3
       chai: ^4.2.22
-      cross-env: ^7.0.3
       dotenv: ~16.0.3
       eslint: ^7.32.0
       mocha: ^8.2.3
@@ -48,7 +47,6 @@ importers:
       '@types/sinon': 10.0.16
       buffer: 6.0.3
       chai: 4.3.7
-      cross-env: 7.0.3
       dotenv: 16.0.3
       eslint: 7.32.0
       mocha: 8.4.0
@@ -68,13 +66,12 @@ importers:
       '@openid/appauth': ^1.3.1
       '@playwright/test': ~1.35.1
       '@types/chai': ^4.2.22
-      '@types/chai-as-promised': ^7
+      '@types/chai-as-promised': ^7.1.1
       '@types/mocha': ^8.2.3
       '@types/node': ^16.0.0
       '@types/sinon': ^10.0.13
       chai: ^4.2.22
-      chai-as-promised: ^7
-      cross-env: ^7.0.3
+      chai-as-promised: ^7.1.1
       dotenv: ~16.0.3
       electron: ^26.0.0
       electron-store: ^8.1.0
@@ -106,7 +103,6 @@ importers:
       '@types/sinon': 10.0.16
       chai: 4.3.7
       chai-as-promised: 7.1.1_chai@4.3.7
-      cross-env: 7.0.3
       dotenv: 16.0.3
       electron: 26.0.0
       eslint: 7.32.0
@@ -128,12 +124,11 @@ importers:
       '@itwin/eslint-plugin': ^3.7.0
       '@openid/appauth': ^1.3.1
       '@types/chai': ^4.2.22
-      '@types/chai-as-promised': ^7
+      '@types/chai-as-promised': ^7.1.1
       '@types/mocha': ^8.2.3
       '@types/node': ^18.11.5
       chai: ^4.2.22
-      chai-as-promised: ^7
-      cross-env: ^7.0.3
+      chai-as-promised: ^7.1.1
       eslint: ^7.32.0
       keytar: ^7.8.0
       mocha: ^8.2.3
@@ -159,7 +154,6 @@ importers:
       '@types/node': 18.17.1
       chai: 4.3.7
       chai-as-promised: 7.1.1_chai@4.3.7
-      cross-env: 7.0.3
       eslint: 7.32.0
       mocha: 8.4.0
       nyc: 15.1.0
@@ -177,13 +171,13 @@ importers:
       '@itwin/service-authorization': workspace:^
       '@playwright/test': ~1.35.1
       '@types/chai': ^4.2.22
-      '@types/chai-as-promised': ^7
+      '@types/chai-as-promised': ^7.1.1
       '@types/jsonwebtoken': ^9.0.1
       '@types/mocha': ^8.2.3
       '@types/node': ^18.11.5
       '@types/sinon': ^10.0.13
       chai: ^4.2.22
-      chai-as-promised: ^7
+      chai-as-promised: ^7.1.1
       dotenv: ^10.0.0
       dotenv-expand: ^5.1.0
       eslint: ^7.32.0
@@ -227,13 +221,12 @@ importers:
       '@itwin/core-common': ^3.3.0 || ^4.0.0
       '@itwin/eslint-plugin': ^3.7.0
       '@types/chai': ^4.2.22
-      '@types/chai-as-promised': ^7
+      '@types/chai-as-promised': ^7.1.1
       '@types/jsonwebtoken': ^8.5.9
       '@types/mocha': ^8.2.3
       '@types/sinon': ^10.0.13
       chai: ^4.2.22
-      chai-as-promised: ^7
-      cross-env: ^7.0.3
+      chai-as-promised: ^7.1.1
       eslint: ^7.32.0
       got: ^12.6.1
       jsonwebtoken: ^9.0.0
@@ -260,7 +253,6 @@ importers:
       '@types/sinon': 10.0.16
       chai: 4.3.7
       chai-as-promised: 7.1.1_chai@4.3.7
-      cross-env: 7.0.3
       eslint: 7.32.0
       mocha: 8.4.0
       nyc: 15.1.0
@@ -2108,7 +2100,7 @@ packages:
     dev: true
 
   /@types/chai-as-promised/7.1.5:
-    resolution: {integrity: sha512-jStwss93SITGBwt/niYrkf2C+/1KTeZCZl1LaeezTlqppAKeoQC7jxyqYuP72sxBGKCIbw7oHgbYssIRzT5FCQ==}
+    resolution: {integrity: sha1-bgFoEfbHpk8u7YIxkcOmlVCU4lU=}
     dependencies:
       '@types/chai': 4.3.5
     dev: true
@@ -2894,7 +2886,7 @@ packages:
     dev: true
 
   /chai-as-promised/7.1.1_chai@4.3.7:
-    resolution: {integrity: sha512-azL6xMoi+uxu6z4rhWQ1jbdUhOMhis2PvscD/xjLqNMkv3BPPp2JyyuTHOrf9BOosGpNQ11v6BKv/g57RXbiaA==}
+    resolution: {integrity: sha1-CGRdgl3rhpbuYXJdv1kMAS6wDKA=}
     peerDependencies:
       chai: '>= 2.1.2 < 5'
     dependencies:
@@ -2944,7 +2936,7 @@ packages:
     dev: true
 
   /check-error/1.0.2:
-    resolution: {integrity: sha512-BrgHpW9NURQgzoNyjfq0Wu6VFO6D7IZEmJNdtgNqpzGG8RuNFHt2jQxWlAs4HMe119chBnv+34syEZtc6IhLtA==}
+    resolution: {integrity: sha1-V00xLt2Iu13YkS6Sht1sCu1KrII=}
     dev: true
 
   /chokidar/3.5.1:
@@ -3165,14 +3157,6 @@ packages:
       subarg: 1.0.0
     transitivePeerDependencies:
       - supports-color
-    dev: true
-
-  /cross-env/7.0.3:
-    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
-    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
-    hasBin: true
-    dependencies:
-      cross-spawn: 7.0.3
     dev: true
 
   /cross-fetch/3.1.5:

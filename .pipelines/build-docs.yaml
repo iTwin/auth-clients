@@ -46,7 +46,7 @@ stages:
             git config --local user.name imodeljs-admin
           displayName: Setup git config
 
-        - script: pnpm install --no-frozen-lockfile
+        - script: pnpm install
           displayName: Install packages
 
         - script: |
