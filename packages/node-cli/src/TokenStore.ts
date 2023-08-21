@@ -94,8 +94,10 @@ export class TokenStore {
     const cacheEntry = this.decryptCache(encryptedCache, Buffer.from(iv, "hex"));
     // Only reuse token if matching scopes. Don't include cache data for TokenResponse object.
     const tokenResponseObj = JSON.parse(cacheEntry);
-    if (tokenResponseObj?.scopesForCacheValidation !== this._scopes)
+    if (tokenResponseObj?.scopesForCacheValidation !== this._scopes) {
+      await this._store.removeItem(key);
       return undefined;
+    }
     delete tokenResponseObj.scopesForCacheValidation;
 
     return new TokenResponse(tokenResponseObj);

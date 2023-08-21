@@ -3,7 +3,7 @@
     {
       "packageName": "@itwin/node-cli-authorization",
       "comment": "Move node-cli from keytar to use crypto and node-persist",
-      "type": "minor"
+      "type": "major"
     }
   ],
   "packageName": "@itwin/node-cli-authorization"
