@@ -40,8 +40,8 @@ jobs:
       - name: Install packages
         run: pnpm install
 
-      # - name: Beachball check
-      #   run: pnpm check
+      - name: Beachball check
+        run: pnpm check
 
       - name: Build packages
         run: pnpm build
