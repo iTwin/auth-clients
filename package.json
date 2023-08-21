@@ -4,13 +4,17 @@
   "version": "0.0.0",
   "description": "Authorization clients for the iTwin platform",
   "scripts": {
-    "build": "echo NOTE: use 'rush build' instead",
-    "clean": "echo NOTE: use 'rush clean' instead",
-    "docs": "echo NOTE: use 'rush docs' instead",
-    "lint": "echo NOTE: use 'rush lint' instead",
-    "test": "echo NOTE: use 'rush test' instead",
-    "test:integration": "echo NOTE: use 'rush test:integration' instead",
-    "preinstall": "echo ERROR: use 'rush install' instead && exit 1"
+    "build": "lage build",
+    "clean": "lage clean",
+    "docs": "lage docs",
+    "lint": "lage lint",
+    "test": "lage test",
+    "test:integration": "lage test:integration",
+    "cover": "lage cover",
+    "change": "beachball change",
+    "check": "beachball check",
+    "version-bump": "beachball bump",
+    "publish-packages": "beachball publish --access public"
   },
   "keywords": [
     "Bentley",
@@ -28,7 +32,8 @@
     "type": "git",
     "url": "https://github.com/iTwin/auth-clients"
   },
-  "peerDependencies": {},
-  "devDependencies": {},
-  "dependencies": {}
+  "devDependencies": {
+    "beachball": "^2.36.0",
+    "lage": "^2.7.6"
+  }
 }

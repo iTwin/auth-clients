@@ -3,25 +3,40 @@
 name: Create Release
 
 on:
-  push:
-    tags:
-      - "**"
+  workflow_dispatch
+
 jobs:
-  create-release:
+  release-packages:
     runs-on: ubuntu-latest
 
+    name: Release packages
     steps:
-      - name: Checkout branch
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
         with:
-          fetch-depth: 0
+          token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
 
-      - name: Configure git
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: ^7.33.5
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18.16.x
+          registry-url: https://registry.npmjs.org/
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build, Lint, Test
+        run: pnpm lage build lint cover
+
+      - name: Publish packages
         run: |
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin
-
-      - name: Create release
-        run: python common/scripts/create_release.py ${{ github.ref_name }}
+          pnpm publish-packages -y --branch ${{ github.ref_name }} --message "Version bump [skip actions][publish docs]"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
