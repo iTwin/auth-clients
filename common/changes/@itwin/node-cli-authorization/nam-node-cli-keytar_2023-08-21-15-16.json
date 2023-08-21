@@ -1,0 +1,10 @@
+{
+  "changes": [
+    {
+      "packageName": "@itwin/node-cli-authorization",
+      "comment": "Move node-cli from keytar to use crypto and node-persist",
+      "type": "minor"
+    }
+  ],
+  "packageName": "@itwin/node-cli-authorization"
+}
