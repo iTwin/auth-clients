@@ -28,7 +28,7 @@ export class TokenStore {
       .replace(/[\/]/g, "%2F"); // Replace all '/' with URL Percent-encoding representation;
     this._scopes = namedArgs.scopes;
     this._store = NodePersist.create({
-      dir: dir ?? path.join(process.cwd(), ".configStore"), // specifies storage file name.
+      dir: dir ?? path.join(process.cwd(), ".configStore"), // specifies storage file path.
     });
   }
 
