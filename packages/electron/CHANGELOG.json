@@ -2,6 +2,18 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "version": "0.15.0",
+      "tag": "@itwin/electron-authorization_v0.15.0",
+      "date": "Wed, 16 Aug 2023 15:07:40 GMT",
+      "comments": {
+        "minor": [
+          {
+            "comment": "move away from node-keytar to SafeStorage"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.14.1",
       "tag": "@itwin/electron-authorization_v0.14.1",
       "date": "Tue, 25 Jul 2023 14:33:09 GMT",

@@ -1,6 +1,13 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 25 Jul 2023 14:33:09 GMT and should not be manually modified.
+This log was last generated on Wed, 16 Aug 2023 15:07:40 GMT and should not be manually modified.
+
+## 0.15.0
+Wed, 16 Aug 2023 15:07:40 GMT
+
+### Minor changes
+
+- move away from node-keytar to SafeStorage
 
 ## 0.14.1
 Tue, 25 Jul 2023 14:33:09 GMT
