@@ -1,0 +1,111 @@
+<html class="iui-theme-light" lang="en" dir="ltr">
+
+<head>
+  <title>{--pageTitle--}</title>
+  <link rel="icon" type="image/x-icon" href="https://connect-cdn.bentley.com/cdn/en/favicon.ico" />
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="x-ua-compatible" content="IE=edge" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style type="text/css">
+    * {
+      font-family: "Open Sans", -apple-system, "system-ui", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    html,
+    body {
+      padding: 0;
+      margin: 0;
+    }
+
+    body {
+      height: 100%;
+    }
+
+    div.page-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    header {
+      margin: 100px 0 20px;
+    }
+
+    header img {
+      height: 52px;
+    }
+
+    main {
+      width: 480px;
+      border-radius: 3px;
+      box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+      padding: 32px;
+      background-color: #FFF;
+      background-color: var(--iui-color-background-1);
+      text-align: center;
+    }
+
+    main h1 {
+      margin-top: 0px;
+      font-size: 16px;
+    }
+
+    footer {
+      height: 90px;
+      margin-top: auto;
+      color: rgba(0, 0, 0, 0.4);
+      font-size: 11px;
+    }
+
+    footer a {
+      text-decoration: none;
+    }
+
+    footer a:hover,
+    footer a:active {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body class="iui-body">
+  <div class="page-container">
+    <header>
+      <img src="https://connect-cdn.bentley.com/cdn/en/logo.svg" alt="Bentley Systems logo" />
+    </header>
+
+    <main>
+      <h1>{--contentTitle--}</h1>
+      <span>{--contentMessage--}</span>
+    </main>
+
+    <footer>
+      <div class="copyright">©
+        <script>
+          const year = new Date();
+          document.write(year.getFullYear());</script> Bentley Systems, Incorporated |
+        <a href="https://www.bentley.com/legal/terms-of-use-and-select-online-agreement/" target="_blank">
+          <span style="color: rgb(153, 153, 153)">Terms of Service</span></a>
+        |
+        <a href="https://www.bentley.com/legal/privacy-policy/" target="_blank">
+          <span style="color: rgb(153, 153, 153)">Privacy</span></a>
+        |
+        <a href="https://www.bentley.com/legal/terms-of-use-and-select-online-agreement/" target="_blank">
+          <span style="color: rgb(153, 153, 153)">Terms of Use</span></a>
+        |
+        <a href="https://www.bentley.com/legal/cookie-policy/" target="_blank">
+          <span style="color: rgb(153, 153, 153)">Cookies</span></a>
+        |
+        <a href="https://www.bentley.com/legal/overview/" target="_blank">
+          <span style="color: rgb(153, 153, 153)">Legal Notices</span></a>
+        <br />
+      </div>
+    </footer>
+  </div>
+</body>
+
+</html>
