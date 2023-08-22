@@ -1,9 +1,9 @@
 import { TokenResponse } from "@openid/appauth";
-import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-import { TokenStore } from "../TokenStore";
+import chai = require("chai");
+import chaiAsPromised = require("chai-as-promised");
+import { TokenStore } from "../TokenStore.js";
 import { rmSync } from "fs";
-import * as sinon from "sinon";
+import sinon from "sinon";
 chai.use(chaiAsPromised);
 
 describe("TokenStore", () => {
@@ -20,7 +20,6 @@ describe("TokenStore", () => {
       issuerUrl: "https://testUrl.com",
       scopes: "testScope1 testScope2",
     }, `${process.cwd()}/testConfig`);
-    await tokenStore.initialize();
   });
 
   afterEach(() => {
@@ -57,7 +56,6 @@ describe("TokenStore", () => {
       issuerUrl: "https://testUrl.com",
       scopes: "testScope1 testScope2 testScope3",
     }, `${process.cwd()}/testConfig`);
-    await tokenStore2.initialize();
 
     const retrievedToken = await tokenStore2.load();
     chai.expect(retrievedToken).to.be.undefined;

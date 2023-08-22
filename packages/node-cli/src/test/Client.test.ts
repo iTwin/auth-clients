@@ -3,8 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
+import chai = require("chai");
+import chaiAsPromised = require("chai-as-promised");
 
 import { BakedAuthorizationConfiguration } from "../Client.js";
 import type { NodeCliAuthorizationConfiguration } from "../Client.js";
