@@ -1,0 +1,7 @@
+{
+  "type": "major",
+  "comment": "Migrate from node-keytar to crypto",
+  "packageName": "@itwin/node-cli-authorization",
+  "email": "50554904+hl662@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
