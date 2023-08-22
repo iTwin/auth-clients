@@ -152,8 +152,6 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     // Would ideally set up in constructor, but async...
     if (!this._configuration)
       this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._bakedConfig.issuerUrl, new NodeRequestor());
-
-    await this._tokenStore.initialize();
   }
 
   private async loadAndRefreshAccessToken() {
