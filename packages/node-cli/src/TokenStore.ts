@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 
 import { getPassword, setPassword } from "keytar";
-import * as OperatingSystemUserName from "username";
+import OperatingSystemUserName from "username";
 import { TokenResponse } from "@openid/appauth";
 
 /**

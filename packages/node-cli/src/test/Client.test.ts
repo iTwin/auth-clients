@@ -6,8 +6,8 @@
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 
-import { BakedAuthorizationConfiguration } from "../Client";
-import type { NodeCliAuthorizationConfiguration } from "../Client";
+import { BakedAuthorizationConfiguration } from "../Client.js";
+import type { NodeCliAuthorizationConfiguration } from "../Client.js";
 
 chai.use(chaiAsPromised);
 
