@@ -30,19 +30,24 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: '18'
+          node-version: '18.12.0'
 
-      - name: Rush Install
-        run: node common/scripts/install-run-rush.js install
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 7
 
-      - name: Rush Change
-        run: node common/scripts/install-run-rush.js change -v
+      - name: Install packages
+        run: pnpm install
 
-      - name: Rush Build
-        run: node common/scripts/install-run-rush.js build -v
+      - name: Beachball check
+        run: pnpm check
 
-      - name: Rush Lint
-        run: node common/scripts/install-run-rush.js lint
+      - name: Build packages
+        run: pnpm build
+
+      - name: Lint packages
+        run: pnpm lint
 
       # Necessary for running linux tests in a dbus session
       #   See packages/electron/README.md for more details
@@ -55,14 +60,13 @@ jobs:
 
       # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
       #   See packages/electron/README.md for more details
-      - name: Rush Cover - Linux
+      - name: pnpm cover - Linux
         run: >-
           dbus-run-session -- sh -c
           "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
-           xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' node common/scripts/install-run-rush.js cover --verbose"
+           xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm cover --verbose"
         if: runner.os == 'Linux'
 
-      - name: Rush Cover - Windows/Mac
-        run: node common/scripts/install-run-rush.js cover --verbose
+      - name: pnpm cover - Windows/Mac
+        run: pnpm cover --verbose
         if: runner.os == 'Windows' || runner.os == 'macOS'
-
