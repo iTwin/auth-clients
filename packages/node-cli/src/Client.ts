@@ -11,15 +11,15 @@
 import { readFileSync } from "fs";
 import * as path from "path";
 import * as Http from "http";
-import * as open from "open";
+import open from "open";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationResponse,
   AuthorizationServiceConfiguration, BaseTokenRequestHandler, BasicQueryStringUtils, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
   TokenRequest,
 } from "@openid/appauth";
-import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
-import { TokenStore } from "./TokenStore";
+import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support/index.js";
+import { TokenStore } from "./TokenStore.js";
 
 import type { AccessToken } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";

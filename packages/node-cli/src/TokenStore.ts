@@ -3,8 +3,8 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import * as OperatingSystemUserName from "username";
 import type { TokenResponseJson } from "@openid/appauth";
+import OperatingSystemUserName from "username";
 import { TokenResponse } from "@openid/appauth";
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
 import * as path from "node:path";
