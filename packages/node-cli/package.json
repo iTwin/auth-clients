@@ -20,7 +20,7 @@
     "rebuild": "npm run clean && npm run build"
   },
   "exports": "./lib/esm/index.js",
-    "typings": "./lib/esm/index.d.ts",
+  "typings": "./lib/esm/index.d.ts",
   "author": {
     "name": "Bentley Systems, Inc.",
     "url": "http://www.bentley.com"
