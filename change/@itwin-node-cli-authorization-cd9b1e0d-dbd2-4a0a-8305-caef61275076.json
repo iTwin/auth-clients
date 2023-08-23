@@ -1,0 +1,7 @@
+{
+  "type": "major",
+  "comment": "Move from cjs to esm and use Conf",
+  "packageName": "@itwin/node-cli-authorization",
+  "email": "50554904+hl662@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}

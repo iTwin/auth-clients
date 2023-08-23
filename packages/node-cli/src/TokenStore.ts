@@ -3,14 +3,17 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import * as OperatingSystemUserName from "username";
 import type { TokenResponseJson } from "@openid/appauth";
+import OperatingSystemUserName from "username";
 import { TokenResponse } from "@openid/appauth";
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
-import * as path from "node:path";
-import * as NodePersist from "node-persist";
+import Conf from "conf";
 
 type CacheEntry = TokenResponseJson & {scopesForCacheValidation?: string};
+interface ConfEntry {
+  encryptedCache: string;
+  iv: string;
+}
 /**
  * Utility to store OIDC AppAuth in secure storage
  * @internal
@@ -18,7 +21,7 @@ type CacheEntry = TokenResponseJson & {scopesForCacheValidation?: string};
 export class TokenStore {
   private readonly _appStorageKey: string;
   private readonly _scopes: string;
-  private readonly _store: NodePersist.LocalStorage;
+  private readonly _store: Conf;
   public constructor(namedArgs: {clientId: string, issuerUrl: string, scopes: string}, dir?: string) {
     // A stored credential is only valid for a combination of the clientId, the issuing authority and the requested scopes.
     // We make the storage key a combination of clientId and issuing authority so that keys can stay cached when switching
@@ -29,14 +32,25 @@ export class TokenStore {
       .replace(/[.]/g, "%2E") // Replace all '.' with URL Percent-encoding representation
       .replace(/[\/]/g, "%2F"); // Replace all '/' with URL Percent-encoding representation;
     this._scopes = namedArgs.scopes;
-    this._store = NodePersist.create({
-      dir: dir ?? path.join(process.cwd(), ".configStore"), // specifies storage file path.
-    });
+
+    let confConfig: object = {
+      configName: configFileName, // specifies storage file name.
+      encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
+    };
+    if (dir) {
+      confConfig = {
+        ...confConfig,
+        cwd: dir, // specifies the directory that contains the storage file.
+      };
+    } else {
+      confConfig = {
+        ...confConfig,
+        projectName: configFileName, // specifies the directory that contains the storage file.
+      };
+    }
+    this._store = new Conf(confConfig);
   }
 
-  public async initialize(): Promise<void> {
-    await this._store.init();
-  }
   private _userName?: string;
   private async getUserName(): Promise<string | undefined> {
     if (!this._userName)
@@ -60,7 +74,7 @@ export class TokenStore {
    * Uses node's native `crypto` module to encrypt the given cache entry.
    * @returns an object containing a hexadecimal encoded token, returned as a string, as well as the initialization vector.
    */
-  private encryptCache(cacheEntry: CacheEntry): {encryptedCache: string, iv: string} {
+  private encryptCache(cacheEntry: CacheEntry): ConfEntry {
     const iv = randomBytes(16);
     const cipher = createCipheriv("aes-256-cbc", this.generateCipherKey(), iv);
 
@@ -86,18 +100,17 @@ export class TokenStore {
       return undefined;
 
     const key = await this.getKey();
-    const storeKeys = await this._store.keys();
-    if (!storeKeys.includes(key)) {
+    if (!this._store.has(key)) {
       return undefined;
     }
-    const storedObj = await this._store.getItem(key);
+    const storedObj = this._store.get(key) as ConfEntry;
     const encryptedCache = storedObj.encryptedCache;
     const iv = storedObj.iv;
     const cacheEntry = this.decryptCache(encryptedCache, Buffer.from(iv, "hex"));
     // Only reuse token if matching scopes. Don't include cache data for TokenResponse object.
     const tokenResponseObj = JSON.parse(cacheEntry) as CacheEntry;
     if (tokenResponseObj?.scopesForCacheValidation !== this._scopes) {
-      await this._store.removeItem(key);
+      this._store.delete(key);
       return undefined;
     }
     delete tokenResponseObj.scopesForCacheValidation;
@@ -124,6 +137,6 @@ export class TokenStore {
     };
     const objToStore = this.encryptCache(cacheEntry);
     const key = await this.getKey();
-    await this._store.setItem(key, objToStore);
+    this._store.set(key, objToStore);
   }
 }

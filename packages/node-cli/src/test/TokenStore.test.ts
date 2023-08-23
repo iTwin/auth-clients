@@ -1,10 +1,10 @@
 import { TokenResponse } from "@openid/appauth";
-import * as chai from "chai";
-import * as chaiAsPromised from "chai-as-promised";
-import { TokenStore } from "../TokenStore";
+import { assert, expect, use } from "chai";
+import chaiAsPromised = require("chai-as-promised");
+import { TokenStore } from "../TokenStore.js";
 import { rmSync } from "fs";
-import * as sinon from "sinon";
-chai.use(chaiAsPromised);
+import { spy } from "sinon";
+use(chaiAsPromised);
 
 describe("TokenStore", () => {
   let tokenStore: TokenStore;
@@ -20,7 +20,6 @@ describe("TokenStore", () => {
       issuerUrl: "https://testUrl.com",
       scopes: "testScope1 testScope2",
     }, `${process.cwd()}/testConfig`);
-    await tokenStore.initialize();
   });
 
   afterEach(() => {
@@ -31,9 +30,9 @@ describe("TokenStore", () => {
     if (process.platform === "linux")
       return;
 
-    const saveSpy = sinon.spy(tokenStore as any, "encryptCache");
+    const saveSpy = spy(tokenStore as any, "encryptCache");
     await tokenStore.save(testTokenResponse);
-    chai.assert.isTrue(saveSpy.calledOnce);
+    assert.isTrue(saveSpy.calledOnce);
   });
 
   it("should decrypt cache on load", async () => {
@@ -43,7 +42,7 @@ describe("TokenStore", () => {
     await tokenStore.save(testTokenResponse);
 
     const retrievedToken = await tokenStore.load();
-    chai.expect(retrievedToken!.refreshToken).equals(testTokenResponse.refreshToken);
+    expect(retrievedToken!.refreshToken).equals(testTokenResponse.refreshToken);
   });
 
   it("load() should return undefined when scopes are mismatched", async () => {
@@ -57,9 +56,8 @@ describe("TokenStore", () => {
       issuerUrl: "https://testUrl.com",
       scopes: "testScope1 testScope2 testScope3",
     }, `${process.cwd()}/testConfig`);
-    await tokenStore2.initialize();
 
     const retrievedToken = await tokenStore2.load();
-    chai.expect(retrievedToken).to.be.undefined;
+    expect(retrievedToken).to.be.undefined;
   });
 });
