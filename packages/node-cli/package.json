@@ -6,7 +6,8 @@
   "description": "Node.js command-line authorization client for iTwin platform",
   "scripts": {
     "build": "npm run -s build:cjs",
-    "build:cjs": "tsc 1>&2 --outDir lib/cjs",
+    "build:cjs": "tsc 1>&2 --outDir lib/cjs && npm run copy:assets",
+    "copy:assets": "cpx src/static/* lib/cjs/static",
     "clean": "rimraf lib",
     "docs": "RUSHSTACK_FILE_ERROR_BASE_FOLDER='../..' betools docs --includes=../../generated-docs/extract --json=../../generated-docs/auth-clients/node-cli-authorization/file.json --tsIndexFile=./index.ts --onlyJson",
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
@@ -44,7 +45,7 @@
     "@types/node": "^18.11.5",
     "@types/sinon": "~10.0.16",
     "chai-as-promised": "^7.1.1",
-    "chai": "^4.2.22",
+    "cpx2": "^5.0.0",
     "eslint": "^7.32.0",
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",

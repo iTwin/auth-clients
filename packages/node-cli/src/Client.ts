@@ -8,6 +8,8 @@
  * @module Authorization
  */
 
+import { readFileSync } from "fs";
+import * as path from "path";
 import * as Http from "http";
 import * as open from "open";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
@@ -62,6 +64,20 @@ export interface NodeCliAuthorizationConfiguration {
  * Directory path that overrides where the refresh token is stored, see {@link TokenStore}
  */
   readonly tokenStorePath?: string;
+}
+
+interface HtmlTemplateParams {
+  pageTitle: string;
+  contentTitle: string;
+  contentMessage: string;
+}
+
+interface OidcUrlSearchParams {
+  state: string | null;
+  code: string | null;
+  error: string | null;
+  errorUri: string | null;
+  errorDescription: string | null;
 }
 
 /**
@@ -181,7 +197,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     await authorizationRequest.setupCodeVerifier();
 
     const authorizationEvents = new NodeCliAuthorizationEvents();
-    this.startLoopbackWebServer(this._bakedConfig.redirectUri, authorizationRequest.state, authorizationEvents);
+    this.startLoopbackWebServer(authorizationRequest.state, authorizationEvents);
 
     const authorizationHandler = new NodeCliAuthorizationRequestHandler(authorizationEvents);
     const notifier = new AuthorizationNotifier();
@@ -257,38 +273,46 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     return tokenHandler.performTokenRequest(this._configuration, tokenRequest);
   }
 
-  private startLoopbackWebServer(redirectUrl: string, authState: string, authEvents: NodeCliAuthorizationEvents) {
+  private startLoopbackWebServer(authState: string, authEvents: NodeCliAuthorizationEvents) {
     const onBrowserRequest = (httpRequest: Http.IncomingMessage, httpResponse: Http.ServerResponse) => {
       if (!httpRequest.url)
         return;
 
       // Parse the request URL to determine the authorization code, state and errors if any
-      const redirectedUrl = new URL(httpRequest.url, redirectUrl);
-      const searchParams = redirectedUrl.searchParams;
+      const { state, code, error, errorUri, errorDescription } = this.parseUrlSearchParams(httpRequest.url);
 
-      const state = searchParams.get("state") || undefined;
       if (!state || state !== authState)
         return; // ignore irrelevant requests (e.g. favicon.ico)
 
       // Notify listeners of the code response or error
       let authorizationResponse: AuthorizationResponseJson | null = null;
       let authorizationError: AuthorizationErrorJson | null = null;
-      const error = searchParams.get("error");
+      let httpResponseContent: HtmlTemplateParams;
+
+      httpResponse.writeHead(200, { "Content-Type": "text/html" }); //  eslint-disable-line @typescript-eslint/naming-convention
+
       if (error) {
-        const errorUri = searchParams.get("error_uri") || undefined;
-        const errorDescription = searchParams.get("error_description") || undefined;
-        authorizationError = { error, error_description: errorDescription, error_uri: errorUri, state }; // eslint-disable-line @typescript-eslint/naming-convention
-        httpResponse.write("<h1>Sign in error!</h1>");
-        httpResponse.end();
+        authorizationError = { error, error_description: errorDescription ?? undefined, error_uri: errorUri ?? undefined, state }; // eslint-disable-line @typescript-eslint/naming-convention
+        httpResponseContent = {
+          pageTitle: "iTwin Auth Sign in error",
+          contentTitle: "Sign in Error",
+          contentMessage: "Please check your application's error console.",
+        };
       } else {
-        const code = searchParams.get("code");
         if (!code)
           throw new Error("Unexpected failure - AuthorizationResponse is missing a code value");
+
         authorizationResponse = { code, state };
-        httpResponse.writeHead(200, { "Content-Type": "text/html" }); //  eslint-disable-line @typescript-eslint/naming-convention
-        httpResponse.write("<h1>Sign in was successful!</h1>You can close this browser window and return to the application");
-        httpResponse.end();
+        httpResponseContent = {
+          pageTitle: "iTwin Auth - Sign in successful",
+          contentTitle: "Sign in was successful!",
+          contentMessage: "You can close this browser window and return to the application.",
+        };
       }
+
+      const template = this.getHtmlTemplate(httpResponseContent);
+      httpResponse.write(template);
+      httpResponse.end();
       authEvents.onAuthorizationResponse.raiseEvent(authorizationError, authorizationResponse);
 
       // Stop the web server when the signin attempt has finished
@@ -296,7 +320,32 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     };
 
     const httpServer = Http.createServer(onBrowserRequest);
-    httpServer.listen(new URL(redirectUrl).port);
+    httpServer.listen(new URL(this._bakedConfig.redirectUri).port);
+  }
+
+  private parseUrlSearchParams(url: string): OidcUrlSearchParams {
+    // Parse the request URL to determine the authorization code, state and errors if any
+    const redirectedUrl = new URL(url, this._bakedConfig.redirectUri);
+    const searchParams = redirectedUrl.searchParams;
+
+    const state = searchParams.get("state");
+    const code = searchParams.get("code");
+    const error = searchParams.get("error");
+    const errorUri = searchParams.get("error_uri");
+    const errorDescription = searchParams.get("error_description");
+
+    return {
+      state, code, error, errorUri, errorDescription,
+    };
+  }
+
+  private getHtmlTemplate({ pageTitle, contentTitle, contentMessage }: HtmlTemplateParams): string {
+    let template = readFileSync(path.resolve(__dirname, "static", "auth-template.html"), "utf-8");
+    template = template.replace("{--pageTitle--}", pageTitle);
+    template = template.replace("{--contentTitle--}", contentTitle);
+    template = template.replace("{--contentMessage--}", contentMessage);
+
+    return template;
   }
 }
 

@@ -5,9 +5,11 @@
 // Code based on the blog article @ https://authguidance.com
 
 import * as Http from "http";
+import * as path from "path";
+import { readFileSync } from "fs";
 import type { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
 import type { ElectronAuthorizationEvents } from "./Events";
-import { Logger } from "@itwin/core-bentley";
+import { assert, Logger } from "@itwin/core-bentley";
 const loggerCategory = "electron-auth";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
@@ -32,6 +34,20 @@ class AuthorizationState {
     }
     return null;
   }
+}
+
+interface HtmlTemplateParams {
+  pageTitle: string;
+  contentTitle: string;
+  contentMessage: string;
+}
+
+interface OidcUrlSearchParams {
+  state: string | null;
+  code: string | null;
+  error: string | null;
+  errorUri: string | null;
+  errorDescription: string | null;
 }
 
 /**
@@ -76,7 +92,6 @@ export class LoopbackWebServer {
       else
         LoopbackWebServer._httpServer = undefined;
     });
-
   }
 
   /** Listen/Handle browser events */
@@ -84,17 +99,11 @@ export class LoopbackWebServer {
     if (!httpRequest.url)
       return;
 
-    // Parse the request URL to determine the authorization code, state and errors if any
-    const redirectedUrl = new URL(httpRequest.url, LoopbackWebServer._redirectUri);
-    const searchParams = redirectedUrl.searchParams;
+    const { state, code, error, errorUri, errorDescription } = LoopbackWebServer.parseUrlSearchParams(httpRequest.url);
 
-    const state = searchParams.get("state") || undefined;
-    const code = searchParams.get("code");
-    const error = searchParams.get("error");
-    if (!state) {
-      // ignore irrelevant requests (e.g. favicon.ico)
+    // ignore irrelevant requests (e.g. favicon.ico)
+    if (!state)
       return;
-    }
 
     // Look up context for the corresponding outgoing request
     const authorizationEvents = LoopbackWebServer._authState.getEvents(state);
@@ -104,24 +113,64 @@ export class LoopbackWebServer {
     // Notify listeners of the code response or error
     let authorizationResponse: AuthorizationResponseJson | null = null;
     let authorizationError: AuthorizationErrorJson | null = null;
+    let httpResponseContent: HtmlTemplateParams;
+
+    httpResponse.writeHead(200, { "Content-Type": "text/html" }); //  eslint-disable-line @typescript-eslint/naming-convention
+
     if (error) {
-      const errorUri = searchParams.get("error_uri") || undefined;
-      const errorDescription = searchParams.get("error_description") || undefined;
-      authorizationError = { error, error_description: errorDescription, error_uri: errorUri, state }; // eslint-disable-line @typescript-eslint/naming-convention
-      httpResponse.write("<h1>Sign in error!</h1>"); // TODO: Needs localization
-      httpResponse.end();
+      authorizationError = { error, error_description: errorDescription ?? undefined, error_uri: errorUri ?? undefined, state }; // eslint-disable-line @typescript-eslint/naming-convention
+      httpResponseContent = {
+        pageTitle: "iTwin Auth Sign in error",
+        contentTitle: "Sign in Error",
+        contentMessage: "Please check your application's error console.",
+      };
+      // TODO: Needs localization
     } else {
-      authorizationResponse = { code: code!, state };
-      httpResponse.writeHead(200, { "Content-Type": "text/html" }); //  eslint-disable-line @typescript-eslint/naming-convention
-      httpResponse.write("<h1>Sign in was successful!</h1>You can close this browser window and return to the application"); // TODO: Needs localization
-      httpResponse.end();
+      assert(!!code, "Auth response code is not present");
+      authorizationResponse = { code, state };
+      httpResponseContent = {
+        pageTitle: "iTwin Auth - Sign in successful",
+        contentTitle: "Sign in was successful!",
+        contentMessage: "You can close this browser window and return to the application.",
+      };
     }
+
+    const html = LoopbackWebServer.getHtmlTemplate(
+      httpResponseContent
+    );
+
+    httpResponse.write(html);
+    httpResponse.end();
     authorizationEvents.onAuthorizationResponse.raiseEvent(authorizationError, authorizationResponse);
 
-    // Handle the authorization completed event
     authorizationEvents.onAuthorizationResponseCompleted.addOnce((_authCompletedError?: AuthorizationErrorJson) => {
       // Stop the web server now that the signin attempt has finished
       LoopbackWebServer.stop();
     });
+  }
+
+  private static parseUrlSearchParams(url: string): OidcUrlSearchParams {
+    // Parse the request URL to determine the authorization code, state and errors if any
+    const redirectedUrl = new URL(url, LoopbackWebServer._redirectUri);
+    const searchParams = redirectedUrl.searchParams;
+
+    const state = searchParams.get("state");
+    const code = searchParams.get("code");
+    const error = searchParams.get("error");
+    const errorUri = searchParams.get("error_uri");
+    const errorDescription = searchParams.get("error_description");
+
+    return {
+      state, code, error, errorUri, errorDescription,
+    };
+  }
+
+  private static getHtmlTemplate({ pageTitle, contentTitle, contentMessage }: HtmlTemplateParams): string {
+    let template = readFileSync(path.resolve(__filename, "..", "static", "auth-template.html"), "utf-8");
+    template = template.replace("{--pageTitle--}", pageTitle);
+    template = template.replace("{--contentTitle--}", contentTitle);
+    template = template.replace("{--contentMessage--}", contentMessage);
+
+    return template;
   }
 }
