@@ -121,8 +121,8 @@ importers:
   packages/node-cli:
     specifiers:
       '@itwin/build-tools': ^4.0.0-dev.93
-      '@itwin/core-bentley': ^3.7.0
-      '@itwin/core-common': ^3.3.0 || ^4.0.0
+      '@itwin/core-bentley': ^4.0.0
+      '@itwin/core-common': ^4.0.0
       '@itwin/eslint-plugin': ^3.7.0
       '@openid/appauth': ^1.3.1
       '@types/chai': ^4.2.22
@@ -144,14 +144,14 @@ importers:
       typescript: ~5.0.2
       username: ^5.1.0
     dependencies:
-      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@4.1.2
       '@openid/appauth': 1.3.1
       conf: 11.0.2
       open: 8.4.2
       username: 5.1.0
     devDependencies:
       '@itwin/build-tools': 4.0.6_@types+node@18.17.1
-      '@itwin/core-bentley': 3.7.12
+      '@itwin/core-bentley': 4.1.2
       '@itwin/eslint-plugin': 3.7.8_cgdknpc562nnyruteofhkegnom
       '@types/chai': 4.3.5
       '@types/chai-as-promised': 7.1.5
@@ -690,6 +690,9 @@ packages:
   /@itwin/core-bentley/3.7.12:
     resolution: {integrity: sha1-UE6Q9Q1lxzH+/rtZ89WcN1ZYyqI=}
 
+  /@itwin/core-bentley/4.1.2:
+    resolution: {integrity: sha512-Pqr3FBcxMw9sbCPXU2RaXHRt5vIQLCZ0fYIQCqJ2QY7b5/xavD4FYkxrvQfEqCgZ3//XDmR2ggLKYldUgb2PDg==}
+
   /@itwin/core-common/4.0.6_@itwin+core-bentley@3.7.12:
     resolution: {integrity: sha512-1N92kv3bqY/01Mdto/GCKgO5dG6dli9d06lp1KpHTUuwPpWVob1oIF/w5ij+0C4QvHq54SZlCxDfNaC7FH6lKQ==}
     peerDependencies:
@@ -697,6 +700,17 @@ packages:
       '@itwin/core-geometry': ^4.0.6
     dependencies:
       '@itwin/core-bentley': 3.7.12
+      flatbuffers: 1.12.0
+      js-base64: 3.7.5
+    dev: false
+
+  /@itwin/core-common/4.0.6_@itwin+core-bentley@4.1.2:
+    resolution: {integrity: sha512-1N92kv3bqY/01Mdto/GCKgO5dG6dli9d06lp1KpHTUuwPpWVob1oIF/w5ij+0C4QvHq54SZlCxDfNaC7FH6lKQ==}
+    peerDependencies:
+      '@itwin/core-bentley': ^4.0.6
+      '@itwin/core-geometry': ^4.0.6
+    dependencies:
+      '@itwin/core-bentley': 4.1.2
       flatbuffers: 1.12.0
       js-base64: 3.7.5
     dev: false
