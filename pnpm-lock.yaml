@@ -120,7 +120,7 @@ importers:
 
   packages/node-cli:
     specifiers:
-      '@itwin/build-tools': ^4.0.0-dev.93
+      '@itwin/build-tools': ^4.0.0
       '@itwin/core-bentley': ^4.0.0
       '@itwin/core-common': ^4.0.0
       '@itwin/eslint-plugin': ^3.7.0

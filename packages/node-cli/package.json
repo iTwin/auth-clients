@@ -39,7 +39,7 @@
     "username": "^5.1.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.0.0-dev.93",
+    "@itwin/build-tools": "^4.0.0",
     "@itwin/core-bentley": "^4.0.0",
     "@itwin/eslint-plugin": "^3.7.0",
     "@types/chai-as-promised": "^7.1.1",
