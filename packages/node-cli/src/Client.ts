@@ -59,6 +59,11 @@ export interface NodeCliAuthorizationConfiguration {
    * @note If unspecified this defaults to 10 minutes.
    */
   readonly expiryBuffer?: number;
+
+  /**
+ * Directory path that overrides where the refresh token is stored, see {@link TokenStore}
+ */
+  readonly tokenStorePath?: string;
 }
 
 interface HtmlTemplateParams {
@@ -95,7 +100,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
   public constructor(config: NodeCliAuthorizationConfiguration) {
     this._bakedConfig = new BakedAuthorizationConfiguration(config);
-    this._tokenStore = new TokenStore({ ...this._bakedConfig });
+    this._tokenStore = new TokenStore({ ...this._bakedConfig }, config.tokenStorePath);
   }
 
   /**
@@ -147,6 +152,8 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     // Would ideally set up in constructor, but async...
     if (!this._configuration)
       this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._bakedConfig.issuerUrl, new NodeRequestor());
+
+    await this._tokenStore.initialize();
   }
 
   private async loadAndRefreshAccessToken() {

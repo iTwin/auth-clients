@@ -120,7 +120,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     // Mock auth request
     sinon.stub(LoopbackWebServer, "start").resolves();
     sinon.stub(ElectronMainAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
-      await new Promise((resolve) => setImmediate(resolve));
+      await new Promise((resolve) => setImmediate(resolve, () => {}));
     });
     sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
       return mockTokenResponse;
@@ -213,7 +213,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     // Mock auth request
     sinon.stub(LoopbackWebServer, "start").resolves();
     sinon.stub(ElectronMainAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
-      await new Promise((resolve) => setImmediate(resolve));
+      await new Promise((resolve) => setImmediate(resolve, () => {}));
     });
     sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
       await tokenStore.save(mockTokenResponse.refreshToken!);
