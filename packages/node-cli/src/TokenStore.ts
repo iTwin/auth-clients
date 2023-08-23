@@ -10,6 +10,10 @@ import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:
 import Conf from "conf";
 
 type CacheEntry = TokenResponseJson & {scopesForCacheValidation?: string};
+interface ConfEntry {
+  encryptedCache: string;
+  iv: string;
+}
 /**
  * Utility to store OIDC AppAuth in secure storage
  * @internal
@@ -70,7 +74,7 @@ export class TokenStore {
    * Uses node's native `crypto` module to encrypt the given cache entry.
    * @returns an object containing a hexadecimal encoded token, returned as a string, as well as the initialization vector.
    */
-  private encryptCache(cacheEntry: CacheEntry): {encryptedCache: string, iv: string} {
+  private encryptCache(cacheEntry: CacheEntry): ConfEntry {
     const iv = randomBytes(16);
     const cipher = createCipheriv("aes-256-cbc", this.generateCipherKey(), iv);
 
@@ -99,7 +103,7 @@ export class TokenStore {
     if (!this._store.has(key)) {
       return undefined;
     }
-    const storedObj = this._store.get(key) as any;
+    const storedObj = this._store.get(key) as ConfEntry;
     const encryptedCache = storedObj.encryptedCache;
     const iv = storedObj.iv;
     const cacheEntry = this.decryptCache(encryptedCache, Buffer.from(iv, "hex"));
