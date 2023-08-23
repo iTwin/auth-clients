@@ -4,11 +4,13 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as OperatingSystemUserName from "username";
+import type { TokenResponseJson } from "@openid/appauth";
 import { TokenResponse } from "@openid/appauth";
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
 import * as path from "node:path";
 import * as NodePersist from "node-persist";
 
+type CacheEntry = TokenResponseJson & {scopesForCacheValidation?: string};
 /**
  * Utility to store OIDC AppAuth in secure storage
  * @internal
@@ -58,7 +60,7 @@ export class TokenStore {
    * Uses node's native `crypto` module to encrypt the given cache entry.
    * @returns an object containing a hexadecimal encoded token, returned as a string, as well as the initialization vector.
    */
-  private encryptCache(cacheEntry: object): {encryptedCache: string, iv: string} {
+  private encryptCache(cacheEntry: CacheEntry): {encryptedCache: string, iv: string} {
     const iv = randomBytes(16);
     const cipher = createCipheriv("aes-256-cbc", this.generateCipherKey(), iv);
 
@@ -93,7 +95,7 @@ export class TokenStore {
     const iv = storedObj.iv;
     const cacheEntry = this.decryptCache(encryptedCache, Buffer.from(iv, "hex"));
     // Only reuse token if matching scopes. Don't include cache data for TokenResponse object.
-    const tokenResponseObj = JSON.parse(cacheEntry);
+    const tokenResponseObj = JSON.parse(cacheEntry) as CacheEntry;
     if (tokenResponseObj?.scopesForCacheValidation !== this._scopes) {
       await this._store.removeItem(key);
       return undefined;
