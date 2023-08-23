@@ -28,11 +28,23 @@ export class TokenStore {
       .replace(/[.]/g, "%2E") // Replace all '.' with URL Percent-encoding representation
       .replace(/[\/]/g, "%2F"); // Replace all '/' with URL Percent-encoding representation;
     this._scopes = namedArgs.scopes;
-    this._store = new Conf({
+
+    let confConfig: object = {
       configName: configFileName, // specifies storage file name.
       encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
-      cwd: dir ?? undefined, // specifies where to the storage file will be saved.
-    });
+    };
+    if (dir) {
+      confConfig = {
+        ...confConfig,
+        cwd: dir, // specifies the directory that contains the storage file.
+      };
+    } else {
+      confConfig = {
+        ...confConfig,
+        projectName: configFileName, // specifies the directory that contains the storage file.
+      };
+    }
+    this._store = new Conf(confConfig);
   }
 
   private _userName?: string;

@@ -19,6 +19,7 @@
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
   },
+  "main": "./lib/esm/index.js",
   "exports": "./lib/esm/index.js",
   "typings": "./lib/esm/index.d.ts",
   "author": {
