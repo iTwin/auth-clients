@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "bump electron from 26.0.0 to 26.2.1",
+  "packageName": "@itwin/electron-authorization",
+  "email": "ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
