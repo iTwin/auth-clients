@@ -35,7 +35,20 @@ describe("TokenStore", () => {
     await tokenStore.save(testTokenResponse);
     chai.assert.isTrue(saveSpy.calledOnce);
   });
+  it("should be able to remove response", async () => {
+    if (process.platform === "linux")
+      return;
 
+    await tokenStore.save(testTokenResponse);
+
+    let retrievedToken = await tokenStore.load();
+    chai.expect(retrievedToken!.refreshToken).equals(testTokenResponse.refreshToken);
+
+    await tokenStore.remove();
+
+    retrievedToken = await tokenStore.load();
+    chai.assert(typeof retrievedToken === "undefined");
+  });
   it("should decrypt cache on load", async () => {
     if (process.platform === "linux")
       return;

@@ -127,6 +127,16 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   }
 
   /**
+   * Clear cached credential (if any). This method does not perform any implicit sign-out using end_session endpoint.
+   */
+  public async signOut() {
+    await this._tokenStore.remove();
+    this._tokenResponse = undefined;
+    this._expiresAt = undefined;
+    this._accessToken = "";
+  }
+
+  /**
    * Attempts to authorize the current user, and resolves when the authorization process is complete.
    * Once the returned promises resolves, getAccessToken will return a valid AccessToken.
    * @note On Windows and MacOS, this will cache the refreshToken in secure storage to reduce the frequency of interactive sign-in.
@@ -135,7 +145,13 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   public async signIn() {
     await this.initialize();
 
-    await this.loadAndRefreshAccessToken();
+    try {
+      await this.loadAndRefreshAccessToken();
+    } catch {
+      // Refresh token have expired as well.
+      await this._tokenStore.remove();
+    }
+
     if (this._accessToken !== "") // Will be defined if AccessToken was successfully loaded from store
       return;
 
