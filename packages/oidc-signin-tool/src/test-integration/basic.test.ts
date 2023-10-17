@@ -66,7 +66,7 @@ test.describe("TestUsers utility (#integration)", () => {
     expect(token).toBeDefined();
     token = await TestUtility.getAccessToken(TestUsers.super);
     expect(token).toBeDefined();
-    // token = await TestUtility.getAccessToken(TestUsers.superManager);
-    // expect(token).toBeDefined();
+    token = await TestUtility.getAccessToken(TestUsers.superManager);
+    expect(token).toBeDefined();
   });
 });
