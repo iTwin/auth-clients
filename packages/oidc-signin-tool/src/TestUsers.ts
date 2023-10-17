@@ -51,7 +51,7 @@ export class TestUsers {
   /** User with the typical permissions of the connected services administrator - Co-Admin: No, Connect-Services-Admin: Yes */
   public static get super(): TestUserCredentials {
     return {
-      email: process.env.IMJS_TEST_SUPER_USER_NAME ?? "",
+      email: "Bunnie.Vinita@bentley.m8r.co" ?? "",
       password: process.env.IMJS_TEST_SUPER_USER_PASSWORD ?? "",
     };
   }
