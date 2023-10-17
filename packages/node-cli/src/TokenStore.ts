@@ -10,7 +10,7 @@ import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:
 import * as path from "node:path";
 import * as NodePersist from "node-persist";
 
-type CacheEntry = TokenResponseJson & {scopesForCacheValidation?: string};
+type CacheEntry = TokenResponseJson & { scopesForCacheValidation?: string };
 /**
  * Utility to store OIDC AppAuth in secure storage
  * @internal
@@ -19,7 +19,7 @@ export class TokenStore {
   private readonly _appStorageKey: string;
   private readonly _scopes: string;
   private readonly _store: NodePersist.LocalStorage;
-  public constructor(namedArgs: {clientId: string, issuerUrl: string, scopes: string}, dir?: string) {
+  public constructor(namedArgs: { clientId: string, issuerUrl: string, scopes: string }, dir?: string) {
     // A stored credential is only valid for a combination of the clientId, the issuing authority and the requested scopes.
     // We make the storage key a combination of clientId and issuing authority so that keys can stay cached when switching
     // between PROD and QA environments.
@@ -60,7 +60,7 @@ export class TokenStore {
    * Uses node's native `crypto` module to encrypt the given cache entry.
    * @returns an object containing a hexadecimal encoded token, returned as a string, as well as the initialization vector.
    */
-  private encryptCache(cacheEntry: CacheEntry): {encryptedCache: string, iv: string} {
+  private encryptCache(cacheEntry: CacheEntry): { encryptedCache: string, iv: string } {
     const iv = randomBytes(16);
     const cipher = createCipheriv("aes-256-cbc", this.generateCipherKey(), iv);
 
@@ -103,6 +103,14 @@ export class TokenStore {
     delete tokenResponseObj.scopesForCacheValidation;
 
     return new TokenResponse(tokenResponseObj);
+  }
+
+  public async remove(): Promise<void> {
+    if (process.platform === "linux")
+      return;
+
+    const key = await this.getKey();
+    await this._store.removeItem(key);
   }
 
   public async save(tokenResponse: TokenResponse): Promise<void> {

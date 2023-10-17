@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Sometime refresh token expires and user must go an manually delete setting from window network password otherwise app will not login or get new token. This PR add ability to forget refresh token if signIn() fail to refresh token. This PR also add method to explicitly signOut() and forget persisted token so new sign can take place.",
+  "packageName": "@itwin/node-cli-authorization",
+  "email": "khanaffan@gmail.com",
+  "dependentChangeType": "patch"
+}
