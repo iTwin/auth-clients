@@ -5,7 +5,7 @@
 import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import { OIDCDiscoveryClient } from "@itwin/service-authorization";
+import { type OIDCConfig, OIDCDiscoveryClient } from "@itwin/service-authorization";
 import * as os from "node:os";
 import { chromium } from "@playwright/test";
 import type { LaunchOptions, Page, Request } from "@playwright/test";
@@ -15,6 +15,20 @@ import type {
   TestUserCredentials,
 } from "./TestUsers";
 import { testSelectors } from "./TestSelectors";
+
+export interface AutomatedSignInContext {
+  page: Page;
+  user: TestUserCredentials;
+  signInInitUrl: string;
+  clientConfig: TestBrowserAuthorizationClientConfiguration;
+  oidcConfig: OIDCConfig;
+}
+
+export interface AutomatedSignInResult {
+  accessToken: string;
+  expiresAt?: Date;
+}
+
 /**
  * Implementation of AuthorizationClient used for the iModel.js integration tests.
  * - this is only to be used in test environments, and **never** in production code.
@@ -124,52 +138,69 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     });
     /* eslint-enable @typescript-eslint/naming-convention */
 
-    const page = await this.launchBrowser();
+    const page = await TestBrowserAuthorizationClient.launchBrowser();
 
+    const result = await TestBrowserAuthorizationClient.automatedSignIn({
+      page,
+      signInInitUrl: signInRequest.url,
+      user: this._user,
+      clientConfig: this._config,
+      oidcConfig: await this._discoveryClient.getConfig(),
+    });
+
+    this._accessToken = result.accessToken;
+    this._expiresAt = result.expiresAt;
+  }
+
+  public static async automatedSignIn(
+    context: AutomatedSignInContext,
+  ): Promise<AutomatedSignInResult> {
     const controller = new AbortController();
     const { signal } = controller;
+    const { page } = context;
 
     // Eventually, we'll get a redirect to the callback url
     // including the params we need to retrieve a token
     // This varies depending on the type of user, so start
     // waiting now and resolve at the end of the "sign in pipeline"
     const waitForCallbackUrl = page.waitForRequest((req: Request) => {
-      return req.url().startsWith(this._config.redirectUri) || signal.aborted;
+      return req.url().startsWith(context.clientConfig.redirectUri) || signal.aborted;
     });
 
     try {
-      await page.goto(signInRequest.url);
+      await page.goto(context.signInInitUrl);
 
       try {
-        await this.handleErrorPage(page);
+        await this.handleErrorPage(context);
 
-        await this.handleLoginPage(page);
+        await this.handleLoginPage(context);
 
-        await this.handlePingLoginPage(page);
+        await this.handlePingLoginPage(context);
 
         // Handle federated sign-in
-        await this.handleFederatedSignin(page);
+        await this.handleFederatedSignin(context);
       } catch (err) {
         controller.abort();
-        throw new Error(`Failed OIDC signin for ${this._user.email}.\n${err}`);
+        throw new Error(`Failed OIDC signin for ${context.user.email}.\n${err}`);
       }
 
       try {
-        await this.handleConsentPage(page);
+        await TestBrowserAuthorizationClient.handleConsentPage(context);
       } catch (error) {
         // ignore, if we get the callback Url, we're good.
       }
 
       const callbackUrl = await waitForCallbackUrl;
-      if (callbackUrl) {
-        const tokenSet = await oidcClient.processSigninResponse(callbackUrl.url());
-        this._accessToken = `Bearer ${tokenSet.access_token}`;
-        if (tokenSet.expires_at)
-          this._expiresAt = new Date(tokenSet.expires_at * 1000);
-        this.onAccessTokenChanged.raiseEvent(this._accessToken);
-      }
+      const tokenSet = await oidcClient.processSigninResponse(callbackUrl.url());
+
+      return {
+        accessToken: `Bearer ${tokenSet.access_token}`,
+        expiresAt: tokenSet.expires_at !== "undefined"
+          ? new Date(tokenSet.expires_at * 1000)
+          : undefined,
+      };
     } finally {
-      await this.cleanup(page, signal, waitForCallbackUrl);
+      await TestBrowserAuthorizationClient.cleanup(page, signal, waitForCallbackUrl);
     }
   }
 
@@ -178,7 +209,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     this.onAccessTokenChanged.raiseEvent(this._accessToken);
   }
 
-  private async handleErrorPage(page: Page): Promise<void> {
+  private static async handleErrorPage({ page }: AutomatedSignInContext): Promise<void> {
     await page.waitForLoadState("networkidle");
     const pageTitle = await page.title();
     let errMsgText;
@@ -193,14 +224,14 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       throw new Error(errMsgText);
   }
 
-  private async handleLoginPage(page: Page): Promise<void> {
-    const config = await this._discoveryClient.getConfig();
-    const loginUrl = new URL("/IMS/Account/Login", config.issuer);
+  private static async handleLoginPage(context: AutomatedSignInContext): Promise<void> {
+    const loginUrl = new URL("/IMS/Account/Login", context.oidcConfig.issuer);
+    const { page } = context;
     if (page.url().startsWith(loginUrl.toString())) {
       await page.waitForSelector(testSelectors.imsEmail);
-      await page.type(testSelectors.imsEmail, this._user.email);
+      await page.type(testSelectors.imsEmail, context.user.email);
       await page.waitForSelector(testSelectors.imsPassword);
-      await page.type(testSelectors.imsPassword, this._user.password);
+      await page.type(testSelectors.imsPassword, context.user.password);
 
       const submit = page.locator(testSelectors.imsSubmit);
       await submit.click();
@@ -210,17 +241,17 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     await this.checkErrorOnPage(page, "#errormessage");
   }
 
-  private async handlePingLoginPage(page: Page): Promise<void> {
-    const config = await this._discoveryClient.getConfig();
+  private static async handlePingLoginPage(context: AutomatedSignInContext): Promise<void> {
+    const { page } = context;
     if (
-      undefined === config.authorization_endpoint ||
-      !page.url().startsWith(config.authorization_endpoint) ||
+      undefined === context.oidcConfig.authorization_endpoint ||
+      !page.url().startsWith(context.oidcConfig.authorization_endpoint) ||
       -1 === page.url().indexOf("ims")
     )
       return;
 
     await page.waitForSelector(testSelectors.pingEmail);
-    await page.type(testSelectors.pingEmail, this._user.email);
+    await page.type(testSelectors.pingEmail, context.user.email);
 
     await page.waitForSelector(testSelectors.pingAllowSubmit);
     let allow = page.locator(testSelectors.pingAllowSubmit);
@@ -231,7 +262,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       return;
 
     await page.waitForSelector(testSelectors.pingPassword);
-    await page.type(testSelectors.pingPassword, this._user.password);
+    await page.type(testSelectors.pingPassword, context.user.password);
 
     await page.waitForSelector(testSelectors.pingAllowSubmit);
     allow = page.locator(testSelectors.pingAllowSubmit);
@@ -255,13 +286,15 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   }
 
   // Bentley-specific federated login.  This will get called if a redirect to a url including "microsoftonline".
-  private async handleFederatedSignin(page: Page): Promise<void> {
+  private static async handleFederatedSignin(context: AutomatedSignInContext): Promise<void> {
+    const { page } = context;
+
     await page.waitForLoadState("networkidle");
     if (-1 === page.url().indexOf("microsoftonline"))
       return;
 
     if (await this.checkSelectorExists(page, testSelectors.msUserNameField)) {
-      await page.type(testSelectors.msUserNameField, this._user.email);
+      await page.type(testSelectors.msUserNameField, context.user.email);
       const msSubmit = await page.waitForSelector(testSelectors.msSubmit);
       await msSubmit.click();
 
@@ -269,11 +302,11 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       await this.checkErrorOnPage(page, "#usernameError");
     } else {
       const fedEmail = await page.waitForSelector(testSelectors.fedEmail);
-      await fedEmail.type(this._user.email);
+      await fedEmail.type(context.user.email);
     }
 
     const fedPassword = await page.waitForSelector(testSelectors.fedPassword);
-    await fedPassword.type(this._user.password);
+    await fedPassword.type(context.user.password);
     const submit = await page.waitForSelector(testSelectors.fedSubmit);
     await submit.click();
 
@@ -298,13 +331,13 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
   }
 
-  private async handleConsentPage(page: Page): Promise<void> {
+  private static async handleConsentPage(context: AutomatedSignInContext): Promise<void> {
+    const { page } = context;
+
     if ((await page.title()) === "localhost")
       return; // we're done
 
-    const config = await this._discoveryClient.getConfig();
-
-    const consentUrl = new URL("/consent", config.issuer);
+    const consentUrl = new URL("/consent", context.oidcConfig.issuer);
     if (page.url().startsWith(consentUrl.toString()))
       await page.click("button[value=yes]");
 
@@ -324,7 +357,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
   }
 
-  private async checkSelectorExists(
+  private static async checkSelectorExists(
     page: Page,
     selector: string
   ): Promise<boolean> {
@@ -332,7 +365,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     return !!element;
   }
 
-  private async checkErrorOnPage(page: Page, selector: string): Promise<void> {
+  private static async checkErrorOnPage(page: Page, selector: string): Promise<void> {
     await page.waitForLoadState("networkidle");
     const errMsgElement = await page.$(selector);
     if (errMsgElement) {
@@ -342,12 +375,16 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     }
   }
 
-  private async launchBrowser(enableSlowNetworkConditions = false) {
-    let launchOptions: LaunchOptions = {};
+  private static async launchBrowser(enableSlowNetworkConditions = false) {
+    const launchOptions: LaunchOptions = {};
+
+    if (process.env.ODIC_SIGNIN_TOOL_EXTRA_LAUNCH_OPTS) {
+      const extraLaunchOpts = JSON.parse(process.env.ODIC_SIGNIN_TOOL_EXTRA_LAUNCH_OPTS);
+      Object.assign(launchOptions, extraLaunchOpts);
+    }
+
     if (os.platform() === "linux") {
-      launchOptions = {
-        args: ["--no-sandbox"],
-      };
+      launchOptions.args = [...launchOptions.args ?? [], "--no-sandbox"];
     }
 
     const proxyUrl = process.env.HTTPS_PROXY;
@@ -381,7 +418,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     return page;
   }
 
-  private async cleanup(
+  private static async cleanup(
     page: Page,
     signal: AbortSignal,
     waitForCallbackUrl: Promise<Request | boolean>
