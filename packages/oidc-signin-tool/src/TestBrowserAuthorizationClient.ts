@@ -5,10 +5,11 @@
 import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
-import { type OIDCConfig, OIDCDiscoveryClient } from "@itwin/service-authorization";
+import type { OIDCConfig } from "@itwin/service-authorization";
+import { OIDCDiscoveryClient } from "@itwin/service-authorization";
 import * as os from "node:os";
 import { chromium } from "@playwright/test";
-import type { LaunchOptions, Page, Request } from "@playwright/test";
+import type { LaunchOptions, Page } from "@playwright/test";
 import { InMemoryWebStorage, OidcClient, WebStorageStateStore } from "oidc-client-ts";
 import type {
   TestBrowserAuthorizationClientConfiguration,
@@ -22,6 +23,12 @@ export interface AutomatedSignInContext {
   signInInitUrl: string;
   clientConfig: TestBrowserAuthorizationClientConfiguration;
   oidcConfig: OIDCConfig;
+  /**
+   * a promise that resolves once the sign in callback is reached,
+   * with the full callback url
+   */
+  waitForCallbackUrl: Promise<string>;
+  resultFromCallbackUrl: (t: string) => AutomatedSignInResult | Promise<AutomatedSignInResult>;
 }
 
 export interface AutomatedSignInResult {
@@ -146,6 +153,25 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       user: this._user,
       clientConfig: this._config,
       oidcConfig: await this._discoveryClient.getConfig(),
+
+      // Eventually, we'll get a redirect to the callback url
+      // including the params we need to retrieve a token
+      // This varies depending on the type of user, so start
+      // waiting now and resolve at the end of the "sign in pipeline"
+      waitForCallbackUrl: page.waitForRequest((req) =>
+        req.url().startsWith(this._config.redirectUri)
+      ).then((resp) => resp.url()),
+
+      resultFromCallbackUrl: async (callbackUrl) => {
+        const tokenSet = await oidcClient.processSigninResponse(callbackUrl);
+
+        return {
+          accessToken: `Bearer ${tokenSet.access_token}`,
+          expiresAt: tokenSet.expires_at !== undefined
+            ? new Date(tokenSet.expires_at * 1000)
+            : undefined,
+        };
+      },
     });
 
     this._accessToken = result.accessToken;
@@ -155,17 +181,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   public static async automatedSignIn(
     context: AutomatedSignInContext,
   ): Promise<AutomatedSignInResult> {
+    const { page } = context;
     const controller = new AbortController();
     const { signal } = controller;
-    const { page } = context;
-
-    // Eventually, we'll get a redirect to the callback url
-    // including the params we need to retrieve a token
-    // This varies depending on the type of user, so start
-    // waiting now and resolve at the end of the "sign in pipeline"
-    const waitForCallbackUrl = page.waitForRequest((req: Request) => {
-      return req.url().startsWith(context.clientConfig.redirectUri) || signal.aborted;
-    });
 
     try {
       await page.goto(context.signInInitUrl);
@@ -190,17 +208,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
         // ignore, if we get the callback Url, we're good.
       }
 
-      const callbackUrl = await waitForCallbackUrl;
-      const tokenSet = await oidcClient.processSigninResponse(callbackUrl.url());
-
-      return {
-        accessToken: `Bearer ${tokenSet.access_token}`,
-        expiresAt: tokenSet.expires_at !== "undefined"
-          ? new Date(tokenSet.expires_at * 1000)
-          : undefined,
-      };
+      return await context.resultFromCallbackUrl(await context.waitForCallbackUrl);
     } finally {
-      await TestBrowserAuthorizationClient.cleanup(page, signal, waitForCallbackUrl);
+      await TestBrowserAuthorizationClient.cleanup(page, signal, context.waitForCallbackUrl);
     }
   }
 
@@ -421,7 +431,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
   private static async cleanup(
     page: Page,
     signal: AbortSignal,
-    waitForCallbackUrl: Promise<Request | boolean>
+    waitForCallbackUrl: Promise<any>
   ) {
     if (signal.aborted)
       await page.reload();
