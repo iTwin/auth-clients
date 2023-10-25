@@ -122,6 +122,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     });
     /* eslint-enable @typescript-eslint/naming-convention */
 
+    const controller = new AbortController();
+
     const page = await SignInAutomation.launchDefaultAutomationPage();
 
     const result = await SignInAutomation.automatedSignIn({
@@ -136,7 +138,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       // This varies depending on the type of user, so start
       // waiting now and resolve at the end of the "sign in pipeline"
       waitForCallbackUrl: page.waitForRequest((req) =>
-        req.url().startsWith(this._config.redirectUri)
+        req.url().startsWith(this._config.redirectUri) || controller.signal.aborted
       ).then((resp) => resp.url()),
 
       resultFromCallbackUrl: async (callbackUrl) => {
@@ -149,6 +151,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
             : undefined,
         };
       },
+
+      abortController: controller,
     });
 
     this._accessToken = result.accessToken;
