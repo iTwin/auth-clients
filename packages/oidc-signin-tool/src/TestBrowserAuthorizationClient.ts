@@ -126,12 +126,16 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     const page = await SignInAutomation.launchDefaultAutomationPage();
 
+    const oidcConfig = await this._discoveryClient.getConfig();
+
     const result = await SignInAutomation.automatedSignIn({
       page,
       signInInitUrl: signInRequest.url,
       user: this._user,
-      clientConfig: this._config,
-      oidcConfig: await this._discoveryClient.getConfig(),
+      config: {
+        issuer: oidcConfig.issuer,
+        authorizationEndpoint: oidcConfig.authorization_endpoint,
+      },
 
       // Eventually, we'll get a redirect to the callback url
       // including the params we need to retrieve a token

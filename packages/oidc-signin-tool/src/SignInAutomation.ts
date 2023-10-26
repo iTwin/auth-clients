@@ -3,41 +3,56 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import type { OIDCConfig } from "@itwin/service-authorization";
 import * as os from "node:os";
 import { chromium } from "@playwright/test";
 import type { LaunchOptions, Page } from "@playwright/test";
-import type {
-  TestBrowserAuthorizationClientConfiguration,
-  TestUserCredentials,
-} from "./TestUsers";
+import type { TestUserCredentials } from "./TestUsers";
 import { testSelectors } from "./TestSelectors";
 
-export interface AutomatedSignInContext {
+/** @alpha configuration for automated sign in */
+export interface AutomatedSignInConfig {
+  issuer: string;
+  /** optional endpoint configuration to verify when handling ping login page */
+  authorizationEndpoint?: string;
+}
+
+/** @alpha context for automated sign in functions */
+export interface AutomatedSignInContext<T> {
   page: Page;
   user: TestUserCredentials;
   signInInitUrl: string;
-  clientConfig: TestBrowserAuthorizationClientConfiguration;
-  oidcConfig: OIDCConfig;
+  config: AutomatedSignInConfig;
   /** a promise that resolves once the sign in callback is reached,
-   * with the full callback url */
-  waitForCallbackUrl: Promise<string>;
-  resultFromCallbackUrl: (t: string) => AutomatedSignInResult | Promise<AutomatedSignInResult>;
+   * with the full callback url.
+   * @defaults Promise.resolve()
+   */
+  waitForCallback?: Promise<T>;
+  /** A function that takes the callback URL and finalizes the sign in process to retrieve an
+   * access token.
+   * @default does nothing
+   */
+  resultFromCallback?: (t: T) => AutomatedSignInResult | Promise<AutomatedSignInResult>;
   /** optionally provide the abort controller for errors,
    * in case you need to cancel your waitForCallbackUrl */
   abortController?: AbortController;
 }
 
+/** @alpha result from automated sign in */
 export interface AutomatedSignInResult {
   accessToken: string;
   expiresAt?: Date;
 }
 
-export async function automatedSignIn(
-  context: AutomatedSignInContext,
+/**
+ * given a context with configuration, user info, a playwright page,
+ * and iTwin services sign in url, sign in
+ * @alpha
+ */
+export async function automatedSignIn<T>(
+  context: AutomatedSignInContext<T>,
 ): Promise<AutomatedSignInResult> {
   const { page } = context;
-  // FIXME: this signal is not checked for in the passed in callback
+  const waitForCallback = context.waitForCallback ?? Promise.resolve() as Promise<T>;
   const controller = context.abortController ?? new AbortController();
 
   try {
@@ -63,13 +78,13 @@ export async function automatedSignIn(
       // ignore, if we get the callback Url, we're good.
     }
 
-    return await context.resultFromCallbackUrl(await context.waitForCallbackUrl);
+    return await context.resultFromCallback?.(await waitForCallback);
   } finally {
-    await cleanup(page, controller.signal, context.waitForCallbackUrl);
+    await cleanup(page, controller.signal, waitForCallback);
   }
 }
 
-async function handleErrorPage({ page }: AutomatedSignInContext): Promise<void> {
+async function handleErrorPage<T>({ page }: AutomatedSignInContext<T>): Promise<void> {
   await page.waitForLoadState("networkidle");
   const pageTitle = await page.title();
   let errMsgText;
@@ -84,8 +99,8 @@ async function handleErrorPage({ page }: AutomatedSignInContext): Promise<void> 
     throw new Error(errMsgText);
 }
 
-async function handleLoginPage(context: AutomatedSignInContext): Promise<void> {
-  const loginUrl = new URL("/IMS/Account/Login", context.oidcConfig.issuer);
+async function handleLoginPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
+  const loginUrl = new URL("/IMS/Account/Login", context.config.issuer);
   const { page } = context;
   if (page.url().startsWith(loginUrl.toString())) {
     await page.waitForSelector(testSelectors.imsEmail);
@@ -101,12 +116,13 @@ async function handleLoginPage(context: AutomatedSignInContext): Promise<void> {
   await checkErrorOnPage(page, "#errormessage");
 }
 
-async function handlePingLoginPage(context: AutomatedSignInContext): Promise<void> {
+async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
   const { page } = context;
   if (
-    undefined === context.oidcConfig.authorization_endpoint ||
-    !page.url().startsWith(context.oidcConfig.authorization_endpoint) ||
-    -1 === page.url().indexOf("ims")
+    context.config.authorizationEndpoint !== undefined && (
+      !page.url().startsWith(context.config.authorizationEndpoint) ||
+      -1 === page.url().indexOf("ims")
+    )
   )
     return;
 
@@ -146,7 +162,7 @@ async function handlePingLoginPage(context: AutomatedSignInContext): Promise<voi
 }
 
 // Bentley-specific federated login.  This will get called if a redirect to a url including "microsoftonline".
-async function handleFederatedSignin(context: AutomatedSignInContext): Promise<void> {
+async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Promise<void> {
   const { page } = context;
 
   await page.waitForLoadState("networkidle");
@@ -191,13 +207,13 @@ async function handleFederatedSignin(context: AutomatedSignInContext): Promise<v
   }
 }
 
-async function handleConsentPage(context: AutomatedSignInContext): Promise<void> {
+async function handleConsentPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
   const { page } = context;
 
   if ((await page.title()) === "localhost")
     return; // we're done
 
-  const consentUrl = new URL("/consent", context.oidcConfig.issuer);
+  const consentUrl = new URL("/consent", context.config.issuer);
   if (page.url().startsWith(consentUrl.toString()))
     await page.click("button[value=yes]");
 
