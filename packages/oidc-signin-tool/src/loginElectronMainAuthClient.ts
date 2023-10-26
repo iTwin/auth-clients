@@ -4,22 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 import type { TestUserCredentials } from "./TestUsers";
 import * as SignInAutomation from "./SignInAutomation";
-import type { ElectronApplication, JSHandle, Page } from "@playwright/test";
+import type { ElectronApplication, Page } from "@playwright/test";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type Electron = typeof import("electron");
-
-/**
- * playwright (and other async contexts) will eagerly evaluate returned promises
- * so return an object wrapping the promise
- */
-type PromiseHandle<T> = JSHandle<{ promise: Promise<T> }>;
-
-/** @note the PromiseHandle must wrap a JSON-serializable object */
-async function promiseHandleValue<T>(promiseHandle: PromiseHandle<T>): Promise<T> {
-  const promiseValueHandle = await promiseHandle.evaluateHandle(async (h) => h.promise);
-  return promiseValueHandle.jsonValue();
-}
 
 /**
  * helper type to allow non-ElectronApplication contexts
@@ -28,30 +16,45 @@ async function promiseHandleValue<T>(promiseHandle: PromiseHandle<T>): Promise<T
  */
 export interface PlaywrightElectronContext {
   evaluate<T, R>(
-    func: (electron: Electron, passed?: T) => R,
+    func: (electron: Electron, passed: T) => R,
     args?: T
   ): Promise<R>;
-  evaluateHandle<T, R>(
-    func: (electron: Electron, passed?: T) => R,
-    args?: T
-  ): Promise<JSHandle<R>>;
+}
+
+/**
+ * playwright will eagerly evaluate returned promises, so instead return an indirect handle
+ * to one (a string key on the globalThis object)
+ * We could return a JSHandle<{ promise: Promise<T> }, but @see PlaywrightElectronContext
+ * does not support that to avoid requiring custom contexts implement JSHandle
+ */
+type PromiseHandle = string;
+
+/** @note the PromiseHandle must wrap a JSON-serializable object */
+async function promiseHandleValue<T>(ctx: PlaywrightElectronContext, promiseHandle: PromiseHandle): Promise<T> {
+  return ctx.evaluate(async (_electron, passed) => {
+    const promise = (globalThis as any)[passed];
+    delete (globalThis as any)[passed];
+    return promise;
+  }, promiseHandle);
 }
 
 /**
  * returns a handle to a pending promise that resolves the next time electron.shell.openExternal is called
  */
-async function setupGetNextFetchedUrl(app: PlaywrightElectronContext): Promise<PromiseHandle<string>> {
-  return app.evaluateHandle(({ shell }) => {
-    return {
-      promise: new Promise<string>((resolve) => {
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        const originalOpenExternal = shell.openExternal;
-        shell.openExternal = async (url: string) => {
-          shell.openExternal = originalOpenExternal;
-          return resolve(url);
-        };
-      }),
-    };
+async function setupGetNextFetchedUrl(app: PlaywrightElectronContext): Promise<string> {
+  return app.evaluate(({ shell }) => {
+    const handle = `promiseHandle_${Math.random()}`;
+
+    (globalThis as any)[handle] = new Promise<string>((resolve) => {
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      const originalOpenExternal = shell.openExternal;
+      shell.openExternal = async (url: string) => {
+        shell.openExternal = originalOpenExternal;
+        return resolve(url);
+      };
+    });
+
+    return handle;
   });
 }
 
@@ -101,7 +104,7 @@ export async function loginElectronMainAuthClient(
 ) {
   const nextFetchedUrlPromise = await setupGetNextFetchedUrl(backendContext);
   void startSignIn();
-  const requestedLoginUrl = await promiseHandleValue(nextFetchedUrlPromise);
+  const requestedLoginUrl = await promiseHandleValue<string>(backendContext, nextFetchedUrlPromise);
   if (!requestedLoginUrl)
     throw Error("requestedLoginPage should be defined");
 
