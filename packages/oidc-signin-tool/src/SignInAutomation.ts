@@ -23,24 +23,17 @@ export interface AutomatedSignInContext<T> {
   signInInitUrl: string;
   config: AutomatedSignInConfig;
   /** a promise that resolves once the sign in callback is reached,
-   * with the full callback url.
+   * with any data, e.g. a callback URL
    * @defaults Promise.resolve()
    */
   waitForCallback?: Promise<T>;
-  /** A function that takes the callback URL and finalizes the sign in process to retrieve an
-   * access token.
-   * @default does nothing
+  /** A function that takes the waitForCallback result data (e.g. a callback url)
+   * and finalizes the sign in process
    */
-  resultFromCallback?: (t: T) => AutomatedSignInResult | Promise<AutomatedSignInResult>;
+  resultFromCallback?: (t: T) => any | Promise<any>;
   /** optionally provide the abort controller for errors,
    * in case you need to cancel your waitForCallbackUrl */
   abortController?: AbortController;
-}
-
-/** @alpha result from automated sign in */
-export interface AutomatedSignInResult {
-  accessToken: string;
-  expiresAt?: Date;
 }
 
 /**
@@ -50,7 +43,7 @@ export interface AutomatedSignInResult {
  */
 export async function automatedSignIn<T>(
   context: AutomatedSignInContext<T>,
-): Promise<AutomatedSignInResult> {
+): Promise<void> {
   const { page } = context;
   const waitForCallback = context.waitForCallback ?? Promise.resolve() as Promise<T>;
   const controller = context.abortController ?? new AbortController();
@@ -78,7 +71,10 @@ export async function automatedSignIn<T>(
       // ignore, if we get the callback Url, we're good.
     }
 
-    return await context.resultFromCallback?.(await waitForCallback);
+    if (context.resultFromCallback)
+      // if we do not await here, logic in resultFromCallback can escape the cleanup in finally
+      // eslint-disable-next-line @typescript-eslint/return-await
+      return await context.resultFromCallback(await waitForCallback);
   } finally {
     await cleanup(page, controller.signal, waitForCallback);
   }
@@ -251,6 +247,7 @@ async function checkErrorOnPage(page: Page, selector: string): Promise<void> {
   }
 }
 
+/** @alpha use playwright to launch the default automation page, which is a chromium instance */
 export async function launchDefaultAutomationPage(enableSlowNetworkConditions = false): Promise<Page> {
   const launchOptions: LaunchOptions = {};
 

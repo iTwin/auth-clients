@@ -128,7 +128,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     const oidcConfig = await this._discoveryClient.getConfig();
 
-    const result = await SignInAutomation.automatedSignIn({
+    await SignInAutomation.automatedSignIn({
       page,
       signInInitUrl: signInRequest.url,
       user: this._user,
@@ -136,31 +136,24 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
         issuer: oidcConfig.issuer,
         authorizationEndpoint: oidcConfig.authorization_endpoint,
       },
+      abortController: controller,
 
       // Eventually, we'll get a redirect to the callback url
       // including the params we need to retrieve a token
       // This varies depending on the type of user, so start
       // waiting now and resolve at the end of the "sign in pipeline"
-      waitForCallbackUrl: page.waitForRequest((req) =>
+      waitForCallback: page.waitForRequest((req) =>
         req.url().startsWith(this._config.redirectUri) || controller.signal.aborted
       ).then((resp) => resp.url()),
 
-      resultFromCallbackUrl: async (callbackUrl) => {
+      resultFromCallback: async (callbackUrl) => {
         const tokenSet = await oidcClient.processSigninResponse(callbackUrl);
-
-        return {
-          accessToken: `Bearer ${tokenSet.access_token}`,
-          expiresAt: tokenSet.expires_at !== undefined
-            ? new Date(tokenSet.expires_at * 1000)
-            : undefined,
-        };
+        this._accessToken = `Bearer ${tokenSet.access_token}`,
+        this._expiresAt = tokenSet.expires_at !== undefined
+          ? new Date(tokenSet.expires_at * 1000)
+          : undefined;
       },
-
-      abortController: controller,
     });
-
-    this._accessToken = result.accessToken;
-    this._expiresAt = result.expiresAt;
   }
 
   public async signOut(): Promise<void> {

@@ -2,11 +2,10 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
-import type {
-  TestUserCredentials,
-} from "./TestUsers";
+import type { TestUserCredentials, } from "./TestUsers";
 import * as SignInAutomation from "./SignInAutomation";
 import type { ElectronApplication, JSHandle } from "@playwright/test";
+import * as assert from "node:assert";
 
 /**
  * playwright (and other async contexts) will eagerly evaluate returned promises
@@ -38,12 +37,40 @@ async function setupGetNextFetchedUrl(app: ElectronApplication): Promise<Promise
   });
 }
 
+async function getExtraWindowAsBrowserFromElectron(app: ElectronApplication) {
+  const prevWindows = app.windows();
+  const prevWindowCount = prevWindows.length;
+
+  await app.evaluate(
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    async ({ BrowserWindow }) => {
+      new BrowserWindow({
+        webPreferences: {
+          partition: "login",
+        },
+      });
+    },
+  );
+
+  const nowWindows = app.windows();
+  assert(prevWindowCount === nowWindows.length - 1);
+  const loginWindow = nowWindows[nowWindows.length - 1];
+
+  return loginWindow;
+}
+
+/**
+ * given an electron app, user, auth config, and a callback to start signing in,
+ * complete the log in flow as that user.
+ * @alpha
+ */
 export async function loginElectronMainAuthClient(
   app: ElectronApplication,
   /** any function that initiates ElectronMainAuthorization.signIn() */
   startSignIn: () => Promise<void>,
   user: TestUserCredentials,
   config: SignInAutomation.AutomatedSignInConfig,
+  loginBrowser: "chromium" | "separate-electron-window" = "chromium",
 ) {
   const nextFetchedUrlPromise = await setupGetNextFetchedUrl(app);
   void startSignIn();
@@ -51,30 +78,15 @@ export async function loginElectronMainAuthClient(
   if (!requestedLoginUrl)
     throw Error("requestedLoginPage should be defined");
 
-  // FIXME: remove
-  /*
-  await app.evaluate(
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    async ({ BrowserWindow }, passed) => {
-      const loginWindow = new BrowserWindow({
-        webPreferences: {
-          partition: "login",
-        },
-      });
-      await loginWindow.loadURL(passed.requestedLoginUrl);
-    },
-    { requestedLoginUrl }
-  );
-  */
-
-  const page = await SignInAutomation.launchDefaultAutomationPage();
+  // the page will be closed by automatedSignIn
+  const page = loginBrowser === "chromium"
+    ? await SignInAutomation.launchDefaultAutomationPage()
+    : await getExtraWindowAsBrowserFromElectron(app);
 
   await SignInAutomation.automatedSignIn({
     page,
     signInInitUrl: requestedLoginUrl,
     user,
     config,
-    waitForCallbackUrl: async () => {},
-    resultFromCallbackUrl: async () => {},
   });
 }
