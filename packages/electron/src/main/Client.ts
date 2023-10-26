@@ -135,14 +135,14 @@ export interface ElectronMainAuthorizationConfiguration {
 export class ElectronMainAuthorization implements AuthorizationClient {
   protected _accessToken: AccessToken = "";
 
-  private _issuerUrl = "https://ims.bentley.com";
-  private _redirectUris: string[];
-  private _clientId: string;
-  private _scopes: string;
+  protected _issuerUrl = "https://ims.bentley.com";
+  protected _redirectUris: string[];
+  protected _clientId: string;
+  protected _scopes: string;
   private _expiryBuffer = 60 * 10; // refresh token 10 minutes before real expiration time
   private _ipcChannelNames: IpcChannelNames;
   private _ipcSocket?: IpcSocketBackend;
-  private _configuration: AuthorizationServiceConfiguration | undefined;
+  protected _configuration: AuthorizationServiceConfiguration | undefined;
   private _refreshToken: string | undefined;
   private _refreshTokenStore: RefreshTokenStore;
   private _expiresAt?: Date;
