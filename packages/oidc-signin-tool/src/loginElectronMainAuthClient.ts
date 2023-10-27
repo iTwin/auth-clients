@@ -58,8 +58,6 @@ async function setupGetNextFetchedUrl(app: PlaywrightElectronContext): Promise<s
   });
 }
 
-// FIXME: used wrong indent setting everywhere!
-
 async function getExtraWindowAsBrowserFromElectron(app: ElectronApplication, url: string) {
   const newWindowPromise = app.waitForEvent("window");
 
