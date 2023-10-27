@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type { TestUserCredentials } from "./TestUsers";
 import * as SignInAutomation from "./SignInAutomation";
-import type { ElectronApplication, Page } from "@playwright/test";
+import type { ElectronApplication } from "@playwright/test";
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 type Electron = typeof import("electron");
