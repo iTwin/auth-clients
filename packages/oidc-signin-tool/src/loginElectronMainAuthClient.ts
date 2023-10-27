@@ -17,7 +17,7 @@ type Electron = typeof import("electron");
 export interface PlaywrightElectronContext {
   evaluate<T, R>(
     func: (electron: Electron, passed: T) => R,
-    args?: T
+    passed?: T
   ): Promise<R>;
 }
 
@@ -59,18 +59,25 @@ async function setupGetNextFetchedUrl(app: PlaywrightElectronContext): Promise<s
 }
 
 // FIXME: used wrong indent setting everywhere!
-async function getExtraWindowAsBrowserFromElectron(app: ElectronApplication) {
-  const newWindowPromise = new Promise<Page>((resolve) => app.on("window", resolve));
+
+async function getExtraWindowAsBrowserFromElectron(app: ElectronApplication, url: string) {
+  const newWindowPromise = app.waitForEvent("window");
 
   await app.evaluate(
     // eslint-disable-next-line @typescript-eslint/naming-convention
-    async ({ BrowserWindow }) => {
-      new BrowserWindow({
+    async ({ BrowserWindow }, passed) => {
+      const loginPage = new BrowserWindow({
+        title: "separate-electron-window",
         webPreferences: {
           partition: "login",
         },
       });
+      // REPORTME: probable playwright bug, for electron, the "window" event is
+      // not emitted until a URL is loaded in the new window, so we early-load the login URL
+      // if the bug were fixed, this would not be necessary, as it will be navigated to again later
+      await loginPage.loadURL(passed.url);
     },
+    { url }
   );
 
   return newWindowPromise;
@@ -111,12 +118,13 @@ export async function loginElectronMainAuthClient(
   // the page will be closed by automatedSignIn
   const page = loginBrowser === "chromium"
     ? await SignInAutomation.launchDefaultAutomationPage()
-    : await getExtraWindowAsBrowserFromElectron(app);
+    : await getExtraWindowAsBrowserFromElectron(app, requestedLoginUrl);
 
   await SignInAutomation.automatedSignIn({
     page,
     signInInitUrl: requestedLoginUrl,
     user,
     config,
+    doNotKillBrowser: loginBrowser === "separate-electron-window",
   });
 }

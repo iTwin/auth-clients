@@ -34,6 +34,9 @@ export interface AutomatedSignInContext<T> {
   /** optionally provide the abort controller for errors,
    * in case you need to cancel your waitForCallbackUrl */
   abortController?: AbortController;
+
+  /** whether or not to kill the entire browser when cleaning up */
+  doNotKillBrowser?: boolean;
 }
 
 /**
@@ -76,7 +79,7 @@ export async function automatedSignIn<T>(
       // eslint-disable-next-line @typescript-eslint/return-await
       return await context.resultFromCallback(await waitForCallback);
   } finally {
-    await cleanup(page, controller.signal, waitForCallback);
+    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser);
   }
 }
 
@@ -294,12 +297,18 @@ export async function launchDefaultAutomationPage(enableSlowNetworkConditions = 
 async function cleanup(
   page: Page,
   signal: AbortSignal,
-  waitForCallbackUrl: Promise<any>
+  waitForCallbackUrl: Promise<any>,
+  doNotKillBrowser = false,
 ) {
   if (signal.aborted)
     await page.reload();
   await waitForCallbackUrl;
   await page.close();
-  await page.context().close();
-  await page.context().browser()?.close();
+
+  const doKillBrowser = !doNotKillBrowser;
+
+  if (doKillBrowser) {
+    await page.context().close();
+    await page.context().browser()?.close();
+  }
 }
