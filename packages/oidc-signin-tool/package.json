@@ -64,6 +64,11 @@
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0",
     "@playwright/test": "^1.0.0"
   },
+  "peerDependenciesMeta": {
+    "@playwright/test": {
+      "optional": true
+    }
+  },
   "eslintConfig": {
     "plugins": [
       "@itwin"
