@@ -27,7 +27,7 @@ importers:
       eslint: ^7.32.0
       mocha: ^8.2.3
       nyc: ^15.1.0
-      oidc-client-ts: ^2.2.0
+      oidc-client-ts: ^2.4.0
       parcel: ~2.9.3
       process: ~0.11.10
       rimraf: ^3.0.2
@@ -35,7 +35,7 @@ importers:
       typescript: ~5.0.2
     dependencies:
       '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
-      oidc-client-ts: 2.2.4
+      oidc-client-ts: 2.4.0
     devDependencies:
       '@itwin/build-tools': 4.0.6_@types+node@18.17.1
       '@itwin/core-bentley': 3.7.12
@@ -3234,6 +3234,10 @@ packages:
     resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
     dev: false
 
+  /crypto-js/4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+    dev: false
+
   /css-select/4.3.0:
     resolution: {integrity: sha512-wPpOYtnsVontu2mODhA19JrqWxNsfdatRKd64kmpRbQgh1KtItko5sTnEpPdpSaJszTOhEMlF/RPz28qj4HqhQ==}
     dependencies:
@@ -6077,6 +6081,14 @@ packages:
     engines: {node: '>=12.13.0'}
     dependencies:
       crypto-js: 4.1.1
+      jwt-decode: 3.1.2
+    dev: false
+
+  /oidc-client-ts/2.4.0:
+    resolution: {integrity: sha512-WijhkTrlXK2VvgGoakWJiBdfIsVGz6CFzgjNNqZU1hPKV2kyeEaJgLs7RwuiSp2WhLfWBQuLvr2SxVlZnk3N1w==}
+    engines: {node: '>=12.13.0'}
+    dependencies:
+      crypto-js: 4.2.0
       jwt-decode: 3.1.2
     dev: false
 
