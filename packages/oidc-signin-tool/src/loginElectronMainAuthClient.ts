@@ -6,8 +6,9 @@ import type { TestUserCredentials } from "./TestUsers";
 import * as SignInAutomation from "./SignInAutomation";
 import type { ElectronApplication } from "@playwright/test";
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-type Electron = typeof import("electron");
+// we could instead do `typeof import("electron")`, but then we must add
+// electron as a real dependency for consumers. So instead get the private type from Playwright
+type Electron = Parameters<Extract<Parameters<ElectronApplication["evaluate"]>[0], (...a: any[]) => any>>[0];
 
 /**
  * helper type to allow non-ElectronApplication contexts
