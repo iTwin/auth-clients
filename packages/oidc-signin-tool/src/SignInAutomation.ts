@@ -4,8 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as os from "node:os";
-import { chromium } from "@playwright/test";
-import type { LaunchOptions, Page } from "@playwright/test";
+import type { Browser, LaunchOptions, Page } from "@playwright/test";
 import type { TestUserCredentials } from "./TestUsers";
 import { testSelectors } from "./TestSelectors";
 
@@ -274,7 +273,20 @@ export async function launchDefaultAutomationPage(enableSlowNetworkConditions = 
     };
   }
 
-  const browser = await chromium.launch(launchOptions);
+  let browser: Browser;
+  try {
+    const { chromium } = await import("@playwright/test");
+    browser = await chromium.launch(launchOptions);
+  } catch (err) {
+    /* eslint-disable no-console */
+    console.error("Original error:");
+    console.error(err);
+    /* eslint-enable no-console */
+    throw Error(
+      "Could not load @playwright/test. Did you supply it as a peer dependency?"
+      + "If so, then you should provide your own playwright Page to automation APIs"
+    );
+  }
 
   let page: Page;
   if (enableSlowNetworkConditions) {
