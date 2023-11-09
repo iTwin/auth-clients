@@ -2,5 +2,6 @@
   "type": "minor",
   "comment": "Added package.json export field and export ElectronMain cjs and ElectronRenderer esm subpath",
   "packageName": "@itwin/electron-authorization",
-  "email": "AnDuong249@users.noreply.github.com"
+  "email": "AnDuong249@users.noreply.github.com",
+  "dependentChangeType": "patch"
 }
