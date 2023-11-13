@@ -1,0 +1,7 @@
+{
+  "type": "none",
+  "comment": "ensure electron package.json version in line with latest release",
+  "packageName": "@itwin/electron-authorization",
+  "email": "ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "none"
+}
