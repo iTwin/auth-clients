@@ -27,15 +27,15 @@ importers:
       eslint: ^7.32.0
       mocha: ^8.2.3
       nyc: ^15.1.0
-      oidc-client-ts: ^2.2.0
+      oidc-client-ts: ^2.4.0
       parcel: ~2.9.3
       process: ~0.11.10
       rimraf: ^3.0.2
       sinon: ^15.0.1
       typescript: ~5.0.2
     dependencies:
-      '@itwin/core-common': 4.0.6_5bnq6kxutumurlg2i2jpxlrogi
-      oidc-client-ts: 2.2.4
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
+      oidc-client-ts: 2.4.0
     devDependencies:
       '@itwin/build-tools': 4.0.6_@types+node@18.17.1
       '@itwin/core-bentley': 3.7.12
@@ -88,7 +88,7 @@ importers:
       typescript: ~5.0.2
       username: ^5.1.0
     dependencies:
-      '@itwin/core-common': 4.0.6_5bnq6kxutumurlg2i2jpxlrogi
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       '@openid/appauth': 1.3.1
       electron-store: 8.1.0
       username: 5.1.0
@@ -145,7 +145,7 @@ importers:
       typescript: ~5.0.2
       username: ^5.1.0
     dependencies:
-      '@itwin/core-common': 4.0.6_5bnq6kxutumurlg2i2jpxlrogi
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       '@openid/appauth': 1.3.1
       node-persist: 3.1.3
       open: 8.4.2
@@ -199,7 +199,7 @@ importers:
       typescript: ~5.0.2
     dependencies:
       '@itwin/certa': 3.7.12
-      '@itwin/core-common': 4.0.6_5bnq6kxutumurlg2i2jpxlrogi
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       '@itwin/service-authorization': link:../service
       '@playwright/test': 1.35.1
       dotenv: 10.0.0
@@ -248,7 +248,7 @@ importers:
       source-map-support: ^0.5.9
       typescript: ~5.0.2
     dependencies:
-      '@itwin/core-common': 4.0.6_5bnq6kxutumurlg2i2jpxlrogi
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       got: 12.6.1
       jsonwebtoken: 9.0.1
       jwks-rsa: 2.1.5
@@ -692,27 +692,15 @@ packages:
   /@itwin/core-bentley/3.7.12:
     resolution: {integrity: sha1-UE6Q9Q1lxzH+/rtZ89WcN1ZYyqI=}
 
-  /@itwin/core-bentley/4.1.6:
-    resolution: {integrity: sha512-37YNjk9VX4G50uWR7JHufsVYL4E2NrFypCbnXW5u2Uci/uJgmtRNP6jC5jwSg6CMRGuj0im4KVsgsFdfHJ3Vtg==}
-    dev: false
-
-  /@itwin/core-common/4.0.6_5bnq6kxutumurlg2i2jpxlrogi:
+  /@itwin/core-common/4.0.6_@itwin+core-bentley@3.7.12:
     resolution: {integrity: sha512-1N92kv3bqY/01Mdto/GCKgO5dG6dli9d06lp1KpHTUuwPpWVob1oIF/w5ij+0C4QvHq54SZlCxDfNaC7FH6lKQ==}
     peerDependencies:
       '@itwin/core-bentley': ^4.0.6
       '@itwin/core-geometry': ^4.0.6
     dependencies:
       '@itwin/core-bentley': 3.7.12
-      '@itwin/core-geometry': 4.1.6
       flatbuffers: 1.12.0
       js-base64: 3.7.5
-    dev: false
-
-  /@itwin/core-geometry/4.1.6:
-    resolution: {integrity: sha512-OkWcfmV9zTgDtOgetibKmXjF3f6dvX4V8/GViwVSAux4OR/nJ6/nE8fKlbFAEznZg/DFlMWpNIIg6Sdq21eVKg==}
-    dependencies:
-      '@itwin/core-bentley': 4.1.6
-      flatbuffers: 1.12.0
     dev: false
 
   /@itwin/eslint-plugin/3.7.8_cgdknpc562nnyruteofhkegnom:
@@ -728,7 +716,7 @@ packages:
       eslint-import-resolver-node: 0.3.4
       eslint-import-resolver-typescript: 2.7.1_jlfacdsytab2usfsc7nq3gjckm
       eslint-plugin-deprecation: 1.5.0_cgdknpc562nnyruteofhkegnom
-      eslint-plugin-import: 2.28.0_vbj67x5zrsh3jcw5wzpewxsjdm
+      eslint-plugin-import: 2.28.0_v35z5nwcdf5szdrauumy3vmgsm
       eslint-plugin-jam3: 0.2.3
       eslint-plugin-jsdoc: 35.5.1_eslint@7.32.0
       eslint-plugin-jsx-a11y: 6.7.1_eslint@7.32.0
@@ -2499,10 +2487,8 @@ packages:
       indent-string: 4.0.0
     dev: true
 
-  /ajv-formats/2.1.1_ajv@8.12.0:
+  /ajv-formats/2.1.1:
     resolution: {integrity: sha1-bmaUAGWet0lzu/LjMycYCgmWtSA=}
-    peerDependencies:
-      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -3111,7 +3097,7 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       atomically: 1.7.0
       debounce-fn: 4.0.0
       dot-prop: 6.0.1
@@ -3245,6 +3231,10 @@ packages:
 
   /crypto-js/4.1.1:
     resolution: {integrity: sha512-o2JlM7ydqd3Qk9CA0L4NL6mTzU2sdx96a+oOfPu8Mkl/PK51vSyoi8/rQ8NknZtk44vq15lmhAj9CIAGwgeWKw==}
+    dev: false
+
+  /crypto-js/4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
     dev: false
 
   /css-select/4.3.0:
@@ -3727,7 +3717,7 @@ packages:
     dependencies:
       debug: 4.3.4
       eslint: 7.32.0
-      eslint-plugin-import: 2.28.0_vbj67x5zrsh3jcw5wzpewxsjdm
+      eslint-plugin-import: 2.28.0_v35z5nwcdf5szdrauumy3vmgsm
       glob: 7.2.3
       is-glob: 4.0.3
       resolve: 1.22.2
@@ -3736,7 +3726,7 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-module-utils/2.8.0_6dt7xcd2k7344yid5ootofvtui:
+  /eslint-module-utils/2.8.0_sjlozvnotdkjw2qqd4bv36zsvi:
     resolution: {integrity: sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw==}
     engines: {node: '>=4'}
     peerDependencies:
@@ -3761,6 +3751,7 @@ packages:
       debug: 3.2.7
       eslint: 7.32.0
       eslint-import-resolver-node: 0.3.7
+      eslint-import-resolver-typescript: 2.7.1_jlfacdsytab2usfsc7nq3gjckm
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3780,7 +3771,7 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-import/2.28.0_vbj67x5zrsh3jcw5wzpewxsjdm:
+  /eslint-plugin-import/2.28.0_v35z5nwcdf5szdrauumy3vmgsm:
     resolution: {integrity: sha512-B8s/n+ZluN7sxj9eUf7/pRFERX0r5bnFA2dCaLHy2ZeaQEAz0k+ZZkFWRFHJAqxfxQDx6KLv9LeIki7cFdwW+Q==}
     engines: {node: '>=4'}
     peerDependencies:
@@ -3799,7 +3790,7 @@ packages:
       doctrine: 2.1.0
       eslint: 7.32.0
       eslint-import-resolver-node: 0.3.7
-      eslint-module-utils: 2.8.0_6dt7xcd2k7344yid5ootofvtui
+      eslint-module-utils: 2.8.0_sjlozvnotdkjw2qqd4bv36zsvi
       has: 1.0.3
       is-core-module: 2.12.1
       is-glob: 4.0.3
@@ -6088,6 +6079,14 @@ packages:
     engines: {node: '>=12.13.0'}
     dependencies:
       crypto-js: 4.1.1
+      jwt-decode: 3.1.2
+    dev: false
+
+  /oidc-client-ts/2.4.0:
+    resolution: {integrity: sha512-WijhkTrlXK2VvgGoakWJiBdfIsVGz6CFzgjNNqZU1hPKV2kyeEaJgLs7RwuiSp2WhLfWBQuLvr2SxVlZnk3N1w==}
+    engines: {node: '>=12.13.0'}
+    dependencies:
+      crypto-js: 4.2.0
       jwt-decode: 3.1.2
     dev: false
 

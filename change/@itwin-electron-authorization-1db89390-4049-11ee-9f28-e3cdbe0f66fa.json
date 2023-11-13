@@ -2,5 +2,6 @@
   "type": "minor",
   "comment": "Add support for Electron 25 & 26",
   "packageName": "@itwin/electron-authorization",
-  "email": "GytisCepk@users.noreply.github.com"
+  "email": "GytisCepk@users.noreply.github.com",
+  "dependentChangeType": "patch"
 }
