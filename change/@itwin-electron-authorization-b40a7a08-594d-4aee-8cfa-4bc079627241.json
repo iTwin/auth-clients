@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Add support for Electron 27",
-  "packageName": "@itwin/electron-authorization",
-  "email": "GytisCepk@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

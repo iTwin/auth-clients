@@ -1,6 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Wed, 16 Aug 2023 15:07:40 GMT and should not be manually modified.
+This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+
+<!-- Start content -->
+
+## 4.2.0
+
+Mon, 13 Nov 2023 15:21:13 GMT
+
+### Minor changes
+
+-  (Jake-Screen@users.noreply.github.com)
 
 ## 4.1.2
 Wed, 16 Aug 2023 15:07:40 GMT
@@ -138,4 +148,3 @@ Wed, 15 Dec 2021 20:20:04 GMT
 Thu, 02 Dec 2021 18:07:16 GMT
 
 _Initial release_
-

@@ -1,6 +1,16 @@
 # Change Log - @itwin/service-authorization
 
-This log was last generated on Tue, 25 Jul 2023 15:42:36 GMT and should not be manually modified.
+This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+
+<!-- Start content -->
+
+## 1.1.0
+
+Mon, 13 Nov 2023 15:21:13 GMT
+
+### Minor changes
+
+-  (Jake-Screen@users.noreply.github.com)
 
 ## 1.0.3
 Tue, 25 Jul 2023 15:42:36 GMT
@@ -88,4 +98,3 @@ Wed, 15 Dec 2021 20:20:04 GMT
 ### Minor changes
 
 - pin deps to core rc
-

@@ -1,6 +1,23 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 16 Aug 2023 15:07:40 GMT and should not be manually modified.
+This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+
+<!-- Start content -->
+
+## 0.17.0
+
+Mon, 13 Nov 2023 15:21:13 GMT
+
+### Minor changes
+
+- Add support for Electron 25 & 26 (GytisCepk@users.noreply.github.com)
+- Added package.json export field and export ElectronMain cjs and ElectronRenderer esm subpath (AnDuong249@users.noreply.github.com)
+-  (Jake-Screen@users.noreply.github.com)
+- Add support for Electron 27 (GytisCepk@users.noreply.github.com)
+
+### Patches
+
+- add styled html loopback pages (ben-polinsky@users.noreply.github.com)
 
 ## 0.15.0
 Wed, 16 Aug 2023 15:07:40 GMT
@@ -163,4 +180,3 @@ Mon, 29 Nov 2021 15:30:19 GMT
 ### Minor changes
 
 - Changed ElectronAuthorizationBackend name to ElectronAuthorizationMain and ElectronAppAuthorization to ElectronAuthorizationRenderer
-

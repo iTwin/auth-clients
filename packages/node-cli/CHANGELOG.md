@@ -1,6 +1,25 @@
 # Change Log - @itwin/node-cli-authorization
 
-This log was last generated on Tue, 25 Jul 2023 14:33:09 GMT and should not be manually modified.
+This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+
+<!-- Start content -->
+
+## 2.0.0
+
+Mon, 13 Nov 2023 15:21:13 GMT
+
+### Major changes
+
+- Migrate from node-keytar to crypto (50554904+hl662@users.noreply.github.com)
+
+### Minor changes
+
+-  (Jake-Screen@users.noreply.github.com)
+- Sometime refresh token expires and user must go an manually delete setting from window network password otherwise app will not login or get new token. This PR add ability to forget refresh token if signIn() fail to refresh token. This PR also add method to explicitly signOut() and forget persisted token so new sign can take place. (khanaffan@gmail.com)
+
+### Patches
+
+- add styled html loopback pages (ben-polinsky@users.noreply.github.com)
 
 ## 1.0.1
 Tue, 25 Jul 2023 14:33:09 GMT
@@ -55,4 +74,3 @@ Wed, 06 Apr 2022 21:17:06 GMT
 ### Minor changes
 
 - Initial version
-

@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "",
-  "packageName": "@itwin/electron-authorization",
-  "email": "Jake-Screen@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

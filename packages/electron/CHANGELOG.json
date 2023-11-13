@@ -2,6 +2,61 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Mon, 13 Nov 2023 15:21:13 GMT",
+      "version": "0.17.0",
+      "tag": "@itwin/electron-authorization_v0.17.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "022b04c78e5370a607641603be9391c04d0b238f",
+            "comment": "Add support for Electron 25 & 26"
+          },
+          {
+            "author": "AnDuong249@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "022b04c78e5370a607641603be9391c04d0b238f",
+            "comment": "Added package.json export field and export ElectronMain cjs and ElectronRenderer esm subpath"
+          },
+          {
+            "author": "Jake-Screen@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "022b04c78e5370a607641603be9391c04d0b238f",
+            "comment": ""
+          },
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "022b04c78e5370a607641603be9391c04d0b238f",
+            "comment": "Add support for Electron 27"
+          }
+        ],
+        "none": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "022b04c78e5370a607641603be9391c04d0b238f",
+            "comment": "ensure electron package.json version in line with latest release"
+          },
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "022b04c78e5370a607641603be9391c04d0b238f",
+            "comment": "fix test file build error"
+          }
+        ],
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "022b04c78e5370a607641603be9391c04d0b238f",
+            "comment": "add styled html loopback pages"
+          }
+        ]
+      }
+    },
+    {
       "version": "0.15.0",
       "tag": "@itwin/electron-authorization_v0.15.0",
       "date": "Wed, 16 Aug 2023 15:07:40 GMT",

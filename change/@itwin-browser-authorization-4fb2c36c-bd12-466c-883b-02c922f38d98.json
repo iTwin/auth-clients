@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Update oidc-client-ts to \"^2.4.0\" from \"^2.2.0\"",
-  "packageName": "@itwin/browser-authorization",
-  "email": "22119573+nick4598@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
