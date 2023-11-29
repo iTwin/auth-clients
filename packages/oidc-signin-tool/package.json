@@ -36,6 +36,7 @@
     "@itwin/certa": "^3.7.0 || ^4.0.0",
     "@itwin/core-common": "^3.3.0 || ^4.0.0",
     "@itwin/service-authorization": "workspace:^",
+    "@playwright/test": "~1.35.1",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
     "oidc-client-ts": "^2.2.4"
@@ -46,7 +47,6 @@
     "@itwin/eslint-plugin": "^3.7.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7.1.1",
-    "@playwright/test": "~1.35.1",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/mocha": "^8.2.3",
     "@types/node": "^18.11.5",
@@ -61,13 +61,7 @@
     "typescript": "~5.0.2"
   },
   "peerDependencies": {
-    "@itwin/core-bentley": "^3.3.0 || ^4.0.0",
-    "@playwright/test": "^1.0.0"
-  },
-  "peerDependenciesMeta": {
-    "@playwright/test": {
-      "optional": true
-    }
+    "@itwin/core-bentley": "^3.3.0 || ^4.0.0"
   },
   "eslintConfig": {
     "plugins": [
