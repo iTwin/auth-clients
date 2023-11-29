@@ -283,8 +283,9 @@ export async function launchDefaultAutomationPage(enableSlowNetworkConditions = 
     console.error(err);
     /* eslint-enable no-console */
     throw Error(
-      "Could not load @playwright/test. Did you supply it as a peer dependency?"
-      + "If so, then you should provide your own playwright Page to automation APIs"
+      "Could not load @playwright/test. Do you have multiple playwright dependencies active? "
+      + "If so, then you should provide your own playwright Page to automation APIs to avoid us "
+      + "attempting to make our own by importing playwright"
     );
   }
 
