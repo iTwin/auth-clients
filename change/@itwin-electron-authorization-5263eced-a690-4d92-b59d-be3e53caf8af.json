@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "add styled html loopback pages",
-  "packageName": "@itwin/electron-authorization",
-  "email": "ben-polinsky@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

@@ -1,6 +1,20 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Tue, 25 Jul 2023 14:33:09 GMT and should not be manually modified.
+This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+
+<!-- Start content -->
+
+## 1.1.0
+
+Mon, 13 Nov 2023 15:21:13 GMT
+
+### Minor changes
+
+-  (Jake-Screen@users.noreply.github.com)
+
+### Patches
+
+- Update oidc-client-ts to "^2.4.0" from "^2.2.0" (22119573+nick4598@users.noreply.github.com)
 
 ## 1.0.1
 Tue, 25 Jul 2023 14:33:09 GMT
@@ -95,4 +109,3 @@ Mon, 29 Nov 2021 22:10:32 GMT
 Mon, 29 Nov 2021 15:30:19 GMT
 
 _Initial release_
-

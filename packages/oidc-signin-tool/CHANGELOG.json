@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Mon, 13 Nov 2023 15:21:13 GMT",
+      "version": "4.2.0",
+      "tag": "@itwin/oidc-signin-tool_v4.2.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "Jake-Screen@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "022b04c78e5370a607641603be9391c04d0b238f",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "version": "4.1.2",
       "tag": "@itwin/oidc-signin-tool_v4.1.2",
       "date": "Wed, 16 Aug 2023 15:07:40 GMT",
