@@ -13,7 +13,7 @@ type Electron = Parameters<Extract<Parameters<ElectronApplication["evaluate"]>[0
 /**
  * helper type to allow non-ElectronApplication contexts
  * e.g. a thirdparty playwright API implementation over an electron utility process
- * @alpha
+ * @internal
  */
 export interface PlaywrightElectronContext {
   evaluate<T, R>(
@@ -85,7 +85,7 @@ async function getExtraWindowAsBrowserFromElectron(app: ElectronApplication, url
 /**
  * given an electron app, auth configuration, and a callback to start signing in,
  * complete the log in flow as the configured user.
- * @alpha
+ * @internal
  */
 export async function loginElectronMainAuthClient(
   {

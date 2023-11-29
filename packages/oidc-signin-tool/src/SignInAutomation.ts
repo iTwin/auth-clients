@@ -8,14 +8,14 @@ import type { Browser, LaunchOptions, Page } from "@playwright/test";
 import type { TestUserCredentials } from "./TestUsers";
 import { testSelectors } from "./TestSelectors";
 
-/** @alpha configuration for automated sign in */
+/** @internal configuration for automated sign in */
 export interface AutomatedSignInConfig {
   issuer: string;
   /** optional endpoint configuration to verify when handling ping login page */
   authorizationEndpoint?: string;
 }
 
-/** @alpha context for automated sign in functions */
+/** @internal context for automated sign in functions */
 export interface AutomatedSignInContext<T> {
   page: Page;
   user: TestUserCredentials;
@@ -41,7 +41,7 @@ export interface AutomatedSignInContext<T> {
 /**
  * given a context with configuration, user info, a playwright page,
  * and iTwin services sign in url, sign in
- * @alpha
+ * @internal
  */
 export async function automatedSignIn<T>(
   context: AutomatedSignInContext<T>,
@@ -249,7 +249,7 @@ async function checkErrorOnPage(page: Page, selector: string): Promise<void> {
   }
 }
 
-/** @alpha use playwright to launch the default automation page, which is a chromium instance */
+/** @internal use playwright to launch the default automation page, which is a chromium instance */
 export async function launchDefaultAutomationPage(enableSlowNetworkConditions = false): Promise<Page> {
   const launchOptions: LaunchOptions = {};
 
