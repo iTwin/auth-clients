@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "export reusable browser automation for desktop and electron",
-  "packageName": "@itwin/oidc-signin-tool",
-  "email": "michael.belousov98@gmail.com",
-  "dependentChangeType": "patch"
-}

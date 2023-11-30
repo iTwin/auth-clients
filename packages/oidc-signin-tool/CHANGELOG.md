@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+This log was last generated on Thu, 30 Nov 2023 18:33:38 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 4.3.0
+
+Thu, 30 Nov 2023 18:33:38 GMT
+
+### Minor changes
+
+- export reusable browser automation for desktop and electron (michael.belousov98@gmail.com)
 
 ## 4.2.0
 
