@@ -138,8 +138,6 @@ export async function logoutElectronMainAuthClient(
     app,
     backendContext = app,
     startSignOut,
-    user,
-    config,
     loginBrowser = "chromium",
   }: {
     app: ElectronApplication;
@@ -149,8 +147,6 @@ export async function logoutElectronMainAuthClient(
     backendContext?: PlaywrightElectronContext | ElectronApplication;
     /** any function that eventually invokes ElectronMainAuthorization.signOut() */
     startSignOut: () => Promise<void>;
-    user: TestUserCredentials;
-    config: SignInAutomation.AutomatedSignInConfig;
     loginBrowser?: "chromium" | "separate-electron-window";
   }
 ) {
@@ -168,8 +164,6 @@ export async function logoutElectronMainAuthClient(
   await SignInAutomation.automatedSignOut({
     page,
     signOutInitUrl: requestedLogoutUrl,
-    user,
-    config,
     doNotKillBrowser: loginBrowser === "separate-electron-window",
   });
 }

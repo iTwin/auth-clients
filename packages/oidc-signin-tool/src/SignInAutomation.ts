@@ -18,8 +18,6 @@ export interface AutomatedSignInConfig {
 /** @internal base context for automated sign in and sign out functions */
 interface AutomatedContextBase<T> {
   page: Page;
-  user: TestUserCredentials;
-  config: AutomatedSignInConfig;
   /** a promise that resolves once the sign in callback is reached,
    * with any data, e.g. a callback URL
    * @defaults Promise.resolve()
@@ -40,6 +38,8 @@ interface AutomatedContextBase<T> {
 /** @internal context for automated sign in functions */
 export interface AutomatedSignInContext<T> extends AutomatedContextBase<T> {
   signInInitUrl: string;
+  user: TestUserCredentials;
+  config: AutomatedSignInConfig;
 }
 
 /** @internal context for automated sign in functions */
@@ -125,7 +125,7 @@ async function handleErrorPage<T>({ page }: AutomatedContextBase<T>): Promise<vo
     throw new Error(errMsgText);
 }
 
-async function handleLoginPage<T>(context: AutomatedContextBase<T>): Promise<void> {
+async function handleLoginPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
   const loginUrl = new URL("/IMS/Account/Login", context.config.issuer);
   const { page } = context;
   if (page.url().startsWith(loginUrl.toString())) {
@@ -142,7 +142,7 @@ async function handleLoginPage<T>(context: AutomatedContextBase<T>): Promise<voi
   await checkErrorOnPage(page, "#errormessage");
 }
 
-async function handlePingLoginPage<T>(context: AutomatedContextBase<T>): Promise<void> {
+async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
   const { page } = context;
   if (
     context.config.authorizationEndpoint !== undefined && (
@@ -188,7 +188,7 @@ async function handlePingLoginPage<T>(context: AutomatedContextBase<T>): Promise
 }
 
 // Bentley-specific federated login.  This will get called if a redirect to a url including "microsoftonline".
-async function handleFederatedSignin<T>(context: AutomatedContextBase<T>): Promise<void> {
+async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Promise<void> {
   const { page } = context;
 
   await page.waitForLoadState("networkidle");
@@ -233,7 +233,7 @@ async function handleFederatedSignin<T>(context: AutomatedContextBase<T>): Promi
   }
 }
 
-async function handleConsentPage<T>(context: AutomatedContextBase<T>): Promise<void> {
+async function handleConsentPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
   const { page } = context;
 
   if ((await page.title()) === "localhost")
