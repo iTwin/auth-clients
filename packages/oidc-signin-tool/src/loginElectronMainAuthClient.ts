@@ -112,7 +112,7 @@ export async function loginElectronMainAuthClient(
   void startSignIn();
   const requestedLoginUrl = await promiseHandleValue<string>(backendContext, nextFetchedUrlPromise);
   if (!requestedLoginUrl)
-    throw Error("requestedLoginPage should be defined");
+    throw Error("startSignIn should have opened a sign in page but got a falsy value");
 
   // the page will be closed by automatedSignIn
   const page = loginBrowser === "chromium"
@@ -122,6 +122,52 @@ export async function loginElectronMainAuthClient(
   await SignInAutomation.automatedSignIn({
     page,
     signInInitUrl: requestedLoginUrl,
+    user,
+    config,
+    doNotKillBrowser: loginBrowser === "separate-electron-window",
+  });
+}
+
+/**
+ * given an electron app, auth configuration, and a callback to start signing out,
+ * complete the log out flow as the configured user.
+ * @internal
+ */
+export async function logoutElectronMainAuthClient(
+  {
+    app,
+    backendContext = app,
+    startSignOut,
+    user,
+    config,
+    loginBrowser = "chromium",
+  }: {
+    app: ElectronApplication;
+    /** the playwright context which holds iTwin.js backend code.
+     * @default the passed in app, since that is usually where backend code is run
+     */
+    backendContext?: PlaywrightElectronContext | ElectronApplication;
+    /** any function that eventually invokes ElectronMainAuthorization.signOut() */
+    startSignOut: () => Promise<void>;
+    user: TestUserCredentials;
+    config: SignInAutomation.AutomatedSignInConfig;
+    loginBrowser?: "chromium" | "separate-electron-window";
+  }
+) {
+  const nextFetchedUrlPromise = await setupGetNextFetchedUrl(backendContext);
+  void startSignOut();
+  const requestedLogoutUrl = await promiseHandleValue<string>(backendContext, nextFetchedUrlPromise);
+  if (!requestedLogoutUrl)
+    throw Error("startSignOut should have opened a sign out page but got a falsy value");
+
+  // the page will be closed by automatedSignOut
+  const page = loginBrowser === "chromium"
+    ? await SignInAutomation.launchDefaultAutomationPage()
+    : await getExtraWindowAsBrowserFromElectron(app, requestedLogoutUrl);
+
+  await SignInAutomation.automatedSignOut({
+    page,
+    signOutInitUrl: requestedLogoutUrl,
     user,
     config,
     doNotKillBrowser: loginBrowser === "separate-electron-window",

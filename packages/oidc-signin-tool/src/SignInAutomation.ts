@@ -15,11 +15,10 @@ export interface AutomatedSignInConfig {
   authorizationEndpoint?: string;
 }
 
-/** @internal context for automated sign in functions */
-export interface AutomatedSignInContext<T> {
+/** @internal base context for automated sign in and sign out functions */
+interface AutomatedContextBase<T> {
   page: Page;
   user: TestUserCredentials;
-  signInInitUrl: string;
   config: AutomatedSignInConfig;
   /** a promise that resolves once the sign in callback is reached,
    * with any data, e.g. a callback URL
@@ -36,6 +35,16 @@ export interface AutomatedSignInContext<T> {
 
   /** whether or not to kill the entire browser when cleaning up */
   doNotKillBrowser?: boolean;
+}
+
+/** @internal context for automated sign in functions */
+export interface AutomatedSignInContext<T> extends AutomatedContextBase<T> {
+  signInInitUrl: string;
+}
+
+/** @internal context for automated sign in functions */
+export interface AutomatedSignOutContext<T> extends AutomatedContextBase<T> {
+  signOutInitUrl: string;
 }
 
 /**
@@ -82,7 +91,26 @@ export async function automatedSignIn<T>(
   }
 }
 
-async function handleErrorPage<T>({ page }: AutomatedSignInContext<T>): Promise<void> {
+/**
+ * given a context with configuration, user info, a playwright page,
+ * and iTwin services sign out url, sign out
+ * @internal
+ */
+export async function automatedSignOut<T>(
+  context: AutomatedSignOutContext<T>,
+): Promise<void> {
+  const { page } = context;
+  const waitForCallback = context.waitForCallback ?? Promise.resolve() as Promise<T>;
+  const controller = context.abortController ?? new AbortController();
+
+  try {
+    await page.goto(context.signOutInitUrl);
+  } finally {
+    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser);
+  }
+}
+
+async function handleErrorPage<T>({ page }: AutomatedContextBase<T>): Promise<void> {
   await page.waitForLoadState("networkidle");
   const pageTitle = await page.title();
   let errMsgText;
@@ -97,7 +125,7 @@ async function handleErrorPage<T>({ page }: AutomatedSignInContext<T>): Promise<
     throw new Error(errMsgText);
 }
 
-async function handleLoginPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
+async function handleLoginPage<T>(context: AutomatedContextBase<T>): Promise<void> {
   const loginUrl = new URL("/IMS/Account/Login", context.config.issuer);
   const { page } = context;
   if (page.url().startsWith(loginUrl.toString())) {
@@ -114,7 +142,7 @@ async function handleLoginPage<T>(context: AutomatedSignInContext<T>): Promise<v
   await checkErrorOnPage(page, "#errormessage");
 }
 
-async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
+async function handlePingLoginPage<T>(context: AutomatedContextBase<T>): Promise<void> {
   const { page } = context;
   if (
     context.config.authorizationEndpoint !== undefined && (
@@ -160,7 +188,7 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
 }
 
 // Bentley-specific federated login.  This will get called if a redirect to a url including "microsoftonline".
-async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Promise<void> {
+async function handleFederatedSignin<T>(context: AutomatedContextBase<T>): Promise<void> {
   const { page } = context;
 
   await page.waitForLoadState("networkidle");
@@ -205,7 +233,7 @@ async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Pro
   }
 }
 
-async function handleConsentPage<T>(context: AutomatedSignInContext<T>): Promise<void> {
+async function handleConsentPage<T>(context: AutomatedContextBase<T>): Promise<void> {
   const { page } = context;
 
   if ((await page.title()) === "localhost")
