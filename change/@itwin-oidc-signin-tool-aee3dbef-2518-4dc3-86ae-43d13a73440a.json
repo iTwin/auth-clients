@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "add section to README indiciating how to ignore the leak",
+  "packageName": "@itwin/oidc-signin-tool",
+  "email": "michael.belousov98@gmail.com",
+  "dependentChangeType": "patch"
+}
