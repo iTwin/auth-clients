@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Thu, 30 Nov 2023 18:33:38 GMT and should not be manually modified.
+This log was last generated on Mon, 04 Dec 2023 15:17:25 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 4.3.1
+
+Mon, 04 Dec 2023 15:17:25 GMT
+
+### Patches
+
+- add section to README indiciating how to ignore the leak (michael.belousov98@gmail.com)
 
 ## 4.3.0
 

@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Mon, 04 Dec 2023 15:17:25 GMT",
+      "version": "4.3.1",
+      "tag": "@itwin/oidc-signin-tool_v4.3.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "michael.belousov98@gmail.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "e1507ebf8611c987d4b5dc1af2667fa7e556f68c",
+            "comment": "add section to README indiciating how to ignore the leak"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 30 Nov 2023 18:33:38 GMT",
       "version": "4.3.0",
       "tag": "@itwin/oidc-signin-tool_v4.3.0",
