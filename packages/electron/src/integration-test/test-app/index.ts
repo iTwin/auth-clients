@@ -1,6 +1,7 @@
 import { ElectronMainAuthorization } from "../../main/Client";
 import { app, BrowserWindow } from "electron";
 import { config } from "dotenv";
+import * as path from "path";
 
 config();
 
@@ -9,7 +10,7 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
-      preload: require.resolve("../../renderer/ElectronPreload"),
+      preload: path.join(__dirname, "../../renderer/ElectronPreload"),
     },
   });
 
