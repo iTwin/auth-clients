@@ -53,7 +53,7 @@
     },
     {
       "name": "Electron integration tests - Main",
-      "program": "${workspaceFolder}/packages/electron/dist/integration-test/index.js",
+      "program": "${workspaceFolder}/packages/electron/dist/integration-test/test-app/index.js",
       "request": "launch",
       "runtimeExecutable": "${workspaceFolder}/packages/electron/node_modules/.bin/electron",
       "skipFiles": [
