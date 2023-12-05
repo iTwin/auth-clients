@@ -68,7 +68,7 @@ importers:
       '@types/chai': ^4.2.22
       '@types/chai-as-promised': ^7.1.1
       '@types/mocha': ^8.2.3
-      '@types/node': ^16.0.0
+      '@types/node': ~18.18.0
       '@types/sinon': ^10.0.13
       chai: ^4.2.22
       chai-as-promised: ^7.1.1
@@ -93,14 +93,14 @@ importers:
       electron-store: 8.1.0
       username: 5.1.0
     devDependencies:
-      '@itwin/build-tools': 4.0.6_@types+node@16.18.39
+      '@itwin/build-tools': 4.0.6_@types+node@18.18.14
       '@itwin/core-bentley': 3.7.12
       '@itwin/eslint-plugin': 3.7.8_cgdknpc562nnyruteofhkegnom
       '@playwright/test': 1.35.1
       '@types/chai': 4.3.5
       '@types/chai-as-promised': 7.1.5
       '@types/mocha': 8.2.3
-      '@types/node': 16.18.39
+      '@types/node': 18.18.14
       '@types/sinon': 10.0.16
       chai: 4.3.7
       chai-as-promised: 7.1.1_chai@4.3.7
@@ -617,11 +617,11 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/build-tools/4.0.6_@types+node@16.18.39:
+  /@itwin/build-tools/4.0.6_@types+node@18.17.1:
     resolution: {integrity: sha512-5s7TS95wKqr+3VP5Uy/m+4vVDVYuS+jECpSo+vw/zDp2xgiHNFg0d7O8WLonL7JOhL2uzz4JkCfP47riL4sDDw==}
     hasBin: true
     dependencies:
-      '@microsoft/api-extractor': 7.34.4_@types+node@16.18.39
+      '@microsoft/api-extractor': 7.34.4_@types+node@18.17.1
       chalk: 3.0.0
       cpx2: 3.0.2
       cross-spawn: 7.0.3
@@ -641,11 +641,11 @@ packages:
       - supports-color
     dev: true
 
-  /@itwin/build-tools/4.0.6_@types+node@18.17.1:
+  /@itwin/build-tools/4.0.6_@types+node@18.18.14:
     resolution: {integrity: sha512-5s7TS95wKqr+3VP5Uy/m+4vVDVYuS+jECpSo+vw/zDp2xgiHNFg0d7O8WLonL7JOhL2uzz4JkCfP47riL4sDDw==}
     hasBin: true
     dependencies:
-      '@microsoft/api-extractor': 7.34.4_@types+node@18.17.1
+      '@microsoft/api-extractor': 7.34.4_@types+node@18.18.14
       chalk: 3.0.0
       cpx2: 3.0.2
       cross-spawn: 7.0.3
@@ -844,22 +844,22 @@ packages:
       - '@types/node'
     dev: true
 
-  /@microsoft/api-extractor-model/7.26.4_@types+node@16.18.39:
-    resolution: {integrity: sha512-PDCgCzXDo+SLY5bsfl4bS7hxaeEtnXj7XtuzEE+BtALp7B5mK/NrS2kHWU69pohgsRmEALycQdaQPXoyT2i5MQ==}
-    dependencies:
-      '@microsoft/tsdoc': 0.14.2
-      '@microsoft/tsdoc-config': 0.16.2
-      '@rushstack/node-core-library': 3.55.2_@types+node@16.18.39
-    transitivePeerDependencies:
-      - '@types/node'
-    dev: true
-
   /@microsoft/api-extractor-model/7.26.4_@types+node@18.17.1:
     resolution: {integrity: sha512-PDCgCzXDo+SLY5bsfl4bS7hxaeEtnXj7XtuzEE+BtALp7B5mK/NrS2kHWU69pohgsRmEALycQdaQPXoyT2i5MQ==}
     dependencies:
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.2
       '@rushstack/node-core-library': 3.55.2_@types+node@18.17.1
+    transitivePeerDependencies:
+      - '@types/node'
+    dev: true
+
+  /@microsoft/api-extractor-model/7.26.4_@types+node@18.18.14:
+    resolution: {integrity: sha512-PDCgCzXDo+SLY5bsfl4bS7hxaeEtnXj7XtuzEE+BtALp7B5mK/NrS2kHWU69pohgsRmEALycQdaQPXoyT2i5MQ==}
+    dependencies:
+      '@microsoft/tsdoc': 0.14.2
+      '@microsoft/tsdoc-config': 0.16.2
+      '@rushstack/node-core-library': 3.55.2_@types+node@18.18.14
     transitivePeerDependencies:
       - '@types/node'
     dev: true
@@ -884,14 +884,14 @@ packages:
       - '@types/node'
     dev: true
 
-  /@microsoft/api-extractor/7.34.4_@types+node@16.18.39:
+  /@microsoft/api-extractor/7.34.4_@types+node@18.17.1:
     resolution: {integrity: sha512-HOdcci2nT40ejhwPC3Xja9G+WSJmWhCUKKryRfQYsmE9cD+pxmBaKBKCbuS9jUcl6bLLb4Gz+h7xEN5r0QiXnQ==}
     hasBin: true
     dependencies:
-      '@microsoft/api-extractor-model': 7.26.4_@types+node@16.18.39
+      '@microsoft/api-extractor-model': 7.26.4_@types+node@18.17.1
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.2
-      '@rushstack/node-core-library': 3.55.2_@types+node@16.18.39
+      '@rushstack/node-core-library': 3.55.2_@types+node@18.17.1
       '@rushstack/rig-package': 0.3.18
       '@rushstack/ts-command-line': 4.13.2
       colors: 1.2.5
@@ -904,14 +904,14 @@ packages:
       - '@types/node'
     dev: true
 
-  /@microsoft/api-extractor/7.34.4_@types+node@18.17.1:
+  /@microsoft/api-extractor/7.34.4_@types+node@18.18.14:
     resolution: {integrity: sha512-HOdcci2nT40ejhwPC3Xja9G+WSJmWhCUKKryRfQYsmE9cD+pxmBaKBKCbuS9jUcl6bLLb4Gz+h7xEN5r0QiXnQ==}
     hasBin: true
     dependencies:
-      '@microsoft/api-extractor-model': 7.26.4_@types+node@18.17.1
+      '@microsoft/api-extractor-model': 7.26.4_@types+node@18.18.14
       '@microsoft/tsdoc': 0.14.2
       '@microsoft/tsdoc-config': 0.16.2
-      '@rushstack/node-core-library': 3.55.2_@types+node@18.17.1
+      '@rushstack/node-core-library': 3.55.2_@types+node@18.18.14
       '@rushstack/rig-package': 0.3.18
       '@rushstack/ts-command-line': 4.13.2
       colors: 1.2.5
@@ -1864,24 +1864,6 @@ packages:
       z-schema: 5.0.5
     dev: true
 
-  /@rushstack/node-core-library/3.55.2_@types+node@16.18.39:
-    resolution: {integrity: sha512-SaLe/x/Q/uBVdNFK5V1xXvsVps0y7h1sN7aSJllQyFbugyOaxhNRF25bwEDnicARNEjJw0pk0lYnJQ9Kr6ev0A==}
-    peerDependencies:
-      '@types/node': '*'
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-    dependencies:
-      '@types/node': 16.18.39
-      colors: 1.2.5
-      fs-extra: 7.0.1
-      import-lazy: 4.0.0
-      jju: 1.4.0
-      resolve: 1.22.2
-      semver: 7.3.8
-      z-schema: 5.0.5
-    dev: true
-
   /@rushstack/node-core-library/3.55.2_@types+node@18.17.1:
     resolution: {integrity: sha512-SaLe/x/Q/uBVdNFK5V1xXvsVps0y7h1sN7aSJllQyFbugyOaxhNRF25bwEDnicARNEjJw0pk0lYnJQ9Kr6ev0A==}
     peerDependencies:
@@ -1891,6 +1873,24 @@ packages:
         optional: true
     dependencies:
       '@types/node': 18.17.1
+      colors: 1.2.5
+      fs-extra: 7.0.1
+      import-lazy: 4.0.0
+      jju: 1.4.0
+      resolve: 1.22.2
+      semver: 7.3.8
+      z-schema: 5.0.5
+    dev: true
+
+  /@rushstack/node-core-library/3.55.2_@types+node@18.18.14:
+    resolution: {integrity: sha512-SaLe/x/Q/uBVdNFK5V1xXvsVps0y7h1sN7aSJllQyFbugyOaxhNRF25bwEDnicARNEjJw0pk0lYnJQ9Kr6ev0A==}
+    peerDependencies:
+      '@types/node': '*'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
+    dependencies:
+      '@types/node': 18.18.14
       colors: 1.2.5
       fs-extra: 7.0.1
       import-lazy: 4.0.0
@@ -2109,7 +2109,7 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
     dev: false
 
   /@types/cacheable-request/6.0.3:
@@ -2117,7 +2117,7 @@ packages:
     dependencies:
       '@types/http-cache-semantics': 4.0.1
       '@types/keyv': 3.1.4
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
       '@types/responselike': 1.0.0
     dev: true
 
@@ -2134,13 +2134,13 @@ packages:
   /@types/connect/3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
     dev: false
 
   /@types/express-serve-static-core/4.17.35:
     resolution: {integrity: sha512-wALWQwrgiB2AWTT91CB62b6Yt0sNHpznUXeZEcnPU3DRdlDIz74x8Qg1UUYKSVFi+va5vKOLYRBI1bRKiLLKIg==}
     dependencies:
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
       '@types/send': 0.17.1
@@ -2179,18 +2179,18 @@ packages:
   /@types/jsonwebtoken/8.5.9:
     resolution: {integrity: sha512-272FMnFGzAVMGtu9tkr29hRL6bZj4Zs1KZNeHLnKqAvp06tAIcarTMwOh8/8bz4FmKRcMxZhZNeUAQsNLoiPhg==}
     dependencies:
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
 
   /@types/jsonwebtoken/9.0.2:
     resolution: {integrity: sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==}
     dependencies:
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
     dev: true
 
   /@types/keyv/3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
     dev: true
 
   /@types/mime/1.3.2:
@@ -2208,15 +2208,16 @@ packages:
   /@types/node-persist/3.1.4:
     resolution: {integrity: sha512-MXwo/ijhPIIKa5jLxwBfs8wTVZzwO36V/a12TSzsm5hAMFiY9CgSzbFobvQEmQTRu778CIIhJoT59KF2BzSYwg==}
     dependencies:
-      '@types/node': 18.17.1
-    dev: true
-
-  /@types/node/16.18.39:
-    resolution: {integrity: sha512-8q9ZexmdYYyc5/cfujaXb4YOucpQxAV4RMG0himLyDUOEr8Mr79VrqsFI+cQ2M2h89YIuy95lbxuYjxT4Hk4kQ==}
+      '@types/node': 18.18.14
     dev: true
 
   /@types/node/18.17.1:
     resolution: {integrity: sha1-hMMpA786CfeHjDkdMf8I9v59gzU=}
+
+  /@types/node/18.18.14:
+    resolution: {integrity: sha512-iSOeNeXYNYNLLOMDSVPvIFojclvMZ/HDY2dU17kUlcsOsSQETbWIslJbYLZgA+ox8g2XQwSHKTkght1a5X26lQ==}
+    dependencies:
+      undici-types: 5.26.5
 
   /@types/parse-json/4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -2233,7 +2234,7 @@ packages:
   /@types/responselike/1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
     dev: true
 
   /@types/semver/7.5.0:
@@ -2244,7 +2245,7 @@ packages:
     resolution: {integrity: sha512-Cwo8LE/0rnvX7kIIa3QHCkcuF21c05Ayb0ZfxPiv0W8VRiZiNW/WuRupHKpqqGVGf7SUA44QSOUKaEd9lIrd/Q==}
     dependencies:
       '@types/mime': 1.3.2
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
     dev: false
 
   /@types/serve-static/1.15.2:
@@ -2252,7 +2253,7 @@ packages:
     dependencies:
       '@types/http-errors': 2.0.1
       '@types/mime': 3.0.1
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
     dev: false
 
   /@types/sinon/10.0.16:
@@ -2273,7 +2274,7 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
     optional: true
 
   /@typescript-eslint/eslint-plugin/4.31.2_3twxgq56pbcx5sbdzeotbqorme:
@@ -3563,7 +3564,7 @@ packages:
     requiresBuild: true
     dependencies:
       '@electron/get': 2.0.2
-      '@types/node': 18.17.1
+      '@types/node': 18.18.14
       extract-zip: 2.0.1
     transitivePeerDependencies:
       - supports-color
@@ -7379,6 +7380,9 @@ packages:
       buffer: 5.7.1
       through: 2.3.8
     dev: false
+
+  /undici-types/5.26.5:
+    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
 
   /universalify/0.1.2:
     resolution: {integrity: sha1-tkb2m+OULavOzJ1mOcgNwQXvqmY=}
