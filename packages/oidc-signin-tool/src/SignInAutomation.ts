@@ -129,10 +129,8 @@ async function handleLoginPage<T>(context: AutomatedSignInContext<T>): Promise<v
   const loginUrl = new URL("/IMS/Account/Login", context.config.issuer);
   const { page } = context;
   if (page.url().startsWith(loginUrl.toString())) {
-    await page.waitForSelector(testSelectors.imsEmail);
-    await page.type(testSelectors.imsEmail, context.user.email);
-    await page.waitForSelector(testSelectors.imsPassword);
-    await page.type(testSelectors.imsPassword, context.user.password);
+    await page.locator(testSelectors.imsEmail).fill(context.user.email);
+    await page.locator(testSelectors.imsPassword).fill(context.user.password);
 
     const submit = page.locator(testSelectors.imsSubmit);
     await submit.click();
@@ -152,8 +150,7 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
   )
     return;
 
-  await page.waitForSelector(testSelectors.pingEmail);
-  await page.type(testSelectors.pingEmail, context.user.email);
+  await page.locator(testSelectors.pingEmail).fill(context.user.email);
 
   await page.waitForSelector(testSelectors.pingAllowSubmit);
   let allow = page.locator(testSelectors.pingAllowSubmit);
@@ -163,8 +160,7 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
   if (-1 !== page.url().indexOf("microsoftonline"))
     return;
 
-  await page.waitForSelector(testSelectors.pingPassword);
-  await page.type(testSelectors.pingPassword, context.user.password);
+  await page.locator(testSelectors.pingPassword).fill(context.user.password);
 
   await page.waitForSelector(testSelectors.pingAllowSubmit);
   allow = page.locator(testSelectors.pingAllowSubmit);
@@ -196,19 +192,17 @@ async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Pro
     return;
 
   if (await checkSelectorExists(page, testSelectors.msUserNameField)) {
-    await page.type(testSelectors.msUserNameField, context.user.email);
+    await page.locator(testSelectors.msUserNameField).fill(context.user.email);
     const msSubmit = await page.waitForSelector(testSelectors.msSubmit);
     await msSubmit.click();
 
     // Checks for the error in username entered
     await checkErrorOnPage(page, "#usernameError");
   } else {
-    const fedEmail = await page.waitForSelector(testSelectors.fedEmail);
-    await fedEmail.type(context.user.email);
+    await page.locator(testSelectors.fedEmail).fill(context.user.email);
   }
 
-  const fedPassword = await page.waitForSelector(testSelectors.fedPassword);
-  await fedPassword.type(context.user.password);
+  await page.locator(testSelectors.fedPassword).fill(context.user.password);
   const submit = await page.waitForSelector(testSelectors.fedSubmit);
   await submit.click();
 
