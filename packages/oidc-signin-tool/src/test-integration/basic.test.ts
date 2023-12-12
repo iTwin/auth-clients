@@ -45,7 +45,7 @@ test.describe("Sign in (#integration)", () => {
     await expect(
       getTestAccessToken(oidcConfig, TestUsers.federatedInvalid)
     ).rejects.toThrowError(
-      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: Enter a valid email address, phone number, or Skype name.`
+      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: This username may be incorrect. Make sure you typed it correctly. Otherwise, contact your admin.`
     );
   });
 
