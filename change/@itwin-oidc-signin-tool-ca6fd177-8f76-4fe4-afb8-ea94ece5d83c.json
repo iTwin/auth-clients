@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Refactor login form handling in SignInAutomation.ts to use .fill",
-  "packageName": "@itwin/oidc-signin-tool",
-  "email": "19596966+johnnyd710@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
