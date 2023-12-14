@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Thu, 14 Dec 2023 00:10:26 GMT",
+      "version": "0.18.0",
+      "tag": "@itwin/electron-authorization_v0.18.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "19596966+johnnyd710@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "833e9d630a38bcfe85c9f6fa26831cd2ea961639",
+            "comment": "Resolve ElectronRendererAuthorization signIn when sign in has completed and reject if an error occurs."
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 13 Nov 2023 15:21:13 GMT",
       "version": "0.17.0",
       "tag": "@itwin/electron-authorization_v0.17.0",

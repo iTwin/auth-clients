@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Dec 2023 00:10:26 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.18.0
+
+Thu, 14 Dec 2023 00:10:26 GMT
+
+### Minor changes
+
+- Resolve ElectronRendererAuthorization signIn when sign in has completed and reject if an error occurs. (19596966+johnnyd710@users.noreply.github.com)
 
 ## 0.17.0
 
