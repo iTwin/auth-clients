@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Resolve ElectronRendererAuthorization signIn when sign in has completed and reject if an error occurs.",
+  "packageName": "@itwin/electron-authorization",
+  "email": "19596966+johnnyd710@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
