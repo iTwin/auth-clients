@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Publish static HTML loopback files.",
-  "packageName": "@itwin/electron-authorization",
-  "email": "19596966+johnnyd710@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
