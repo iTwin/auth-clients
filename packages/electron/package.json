@@ -50,17 +50,17 @@
     "@itwin/build-tools": "^4.0.6",
     "@itwin/core-bentley": "^3.7.0",
     "@itwin/eslint-plugin": "^3.3.0",
-    "@playwright/test": "~1.35.1",
+    "@playwright/test": "~1.41.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7.1.1",
     "@types/mocha": "^8.2.3",
-    "@types/node": "^16.0.0",
+    "@types/node": "~18.18.0",
     "@types/sinon": "^10.0.13",
     "chai": "^4.2.22",
     "chai-as-promised": "^7.1.1",
     "cpx2": "^5.0.0",
     "dotenv": "~16.0.3",
-    "electron": "^27.0.0",
+    "electron": "^28.0.0",
     "eslint": "^7.32.0",
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",
@@ -74,7 +74,7 @@
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0",
-    "electron": ">=23.0.0 <28.0.0"
+    "electron": ">=23.0.0 <29.0.0"
   },
   "eslintConfig": {
     "plugins": [
