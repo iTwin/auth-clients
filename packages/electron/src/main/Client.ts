@@ -398,40 +398,47 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     // Setup a notifier to obtain the result of authorization
     const notifier = new AuthorizationNotifier();
     authorizationHandler.setAuthorizationNotifier(notifier);
-    notifier.setAuthorizationListener(
-      async (
-        authRequest: AuthorizationRequest,
-        authResponse: AuthorizationResponse | null,
-        authError: AuthorizationError | null
-      ) => {
-        Logger.logTrace(
-          loggerCategory,
-          "Authorization listener invoked",
-          () => ({ authRequest, authResponse, authError })
-        );
 
-        const tokenResponse = await this._onAuthorizationResponse(
-          authRequest,
-          authResponse,
-          authError
-        );
-        authorizationEvents.onAuthorizationResponseCompleted.raiseEvent(
-          authError ? authError : undefined
-        );
+    const tokenRequestCompleted = new Promise<void>((finished, reject) => {
+      notifier.setAuthorizationListener(
+        async (
+          authRequest: AuthorizationRequest,
+          authResponse: AuthorizationResponse | null,
+          authError: AuthorizationError | null
+        ) => {
+          Logger.logTrace(
+            loggerCategory,
+            "Authorization listener invoked",
+            () => ({ authRequest, authResponse, authError })
+          );
 
-        if (tokenResponse)
-          // await this.saveRefreshToken(tokenResponse);
-          await this.processTokenResponse(tokenResponse);
-        else
-          await this.clearTokenCache();
-      }
-    );
+          const tokenResponse = await this._onAuthorizationResponse(
+            authRequest,
+            authResponse,
+            authError
+          ).catch((e) => reject(e));
+
+          authorizationEvents.onAuthorizationResponseCompleted.raiseEvent(
+            authError ? authError : undefined
+          );
+
+          if (tokenResponse)
+            await this.processTokenResponse(tokenResponse);
+          else
+            await this.clearTokenCache();
+
+          finished();
+        }
+      );
+    });
 
     // Start the signin
     await authorizationHandler.performAuthorizationRequest(
       this._configuration,
       authorizationRequest
     );
+
+    return tokenRequestCompleted;
   }
 
   /**

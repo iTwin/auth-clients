@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Tue, 12 Dec 2023 20:38:56 GMT",
+      "version": "4.3.2",
+      "tag": "@itwin/oidc-signin-tool_v4.3.2",
+      "comments": {
+        "patch": [
+          {
+            "author": "19596966+johnnyd710@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "909f2ccf19a604b46a09c0c74c224f61b1232b79",
+            "comment": "Refactor login form handling in SignInAutomation.ts to use .fill"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 04 Dec 2023 15:17:25 GMT",
       "version": "4.3.1",
       "tag": "@itwin/oidc-signin-tool_v4.3.1",
