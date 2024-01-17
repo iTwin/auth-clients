@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Wed, 17 Jan 2024 15:40:23 GMT",
+      "version": "4.3.2",
+      "tag": "@itwin/oidc-signin-tool_v4.3.2",
+      "comments": {
+        "none": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "cd0b4076fe458ad78015fadbfd14cc9285a774f3",
+            "comment": "Upgrade '@playwright/test' version to 1.41.0"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 12 Dec 2023 20:38:56 GMT",
       "version": "4.3.2",
       "tag": "@itwin/oidc-signin-tool_v4.3.2",
