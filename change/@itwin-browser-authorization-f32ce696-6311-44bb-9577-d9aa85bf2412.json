@@ -1,7 +1,7 @@
 {
-  "type": "patch",
+  "type": "none",
   "comment": "Upgrade '@playwright/test' version to 1.41.0",
-  "packageName": "@itwin/oidc-signin-tool",
+  "packageName": "@itwin/browser-authorization",
   "email": "GytisCepk@users.noreply.github.com",
-  "dependentChangeType": "patch"
+  "dependentChangeType": "none"
 }
