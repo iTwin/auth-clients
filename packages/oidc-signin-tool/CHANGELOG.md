@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Mon, 04 Dec 2023 15:17:25 GMT and should not be manually modified.
+This log was last generated on Tue, 12 Dec 2023 20:38:56 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 4.3.2
+
+Tue, 12 Dec 2023 20:38:56 GMT
+
+### Patches
+
+- Refactor login form handling in SignInAutomation.ts to use .fill (19596966+johnnyd710@users.noreply.github.com)
 
 ## 4.3.1
 

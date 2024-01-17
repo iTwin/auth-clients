@@ -105,7 +105,11 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     });
   }
 
-  /** Called to start the sign-in process. Subscribe to onAccessTokenChanged to be notified when sign-in completes */
+  /**
+   * Called to start the sign-in process.
+   * Resolves when sign-in completes, rejects if sign-in fails.
+   * Subscribe to `onAccessTokenChanged` to be notified when a token is available.
+   */
   public async signIn(): Promise<void> {
     await this._ipcAuthAPI.signIn();
   }

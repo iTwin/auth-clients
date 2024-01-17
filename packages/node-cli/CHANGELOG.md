@@ -1,8 +1,16 @@
 # Change Log - @itwin/node-cli-authorization
 
-This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Dec 2023 15:21:31 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 2.0.1
+
+Thu, 14 Dec 2023 15:21:31 GMT
+
+### Patches
+
+- Publish static HTML loopback files. (19596966+johnnyd710@users.noreply.github.com)
 
 ## 2.0.0
 
