@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Thu, 08 Feb 2024 15:38:07 GMT",
+      "version": "0.18.3",
+      "tag": "@itwin/electron-authorization_v0.18.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "17436829+GintV@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "678d22010ddbad3f54d1728df74b062f093127b8",
+            "comment": "Anticipate safeStorage to be polyfilled with async functions"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 17 Jan 2024 15:40:23 GMT",
       "version": "0.18.2",
       "tag": "@itwin/electron-authorization_v0.18.2",

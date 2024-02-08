@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Anticipate safeStorage to be polyfilled with async functions",
-  "packageName": "@itwin/electron-authorization",
-  "email": "17436829+GintV@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
