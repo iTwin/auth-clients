@@ -50,11 +50,13 @@ export class RefreshTokenStore {
     return this._userName;
   }
 
-  private encryptRefreshToken(token: string): Buffer {
+  // Note: this is intentionally made async in case this code doesn't run in electron's main process and safeStorage must be polyfilled with async function
+  private async encryptRefreshToken(token: string): Promise<Buffer> {
     return safeStorage.encryptString(token);
   }
 
-  private decryptRefreshToken(encryptedToken: Buffer): string {
+  // Note: this is intentionally made async in case this code doesn't run in electron's main process and safeStorage must be polyfilled with async function
+  private async decryptRefreshToken(encryptedToken: Buffer): Promise<string> {
     return safeStorage.decryptString(Buffer.from(encryptedToken));
   }
 
@@ -74,7 +76,7 @@ export class RefreshTokenStore {
       return undefined;
     }
     const encryptedToken = this._store.get(key);
-    const refreshToken = this.decryptRefreshToken(encryptedToken);
+    const refreshToken = await this.decryptRefreshToken(encryptedToken);
     return refreshToken;
   }
 
@@ -83,7 +85,7 @@ export class RefreshTokenStore {
     const userName = await this.getUserName();
     if (!userName)
       return;
-    const encryptedToken = this.encryptRefreshToken(refreshToken);
+    const encryptedToken = await this.encryptRefreshToken(refreshToken);
     const key = await this.getKey();
     this._store.set(key, encryptedToken);
   }
