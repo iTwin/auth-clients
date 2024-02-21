@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Handle decryptRefreshToken failure",
-  "packageName": "@itwin/electron-authorization",
-  "email": "17436829+GintV@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

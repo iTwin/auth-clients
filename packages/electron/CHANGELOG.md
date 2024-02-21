@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Thu, 08 Feb 2024 15:38:07 GMT and should not be manually modified.
+This log was last generated on Wed, 21 Feb 2024 19:26:31 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.18.4
+
+Wed, 21 Feb 2024 19:26:31 GMT
+
+### Patches
+
+- Handle decryptRefreshToken failure (17436829+GintV@users.noreply.github.com)
 
 ## 0.18.3
 

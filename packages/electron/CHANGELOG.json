@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Wed, 21 Feb 2024 19:26:31 GMT",
+      "version": "0.18.4",
+      "tag": "@itwin/electron-authorization_v0.18.4",
+      "comments": {
+        "patch": [
+          {
+            "author": "17436829+GintV@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "057e7e3b00c9126a9dbb9fc1f46fc488b7898d62",
+            "comment": "Handle decryptRefreshToken failure"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 08 Feb 2024 15:38:07 GMT",
       "version": "0.18.3",
       "tag": "@itwin/electron-authorization_v0.18.3",
