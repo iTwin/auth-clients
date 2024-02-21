@@ -74,8 +74,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const mockTokenResponse = new TokenResponse(mockTokenResponseJson);
 
     const refreshToken = "old refresh token";
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(refreshToken));
-    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(refreshToken);
+    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(refreshToken)));
+    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(refreshToken));
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
@@ -111,8 +111,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
         expires_in: "60000",
       });
 
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(mockTokenResponse.refreshToken!));
-    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(mockTokenResponse.refreshToken);
+    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(mockTokenResponse.refreshToken!)));
+    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(mockTokenResponse.refreshToken));
     // Clear token store
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
     await tokenStore.delete();
@@ -162,8 +162,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
       });
 
     const refreshToken = "old refresh token";
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(refreshToken));
-    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(refreshToken);
+    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(refreshToken)));
+    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(refreshToken));
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
@@ -204,8 +204,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
         expires_in: "60000",
       });
 
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(mockTokenResponse.refreshToken!));
-    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(mockTokenResponse.refreshToken);
+    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(mockTokenResponse.refreshToken!)));
+    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(mockTokenResponse.refreshToken));
     // Clear token store
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
     await tokenStore.delete();
@@ -257,8 +257,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const mockTokenResponse = new TokenResponse(mockTokenResponseJson);
 
     const refreshToken = "old refresh token";
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Buffer.from(refreshToken));
-    const decryptSpy = sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(refreshToken);
+    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(refreshToken)));
+    const decryptSpy = sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(refreshToken));
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId),getTokenStoreKey(config.clientId));
     await tokenStore.delete();

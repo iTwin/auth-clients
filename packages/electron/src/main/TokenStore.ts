@@ -76,7 +76,7 @@ export class RefreshTokenStore {
       return undefined;
     }
     const encryptedToken = this._store.get(key);
-    const refreshToken = await this.decryptRefreshToken(encryptedToken);
+    const refreshToken = await this.decryptRefreshToken(encryptedToken).catch(() => undefined);
     return refreshToken;
   }
 
