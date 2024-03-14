@@ -17,6 +17,7 @@ export interface IntrospectionResponse {
   aud?: string | string[];
   scope: string;
   sub?: string;
+  org?: string;
   nbf?: number;
   token_type?: string;
 }
