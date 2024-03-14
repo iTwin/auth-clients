@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Add org to introspection response",
-  "packageName": "@itwin/service-authorization",
-  "email": "Andrew.DiNunzio@bentley.com",
-  "dependentChangeType": "patch"
-}

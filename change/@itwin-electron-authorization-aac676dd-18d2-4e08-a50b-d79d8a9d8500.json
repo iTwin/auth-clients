@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Add support for Electron 29",
-  "packageName": "@itwin/electron-authorization",
-  "email": "GytisCepk@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

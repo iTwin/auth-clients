@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Thu, 14 Mar 2024 15:38:52 GMT",
+      "version": "0.18.5",
+      "tag": "@itwin/electron-authorization_v0.18.5",
+      "comments": {
+        "patch": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "77f681fedcdbab4d9840633ac98364e6096bc884",
+            "comment": "Add support for Electron 29"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 21 Feb 2024 19:26:31 GMT",
       "version": "0.18.4",
       "tag": "@itwin/electron-authorization_v0.18.4",

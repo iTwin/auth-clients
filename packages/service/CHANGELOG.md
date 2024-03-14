@@ -1,8 +1,16 @@
 # Change Log - @itwin/service-authorization
 
-This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+This log was last generated on Thu, 14 Mar 2024 15:38:52 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.2.0
+
+Thu, 14 Mar 2024 15:38:52 GMT
+
+### Minor changes
+
+- Add org to introspection response (Andrew.DiNunzio@bentley.com)
 
 ## 1.1.0
 
