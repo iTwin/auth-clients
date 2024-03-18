@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Add EU cookie banner handling to OIDC sign-in tool",
-  "packageName": "@itwin/oidc-signin-tool",
-  "email": "jsnaras@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

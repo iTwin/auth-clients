@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Mon, 18 Mar 2024 08:59:46 GMT",
+      "version": "4.3.3",
+      "tag": "@itwin/oidc-signin-tool_v4.3.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "jsnaras@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "690e7ef23d362378d5a2e53518147eb9cd2a8537",
+            "comment": "Add EU cookie banner handling to OIDC sign-in tool"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 17 Jan 2024 15:40:23 GMT",
       "version": "4.3.2",
       "tag": "@itwin/oidc-signin-tool_v4.3.2",

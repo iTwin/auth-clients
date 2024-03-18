@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 12 Dec 2023 20:38:56 GMT and should not be manually modified.
+This log was last generated on Mon, 18 Mar 2024 08:59:46 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 4.3.3
+
+Mon, 18 Mar 2024 08:59:46 GMT
+
+### Patches
+
+- Add EU cookie banner handling to OIDC sign-in tool (jsnaras@users.noreply.github.com)
 
 ## 4.3.2
 
