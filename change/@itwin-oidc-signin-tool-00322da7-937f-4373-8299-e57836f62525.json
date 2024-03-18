@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Fix EU cookie consent banner selector",
-  "packageName": "@itwin/oidc-signin-tool",
-  "email": "jsnaras@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

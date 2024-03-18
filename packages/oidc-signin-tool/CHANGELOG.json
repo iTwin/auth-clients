@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Mon, 18 Mar 2024 17:02:58 GMT",
+      "version": "4.3.4",
+      "tag": "@itwin/oidc-signin-tool_v4.3.4",
+      "comments": {
+        "patch": [
+          {
+            "author": "jsnaras@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "82787f3555e8d2c2e364bfdf95783305e67509bf",
+            "comment": "Fix EU cookie consent banner selector"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 18 Mar 2024 08:59:46 GMT",
       "version": "4.3.3",
       "tag": "@itwin/oidc-signin-tool_v4.3.3",

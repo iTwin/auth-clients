@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Mon, 18 Mar 2024 08:59:46 GMT and should not be manually modified.
+This log was last generated on Mon, 18 Mar 2024 17:02:58 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 4.3.4
+
+Mon, 18 Mar 2024 17:02:58 GMT
+
+### Patches
+
+- Fix EU cookie consent banner selector (jsnaras@users.noreply.github.com)
 
 ## 4.3.3
 
