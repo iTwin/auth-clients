@@ -249,6 +249,17 @@ async function handleConsentPage<T>(context: AutomatedSignInContext<T>): Promise
     const acceptButton = await page.waitForSelector(
       "xpath=(//button/span[text()='Accept'] | //div[contains(@class, 'ping-buttons')]/a[text()='Accept'])[1]"
     );
+
+    // In EU there is a cookie consent banner covering the accept button, and it must be dismissed first
+    const cookieAcceptButton = await page.waitForSelector(
+      "#onetrust-accept-btn-handler",
+      { timeout: 1000 }
+    );
+
+    if (await cookieAcceptButton.isVisible()) {
+      await cookieAcceptButton.click();
+    }
+
     await acceptButton.click();
   }
 }
