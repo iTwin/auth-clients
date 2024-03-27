@@ -40,6 +40,7 @@ import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthoriza
 import { RefreshTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
 import * as electron from "electron";
+import { defaultExpiryBufferInSeconds } from "../common/constants";
 import type { IpcChannelNames } from "../common/IpcChannelNames";
 import { getIpcChannelNames } from "../common/IpcChannelNames";
 const loggerCategory = "electron-auth";
@@ -139,7 +140,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private _redirectUris: string[];
   private _clientId: string;
   private _scopes: string;
-  private _expiryBuffer = 60 * 10; // refresh token 10 minutes before real expiration time
+  private _expiryBuffer = defaultExpiryBufferInSeconds;
   private _ipcChannelNames: IpcChannelNames;
   private _ipcSocket?: IpcSocketBackend;
   private _configuration: AuthorizationServiceConfiguration | undefined;

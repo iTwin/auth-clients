@@ -10,6 +10,7 @@
 import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient, IpcSocketFrontend } from "@itwin/core-common";
+import { defaultExpiryBufferInSeconds } from "../common/constants";
 import type { IpcChannelNames } from "../common/IpcChannelNames";
 import { getIpcChannelNames } from "../common/IpcChannelNames";
 import type { ITwinElectronApi } from "./ElectronPreload";
@@ -70,6 +71,14 @@ export interface ElectronRendererAuthorizationConfiguration {
    * authorization client, see {@link ElectronMainAuthorization}. If not provided, default IPC implementation is used.
    */
   readonly ipcSocket?: IpcSocketFrontend;
+
+  /**
+   * Time in seconds that's used as a buffer to check the token for validity/expiry.
+   * The checks for authorization, and refreshing access tokens all use this buffer - i.e., the token is considered expired if the current time is within the specified
+   * time of the actual expiry.
+   * @note If unspecified this defaults to 10 minutes.
+   */
+  readonly expiryBuffer?: number;
 }
 
 /**
@@ -80,8 +89,9 @@ export interface ElectronRendererAuthorizationConfiguration {
  */
 export class ElectronRendererAuthorization implements AuthorizationClient {
   private _cachedToken: AccessToken = "";
-  private _refreshingToken = false;
+  private _tokenRequest: Promise<AccessToken> | undefined;
   private _expiresAt?: Date;
+  private _expiryBuffer = defaultExpiryBufferInSeconds;
   public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
   public get hasSignedIn() { return this._cachedToken !== ""; }
   public get isAuthorized(): boolean {
@@ -103,6 +113,9 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date) => {
       this._expiresAt = expiration;
     });
+
+    if (config.expiryBuffer)
+      this._expiryBuffer = config.expiryBuffer;
   }
 
   /**
@@ -133,17 +146,17 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
   public async getAccessToken(): Promise<AccessToken> {
     // if we have a valid token, return it. Otherwise call backend to refresh the token.
     if (!this.isAuthorized) {
-      if (this._refreshingToken) {
-        return Promise.reject(); // short-circuits any recursive use of this function
+      if (this._tokenRequest) {
+        return this._tokenRequest; // short-circuits any recursive use of this function
       }
 
       try {
-        this._refreshingToken = true;
-        this._cachedToken = (await this._ipcAuthAPI.getAccessToken()) ?? "";
+        this._tokenRequest = this._ipcAuthAPI.getAccessToken().then((x) => x ?? "");
+        this._cachedToken = await this._tokenRequest;
       } catch (err) {
         throw err;
       } finally {
-        this._refreshingToken = false;
+        this._tokenRequest = undefined;
       }
     }
 
@@ -154,6 +167,6 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     if (!this._expiresAt)
       return false;
 
-    return this._expiresAt.getTime() - Date.now() <= 1 * 60 * 1000; // Consider 1 minute before expiry as expired
+    return this._expiresAt.getTime() - Date.now() <= this._expiryBuffer * 1000; // Consider this.expireSafety's amount of time early as expired
   }
 }
