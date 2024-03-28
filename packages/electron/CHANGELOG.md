@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Thu, 28 Mar 2024 09:11:38 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Mar 2024 13:12:45 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.19.1
+
+Thu, 28 Mar 2024 13:12:45 GMT
+
+### Patches
+
+- defaultExpiryBufferInSeconds should be internal (ben-polinsky@users.noreply.github.com)
 
 ## 0.19.0
 
