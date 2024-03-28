@@ -79,6 +79,8 @@ stages:
       parameters:
         checkout: itwinjs-core
         ignoreAudit: true
+        useCurrentAuthClientsDocsArtifact: true
+
 
   - stage: Tag_Docs
     dependsOn: Validate_Docs
