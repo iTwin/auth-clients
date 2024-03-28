@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Thu, 14 Mar 2024 15:38:52 GMT and should not be manually modified.
+This log was last generated on Thu, 28 Mar 2024 09:11:38 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.19.0
+
+Thu, 28 Mar 2024 09:11:38 GMT
+
+### Minor changes
+
+- Unify expiry buffer accross electron auth clients - added ability to set expiryBuffer for ElectronRendererAuthorization, defaulting to 10 min - added defaultExpiryBufferInSeconds to be reused in both electron auth clients - added ElectronRendererAuthorization._tokenRequest to be returned instead of Promise.reject() to short-circuit any recursive use of ElectronRendererAuthorization.getAccessToken (17436829+GintV@users.noreply.github.com)
 
 ## 0.18.5
 

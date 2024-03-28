@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Thu, 28 Mar 2024 09:11:38 GMT",
+      "version": "0.19.0",
+      "tag": "@itwin/electron-authorization_v0.19.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "17436829+GintV@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "254f3a5d08bf205a3360639cd1e5ffa72565b4dd",
+            "comment": "Unify expiry buffer accross electron auth clients - added ability to set expiryBuffer for ElectronRendererAuthorization, defaulting to 10 min - added defaultExpiryBufferInSeconds to be reused in both electron auth clients - added ElectronRendererAuthorization._tokenRequest to be returned instead of Promise.reject() to short-circuit any recursive use of ElectronRendererAuthorization.getAccessToken"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 14 Mar 2024 15:38:52 GMT",
       "version": "0.18.5",
       "tag": "@itwin/electron-authorization_v0.18.5",
