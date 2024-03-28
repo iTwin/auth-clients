@@ -5,5 +5,6 @@
 
 /**
  * Refresh token 10 minutes before real expiration time (by default)
+ * @internal
  */
 export const defaultExpiryBufferInSeconds = 600;
