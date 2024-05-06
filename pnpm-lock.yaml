@@ -5,10 +5,10 @@ importers:
   .:
     specifiers:
       beachball: ^2.36.0
-      lage: ^2.7.6
+      lage: ^2.7.14
     devDependencies:
       beachball: 2.36.0
-      lage: 2.7.6
+      lage: 2.7.15
 
   packages/browser:
     specifiers:
@@ -34,7 +34,7 @@ importers:
       sinon: ^15.0.1
       typescript: ~5.0.2
     dependencies:
-      '@itwin/core-common': 4.0.6_dum264t5vm72jlc6oceumcbt4e
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       oidc-client-ts: 2.4.0
     devDependencies:
       '@itwin/build-tools': 4.0.6_@types+node@18.17.1
@@ -88,7 +88,7 @@ importers:
       typescript: ~5.0.2
       username: ^5.1.0
     dependencies:
-      '@itwin/core-common': 4.0.6_dum264t5vm72jlc6oceumcbt4e
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       '@openid/appauth': 1.3.1
       electron-store: 8.1.0
       username: 5.1.0
@@ -145,7 +145,7 @@ importers:
       typescript: ~5.0.2
       username: ^5.1.0
     dependencies:
-      '@itwin/core-common': 4.0.6_dum264t5vm72jlc6oceumcbt4e
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       '@openid/appauth': 1.3.1
       node-persist: 3.1.3
       open: 8.4.2
@@ -199,7 +199,7 @@ importers:
       typescript: ~5.0.2
     dependencies:
       '@itwin/certa': 3.7.12
-      '@itwin/core-common': 4.0.6_dum264t5vm72jlc6oceumcbt4e
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       '@itwin/service-authorization': link:../service
       '@playwright/test': 1.41.0
       dotenv: 10.0.0
@@ -248,7 +248,7 @@ importers:
       source-map-support: ^0.5.9
       typescript: ~5.0.2
     dependencies:
-      '@itwin/core-common': 4.0.6_dum264t5vm72jlc6oceumcbt4e
+      '@itwin/core-common': 4.0.6_@itwin+core-bentley@3.7.12
       got: 12.6.1
       jsonwebtoken: 9.0.1
       jwks-rsa: 2.1.5
@@ -692,27 +692,15 @@ packages:
   /@itwin/core-bentley/3.7.12:
     resolution: {integrity: sha1-UE6Q9Q1lxzH+/rtZ89WcN1ZYyqI=}
 
-  /@itwin/core-bentley/4.2.4:
-    resolution: {integrity: sha512-tB5d7ZFFAkj5a1RHjJzl0E5qznVYtQSq56umuyiqdMFPHyW8mPNuP4vDuq1nDK/3SuqNcbF6wN/CLt+wWXEvqA==}
-    dev: false
-
-  /@itwin/core-common/4.0.6_dum264t5vm72jlc6oceumcbt4e:
+  /@itwin/core-common/4.0.6_@itwin+core-bentley@3.7.12:
     resolution: {integrity: sha512-1N92kv3bqY/01Mdto/GCKgO5dG6dli9d06lp1KpHTUuwPpWVob1oIF/w5ij+0C4QvHq54SZlCxDfNaC7FH6lKQ==}
     peerDependencies:
       '@itwin/core-bentley': ^4.0.6
       '@itwin/core-geometry': ^4.0.6
     dependencies:
       '@itwin/core-bentley': 3.7.12
-      '@itwin/core-geometry': 4.2.4
       flatbuffers: 1.12.0
       js-base64: 3.7.5
-    dev: false
-
-  /@itwin/core-geometry/4.2.4:
-    resolution: {integrity: sha512-6mLL4G/9JsKv7BazgbcKyx65ddKnYDzM+VNSHV2lrKJG9P4iVoFgshy9k+WsiyPLul7nfwODI2ZrmzvHPDH1gw==}
-    dependencies:
-      '@itwin/core-bentley': 4.2.4
-      flatbuffers: 1.12.0
     dev: false
 
   /@itwin/eslint-plugin/3.7.8_cgdknpc562nnyruteofhkegnom:
@@ -728,7 +716,7 @@ packages:
       eslint-import-resolver-node: 0.3.4
       eslint-import-resolver-typescript: 2.7.1_jlfacdsytab2usfsc7nq3gjckm
       eslint-plugin-deprecation: 1.5.0_cgdknpc562nnyruteofhkegnom
-      eslint-plugin-import: 2.28.0_vbj67x5zrsh3jcw5wzpewxsjdm
+      eslint-plugin-import: 2.28.0_v35z5nwcdf5szdrauumy3vmgsm
       eslint-plugin-jam3: 0.2.3
       eslint-plugin-jsdoc: 35.5.1_eslint@7.32.0
       eslint-plugin-jsx-a11y: 6.7.1_eslint@7.32.0
@@ -2503,10 +2491,8 @@ packages:
       indent-string: 4.0.0
     dev: true
 
-  /ajv-formats/2.1.1_ajv@8.12.0:
+  /ajv-formats/2.1.1:
     resolution: {integrity: sha1-bmaUAGWet0lzu/LjMycYCgmWtSA=}
-    peerDependencies:
-      ajv: ^8.0.0
     peerDependenciesMeta:
       ajv:
         optional: true
@@ -3115,7 +3101,7 @@ packages:
     engines: {node: '>=12'}
     dependencies:
       ajv: 8.12.0
-      ajv-formats: 2.1.1_ajv@8.12.0
+      ajv-formats: 2.1.1
       atomically: 1.7.0
       debounce-fn: 4.0.0
       dot-prop: 6.0.1
@@ -3735,7 +3721,7 @@ packages:
     dependencies:
       debug: 4.3.4
       eslint: 7.32.0
-      eslint-plugin-import: 2.28.0_vbj67x5zrsh3jcw5wzpewxsjdm
+      eslint-plugin-import: 2.28.0_v35z5nwcdf5szdrauumy3vmgsm
       glob: 7.2.3
       is-glob: 4.0.3
       resolve: 1.22.2
@@ -3744,7 +3730,7 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-module-utils/2.8.0_6dt7xcd2k7344yid5ootofvtui:
+  /eslint-module-utils/2.8.0_sjlozvnotdkjw2qqd4bv36zsvi:
     resolution: {integrity: sha512-aWajIYfsqCKRDgUfjEXNN/JlrzauMuSEy5sbd7WXbtW3EH6A6MpwEh42c7qD+MqQo9QMJ6fWLAeIJynx0g6OAw==}
     engines: {node: '>=4'}
     peerDependencies:
@@ -3769,6 +3755,7 @@ packages:
       debug: 3.2.7
       eslint: 7.32.0
       eslint-import-resolver-node: 0.3.7
+      eslint-import-resolver-typescript: 2.7.1_jlfacdsytab2usfsc7nq3gjckm
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -3788,7 +3775,7 @@ packages:
       - supports-color
     dev: true
 
-  /eslint-plugin-import/2.28.0_vbj67x5zrsh3jcw5wzpewxsjdm:
+  /eslint-plugin-import/2.28.0_v35z5nwcdf5szdrauumy3vmgsm:
     resolution: {integrity: sha512-B8s/n+ZluN7sxj9eUf7/pRFERX0r5bnFA2dCaLHy2ZeaQEAz0k+ZZkFWRFHJAqxfxQDx6KLv9LeIki7cFdwW+Q==}
     engines: {node: '>=4'}
     peerDependencies:
@@ -3807,7 +3794,7 @@ packages:
       doctrine: 2.1.0
       eslint: 7.32.0
       eslint-import-resolver-node: 0.3.7
-      eslint-module-utils: 2.8.0_6dt7xcd2k7344yid5ootofvtui
+      eslint-module-utils: 2.8.0_sjlozvnotdkjw2qqd4bv36zsvi
       has: 1.0.3
       is-core-module: 2.12.1
       is-glob: 4.0.3
@@ -4463,8 +4450,8 @@ packages:
       util.inherits: 1.0.3
     dev: true
 
-  /glob-hasher-darwin-arm64/1.3.0:
-    resolution: {integrity: sha512-xJk+chXLeVBamYQ2fo1Plk0uqoUkv42o7PYZBVr7lSy9eoBAqXKCcf23godpA1BoUfz2cWpvzhI0Nl+MQsJX6g==}
+  /glob-hasher-darwin-arm64/1.4.2:
+    resolution: {integrity: sha512-zqCZDkDrgo86UsEbOV5wnfyAVlNQ85clGt9EV4LlskDmv2aeuHD6dFYU8hLbbQSC7nvd90EWewy1WqvV6KsL7A==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [darwin]
@@ -4472,8 +4459,8 @@ packages:
     dev: true
     optional: true
 
-  /glob-hasher-darwin-x64/1.3.0:
-    resolution: {integrity: sha512-RpXjO136MYGi+GyQgYgDqsBmyrLUhSJTwsEZx8mhF/3JcH5/RW/RVhr9PSB9Mt/FU1MH099Ln03G+u3OEDK46g==}
+  /glob-hasher-darwin-x64/1.4.2:
+    resolution: {integrity: sha512-yEmIQyr6pGj2RG6IxUpOiVbbTm+lw5+L6MqxdPJvp+Z96YSUIo7aOkru0M8lgFGTRh5fQNDWdoHM6kgK8USYrA==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [darwin]
@@ -4481,8 +4468,8 @@ packages:
     dev: true
     optional: true
 
-  /glob-hasher-linux-x64-gnu/1.3.0:
-    resolution: {integrity: sha512-B8woNLpg+JEdyD9Lfqvmm0rWDn2aYrh04SthIw2i1hdXwBm53JgsNIcdMnkhW9ZZtRI8LH5uTcQgPmC46lCE4w==}
+  /glob-hasher-linux-x64-gnu/1.4.2:
+    resolution: {integrity: sha512-7TT8Wfkw41zwfvkbZJ3M3QqWR4bR9qLnbSzcMFHrOIpJjdnvKzCzrqfi470S8sPb6dyEVyS7s49eP5YB8cSy5A==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [linux]
@@ -4490,8 +4477,8 @@ packages:
     dev: true
     optional: true
 
-  /glob-hasher-win32-arm64-msvc/1.3.0:
-    resolution: {integrity: sha512-mndlrg8lgXoHjzZooHh5aBkS5vOKRzVYBQkNKhqXmeSK6uV4VPnDYE3I/G7ucyNJc1CcAjQ9YTktwXNJkshLVg==}
+  /glob-hasher-win32-arm64-msvc/1.4.2:
+    resolution: {integrity: sha512-HyNotx1CF0/7ulND7CnbLoyuykGeMIARJRzJK36WlcgR+BqkSfcPJEbsbk7AsHhaBOtlUWAbEX9MDndcx8uguQ==}
     engines: {node: '>= 10'}
     cpu: [arm64]
     os: [win32]
@@ -4499,8 +4486,8 @@ packages:
     dev: true
     optional: true
 
-  /glob-hasher-win32-x64-msvc/1.3.0:
-    resolution: {integrity: sha512-Gs4y0ZX4bJzLA2F9zAafvUJEZEEYYEDREEhdec3KB+a3pPxxjlVtNgH0hVOgXfzv8WRqUdFIff7a1vyem+y2NQ==}
+  /glob-hasher-win32-x64-msvc/1.4.2:
+    resolution: {integrity: sha512-6mKybe2NwFABUA7ZxiiXurD5RXDrrCWwGA53NasfnO4z+hvH5q4jG6YvVhavf6GdTapJi9WwfMHRKvoSQNUxeQ==}
     engines: {node: '>= 10'}
     cpu: [x64]
     os: [win32]
@@ -4508,15 +4495,15 @@ packages:
     dev: true
     optional: true
 
-  /glob-hasher/1.3.0:
-    resolution: {integrity: sha512-kwtzRkuYcF1FfO5h7rwMtklwI2wtAXh4BreHxgSSvoFQ4XGdtIIxkXUEmmvIsCrVr2NVBSNyCmcCXxkddtUv9w==}
+  /glob-hasher/1.4.2:
+    resolution: {integrity: sha512-wYeJvOixB9iAzNpY94AgK0JvOdOQ7g30U+PN0LGSH9u0Y0WC+jIwukjMZ1JZiSoNzUSyrvABZYCNhXpZEoJ/8Q==}
     engines: {node: '>= 10'}
     optionalDependencies:
-      glob-hasher-darwin-arm64: 1.3.0
-      glob-hasher-darwin-x64: 1.3.0
-      glob-hasher-linux-x64-gnu: 1.3.0
-      glob-hasher-win32-arm64-msvc: 1.3.0
-      glob-hasher-win32-x64-msvc: 1.3.0
+      glob-hasher-darwin-arm64: 1.4.2
+      glob-hasher-darwin-x64: 1.4.2
+      glob-hasher-linux-x64-gnu: 1.4.2
+      glob-hasher-win32-arm64-msvc: 1.4.2
+      glob-hasher-win32-x64-msvc: 1.4.2
     dev: true
 
   /glob-parent/5.1.2:
@@ -5313,11 +5300,11 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /lage/2.7.6:
-    resolution: {integrity: sha512-c7RZaXpJk1oLC7rkc7HzrZ2LTZqfKqz9FRGfjdmk4eROTq78miIKZx+wHcrR2H3NhFoZTpQiU89Q03rnyvxv0A==}
+  /lage/2.7.15:
+    resolution: {integrity: sha512-50+L6cSpCJOvLNi2VLoQuDU/8ncmXDHty02PKJveVzBA2BiQAwx/VdJw4BAdGflEUM7M/mkn86LDMuf9PHUxZQ==}
     hasBin: true
     dependencies:
-      glob-hasher: 1.3.0
+      glob-hasher: 1.4.2
     optionalDependencies:
       fsevents: 2.3.3
     dev: true
