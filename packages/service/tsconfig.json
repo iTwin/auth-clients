@@ -3,9 +3,13 @@
   "compilerOptions": {
     "target": "ES2021",
     "outDir": "./lib/cjs",
-    "module": "NodeNext",
     "moduleResolution": "NodeNext"
   },
-  "include": ["./src/**/*.ts"],
-  "exclude": ["lib", "node_modules"]
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "lib",
+    "node_modules"
+  ]
 }

@@ -47,14 +47,14 @@
     "username": "^5.1.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.6.0-dev.27",
+    "@itwin/build-tools": "^4.0.6",
     "@itwin/core-bentley": "^3.7.0",
     "@itwin/eslint-plugin": "^3.3.0",
     "@playwright/test": "~1.41.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7.1.1",
     "@types/mocha": "^8.2.3",
-    "@types/node": "^20.12.8",
+    "@types/node": "~18.18.0",
     "@types/sinon": "^10.0.13",
     "chai": "^4.2.22",
     "chai-as-promised": "^7.1.1",
@@ -70,7 +70,7 @@
     "rimraf": "^3.0.2",
     "sinon": "^15.0.1",
     "source-map-support": "^0.5.9",
-    "typescript": "~5.3.3"
+    "typescript": "~5.0.2"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0",

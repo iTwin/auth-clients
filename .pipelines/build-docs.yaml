@@ -33,13 +33,13 @@ stages:
           clean: true
 
         - task: NodeTool@0
-          displayName: Use Node 20
+          displayName: Use Node 18
           inputs:
-            versionSpec: 20
+            versionSpec: 18
             checkLatest: true
 
-        - script: npm install -g pnpm@8.15.8
-          displayName: Install pnpm 8
+        - script: npm install -g pnpm@7.33.5
+          displayName: Install pnpm
 
         - script: |
             git config --local user.email imodeljs-admin@users.noreply.github.com
