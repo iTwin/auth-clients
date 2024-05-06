@@ -35,13 +35,13 @@
     "oidc-client-ts": "^2.4.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.0.0-dev.93",
+    "@itwin/build-tools": "^4.6.0-dev.27",
     "@itwin/core-bentley": "^3.7.0",
     "@itwin/eslint-plugin": "^3.7.0",
     "@playwright/test": "~1.41.0",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^8.2.3",
-    "@types/node": "^18.11.5",
+    "@types/node": "^20.12.8",
     "@types/sinon": "^10.0.13",
     "buffer": "~6.0.3",
     "chai": "^4.2.22",
@@ -53,7 +53,7 @@
     "process": "~0.11.10",
     "rimraf": "^3.0.2",
     "sinon": "^15.0.1",
-    "typescript": "~5.0.2"
+    "typescript": "~5.3.3"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0"

@@ -8,8 +8,6 @@
 
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
-// @ts-expect-error -- this is a type-only import, it won't break the resulting .js file.
-// It also won't show up in the resulting .d.ts file because we don't re-export this type.
 import type { Options as GotOptions } from "got" assert { "resolution-mode": "import" };
 import { OIDCDiscoveryClient } from "./OIDCDiscoveryClient";
 
