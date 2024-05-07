@@ -1,5 +1,5 @@
 {
-  "type": "none",
+  "type": "patch",
   "comment": "upgrade docs build tools, typescript, and eslint",
   "packageName": "@itwin/node-cli-authorization",
   "email": "ben-polinsky@users.noreply.github.com",
