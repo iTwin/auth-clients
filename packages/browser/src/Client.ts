@@ -42,7 +42,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     this._basicSettings = {
       ...configuration,
-      authority: configuration.authority ?? getImsAuthority(),
+      authority: configuration.authority ?? getImsAuthority(), // eslint-disable-line deprecation/deprecation
     };
   }
 
