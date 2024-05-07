@@ -74,7 +74,7 @@ importers:
       chai-as-promised: ^7.1.1
       cpx2: ^5.0.0
       dotenv: ~16.0.3
-      electron: ^29.0.0
+      electron: ^30.0.0
       electron-store: ^8.1.0
       eslint: ^7.32.0
       mocha: ^8.2.3
@@ -106,7 +106,7 @@ importers:
       chai-as-promised: 7.1.1_chai@4.3.7
       cpx2: 5.0.0
       dotenv: 16.0.3
-      electron: 29.0.1
+      electron: 30.0.0
       eslint: 7.32.0
       mocha: 8.4.0
       nyc: 15.1.0
@@ -3546,8 +3546,8 @@ packages:
     resolution: {integrity: sha512-ABv1nHMIR8I5n3O3Een0gr6i0mfM+YcTZqjHy3pAYaOjgFG+BMquuKrSyfYf5CbEkLr9uM05RA3pOk4udNB/aQ==}
     dev: true
 
-  /electron/29.0.1:
-    resolution: {integrity: sha512-hsQr9clm8NCAMv4uhHlXThHn52UAgrHgyz3ubBAxZIPuUcpKVDtg4HPmx4hbmHIbYICI5OyLN3Ztp7rS+Dn4Lw==}
+  /electron/30.0.0:
+    resolution: {integrity: sha512-GRwKphq/TUhSlb44OwSckXKl50f5OR/pm9MvF3rBLyqcxwfu7L11xejrZ0hDea1eKyCkzGd4B+cIqaQiDguPEA==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true
