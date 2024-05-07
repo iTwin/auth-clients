@@ -60,16 +60,16 @@ export class LoopbackWebServer {
   private static _redirectUri: string;
 
   /** Start a web server to listen to the browser requests */
-  public static async start(redirectUri: string): Promise<void> {
+  public static async start(this: void, redirectUri: string): Promise<void> {
     if (LoopbackWebServer._httpServer)
       return;
-    this._redirectUri = redirectUri;
+    LoopbackWebServer._redirectUri = redirectUri;
 
     return new Promise((resolve, reject) => {
       const server = Http.createServer(LoopbackWebServer.onBrowserRequest);
       server.on("error", reject);
 
-      const urlParts: URL = new URL(this._redirectUri);
+      const urlParts: URL = new URL(LoopbackWebServer._redirectUri);
       server.listen(urlParts.port, () => {
         LoopbackWebServer._httpServer = server;
         resolve();
@@ -95,7 +95,7 @@ export class LoopbackWebServer {
   }
 
   /** Listen/Handle browser events */
-  private static onBrowserRequest(httpRequest: Http.IncomingMessage, httpResponse: Http.ServerResponse): void {
+  private static onBrowserRequest(this: void, httpRequest: Http.IncomingMessage, httpResponse: Http.ServerResponse): void {
     if (!httpRequest.url)
       return;
 
@@ -136,7 +136,7 @@ export class LoopbackWebServer {
     }
 
     const html = LoopbackWebServer.getHtmlTemplate(
-      httpResponseContent
+      httpResponseContent,
     );
 
     httpResponse.write(html);

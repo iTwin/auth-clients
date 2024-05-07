@@ -26,7 +26,8 @@ interface AutomatedContextBase<T> {
   /** A function that takes the waitForCallback result data (e.g. a callback url)
    * and finalizes the sign in process
    */
-  resultFromCallback?: (t: T) => any | Promise<any>;
+  // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
+  resultFromCallback?: (t: T) => any | Promise<any>; // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
   /** optionally provide the abort controller for errors,
    * in case you need to cancel your waitForCallbackUrl */
   abortController?: AbortController;
@@ -168,14 +169,14 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
 
   await page.waitForLoadState("networkidle");
   const error = page.getByText(
-    "We didn't recognize the email address or password you entered. Please try again."
+    "We didn't recognize the email address or password you entered. Please try again.",
   );
 
   const count = await error.count();
 
   if (count) {
     throw new Error(
-      "We didn't recognize the email address or password you entered. Please try again."
+      "We didn't recognize the email address or password you entered. Please try again.",
     );
   }
 
@@ -241,13 +242,13 @@ async function handleConsentPage<T>(context: AutomatedSignInContext<T>): Promise
 
   if (pageTitle === "Request for Approval") {
     const pingSubmit = await page.waitForSelector(
-      testSelectors.pingAllowSubmit
+      testSelectors.pingAllowSubmit,
     );
     await pingSubmit.click();
   } else if ((await page.title()) === "Permissions") {
     // Another new consent page...
     const acceptButton = await page.waitForSelector(
-      "xpath=(//button/span[text()='Accept'] | //div[contains(@class, 'ping-buttons')]/a[text()='Accept'])[1]"
+      "xpath=(//button/span[text()='Accept'] | //div[contains(@class, 'ping-buttons')]/a[text()='Accept'])[1]",
     );
 
     // In EU there is a cookie consent banner covering the accept button, and it must be dismissed first
@@ -263,7 +264,7 @@ async function handleConsentPage<T>(context: AutomatedSignInContext<T>): Promise
 
 async function checkSelectorExists(
   page: Page,
-  selector: string
+  selector: string,
 ): Promise<boolean> {
   const element = await page.$(selector);
   return !!element;
@@ -315,7 +316,7 @@ export async function launchDefaultAutomationPage(enableSlowNetworkConditions = 
     throw Error(
       "Could not load @playwright/test. Do you have multiple playwright dependencies active? "
       + "If so, then you should provide your own playwright Page to automation APIs to avoid us "
-      + "attempting to make our own by importing playwright"
+      + "attempting to make our own by importing playwright",
     );
   }
 

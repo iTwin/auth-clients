@@ -76,7 +76,7 @@ async function getExtraWindowAsBrowserFromElectron(app: ElectronApplication, url
       // if the bug were fixed, this would not be necessary, as it will be navigated to again later
       await loginPage.loadURL(passed.url);
     },
-    { url }
+    { url },
   );
 
   return newWindowPromise;
@@ -106,7 +106,7 @@ export async function loginElectronMainAuthClient(
     user: TestUserCredentials;
     config: SignInAutomation.AutomatedSignInConfig;
     loginBrowser?: "chromium" | "separate-electron-window";
-  }
+  },
 ) {
   const nextFetchedUrlPromise = await setupGetNextFetchedUrl(backendContext);
   void startSignIn();
@@ -148,7 +148,7 @@ export async function logoutElectronMainAuthClient(
     /** any function that eventually invokes ElectronMainAuthorization.signOut() */
     startSignOut: () => Promise<void>;
     loginBrowser?: "chromium" | "separate-electron-window";
-  }
+  },
 ) {
   const nextFetchedUrlPromise = await setupGetNextFetchedUrl(backendContext);
   void startSignOut();

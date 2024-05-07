@@ -114,7 +114,7 @@ export interface ElectronMainAuthorizationConfiguration {
 
   /**
    * Optional custom implementation of {@link IpcSocketBackend} to use for IPC communication with the Frontend counterpart of
-   * authorization client, see {@link ElectronRendererAuthorization}. If not provided, default IPC implementation is used.
+   * authorization client, see {@link ../ElectronRendererAuthorization}. If not provided, default IPC implementation is used.
    */
   readonly ipcSocket?: IpcSocketBackend;
 
@@ -156,7 +156,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   public constructor(config: ElectronMainAuthorizationConfiguration) {
     if (!config.clientId || !config.scopes || config.redirectUris.length === 0)
       throw new Error(
-        "Must specify a valid configuration with a clientId, scopes and redirect URIs when initializing ElectronMainAuthorization"
+        "Must specify a valid configuration with a clientId, scopes and redirect URIs when initializing ElectronMainAuthorization",
       );
 
     // This library assumes that refresh tokens will be used by the Client. 'offline_access' is a special OAuth
@@ -186,7 +186,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (config.expiryBuffer)
       this._expiryBuffer = config.expiryBuffer;
 
-    const configFileName =  `iTwinJs_${this._clientId}`;
+    const configFileName = `iTwinJs_${this._clientId}`;
     const appStorageKey = `${configFileName}:${this._issuerUrl}`;
     this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey, config.tokenStorePath);
   }
@@ -194,13 +194,13 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   /**
    * Register a persistent handler function that will process incoming Frontend IPC messages from given channel.
    * It is expected that messages received by specified channels originate from an instance of
-   * {@link ElectronRendererAuthorization} that matches this Backend auth client instance.
+   * {@link ../ElectronRendererAuthorization} that matches this Backend auth client instance.
    * @param channel Name of the channel to handle messages from.
    * @param handler Function that will be executed to process incoming messages.
    */
   private handleIpcMessage(
     channel: string,
-    handler: (...args: any[]) => Promise<any>
+    handler: (...args: any[]) => Promise<any>,
   ) {
     if (this._ipcSocket) {
       this._ipcSocket.handle(channel, handler);
@@ -211,7 +211,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   /**
    * Send an IPC message to the Frontend via given channel. Sent message is expected to be received and handled
-   * by an instance of {@link ElectronRendererAuthorization} that matches this Backend auth client instance.
+   * by an instance of {@link ../ElectronRendererAuthorization} that matches this Backend auth client instance.
    * @param channel Name of the to which given message should be sent.
    * @param data Array of objects/values to send over the IPC channel in a single message.
    */
@@ -254,7 +254,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private notifyFrontendAccessTokenExpirationChange(expiresAt: Date): void {
     this.sendIpcMessage(
       this._ipcChannelNames.onAccessTokenExpirationChanged,
-      expiresAt
+      expiresAt,
     );
   }
 
@@ -310,7 +310,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       return await this.refreshAccessToken(refreshToken);
     } catch (err) {
       Logger.logError(loggerCategory, `Error refreshing access token`, () =>
-        BentleyError.getErrorProps(err)
+        BentleyError.getErrorProps(err),
       );
       return "";
     }
@@ -333,12 +333,12 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       this._configuration =
         await AuthorizationServiceConfiguration.fetchFromIssuer(
           this._issuerUrl,
-          tokenRequestor
+          tokenRequestor,
         );
       Logger.logTrace(
         loggerCategory,
         "Initialized service configuration",
-        () => ({ configuration: this._configuration })
+        () => ({ configuration: this._configuration }),
       );
     }
 
@@ -363,7 +363,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     if (redirectUri === "") {
       throw new Error(
-        `Failed to start an HTTP server with given redirect URIs, [${this._redirectUris.toString()}]`
+        `Failed to start an HTTP server with given redirect URIs, [${this._redirectUris.toString()}]`,
       );
     }
 
@@ -379,7 +379,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     const authorizationRequest = new AuthorizationRequest(
       authReqJson,
       new NodeCrypto(),
-      usePkce
+      usePkce,
     );
     await authorizationRequest.setupCodeVerifier();
 
@@ -389,11 +389,11 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     // Ensure that completion callbacks are correlated to the correct authorization request
     LoopbackWebServer.addCorrelationState(
       authorizationRequest.state,
-      authorizationEvents
+      authorizationEvents,
     );
 
     const authorizationHandler = new ElectronMainAuthorizationRequestHandler(
-      authorizationEvents
+      authorizationEvents,
     );
 
     // Setup a notifier to obtain the result of authorization
@@ -405,22 +405,22 @@ export class ElectronMainAuthorization implements AuthorizationClient {
         async (
           authRequest: AuthorizationRequest,
           authResponse: AuthorizationResponse | null,
-          authError: AuthorizationError | null
+          authError: AuthorizationError | null,
         ) => {
           Logger.logTrace(
             loggerCategory,
             "Authorization listener invoked",
-            () => ({ authRequest, authResponse, authError })
+            () => ({ authRequest, authResponse, authError }),
           );
 
           const tokenResponse = await this._onAuthorizationResponse(
             authRequest,
             authResponse,
-            authError
+            authError,
           ).catch((e) => reject(e));
 
           authorizationEvents.onAuthorizationResponseCompleted.raiseEvent(
-            authError ? authError : undefined
+            authError ? authError : undefined,
           );
 
           if (tokenResponse)
@@ -429,14 +429,14 @@ export class ElectronMainAuthorization implements AuthorizationClient {
             await this.clearTokenCache();
 
           finished();
-        }
+        },
       );
     });
 
     // Start the signin
     await authorizationHandler.performAuthorizationRequest(
       this._configuration,
-      authorizationRequest
+      authorizationRequest,
     );
 
     return tokenRequestCompleted;
@@ -451,12 +451,12 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       this._configuration =
         await AuthorizationServiceConfiguration.fetchFromIssuer(
           this._issuerUrl,
-          tokenRequestor
+          tokenRequestor,
         );
       Logger.logTrace(
         loggerCategory,
         "Initialized service configuration",
-        () => ({ configuration: this._configuration })
+        () => ({ configuration: this._configuration }),
       );
     }
     try {
@@ -470,14 +470,14 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private async _onAuthorizationResponse(
     authRequest: AuthorizationRequest,
     authResponse: AuthorizationResponse | null,
-    authError: AuthorizationError | null
+    authError: AuthorizationError | null,
   ): Promise<TokenResponse | undefined> {
     // Phase 1 of login has completed to fetch the authorization code - check for errors
     if (authError) {
       Logger.logError(
         loggerCategory,
         "Authorization error. Unable to get authorization code.",
-        () => authError
+        () => authError,
       );
       return undefined;
     }
@@ -490,7 +490,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
           error: "invalid_state",
           errorDescription:
             "The login response state did not match the login request state.",
-        })
+        }),
       );
       return undefined;
     }
@@ -499,11 +499,11 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     const tokenResponse = await this.swapAuthorizationCodeForTokens(
       authResponse.code,
       authRequest.internal!.code_verifier,
-      authRequest.redirectUri
+      authRequest.redirectUri,
     );
     Logger.logTrace(
       loggerCategory,
-      "Authorization completed, and issued access token"
+      "Authorization completed, and issued access token",
     );
 
     return tokenResponse;
@@ -522,7 +522,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   }
 
   private async processTokenResponse(
-    tokenResponse: TokenResponse
+    tokenResponse: TokenResponse,
   ): Promise<AccessToken> {
     this._refreshToken = tokenResponse.refreshToken;
     if (this._refreshToken)
@@ -557,11 +557,11 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   private async refreshAccessToken(refreshToken: string): Promise<AccessToken> {
     const tokenResponse = await this.makeRefreshAccessTokenRequest(
-      refreshToken
+      refreshToken,
     );
     Logger.logTrace(
       loggerCategory,
-      "Refresh token completed, and issued access token"
+      "Refresh token completed, and issued access token",
     );
 
     return this.processTokenResponse(tokenResponse);
@@ -571,7 +571,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private async swapAuthorizationCodeForTokens(
     authCode: string,
     codeVerifier: string,
-    redirectUri: string
+    redirectUri: string,
   ): Promise<TokenResponse> {
     if (!this._configuration)
       throw new Error("Not initialized. First call initialize()");
@@ -589,25 +589,25 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     const tokenRequest = new TokenRequest(tokenRequestJson);
     const tokenRequestor = new NodeRequestor();
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(
-      tokenRequestor
+      tokenRequestor,
     );
     try {
       return await tokenHandler.performTokenRequest(
         this._configuration,
-        tokenRequest
+        tokenRequest,
       );
     } catch (err) {
       Logger.logError(
         loggerCategory,
         `Error performing token request from token handler`,
-        () => BentleyError.getErrorProps(err)
+        () => BentleyError.getErrorProps(err),
       );
       throw err;
     }
   }
 
   private async makeRefreshAccessTokenRequest(
-    refreshToken: string
+    refreshToken: string,
   ): Promise<TokenResponse> {
     if (!this._configuration)
       throw new Error("Not initialized. First call initialize()");
@@ -628,7 +628,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     const tokenRequest = new TokenRequest(tokenRequestJson);
     const tokenRequestor = new NodeRequestor();
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(
-      tokenRequestor
+      tokenRequestor,
     );
 
     return tokenHandler.performTokenRequest(this._configuration, tokenRequest);
@@ -637,7 +637,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private async makeRevokeTokenRequest(): Promise<void> {
     if (!this._refreshToken)
       throw new Error(
-        "Missing refresh token. First call signIn() and ensure it's successful"
+        "Missing refresh token. First call signIn() and ensure it's successful",
       );
     assert(this._clientId !== "");
 
@@ -650,16 +650,16 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     const revokeTokenRequest = new RevokeTokenRequest(revokeTokenRequestJson);
     const tokenRequestor = new NodeRequestor();
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(
-      tokenRequestor
+      tokenRequestor,
     );
     await tokenHandler.performRevokeTokenRequest(
       this._configuration!,
-      revokeTokenRequest
+      revokeTokenRequest,
     );
 
     Logger.logTrace(
       loggerCategory,
-      "Authorization revoked, and removed access token"
+      "Authorization revoked, and removed access token",
     );
     await this.clearTokenCache();
   }

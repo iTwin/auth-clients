@@ -47,9 +47,9 @@
     "username": "^5.1.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.0.6",
+    "@itwin/build-tools": "^4.6.0-dev.27",
     "@itwin/core-bentley": "^3.7.0",
-    "@itwin/eslint-plugin": "^3.3.0",
+    "@itwin/eslint-plugin": "^4.0.1",
     "@playwright/test": "~1.41.0",
     "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7.1.1",
@@ -61,7 +61,7 @@
     "cpx2": "^5.0.0",
     "dotenv": "~16.0.3",
     "electron": "^30.0.0",
-    "eslint": "^7.32.0",
+    "eslint": "^8.56.0",
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",
     "parcel": "~2.9.3",
@@ -70,20 +70,10 @@
     "rimraf": "^3.0.2",
     "sinon": "^15.0.1",
     "source-map-support": "^0.5.9",
-    "typescript": "~5.0.2"
+    "typescript": "~5.3.3"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0",
     "electron": ">=23.0.0 <31.0.0"
-  },
-  "eslintConfig": {
-    "plugins": [
-      "@itwin"
-    ],
-    "extends": "plugin:@itwin/itwinjs-recommended",
-    "rules": {
-      "no-duplicate-imports": "off",
-      "@typescript-eslint/consistent-type-imports": "error"
-    }
   }
 }

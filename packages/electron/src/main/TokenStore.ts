@@ -14,8 +14,7 @@ const Store = require("electron-store"); // eslint-disable-line @typescript-esli
  */
 export class RefreshTokenStore {
   /**
-   * Key that will be used to store and read refresh token from OS level secure credential store,
-   * see {@link setPassword}, {@link getPassword}.
+   * Key that will be used to store and read refresh token from OS level secure credential store
    */
   private _appStorageKey: string;
   /**

@@ -68,7 +68,7 @@ export interface ElectronRendererAuthorizationConfiguration {
 
   /**
    * Optional custom implementation of {@link IpcSocketFrontend} to use for IPC communication with the Backend counterpart of
-   * authorization client, see {@link ElectronMainAuthorization}. If not provided, default IPC implementation is used.
+   * authorization client, see {@link ../ElectronMainAuthorization}. If not provided, default IPC implementation is used.
    */
   readonly ipcSocket?: IpcSocketFrontend;
 

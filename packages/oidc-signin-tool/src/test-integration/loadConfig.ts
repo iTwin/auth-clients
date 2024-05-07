@@ -4,6 +4,9 @@ import type { TestBrowserAuthorizationClientConfiguration } from "../TestUsers";
 
 const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
 
+/**
+ * Determines auth sign in flow.
+ */
 export enum TestConfigType {
   OIDC,
   AZURE,
@@ -17,8 +20,11 @@ function loadEnv(envFile: string) {
   }
 }
 
+/**
+ * Loads configuration from environment variables
+ */
 export function loadConfig(
-  configType: TestConfigType
+  configType: TestConfigType,
 ): TestBrowserAuthorizationClientConfiguration {
   loadEnv(path.join(__dirname, "..", "..", ".env"));
   config();
@@ -44,15 +50,15 @@ export function loadConfig(
   if (configType === TestConfigType.AZURE) {
     if (!process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY)
       throw new Error(
-        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY"
+        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_AUTHORITY",
       );
     if (!process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID)
       throw new Error(
-        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID"
+        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_CLIENT_ID",
       );
     if (!process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI)
       throw new Error(
-        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI"
+        "Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_REDIRECT_URI",
       );
     if (!process.env.IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES)
       throw new Error("Could not find IMJS_OIDC_AZUREAD_BROWSER_TEST_SCOPES");
@@ -68,17 +74,17 @@ export function loadConfig(
   if (configType === TestConfigType.AUTHING) {
     if (!process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY)
       throw new Error(
-        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY"
+        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_AUTHORITY",
       );
 
     if (!process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID)
       throw new Error(
-        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID"
+        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_CLIENT_ID",
       );
 
     if (!process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI)
       throw new Error(
-        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI"
+        "Could not find IMJS_OIDC_AUTHING_BROWSER_TEST_REDIRECT_URI",
       );
 
     if (!process.env.IMJS_OIDC_AUTHING_BROWSER_TEST_SCOPES)

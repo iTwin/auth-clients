@@ -43,7 +43,7 @@ describe("BrowserAuthorizationClient", () => {
       assert.equal(settings.redirectUri, "test_redirectUri");
       assert.equal(
         settings.postSignoutRedirectUri,
-        "test_postSignoutRedirectUri"
+        "test_postSignoutRedirectUri",
       );
       assert.equal(settings.scope, "test_scope");
       assert.equal(settings.responseType, "test_responseType");

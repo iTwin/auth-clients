@@ -63,5 +63,5 @@ registerBackendCallback(
   getTokenCallbackName,
   async (user: any, oidcConfig?: any): Promise<string> => {
     return signin(user, oidcConfig);
-  }
+  },
 );
