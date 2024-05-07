@@ -2,7 +2,6 @@
  * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
-
 import { assert } from "chai";
 import { BrowserAuthorizationClient } from "../Client";
 import { getImsAuthority } from "../utils";
@@ -72,7 +71,7 @@ describe("BrowserAuthorizationClient", () => {
       const client = new BrowserAuthorizationClient(testConfigWithoutAuthority);
 
       // getImsAuthority manages the value of the default authority
-      assert.equal(client.authorityUrl, getImsAuthority());
+      assert.equal(client.authorityUrl, getImsAuthority()); // eslint-disable-line deprecation/deprecation
     });
 
     it("default authority is used and when none is given and uses environment prefix", () => {
@@ -80,7 +79,7 @@ describe("BrowserAuthorizationClient", () => {
       const client = new BrowserAuthorizationClient(testConfigWithoutAuthority);
 
       // getImsAuthority manages the value of the default authority
-      assert.equal(client.authorityUrl, getImsAuthority());
+      assert.equal(client.authorityUrl, getImsAuthority()); // eslint-disable-line deprecation/deprecation
     });
 
     it("_basicSettings contains passed in configuration", () => {
@@ -112,7 +111,7 @@ describe("BrowserAuthorizationClient", () => {
       const client = new BrowserAuthorizationClient(testConfigWithoutAuthority);
 
       // getImsAuthority manages the value of the default authority
-      assert.equal(client.authorityUrl, getImsAuthority());
+      assert.equal(client.authorityUrl, getImsAuthority()); // eslint-disable-line deprecation/deprecation
     });
 
     it("default authority is used and when none is given and uses environment prefix", () => {
@@ -120,7 +119,7 @@ describe("BrowserAuthorizationClient", () => {
       const client = new BrowserAuthorizationClient(testConfigWithoutAuthority);
 
       // getImsAuthority manages the value of the default authority
-      assert.equal(client.authorityUrl, getImsAuthority());
+      assert.equal(client.authorityUrl, getImsAuthority()); // eslint-disable-line deprecation/deprecation
     });
 
     it('successfully sets "query" as response mode', () => {
