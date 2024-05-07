@@ -8,18 +8,12 @@ importers:
 
   .:
     devDependencies:
-      '@itwin/core-bentley':
-        specifier: ^3.3.0 || ^4.0.0
-        version: 3.7.12
       beachball:
         specifier: ^2.36.0
         version: 2.36.0
       lage:
         specifier: ^2.7.14
         version: 2.7.15
-      process:
-        specifier: ^0.11.10
-        version: 0.11.10
 
   packages/browser:
     dependencies:
@@ -143,8 +137,8 @@ importers:
         specifier: ~16.0.3
         version: 16.0.3
       electron:
-        specifier: ^29.0.0
-        version: 29.0.1
+        specifier: ^30.0.0
+        version: 30.0.2
       eslint:
         specifier: ^7.32.0
         version: 7.32.0
@@ -2966,7 +2960,7 @@ packages:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
     dependencies:
       '@types/connect': 3.4.35
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
     dev: false
 
   /@types/cacheable-request@6.0.3:
@@ -2974,7 +2968,7 @@ packages:
     dependencies:
       '@types/http-cache-semantics': 4.0.1
       '@types/keyv': 3.1.4
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
       '@types/responselike': 1.0.0
     dev: true
 
@@ -2991,13 +2985,13 @@ packages:
   /@types/connect@3.4.35:
     resolution: {integrity: sha512-cdeYyv4KWoEgpBISTxWvqYsVy444DOqehiF3fM3ne10AmJ62RSyNkUnxMJXHQWRQQX2eR94m5y1IZyDwBjV9FQ==}
     dependencies:
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
     dev: false
 
   /@types/express-serve-static-core@4.17.35:
     resolution: {integrity: sha512-wALWQwrgiB2AWTT91CB62b6Yt0sNHpznUXeZEcnPU3DRdlDIz74x8Qg1UUYKSVFi+va5vKOLYRBI1bRKiLLKIg==}
     dependencies:
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
       '@types/qs': 6.9.7
       '@types/range-parser': 1.2.4
       '@types/send': 0.17.1
@@ -3047,7 +3041,7 @@ packages:
   /@types/keyv@3.1.4:
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
     dependencies:
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
     dev: true
 
   /@types/mime@1.3.2:
@@ -3081,6 +3075,7 @@ packages:
     resolution: {integrity: sha512-7xMnVEcZFu0DikYjWOlRq7NTPETrm7teqUT2WkQjrTIkEgUyyGdWsj/Zg8bEJt5TNklzbPD1X3fqfsHw3SpapQ==}
     dependencies:
       undici-types: 5.26.5
+    dev: true
 
   /@types/parse-json@4.0.0:
     resolution: {integrity: sha512-//oorEZjL6sbPcKUaCdIGlIUeH26mgzimjBB77G6XRgnDl/L5wOnpyBGRe/Mmf5CVW3PwEBE1NjiMZ/ssFh4wA==}
@@ -3097,7 +3092,7 @@ packages:
   /@types/responselike@1.0.0:
     resolution: {integrity: sha512-85Y2BjiufFzaMIlvJDvTTB8Fxl2xfLo4HgmHzVBz08w4wDePCTjYw66PdrolO0kzli3yam/YCgRufyo1DdQVTA==}
     dependencies:
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
     dev: true
 
   /@types/semver@7.5.0:
@@ -3108,7 +3103,7 @@ packages:
     resolution: {integrity: sha512-Cwo8LE/0rnvX7kIIa3QHCkcuF21c05Ayb0ZfxPiv0W8VRiZiNW/WuRupHKpqqGVGf7SUA44QSOUKaEd9lIrd/Q==}
     dependencies:
       '@types/mime': 1.3.2
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
     dev: false
 
   /@types/serve-static@1.15.2:
@@ -3116,7 +3111,7 @@ packages:
     dependencies:
       '@types/http-errors': 2.0.1
       '@types/mime': 3.0.1
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
     dev: false
 
   /@types/sinon@10.0.16:
@@ -3137,7 +3132,7 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 20.11.19
+      '@types/node': 18.18.14
     optional: true
 
   /@typescript-eslint/eslint-plugin@4.31.2(@typescript-eslint/parser@4.31.2)(eslint@7.32.0)(typescript@5.0.4):
@@ -4416,8 +4411,8 @@ packages:
     resolution: {integrity: sha512-ABv1nHMIR8I5n3O3Een0gr6i0mfM+YcTZqjHy3pAYaOjgFG+BMquuKrSyfYf5CbEkLr9uM05RA3pOk4udNB/aQ==}
     dev: true
 
-  /electron@29.0.1:
-    resolution: {integrity: sha512-hsQr9clm8NCAMv4uhHlXThHn52UAgrHgyz3ubBAxZIPuUcpKVDtg4HPmx4hbmHIbYICI5OyLN3Ztp7rS+Dn4Lw==}
+  /electron@30.0.2:
+    resolution: {integrity: sha512-zv7T+GG89J/hyWVkQsLH4Y/rVEfqJG5M/wOBIGNaDdqd8UV9/YZPdS7CuFeaIj0H9LhCt95xkIQNpYB/3svOkQ==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true
