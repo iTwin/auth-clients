@@ -28,5 +28,5 @@ export function getImsAuthority(): string {
     // swallow error
   }
 
-  return `https://ims.bentley.com`;
+  return "https://ims.bentley.com";
 }
