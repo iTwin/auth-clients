@@ -26,7 +26,6 @@ interface AutomatedContextBase<T> {
   /** A function that takes the waitForCallback result data (e.g. a callback url)
    * and finalizes the sign in process
    */
-  // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
   resultFromCallback?: (t: T) => any | Promise<any>; // eslint-disable-line @typescript-eslint/no-redundant-type-constituents
   /** optionally provide the abort controller for errors,
    * in case you need to cancel your waitForCallbackUrl */
