@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "ts assert syntax changes",
-  "packageName": "@itwin/service-authorization",
-  "email": "ben-polinsky@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

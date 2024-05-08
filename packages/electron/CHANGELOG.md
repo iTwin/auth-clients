@@ -1,8 +1,17 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Thu, 28 Mar 2024 13:12:45 GMT and should not be manually modified.
+This log was last generated on Wed, 08 May 2024 21:11:26 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.19.2
+
+Wed, 08 May 2024 21:11:26 GMT
+
+### Patches
+
+- clean up `this` usage (ben-polinsky@users.noreply.github.com)
+- Add support for Electron 30 (GytisCepk@users.noreply.github.com)
 
 ## 0.19.1
 

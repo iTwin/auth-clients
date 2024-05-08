@@ -1,8 +1,17 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Mon, 13 Nov 2023 15:21:13 GMT and should not be manually modified.
+This log was last generated on Wed, 08 May 2024 21:11:26 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.1.1
+
+Wed, 08 May 2024 21:11:26 GMT
+
+### Patches
+
+- clean up redundant types (ben-polinsky@users.noreply.github.com)
+- deprecate getImsAuthority and usage of process.env on frontend (ben-polinsky@users.noreply.github.com)
 
 ## 1.1.0
 

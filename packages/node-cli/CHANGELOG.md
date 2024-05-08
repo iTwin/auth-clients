@@ -1,8 +1,16 @@
 # Change Log - @itwin/node-cli-authorization
 
-This log was last generated on Thu, 14 Dec 2023 15:21:31 GMT and should not be manually modified.
+This log was last generated on Wed, 08 May 2024 21:11:26 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 2.0.2
+
+Wed, 08 May 2024 21:11:26 GMT
+
+### Patches
+
+- upgrade docs build tools, typescript, and eslint (ben-polinsky@users.noreply.github.com)
 
 ## 2.0.1
 

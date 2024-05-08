@@ -1,8 +1,16 @@
 # Change Log - @itwin/service-authorization
 
-This log was last generated on Thu, 14 Mar 2024 15:38:52 GMT and should not be manually modified.
+This log was last generated on Wed, 08 May 2024 21:11:26 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.2.1
+
+Wed, 08 May 2024 21:11:26 GMT
+
+### Patches
+
+- ts assert syntax changes (ben-polinsky@users.noreply.github.com)
 
 ## 1.2.0
 

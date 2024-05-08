@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "deprecate getImsAuthority and usage of process.env on frontend",
-  "packageName": "@itwin/browser-authorization",
-  "email": "ben-polinsky@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

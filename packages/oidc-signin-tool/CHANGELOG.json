@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Wed, 08 May 2024 21:11:26 GMT",
+      "version": "4.3.5",
+      "tag": "@itwin/oidc-signin-tool_v4.3.5",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "26561d12deb510bc9d418faa285c2966f73fe5b3",
+            "comment": "upgrade docs build tools, typescript, and eslint"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 18 Mar 2024 17:02:58 GMT",
       "version": "4.3.4",
       "tag": "@itwin/oidc-signin-tool_v4.3.4",

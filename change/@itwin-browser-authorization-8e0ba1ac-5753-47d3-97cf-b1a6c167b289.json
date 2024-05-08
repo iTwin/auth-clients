@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "clean up redundant types",
-  "packageName": "@itwin/browser-authorization",
-  "email": "ben-polinsky@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

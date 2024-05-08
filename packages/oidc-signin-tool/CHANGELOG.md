@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Mon, 18 Mar 2024 17:02:58 GMT and should not be manually modified.
+This log was last generated on Wed, 08 May 2024 21:11:26 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 4.3.5
+
+Wed, 08 May 2024 21:11:26 GMT
+
+### Patches
+
+- upgrade docs build tools, typescript, and eslint (ben-polinsky@users.noreply.github.com)
 
 ## 4.3.4
 

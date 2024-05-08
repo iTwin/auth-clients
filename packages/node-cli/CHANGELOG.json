@@ -2,6 +2,21 @@
   "name": "@itwin/node-cli-authorization",
   "entries": [
     {
+      "date": "Wed, 08 May 2024 21:11:26 GMT",
+      "version": "2.0.2",
+      "tag": "@itwin/node-cli-authorization_v2.0.2",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/node-cli-authorization",
+            "commit": "26561d12deb510bc9d418faa285c2966f73fe5b3",
+            "comment": "upgrade docs build tools, typescript, and eslint"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 14 Dec 2023 15:21:31 GMT",
       "version": "2.0.1",
       "tag": "@itwin/node-cli-authorization_v2.0.1",

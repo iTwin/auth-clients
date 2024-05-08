@@ -2,6 +2,21 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "date": "Wed, 08 May 2024 21:11:26 GMT",
+      "version": "1.2.1",
+      "tag": "@itwin/service-authorization_v1.2.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "26561d12deb510bc9d418faa285c2966f73fe5b3",
+            "comment": "ts assert syntax changes"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 14 Mar 2024 15:38:52 GMT",
       "version": "1.2.0",
       "tag": "@itwin/service-authorization_v1.2.0",
