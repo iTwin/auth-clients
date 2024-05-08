@@ -34,7 +34,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
    */
   public constructor(
     config: TestBrowserAuthorizationClientConfiguration,
-    user: TestUserCredentials
+    user: TestUserCredentials,
   ) {
     this._config = config;
     this._user = user;
@@ -85,7 +85,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
           (err instanceof Error &&
             -1 ===
             err.message.indexOf(
-              "Execution context was destroyed, most likely because of a navigation"
+              "Execution context was destroyed, most likely because of a navigation",
             ))
         )
           throw err;
@@ -143,7 +143,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       // This varies depending on the type of user, so start
       // waiting now and resolve at the end of the "sign in pipeline"
       waitForCallback: page.waitForRequest((req) =>
-        req.url().startsWith(this._config.redirectUri) || controller.signal.aborted
+        req.url().startsWith(this._config.redirectUri) || controller.signal.aborted,
       ).then((resp) => resp.url()),
 
       resultFromCallback: async (callbackUrl) => {
@@ -167,14 +167,11 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
  * - this is only to be used in test environments, and **never** in production code.
  * - causes authorization to happen by spawning a
  *  browser, and automatically filling in the supplied user credentials
- * @param config Oidc configuration
- * @param user User
- * @param deploymentRegion Deployment region. If unspecified, it's inferred from configuration, or simply defaults to "0" for PROD use
  * @alpha
  */
 export async function getTestAccessToken(
   config: TestBrowserAuthorizationClientConfiguration,
-  user: TestUserCredentials
+  user: TestUserCredentials,
 ): Promise<AccessToken | undefined> {
   const client = new TestBrowserAuthorizationClient(config, user);
   return client.getAccessToken();

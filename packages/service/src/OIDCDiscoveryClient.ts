@@ -19,7 +19,6 @@ const booleanProperties = ["claims_parameter_supported", "request_parameter_supp
   * Supports the OpenID Connect Discovery 1.0 specification.
   * @internal
   */
-
 export type OIDCConfig =
   { [x in typeof stringProperties[number]]: string | undefined } &
   { [x in typeof arrayProperties[number]]: string[] | undefined } &

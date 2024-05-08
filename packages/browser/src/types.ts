@@ -50,8 +50,7 @@ export interface BrowserAuthorizationClientConfiguration
   | "id_token token"
   | "code id_token"
   | "code token"
-  | "code id_token token"
-  | string;
+  | "code id_token token";
   /** if true, do NOT attempt a silent signIn on startup of the application */
   readonly noSilentSignInOnAppStartup?: boolean;
   /** The redirect URL used for silent sign in and renew. If not provided, will default to redirectUri. */
@@ -66,9 +65,12 @@ export interface BrowserAuthorizationClientConfiguration
  */
 export interface BrowserAuthorizationClientRequestOptions {
   /** The required action demanded of the user before the authentication request can succeed */
-  prompt?: "none" | "login" | "consent" | "select_account" | string;
+  prompt?: string;
 }
 
+/**
+ * Represents the settings stored in storage.
+ */
 export interface SettingsInStorage {
   id: string; // nonce/state
   authority: string;

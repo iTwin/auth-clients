@@ -35,9 +35,9 @@
     "username": "^5.1.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.0.0-dev.93",
+    "@itwin/build-tools": "^4.6.0-dev.27",
     "@itwin/core-bentley": "^3.7.0",
-    "@itwin/eslint-plugin": "^3.7.0",
+    "@itwin/eslint-plugin": "^4.0.2",
     "@types/chai-as-promised": "^7.1.1",
     "@types/chai": "^4.2.22",
     "@types/mocha": "^8.2.3",
@@ -47,13 +47,13 @@
     "chai-as-promised": "^7.1.1",
     "chai": "^4.2.22",
     "cpx2": "^5.0.0",
-    "eslint": "^7.32.0",
+    "eslint": "^8.56.0",
     "mocha": "^8.2.3",
     "nyc": "^15.1.0",
     "rimraf": "^3.0.2",
     "sinon": "^15.2.0",
     "source-map-support": "^0.5.9",
-    "typescript": "~5.0.2"
+    "typescript": "~5.3.3"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0"

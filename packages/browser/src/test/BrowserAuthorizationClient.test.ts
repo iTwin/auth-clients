@@ -21,7 +21,7 @@ describe("BrowserAuthorizationClient", () => {
         redirectUri: "test_redirectUri",
         postSignoutRedirectUri: "test_postSignoutRedirectUri",
         scope: "test_scope",
-        responseType: "test_responseType",
+        responseType: "code",
         noSilentSignInOnAppStartup: false,
         silentRedirectUri: "test_silentRedirectUri",
         responseMode: "query",
@@ -43,10 +43,10 @@ describe("BrowserAuthorizationClient", () => {
       assert.equal(settings.redirectUri, "test_redirectUri");
       assert.equal(
         settings.postSignoutRedirectUri,
-        "test_postSignoutRedirectUri"
+        "test_postSignoutRedirectUri",
       );
       assert.equal(settings.scope, "test_scope");
-      assert.equal(settings.responseType, "test_responseType");
+      assert.equal(settings.responseType, "code");
       assert.equal(settings.noSilentSignInOnAppStartup, false);
       assert.equal(settings.silentRedirectUri, "test_silentRedirectUri");
     });

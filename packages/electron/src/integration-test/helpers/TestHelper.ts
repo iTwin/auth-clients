@@ -6,6 +6,9 @@
 import type { Page } from "@playwright/test";
 import type { SignInOptions } from "../types";
 
+/**
+ * Helper class for tests
+ */
 export class TestHelper {
   constructor(private _signInOptions: SignInOptions) { }
 
@@ -36,7 +39,7 @@ export class TestHelper {
 
   public async signIn(page: Page, url: string) {
     await page.goto(url);
-    await page.waitForSelector("#identifierInput", {timeout: 5000});
+    await page.waitForSelector("#identifierInput", { timeout: 5000 });
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);

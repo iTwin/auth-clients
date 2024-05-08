@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "clean up `this` usage",
+  "packageName": "@itwin/electron-authorization",
+  "email": "ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}

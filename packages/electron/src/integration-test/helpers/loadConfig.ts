@@ -5,6 +5,9 @@
 
 import { config } from "dotenv";
 
+/**
+ * Load configuration from environment variables.
+ */
 export function loadConfig() {
   config();
 
@@ -14,7 +17,7 @@ export function loadConfig() {
     !process.env.IMJS_TEST_REGULAR_USER_PASSWORD
   ) {
     throw new Error(
-      "Please expose IMJS_TEST_ELECTRON_CLIENT_ID, IMJS_TEST_REGULAR_USER_NAME and IMJS_TEST_REGULAR_USER_PASSWORD as env variables"
+      "Please expose IMJS_TEST_ELECTRON_CLIENT_ID, IMJS_TEST_REGULAR_USER_NAME and IMJS_TEST_REGULAR_USER_PASSWORD as env variables",
     );
   }
 

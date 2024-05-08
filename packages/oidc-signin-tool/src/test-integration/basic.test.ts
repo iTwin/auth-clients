@@ -5,7 +5,9 @@
 
 import { expect, test } from "@playwright/test";
 import type { TestBrowserAuthorizationClientConfiguration } from "../index";
-import { getTestAccessToken, TestUsers, TestUtility } from "../index";
+import { getTestAccessToken } from "../TestBrowserAuthorizationClient";
+import { TestUsers } from "../TestUsers";
+import { TestUtility } from "../TestUtility";
 import { loadConfig, TestConfigType } from "./loadConfig";
 
 let oidcConfig: TestBrowserAuthorizationClientConfiguration;
@@ -28,7 +30,7 @@ test.describe("Sign in (#integration)", () => {
         ...oidcConfig,
         scope: `${oidcConfig.scope} projects:read`,
       },
-      validUser
+      validUser,
     );
     expect(token).toBeDefined();
   });
@@ -37,23 +39,23 @@ test.describe("Sign in (#integration)", () => {
     const oidcInvalidConfig = { ...oidcConfig, redirectUri: "invalid.com" };
     const validUser = TestUsers.regular;
     await expect(
-      getTestAccessToken(oidcInvalidConfig, validUser)
+      getTestAccessToken(oidcInvalidConfig, validUser),
     ).rejects.toThrowError(`400 - Invalid redirect_uri`);
   });
 
   test("failure with invalid Bentley federated user", async () => {
     await expect(
-      getTestAccessToken(oidcConfig, TestUsers.federatedInvalid)
+      getTestAccessToken(oidcConfig, TestUsers.federatedInvalid),
     ).rejects.toThrowError(
-      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: This username may be incorrect. Make sure you typed it correctly. Otherwise, contact your admin.`
+      `Failed OIDC signin for ${TestUsers.federatedInvalid.email}.\nError: This username may be incorrect. Make sure you typed it correctly. Otherwise, contact your admin.`,
     );
   });
 
   test("failure with invalid user", async () => {
     await expect(
-      getTestAccessToken(oidcConfig, TestUsers.invalid)
+      getTestAccessToken(oidcConfig, TestUsers.invalid),
     ).rejects.toThrowError(
-      `Failed OIDC signin for ${TestUsers.invalid.email}.\nError: We didn't recognize the email address or password you entered. Please try again.`
+      `Failed OIDC signin for ${TestUsers.invalid.email}.\nError: We didn't recognize the email address or password you entered. Please try again.`,
     );
   });
 });

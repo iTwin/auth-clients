@@ -76,9 +76,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Merges the basic and advanced settings into a single configuration object consumable by the internal userManager.
-   * @param basicSettings
-   * @param advancedSettings
-   * @returns a promise resolving to UserManagerSettings
    */
   protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
     let userManagerSettings: UserManagerSettings = {
@@ -104,7 +101,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   /**
    * Creates the internal user manager and binds all relevant events to their respective callback function.
-   * @param settings
    */
   protected createUserManager(settings: UserManagerSettings): UserManager {
     const userManager = new UserManager(settings);
@@ -434,7 +430,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
   private static loadSettingsFromStorage(
     client: BrowserAuthorizationClient,
-    store: Storage
+    store: Storage,
   ) {
     const url = new URL(window.location.href);
     const nonce = url.searchParams.get("state");

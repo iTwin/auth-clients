@@ -3,6 +3,9 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
+/**
+ * Options for signing in.
+ */
 export interface SignInOptions {
   clientId: string;
   email: string;

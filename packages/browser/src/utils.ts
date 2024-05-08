@@ -12,8 +12,6 @@
  * A prefix will be prepended based on the value of the IMJS_URL_PREFIX environment variable.
  * The prefix "dev-" will automatically be converted to "qa-".
  * @deprecated in 1.1.x Please set the authority in `BrowserAuthorizationClientConfiguration` configuration object.
- * @param authorityUrl
- * @returns
  */
 export function getImsAuthority(): string {
   try {
