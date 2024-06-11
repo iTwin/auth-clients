@@ -70,7 +70,9 @@ export class LoopbackWebServer {
       server.on("error", reject);
 
       const urlParts: URL = new URL(LoopbackWebServer._redirectUri);
-      server.listen(urlParts.port, () => {
+      const portNumber = Number(urlParts.port);
+
+      server.listen(portNumber, urlParts.hostname, () => {
         LoopbackWebServer._httpServer = server;
         resolve();
       });

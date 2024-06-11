@@ -32,6 +32,8 @@ There is also an [authorization client for command-line developer tools](./packa
 3. Build source: `pnpm build`
 4. Run tests: `pnpm cover`
 
+> Note: Sometimes lage's cache will become stale and it may refuse to build projects you've changed. If this or other odd behavior occurs on build, add the [`--reset-cache` flag](https://microsoft.github.io/lage/docs/Tutorial/cache/) to the `pnpm build` command.
+
 ## Extract Documentation
 
 `pnpm run docs`
