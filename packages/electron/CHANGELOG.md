@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 08 May 2024 21:11:26 GMT and should not be manually modified.
+This log was last generated on Tue, 11 Jun 2024 21:25:12 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.19.3
+
+Tue, 11 Jun 2024 21:25:12 GMT
+
+### Patches
+
+- Only listen on hostname and port provided in redirectUris. Previously, we would listen on any local interface with the selected port. (ben-polinsky@users.noreply.github.com)
 
 ## 0.19.2
 

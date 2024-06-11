@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Only listen on hostname and port provided in redirectUris. Previously, we would listen on any local interface with the selected port.",
-  "packageName": "@itwin/electron-authorization",
-  "email": "ben-polinsky@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
