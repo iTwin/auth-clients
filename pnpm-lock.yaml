@@ -24,8 +24,8 @@ importers:
         specifier: ^3.7.0 || ^4.0.0
         version: 4.0.6(@itwin/core-bentley@3.7.12)(@itwin/core-geometry@4.7.1)
       oidc-client-ts:
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^2.4.0
+        version: 2.4.0
     devDependencies:
       '@itwin/build-tools':
         specifier: ^4.6.0-dev.27
@@ -273,8 +273,8 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       oidc-client-ts:
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^2.4.0
+        version: 2.4.0
     devDependencies:
       '@itwin/build-tools':
         specifier: ^4.6.0-dev.27
@@ -3664,6 +3664,10 @@ packages:
       randomfill: 1.0.4
     dev: false
 
+  /crypto-js@4.2.0:
+    resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+    dev: false
+
   /css-select@4.3.0:
     resolution: {integrity: sha512-wPpOYtnsVontu2mODhA19JrqWxNsfdatRKd64kmpRbQgh1KtItko5sTnEpPdpSaJszTOhEMlF/RPz28qj4HqhQ==}
     dependencies:
@@ -5928,9 +5932,8 @@ packages:
       safe-buffer: 5.2.1
     dev: false
 
-  /jwt-decode@4.0.0:
-    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
-    engines: {node: '>=18'}
+  /jwt-decode@3.1.2:
+    resolution: {integrity: sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==}
     dev: false
 
   /keyv@4.5.3:
@@ -6692,11 +6695,12 @@ packages:
       es-object-atoms: 1.0.0
     dev: true
 
-  /oidc-client-ts@3.0.1:
-    resolution: {integrity: sha512-xX8unZNtmtw3sOz4FPSqDhkLFnxCDsdo2qhFEH2opgWnF/iXMFoYdBQzkwCxAZVgt3FT3DnuBY3k80EZHT0RYg==}
-    engines: {node: '>=18'}
+  /oidc-client-ts@2.4.0:
+    resolution: {integrity: sha512-WijhkTrlXK2VvgGoakWJiBdfIsVGz6CFzgjNNqZU1hPKV2kyeEaJgLs7RwuiSp2WhLfWBQuLvr2SxVlZnk3N1w==}
+    engines: {node: '>=12.13.0'}
     dependencies:
-      jwt-decode: 4.0.0
+      crypto-js: 4.2.0
+      jwt-decode: 3.1.2
     dev: false
 
   /on-finished@2.4.1:
