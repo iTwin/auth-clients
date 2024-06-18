@@ -1,0 +1,7 @@
+{
+  "type": "major",
+  "comment": "Drop iTwin 3.x support",
+  "packageName": "@itwin/node-cli-authorization",
+  "email": "ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}

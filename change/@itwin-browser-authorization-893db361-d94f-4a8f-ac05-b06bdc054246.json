@@ -1,0 +1,7 @@
+{
+  "type": "major",
+  "comment": "Drop iTwin 3.x support; upgrade to oidc-client-ts 3.0.1 (uses browser's crypto)",
+  "packageName": "@itwin/browser-authorization",
+  "email": "ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
