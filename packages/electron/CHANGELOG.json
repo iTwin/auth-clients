@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Tue, 18 Jun 2024 19:11:49 GMT",
+      "version": "0.19.4",
+      "tag": "@itwin/electron-authorization_v0.19.4",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "f1465b0f0fc422baad21759d0aaff094d4391e84",
+            "comment": "fix latest sec vulnerabilities; run audit during ci"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 11 Jun 2024 21:25:12 GMT",
       "version": "0.19.3",
       "tag": "@itwin/electron-authorization_v0.19.3",

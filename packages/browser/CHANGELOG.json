@@ -2,6 +2,21 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "date": "Tue, 18 Jun 2024 19:11:49 GMT",
+      "version": "1.1.2",
+      "tag": "@itwin/browser-authorization_v1.1.2",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "f1465b0f0fc422baad21759d0aaff094d4391e84",
+            "comment": "fix latest sec vulnerabilities; run audit during ci"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 08 May 2024 21:11:26 GMT",
       "version": "1.1.1",
       "tag": "@itwin/browser-authorization_v1.1.1",

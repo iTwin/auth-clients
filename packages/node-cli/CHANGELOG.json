@@ -2,6 +2,21 @@
   "name": "@itwin/node-cli-authorization",
   "entries": [
     {
+      "date": "Tue, 18 Jun 2024 19:11:49 GMT",
+      "version": "2.0.3",
+      "tag": "@itwin/node-cli-authorization_v2.0.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/node-cli-authorization",
+            "commit": "f1465b0f0fc422baad21759d0aaff094d4391e84",
+            "comment": "fix latest sec vulnerabilities; run audit during ci"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 08 May 2024 21:11:26 GMT",
       "version": "2.0.2",
       "tag": "@itwin/node-cli-authorization_v2.0.2",
