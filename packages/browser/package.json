@@ -34,9 +34,6 @@
     "@itwin/core-common": "^3.7.0 || ^4.0.0",
     "oidc-client-ts": "^3.0.1"
   },
-  "targets": {
-    "browser": true
-  },
   "devDependencies": {
     "@itwin/build-tools": "^4.6.0-dev.27",
     "@itwin/core-bentley": "^3.7.0",
