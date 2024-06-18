@@ -6,7 +6,8 @@ import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import { OIDCDiscoveryClient } from "@itwin/service-authorization";
-import * as crypto from "crypto"
+import * as crypto from "crypto-browserify"
+
 import { InMemoryWebStorage, OidcClient, WebStorageStateStore } from "oidc-client-ts";
 import type {
   TestBrowserAuthorizationClientConfiguration,
