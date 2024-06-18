@@ -39,7 +39,7 @@
     "@playwright/test": "~1.41.0",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
-    "oidc-client-ts": "^2.2.4"
+    "oidc-client-ts": "^3.0.1"
   },
   "devDependencies": {
     "@itwin/build-tools": "^4.6.0-dev.27",
@@ -51,11 +51,11 @@
     "@types/mocha": "^8.2.3",
     "@types/node": "^18.11.5",
     "@types/sinon": "^10.0.13",
-    "chai": "^4.2.22",
+    "chai": "^5.1.1",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.56.0",
-    "mocha": "^8.2.3",
-    "nyc": "^15.1.0",
+    "mocha": "^10.2.0",
+    "nyc": "^17.0.0",
     "rimraf": "^3.0.2",
     "sinon": "15.0.4",
     "typescript": "~5.3.3"

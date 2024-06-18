@@ -33,7 +33,7 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "devDependencies": {
-    "beachball": "^2.36.0",
-    "lage": "^2.7.14"
+    "beachball": "^2.43.1",
+    "lage": "^2.7.18"
   }
 }
