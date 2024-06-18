@@ -30,9 +30,9 @@ jobs:
     persistCredentials: true
 
   - task: NodeTool@0
-    displayName: Use Node 18
+    displayName: Use Node
     inputs:
-      versionSpec: 18.x
+      versionSpec: 20.x
 
   - script: npm install -g pnpm@8
     displayName: Install pnpm
