@@ -6,8 +6,6 @@ import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import { OIDCDiscoveryClient } from "@itwin/service-authorization";
-import * as crypto from "crypto-browserify"
-
 import { InMemoryWebStorage, OidcClient, WebStorageStateStore } from "oidc-client-ts";
 import type {
   TestBrowserAuthorizationClientConfiguration,
@@ -151,9 +149,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       resultFromCallback: async (callbackUrl) => {
         const tokenSet = await oidcClient.processSigninResponse(callbackUrl);
         this._accessToken = `Bearer ${tokenSet.access_token}`,
-          this._expiresAt = tokenSet.expires_at !== undefined
-            ? new Date(tokenSet.expires_at * 1000)
-            : undefined;
+        this._expiresAt = tokenSet.expires_at !== undefined
+          ? new Date(tokenSet.expires_at * 1000)
+          : undefined;
       },
     });
   }
