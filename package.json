@@ -9,7 +9,7 @@
     "docs": "lage docs",
     "lint": "lage lint",
     "test": "lage test",
-    "test:integration": "lage test:integration",
+    "test:integration": "lage test:integration --reset-cache",
     "cover": "lage cover",
     "change": "beachball change",
     "check": "beachball check",
@@ -33,7 +33,8 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "devDependencies": {
-    "beachball": "^2.36.0",
-    "lage": "^2.7.14"
+    "beachball": "^2.43.1",
+    "lage": "^2.7.18",
+    "process": "^0.11.10"
   }
 }
