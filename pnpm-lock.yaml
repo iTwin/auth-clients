@@ -14,6 +14,9 @@ importers:
       lage:
         specifier: ^2.7.18
         version: 2.7.18
+      process:
+        specifier: ^0.11.10
+        version: 0.11.10
 
   packages/browser:
     dependencies:
@@ -6830,7 +6833,7 @@ packages:
     dev: true
 
   /process@0.11.10:
-    resolution: {integrity: sha1-czIwDoQBYb2j5podHZGn1LwW8YI=}
+    resolution: {integrity: sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==}
     engines: {node: '>= 0.6.0'}
     dev: true
 

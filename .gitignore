@@ -27,4 +27,4 @@ pnpm-debug.log
 *.build.log
 *.build.error.log
 
-.env
+*.env

@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "beachball": "^2.43.1",
-    "lage": "^2.7.18"
+    "lage": "^2.7.18",
+    "process": "^0.11.10"
   }
 }
