@@ -9,7 +9,7 @@
     "docs": "lage docs",
     "lint": "lage lint",
     "test": "lage test",
-    "test:integration": "lage test:integration",
+    "test:integration": "lage test:integration --reset-cache",
     "cover": "lage cover",
     "change": "beachball change",
     "check": "beachball check",
