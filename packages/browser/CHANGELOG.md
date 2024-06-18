@@ -1,8 +1,16 @@
 # Change Log - @itwin/browser-authorization
 
-This log was last generated on Wed, 08 May 2024 21:11:26 GMT and should not be manually modified.
+This log was last generated on Tue, 18 Jun 2024 19:11:49 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 1.1.2
+
+Tue, 18 Jun 2024 19:11:49 GMT
+
+### Patches
+
+- fix latest sec vulnerabilities; run audit during ci (ben-polinsky@users.noreply.github.com)
 
 ## 1.1.1
 

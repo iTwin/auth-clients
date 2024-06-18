@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 11 Jun 2024 21:25:12 GMT and should not be manually modified.
+This log was last generated on Tue, 18 Jun 2024 19:11:49 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.19.4
+
+Tue, 18 Jun 2024 19:11:49 GMT
+
+### Patches
+
+- fix latest sec vulnerabilities; run audit during ci (ben-polinsky@users.noreply.github.com)
 
 ## 0.19.3
 
