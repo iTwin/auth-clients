@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Tue, 18 Jun 2024 19:11:49 GMT",
+      "version": "4.3.6",
+      "tag": "@itwin/oidc-signin-tool_v4.3.6",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "f1465b0f0fc422baad21759d0aaff094d4391e84",
+            "comment": "fix latest sec vulnerabilities; run audit during ci"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 08 May 2024 21:11:26 GMT",
       "version": "4.3.5",
       "tag": "@itwin/oidc-signin-tool_v4.3.5",
