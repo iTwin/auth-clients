@@ -140,8 +140,8 @@ importers:
         specifier: ~16.0.3
         version: 16.0.3
       electron:
-        specifier: ^30.0.0
-        version: 30.0.2
+        specifier: ^31.0.0
+        version: 31.0.2
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -4028,8 +4028,8 @@ packages:
     resolution: {integrity: sha512-8W4UJwX/w9T0QSzINJckTKG6CYpAUTqsaWcWIsdud3I1FYJcMgW9QqT1/4CBff/pP/TihWh13OmiyY8neto6vw==}
     dev: true
 
-  /electron@30.0.2:
-    resolution: {integrity: sha512-zv7T+GG89J/hyWVkQsLH4Y/rVEfqJG5M/wOBIGNaDdqd8UV9/YZPdS7CuFeaIj0H9LhCt95xkIQNpYB/3svOkQ==}
+  /electron@31.0.2:
+    resolution: {integrity: sha512-55efQ5yfLN+AQHcFC00AXQqtxC3iAGaxX2GQ3EDbFJ0ca9GHNOdSXkcrdBElLleiDrR2hpXNkQxN1bDn0oxe6w==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true
@@ -7096,7 +7096,7 @@ packages:
     dev: true
 
   /progress@2.0.3:
-    resolution: {integrity: sha1-foz42PW48jnBvGi+tOt4Vn1XLvg=}
+    resolution: {integrity: sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==}
     engines: {node: '>=0.4.0'}
     dev: true
 
