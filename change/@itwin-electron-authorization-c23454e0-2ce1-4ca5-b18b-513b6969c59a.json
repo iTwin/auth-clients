@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Add missing CJS and ESM support for subpath imports",
+  "packageName": "@itwin/electron-authorization",
+  "email": "50554904+hl662@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
