@@ -1,8 +1,17 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 18 Jun 2024 19:11:49 GMT and should not be manually modified.
+This log was last generated on Tue, 02 Jul 2024 22:24:53 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.19.5
+
+Tue, 02 Jul 2024 22:24:53 GMT
+
+### Patches
+
+- Add support for Electron 31 (GytisCepk@users.noreply.github.com)
+- Add missing CJS and ESM support for subpath imports (50554904+hl662@users.noreply.github.com)
 
 ## 0.19.4
 
