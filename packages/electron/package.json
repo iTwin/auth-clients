@@ -5,11 +5,13 @@
   "exports": {
     "./Main": {
       "types": "./lib/cjs/ElectronMain.d.ts",
+      "import": "./lib/esm/ElectronMain.js",
       "require": "./lib/cjs/ElectronMain.js"
     },
     "./Renderer": {
       "types": "./lib/esm/ElectronRenderer.d.ts",
-      "import": "./lib/esm/ElectronRenderer.js"
+      "import": "./lib/esm/ElectronRenderer.js",
+      "require": "./lib/cjs/ElectronRenderer.js"
     }
   },
   "scripts": {
