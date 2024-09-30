@@ -79,6 +79,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       try {
         await this.signIn();
       } catch (err) {
+        console.log("Error signing in", err);
         // rethrow error if hit max number of retries or if it's not a navigation failure (i.e. a flaky failure)
         if (
           numRetries === 2 ||
@@ -90,6 +91,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
         )
           throw err;
         numRetries++;
+        console.log("Retrying sign in");
         continue;
       }
 
@@ -149,9 +151,9 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       resultFromCallback: async (callbackUrl) => {
         const tokenSet = await oidcClient.processSigninResponse(callbackUrl);
         this._accessToken = `Bearer ${tokenSet.access_token}`,
-        this._expiresAt = tokenSet.expires_at !== undefined
-          ? new Date(tokenSet.expires_at * 1000)
-          : undefined;
+          this._expiresAt = tokenSet.expires_at !== undefined
+            ? new Date(tokenSet.expires_at * 1000)
+            : undefined;
       },
     });
   }
