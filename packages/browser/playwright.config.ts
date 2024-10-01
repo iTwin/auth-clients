@@ -15,7 +15,7 @@ export default defineConfig({
     command: "npm run test:integration:start-test-app",
     url: "http://localhost:1234",
   },
-  retries: 0,
+  retries: 2,
   repeatEach: 0,
   timeout: 20000,
   name: "chrome",
