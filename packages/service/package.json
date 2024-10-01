@@ -29,27 +29,26 @@
   "dependencies": {
     "@itwin/core-common": "^3.3.0 || ^4.0.0",
     "got": "^12.6.1",
-    "jsonwebtoken": "^9.0.0",
-    "jwks-rsa": "^2.0.4"
+    "jsonwebtoken": "^9.0.2",
+    "jwks-rsa": "^2.1.5"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.6.0-dev.27",
-    "@itwin/core-bentley": "^3.7.0",
-    "@itwin/eslint-plugin": "^4.0.2",
-    "@types/chai": "^4.2.22",
-    "@types/chai-as-promised": "^7.1.1",
+    "@itwin/build-tools": "^4.9.1",
+    "@itwin/core-bentley": "^3.8.0",
+    "@itwin/eslint-plugin": "^4.1.1",
+    "@types/chai": "^4.3.20",
+    "@types/chai-as-promised": "^7.1.8",
     "@types/jsonwebtoken": "^8.5.9",
     "@types/mocha": "^8.2.3",
-    "@types/sinon": "^10.0.13",
-    "eslint": "^8.56.0",
-    "chai": "^4.2.2",
-    "chai-as-promised": "^7.1.1",
-    "mocha": "^10.2.0",
-    "nyc": "^17.0.0",
+    "@types/sinon": "^10.0.20",
+    "chai": "^4.5.0",
+    "chai-as-promised": "^7.1.2",
+    "eslint": "^8.57.1",
+    "mocha": "^10.7.3",
+    "nyc": "^17.1.0",
     "rimraf": "^3.0.2",
-    "sinon": "^15.0.1",
-    "source-map-support": "^0.5.9",
-    "typescript": "~5.3.3"
+    "sinon": "^19.0.2",
+    "source-map-support": "^0.5.21"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0"

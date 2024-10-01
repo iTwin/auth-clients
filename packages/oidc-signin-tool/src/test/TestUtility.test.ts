@@ -26,8 +26,11 @@ describe("TestUtility", () => {
   let constructorStub: sinon.SinonStub;
 
   beforeEach(() => {
-    constructorStub = sinon.stub(TestBrowserAuthorizationClientModule, "TestBrowserAuthorizationClient").returns(
-      (user: TestUserCredentials, config: TestBrowserAuthorizationClientConfiguration) => { return { ...user, ...config }; });
+    constructorStub = sinon.stub(TestBrowserAuthorizationClientModule, "TestBrowserAuthorizationClient").callsFake(
+      (config: TestBrowserAuthorizationClientConfiguration, user: TestUserCredentials) => {
+        return { config, user };
+      }
+    );
     sinon.stub(TestUsers, "getTestBrowserAuthorizationClientConfiguration").returns({ ...defaultConfig });
   });
 
@@ -52,9 +55,10 @@ describe("TestUtility", () => {
       { user: { ...defaultUser }, config: { ...defaultConfig, authority: "test-authority" } },
     ].forEach((data, index) => {
       it(`Test case #${index + 1}`, async () => {
-        const client = TestUtility.getAuthorizationClient(defaultUser, defaultConfig);
+        const defaultClient = TestUtility.getAuthorizationClient(defaultUser, defaultConfig);
+        const client = TestUtility.getAuthorizationClient(data.user, data.config)
 
-        expect(TestUtility.getAuthorizationClient(data.user, data.config)).to.not.equal(client);
+        expect(defaultClient).to.not.equal(client);
         expect(constructorStub.calledTwice).to.be.true;
       });
     });
