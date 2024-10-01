@@ -30,9 +30,9 @@ jobs:
     persistCredentials: true
 
   - task: NodeTool@0
-    displayName: Use Node 18
+    displayName: Use Node 20
     inputs:
-      versionSpec: 18.x
+      versionSpec: 20.x
 
   - script: npm install -g pnpm@8
     displayName: Install pnpm
@@ -105,7 +105,7 @@ jobs:
       IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - script: pnpm test:integration
+  - script: pnpm test:integration --verbose
     displayName: pnpm test:integration
     env:
       # Couldn't get this variable to be ingested in the steps above, but this works
