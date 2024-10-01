@@ -20,7 +20,6 @@ const signInOptions: SignInOptions = {
 };
 
 const testHelper = new TestHelper(signInOptions);
-
 test("signin redirect", async ({ page }) => {
   await page.goto(signInOptions.url);
   await testHelper.signIn(page);
@@ -63,9 +62,9 @@ test("signin popup", async ({ page }) => {
   await el.click();
   const popup = await popupPromise;
   await popup.waitForLoadState();
-  await testHelper.signIn(popup);
-  await popup.waitForEvent("close");
+  await Promise.all([testHelper.signIn(popup), popup.waitForEvent("close")])
   await testHelper.validateAuthenticated(page, AuthType.PopUp);
+
 });
 
 test("signout popup", async ({ page }) => {
@@ -75,15 +74,14 @@ test("signout popup", async ({ page }) => {
   await el.click();
   const popup = await popupPromise;
   await popup.waitForLoadState();
-  await testHelper.signIn(popup);
-  await popup.waitForEvent("close");
+  await Promise.all([testHelper.signIn(popup), popup.waitForEvent("close")])
   await testHelper.validateAuthenticated(page, AuthType.PopUp);
 
   const signoutPopupPromise = page.waitForEvent("popup");
   const locator = page.getByTestId("signout-button-popup");
   await locator.click();
-  const signOutPopup = await signoutPopupPromise;
 
+  const signOutPopup = await signoutPopupPromise;
   const content = signOutPopup.getByText("Sign Off Successful");
   expect(content).toBeDefined();
 });
