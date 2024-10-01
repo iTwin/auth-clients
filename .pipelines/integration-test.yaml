@@ -14,109 +14,108 @@ variables:
   - group: iTwin.js Auth Client Integration tests
 
 jobs:
-  - job: BuildPackages
-    strategy:
-      matrix:
-        linux:
-          imageName: "ubuntu-latest"
-        mac:
-          imageName: "macos-latest"
-        windows:
-          imageName: "windows-latest"
-    pool:
-      vmImage: $(imageName)
-    steps:
-      - checkout: self
-        persistCredentials: true
+- job: BuildPackages
+  strategy:
+    matrix:
+      linux:
+        imageName: 'ubuntu-latest'
+      mac:
+        imageName: 'macos-latest'
+      windows:
+        imageName: 'windows-latest'
+  pool:
+    vmImage: $(imageName)
+  steps:
+  - checkout: self
+    persistCredentials: true
 
-      - task: NodeTool@0
-        displayName: Use Node 20
-        inputs:
-          versionSpec: 20.x
+  - task: NodeTool@0
+    displayName: Use Node 20
+    inputs:
+      versionSpec: 20.x
 
-      - script: npm install -g pnpm@8
-        displayName: Install pnpm
+  - script: npm install -g pnpm@8
+    displayName: Install pnpm
 
-      - bash: |
-          echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
-          echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
-          echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
-          echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
-          echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$test_azuread_user_password"
-          export
-        displayName: "Add config to environment"
-        env:
-          test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
-          test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
-          test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
-          test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
-          test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
-        condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
+  - bash: |
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$test_super_manager_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$test_super_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$test_manager_user_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$test_reg_password"
+     echo "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$test_azuread_user_password"
+     export
+    displayName: 'Add config to environment'
+    env:
+      test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
+      test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
+      test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
+      test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
+      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Windows_NT'))
 
-      # For debugging
-      - bash: |
-          export
+  # For debugging
+  - bash: |
+      export
 
-      - powershell: |
-          Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
-          Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
-          Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
-          Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
-          Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
-          Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
-        displayName: "Add config to environment"
-        env:
-          test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
-          test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
-          test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
-          test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
-          test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
-        condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+  - powershell: |
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_MANAGER_USER_PASSWORD;]$Env:test_super_manager_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_SUPER_USER_PASSWORD;]$Env:test_super_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_MANAGER_USER_PASSWORD;]$Env:test_manager_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_REGULAR_USER_PASSWORD;]$Env:test_reg_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
+      Write-Host "##vso[task.setvariable variable=IMJS_TEST_AZUREAD_USER_PASSWORD;]$Env:test_azuread_user_password"
+    displayName: 'Add config to environment'
+    env:
+      test_super_manager_password: $(IMJS_SUPER_MANAGER_USER_PASSWORD)
+      test_super_user_password: $(IMJS_SUPER_USER_PASSWORD)
+      test_manager_user_password: $(IMJS_MANAGER_USER_PASSWORD)
+      test_reg_password: $(IMJS_REGULAR_USER_PASSWORD)
+      test_azuread_user_password: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
-      - script: |
-          git config user.email imodeljs-admin@users.noreply.github.com
-          git config user.name imodeljs-admin
-        displayName: git config
+  - script: |
+      git config user.email imodeljs-admin@users.noreply.github.com
+      git config user.name imodeljs-admin
+    displayName: git config
 
-      - script: pnpm install
-        displayName: Install packages
+  - script: pnpm install
+    displayName: Install packages
 
-      - script: pnpm build
-        displayName: Build packages
+  - script: pnpm build
+    displayName: Build packages
 
-      - script: |
+  - script: |
           sudo apt-get install -y libsecret-1-dev
           sudo apt-get install -y dbus-x11
           sudo apt-get install -y gnome-keyring
-        displayName: Install Packages - Linux
-        condition:
-          and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+    displayName: Install Packages - Linux
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-          # By default linux agents do not have a real display so use the virtual framebuffer
-          # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
-          #   See packages/electron/README.md for more details
-      - script: >-
-          dbus-run-session -- sh -c
-          "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
-            xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm test:integration --verbose"
-        displayName: pnpm test:integration - Linux
-        env:
-          # Couldn't get this variable to be ingested in the steps above, but this works
-          IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
-          IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
-        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+      # By default linux agents do not have a real display so use the virtual framebuffer
+      # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
+      #   See packages/electron/README.md for more details
+  - script: >-
+      dbus-run-session -- sh -c
+      "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
+        xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm test:integration --verbose"
+    displayName: pnpm test:integration - Linux
+    env:
+      # Couldn't get this variable to be ingested in the steps above, but this works
+      IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+      IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
+    condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-      - script: pnpm test:integration --verbose
-        displayName: pnpm test:integration
-        env:
-          # Couldn't get this variable to be ingested in the steps above, but this works
-          IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
-          IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
-        condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
+  - script: pnpm test:integration --verbose
+    displayName: pnpm test:integration
+    env:
+      # Couldn't get this variable to be ingested in the steps above, but this works
+      IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+      IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
+    condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
 
-      - task: PublishTestResults@2
-        displayName: "Publish Integration Test Results"
-        condition: always()
-        inputs:
-          testResultsFiles: "packages/**/junit_results.xml"
-          testRunTitle: "Tools - auth-clients - $(Agent.OS)"
+  - task: PublishTestResults@2
+    displayName: "Publish Integration Test Results"
+    condition: always()
+    inputs:
+      testResultsFiles: "packages/**/junit_results.xml"
+      testRunTitle: "Tools - auth-clients - $(Agent.OS)"
