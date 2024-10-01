@@ -24,9 +24,6 @@ export default defineConfig({
       use: {
         screenshot: "only-on-failure",
         headless: true,
-        launchOptions: {
-          slowMo: 100
-        }
       },
       retries: 0,
       repeatEach: 0,
