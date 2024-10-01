@@ -2,8 +2,7 @@
 
 name: Create Release
 
-on:
-  workflow_dispatch
+on: workflow_dispatch
 
 jobs:
   release-packages:
@@ -16,16 +15,14 @@ jobs:
         with:
           token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v2.2.4
-        with:
-          version: 8
-
       - name: Use Node.js 18
         uses: actions/setup-node@v3
         with:
           node-version: 18.16.x
           registry-url: https://registry.npmjs.org/
+
+      - name: Setup pnpm
+        run: corepack enable
 
       - name: Install dependencies
         run: pnpm install

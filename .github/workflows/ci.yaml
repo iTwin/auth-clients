@@ -30,12 +30,10 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v2
         with:
-          node-version: '18.12.0'
+          node-version: "18.12.0"
 
       - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 8
+        run: corepack enable
 
       - name: Install packages
         run: pnpm install
