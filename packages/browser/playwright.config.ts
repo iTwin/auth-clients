@@ -17,17 +17,10 @@ export default defineConfig({
   },
   retries: 0,
   repeatEach: 0,
-  projects: [
-    {
-      timeout: 20000,
-      name: "chrome",
-      use: {
-        screenshot: "only-on-failure",
-        headless: true,
-      },
-      retries: 0,
-      repeatEach: 0,
-    }
-  ]
-
+  timeout: 20000,
+  name: "chrome",
+  use: {
+    screenshot: "only-on-failure",
+    headless: true,
+  },
 });
