@@ -1,6 +1,6 @@
 {
   "type": "none",
-  "comment": "fine pnpm overrides",
+  "comment": "",
   "packageName": "@itwin/oidc-signin-tool",
   "email": "ben-polinsky@users.noreply.github.com",
   "dependentChangeType": "none"

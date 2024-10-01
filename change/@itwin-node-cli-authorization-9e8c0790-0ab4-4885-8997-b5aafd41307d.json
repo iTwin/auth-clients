@@ -1,6 +1,6 @@
 {
   "type": "none",
-  "comment": "fine pnpm overrides",
+  "comment": "",
   "packageName": "@itwin/node-cli-authorization",
   "email": "ben-polinsky@users.noreply.github.com",
   "dependentChangeType": "none"
