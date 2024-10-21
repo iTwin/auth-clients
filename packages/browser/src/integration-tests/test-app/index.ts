@@ -28,12 +28,13 @@ async function initialize() {
     if (contentArea)
       contentArea.textContent = "Signed Out!";
   } else if (isSigninViaPopupPage()) {
-    const popupButton = document.getElementById("popup");
-    if (popupButton)
-      popupButton.addEventListener("click", async () => {
+    if (contentArea)
+      appendButton(contentArea, "Signin Via Popup", "popup", true, async () => {
         await client.signInPopup();
         await client.signInSilent(); // effectively loads the current user.
-        popupButton.parentElement?.removeChild(popupButton);
+        const popupButton = document.getElementById("popup");
+        if (popupButton)
+          popupButton.parentElement?.removeChild(popupButton);
         await validateAuthenticated();
       });
   } else if (!isOidcCallbackPage()) {
@@ -82,14 +83,17 @@ function appendButton(
   parent: Element,
   text: string,
   testId: string,
-  popup: boolean = false
+  popup: boolean = false,
+  clickHandler?: () => void
 ) {
   const button = document.createElement("button");
   button.textContent = text;
   button.setAttribute("data-testid", testId);
-  button.addEventListener("click", async () => {
+  button.setAttribute("id", testId);
+  const handler = clickHandler ?? (async () => {
     await signout(popup);
-  });
+  })
+  button.addEventListener("click", handler);
   parent.appendChild(button);
 }
 
