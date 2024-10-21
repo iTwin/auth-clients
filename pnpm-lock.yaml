@@ -140,8 +140,8 @@ importers:
         specifier: ~16.0.3
         version: 16.0.3
       electron:
-        specifier: ^32.0.0
-        version: 32.0.0
+        specifier: ^33.0.0
+        version: 33.0.1
       eslint:
         specifier: ^8.56.0
         version: 8.57.0
@@ -4028,8 +4028,8 @@ packages:
     resolution: {integrity: sha512-8W4UJwX/w9T0QSzINJckTKG6CYpAUTqsaWcWIsdud3I1FYJcMgW9QqT1/4CBff/pP/TihWh13OmiyY8neto6vw==}
     dev: true
 
-  /electron@32.0.0:
-    resolution: {integrity: sha512-rs+VkhztJd2LvRX7d3ikKH+EIHMW4vKM2l5qp7Dx/dLQAKKz3IFNKyYhYzczDnqO+/jUvx0ic0SQvqpv1/ZAsw==}
+  /electron@33.0.1:
+    resolution: {integrity: sha512-PipPnWH4gvf7o+P8jlKQZGgPfb5eHcLgTrnKkFzb98MXhyPjVJYCR7YWqcawZ8IfyJCut8vMxLuBFLT1Ag8TSQ==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
     requiresBuild: true
