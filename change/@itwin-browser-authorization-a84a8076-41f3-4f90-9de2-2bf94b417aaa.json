@@ -1,6 +1,6 @@
 {
   "type": "none",
-  "comment": "Integration test\u0017 fixes",
+  "comment": "",
   "packageName": "@itwin/browser-authorization",
   "email": "ben-polinsky@users.noreply.github.com",
   "dependentChangeType": "none"

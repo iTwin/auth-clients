@@ -14,7 +14,7 @@ variables:
   - group: iTwin.js Auth Client Integration tests
 
 jobs:
-- job: BuildPackages
+- job: IntegrationTests
   strategy:
     matrix:
       linux:
