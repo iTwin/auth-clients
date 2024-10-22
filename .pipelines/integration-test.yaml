@@ -12,9 +12,11 @@ variables:
   - group: iTwin.js non-secret config variables
   - group: iTwin.js Integration Test Users
   - group: iTwin.js Auth Client Integration tests
+  - name: packages
+    value: browser-authorization, electron-authorization, oidc-signin-tool
 
 jobs:
-- job: BuildPackages
+- job: IntegrationTests
   strategy:
     matrix:
       linux:
@@ -105,13 +107,14 @@ jobs:
       IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - script: pnpm test:integration
-    displayName: pnpm test:integration
-    env:
-      # Couldn't get this variable to be ingested in the steps above, but this works
-      IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
-      IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
-    condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
+  - ${{ each package in split(variables.packages, ', ')}}:
+    - script: pnpm --filter ${{package}} test:integration
+      displayName: run ${{package}} tests
+      env:
+        # Couldn't get this variable to be ingested in the steps above, but this works
+        IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
+        IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
+      condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
 
   - task: PublishTestResults@2
     displayName: "Publish Integration Test Results"
