@@ -1,6 +1,6 @@
 {
   "type": "none",
-  "comment": "remove tests from oidc-signin-tool build output and prevent multiple test runs",
+  "comment": "",
   "packageName": "@itwin/oidc-signin-tool",
   "email": "ben-polinsky@users.noreply.github.com",
   "dependentChangeType": "none"
