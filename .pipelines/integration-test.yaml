@@ -109,7 +109,7 @@ jobs:
 
   - ${{ each package in split(variables.packages, ', ')}}:
     - script: pnpm --filter ${{package}} test:integration
-      displayName: integration test - ${{package}}
+      displayName: run ${{package}} tests
       env:
         # Couldn't get this variable to be ingested in the steps above, but this works
         IMJS_TEST_AZUREAD_USER_PASSWORD: $(IMJS_TEST_AZUREAD_USER_PASSWORD)
