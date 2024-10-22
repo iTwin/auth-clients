@@ -3,13 +3,13 @@ import { defineConfig } from "@playwright/test";
 // playwright types here are... not cooperating
 const reporter: any = process.env.AGENT_ID
   ? [
-      ["junit", { outputFile: "junit_results.xml" }],
-      ["dot", []],
-    ]
+    ["junit", { outputFile: "junit_results.xml" }],
+    ["dot", []],
+  ]
   : "list";
 
 export default defineConfig({
-  timeout: 60000,
+  timeout: 10000,
   reporter,
   webServer: {
     command: "npm run test:integration:start-test-app",
@@ -17,6 +17,6 @@ export default defineConfig({
   },
   use: {
     screenshot: "only-on-failure",
-    headless: true,
+    headless: true
   },
 });
