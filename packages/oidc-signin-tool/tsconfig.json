@@ -12,6 +12,5 @@
     "lib",
     "node_modules",
     "src/test-integration",
-    "src/test"
   ]
 }
