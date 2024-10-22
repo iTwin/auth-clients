@@ -5,7 +5,7 @@
   "description": "Authorization clients for the iTwin platform",
   "scripts": {
     "build": "lage build",
-    "clean": "lage clean",
+    "clean": "lage clean --no-cache",
     "docs": "lage docs",
     "lint": "lage lint",
     "test": "lage test",
