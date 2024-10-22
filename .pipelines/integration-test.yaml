@@ -13,7 +13,7 @@ variables:
   - group: iTwin.js Integration Test Users
   - group: iTwin.js Auth Client Integration tests
   - name: packages
-    value: browser-authorization, electron-authorization, oidc-signin-tool, service-authorization, node-cli-authorization
+    value: browser-authorization, electron-authorization, oidc-signin-tool
 
 jobs:
 - job: IntegrationTests
