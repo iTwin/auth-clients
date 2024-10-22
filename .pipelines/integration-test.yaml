@@ -81,6 +81,12 @@ jobs:
   - script: pnpm install
     displayName: Install packages
 
+  - script: rm -rf /Users/runner/Library/Caches/ms-playwright
+    displayName: Clear Playwright cache
+
+  - script: npx playwright install
+    displayName: Install Playwright browsers
+
   - script: pnpm build
     displayName: Build packages
 
