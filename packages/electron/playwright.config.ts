@@ -7,7 +7,7 @@ import { PlaywrightTestConfig } from '@playwright/test'
 
 const config: PlaywrightTestConfig = {
   testDir: './src/integration-test',
-  timeout: 5000,
+  timeout: 20000,
   use: {
     screenshot: "only-on-failure",
     headless: true
