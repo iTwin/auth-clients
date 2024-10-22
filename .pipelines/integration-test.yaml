@@ -78,9 +78,6 @@ jobs:
       git config user.name imodeljs-admin
     displayName: git config
 
-  - script: rm -rf /Users/runner/Library/Caches/ms-playwright
-    displayName: Clear Playwright cache
-
   - script: pnpm install
     displayName: Install packages
 
