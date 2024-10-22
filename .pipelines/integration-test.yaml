@@ -12,16 +12,8 @@ variables:
   - group: iTwin.js non-secret config variables
   - group: iTwin.js Integration Test Users
   - group: iTwin.js Auth Client Integration tests
-
-parameters:
-- name: testPackages
-  type: object
-  default:
-  - browser-authorization
-  - electron-authorization
-  - oidc-signin-tool
-  - service-authorization
-  - node-cli-authorization
+  - name: packages
+    value: browser-authorization, electron-authorization, oidc-signin-tool, service-authorization, node-cli-authorization
 
 jobs:
 - job: IntegrationTests
@@ -115,7 +107,7 @@ jobs:
       IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
     condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-  - ${{ each testPackage in parameters.testPackages }}:
+  - ${{ each package in split(variables.packages, ', ')}}:
     - script: pnpm --filter ${{testPackage}} test:integration
       displayName: integration test - ${{testPackage}}
       env:
