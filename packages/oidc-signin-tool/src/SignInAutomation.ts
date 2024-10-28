@@ -111,7 +111,6 @@ export async function automatedSignOut<T>(
 }
 
 async function handleErrorPage<T>({ page }: AutomatedContextBase<T>): Promise<void> {
-  await page.waitForLoadState("networkidle");
   const pageTitle = await page.title();
   let errMsgText;
 
@@ -166,7 +165,6 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
   allow = page.locator(testSelectors.pingAllowSubmit);
   await allow.click();
 
-  await page.waitForLoadState("networkidle");
   const error = page.getByText(
     "We didn't recognize the email address or password you entered. Please try again.",
   );
@@ -187,7 +185,6 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
 async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Promise<void> {
   const { page } = context;
 
-  await page.waitForLoadState("networkidle");
   if (-1 === page.url().indexOf("microsoftonline"))
     return;
 
@@ -270,7 +267,6 @@ async function checkSelectorExists(
 }
 
 async function checkErrorOnPage(page: Page, selector: string): Promise<void> {
-  await page.waitForLoadState("networkidle");
   const errMsgElement = await page.$(selector);
   if (errMsgElement) {
     const errMsgText = await errMsgElement.textContent();
