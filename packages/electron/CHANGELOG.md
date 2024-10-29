@@ -1,8 +1,17 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 02 Jul 2024 22:24:53 GMT and should not be manually modified.
+This log was last generated on Tue, 29 Oct 2024 21:49:00 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.19.6
+
+Tue, 29 Oct 2024 21:49:00 GMT
+
+### Patches
+
+- Add support for Electron 33 (GytisCepk@users.noreply.github.com)
+- Add support for Electron 32 (GytisCepk@users.noreply.github.com)
 
 ## 0.19.5
 

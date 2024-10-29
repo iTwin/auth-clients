@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 18 Jun 2024 19:11:49 GMT and should not be manually modified.
+This log was last generated on Tue, 29 Oct 2024 21:49:00 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 4.3.7
+
+Tue, 29 Oct 2024 21:49:00 GMT
+
+### Patches
+
+- Remove discouraged 'networkidle' (108895074+MichaelSwigerAtBentley@users.noreply.github.com)
 
 ## 4.3.6
 

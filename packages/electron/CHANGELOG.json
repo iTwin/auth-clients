@@ -2,6 +2,35 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Tue, 29 Oct 2024 21:49:00 GMT",
+      "version": "0.19.6",
+      "tag": "@itwin/electron-authorization_v0.19.6",
+      "comments": {
+        "patch": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": "Add support for Electron 33"
+          },
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": "Add support for Electron 32"
+          }
+        ],
+        "none": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 02 Jul 2024 22:24:53 GMT",
       "version": "0.19.5",
       "tag": "@itwin/electron-authorization_v0.19.5",

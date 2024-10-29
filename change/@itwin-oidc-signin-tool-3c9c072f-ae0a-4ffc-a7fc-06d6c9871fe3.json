@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Remove discouraged 'networkidle'",
-  "packageName": "@itwin/oidc-signin-tool",
-  "email": "108895074+MichaelSwigerAtBentley@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

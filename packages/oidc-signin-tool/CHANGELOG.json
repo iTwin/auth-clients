@@ -2,6 +2,29 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Tue, 29 Oct 2024 21:49:00 GMT",
+      "version": "4.3.7",
+      "tag": "@itwin/oidc-signin-tool_v4.3.7",
+      "comments": {
+        "patch": [
+          {
+            "author": "108895074+MichaelSwigerAtBentley@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": "Remove discouraged 'networkidle'"
+          }
+        ],
+        "none": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 18 Jun 2024 19:11:49 GMT",
       "version": "4.3.6",
       "tag": "@itwin/oidc-signin-tool_v4.3.6",

@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Fix method name in README.md",
-  "packageName": "@itwin/browser-authorization",
-  "email": "GytisCepk@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

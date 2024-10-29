@@ -2,6 +2,29 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "date": "Tue, 29 Oct 2024 21:49:00 GMT",
+      "version": "1.1.3",
+      "tag": "@itwin/browser-authorization_v1.1.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": "Fix method name in README.md"
+          }
+        ],
+        "none": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 18 Jun 2024 19:11:49 GMT",
       "version": "1.1.2",
       "tag": "@itwin/browser-authorization_v1.1.2",
