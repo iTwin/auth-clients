@@ -2,8 +2,7 @@
 
 name: Create Release
 
-on:
-  workflow_dispatch
+on: workflow_dispatch
 
 jobs:
   release-packages:
@@ -17,9 +16,9 @@ jobs:
           token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
 
       - name: Install pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: latest
 
       - name: Use Node.js 18
         uses: actions/setup-node@v3
