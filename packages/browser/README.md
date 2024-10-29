@@ -35,7 +35,7 @@ await client.signInRedirect();
 Instead of a redirect, you may want to trigger a pop up to handle the sign in process:
 
 ```typescript
-await client.signinPopup();
+await client.signInPopup();
 ```
 
 After the user signs in, they will be redirected to the redirect url specified in your oidc configuration (developer.bentley.com)
