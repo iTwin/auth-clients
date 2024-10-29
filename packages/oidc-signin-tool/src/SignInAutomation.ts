@@ -188,7 +188,8 @@ async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Pro
   if (-1 === page.url().indexOf("microsoftonline"))
     return;
 
-  await page.waitForLoadState("networkidle");
+  // await page.waitForSelector(testSelectors.msUserNameField); || waitForSelector(testSelectors.fedPassword)
+  await page.waitForLoadState("domcontentloaded");
   if (await checkSelectorExists(page, testSelectors.msUserNameField)) {
     await page.locator(testSelectors.msUserNameField).fill(context.user.email);
     const msSubmit = await page.waitForSelector(testSelectors.msSubmit);
