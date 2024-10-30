@@ -12,8 +12,8 @@ import type {
 import {
   AuthorizationError, AuthorizationRequestHandler, AuthorizationResponse, BasicQueryStringUtils,
 } from "@openid/appauth";
-import { NodeCrypto } from "@openid/appauth/built/node_support";
-import type { ElectronAuthorizationEvents } from "./Events";
+import { NodeCrypto } from "@openid/appauth/built/node_support/index.js";
+import type { ElectronAuthorizationEvents } from "./Events.js";
 import { shell } from "electron";
 
 const electronAuthLoggerCategory = "electron-auth";

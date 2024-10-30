@@ -3,4 +3,4 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-export * from "./renderer/Client";
+export * from "./renderer/Client.js";

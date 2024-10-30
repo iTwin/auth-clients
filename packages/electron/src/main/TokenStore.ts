@@ -4,10 +4,10 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-import * as OperatingSystemUserName from "username";
+import OperatingSystemUserName from "username";
 import { safeStorage } from "electron";
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
+import Store from "electron-store";
 /**
  * Utility class used to store and read OAuth refresh tokens.
  * @internal
@@ -22,7 +22,7 @@ export class RefreshTokenStore {
    */
   private _userName?: string;
 
-  private _store: typeof Store;
+  private _store: Store;
 
   public constructor(configFileName: string, appStorageKey: string, dir?: string) {
     this._appStorageKey = appStorageKey
@@ -31,7 +31,7 @@ export class RefreshTokenStore {
     this._store = new Store({
       name: configFileName, // specifies storage file name.
       encryptionKey: "iTwin", // obfuscates the storage file's content, in case a user finds the file and wants to modify it.
-      cwd: dir ?? null, // specifies where to the storage file will be saved.
+      cwd: dir ?? undefined, // specifies where to the storage file will be saved.
     });
   }
 
@@ -74,7 +74,7 @@ export class RefreshTokenStore {
     if (!this._store.has(key)) {
       return undefined;
     }
-    const encryptedToken = this._store.get(key);
+    const encryptedToken = this._store.get(key) as Buffer;
     const refreshToken = await this.decryptRefreshToken(encryptedToken).catch(() => undefined);
     return refreshToken;
   }

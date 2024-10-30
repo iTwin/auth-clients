@@ -2,6 +2,7 @@
   "name": "@itwin/electron-authorization",
   "version": "0.19.6",
   "description": "Electron authorization client for iTwin platform",
+  "type": "module",
   "exports": {
     "./Main": {
       "types": "./lib/cjs/ElectronMain.d.ts",
