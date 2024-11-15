@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Update to username v7.0.0",
+  "packageName": "@itwin/electron-authorization",
+  "email": "33036725+wgoehrig@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}

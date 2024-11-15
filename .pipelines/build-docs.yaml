@@ -38,7 +38,7 @@ stages:
             versionSpec: 18
             checkLatest: true
 
-        - script: npm install -g pnpm@8
+        - script: npm install -g pnpm@9
           displayName: Install pnpm
 
         - script: |

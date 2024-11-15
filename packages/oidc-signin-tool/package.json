@@ -36,7 +36,7 @@
     "@itwin/certa": "^3.7.0 || ^4.0.0",
     "@itwin/core-common": "^3.3.0 || ^4.0.0",
     "@itwin/service-authorization": "workspace:^",
-    "@playwright/test": "~1.41.0",
+    "@playwright/test": "~1.48.2",
     "crypto-browserify": "^3.12.0",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
