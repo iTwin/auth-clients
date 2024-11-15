@@ -37,7 +37,7 @@ const userDataPath = getElectronUserDataPath();
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
-const tokenStore = new RefreshTokenStore(getTokenStoreFileName(), getTokenStoreKey(), userDataPath);
+const tokenStore = new RefreshTokenStore(getTokenStoreFileName(),getTokenStoreKey(), userDataPath);
 
 function getTokenStoreKey(issuerUrl?: string): string {
   const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
@@ -72,7 +72,6 @@ test.beforeEach(async () => {
     });
     electronPage = await electronApp.firstWindow();
   } catch (error) {
-    console.error(error);
   }
 });
 
