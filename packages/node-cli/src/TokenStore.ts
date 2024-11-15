@@ -3,7 +3,6 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import * as OperatingSystemUserName from "username";
 import type { TokenResponseJson } from "@openid/appauth";
 import { TokenResponse } from "@openid/appauth";
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
@@ -40,7 +39,7 @@ export class TokenStore {
   private _userName?: string;
   private async getUserName(): Promise<string | undefined> {
     if (!this._userName)
-      this._userName = await OperatingSystemUserName();
+      this._userName = await (await import("username")).username();
     return this._userName;
   }
 
