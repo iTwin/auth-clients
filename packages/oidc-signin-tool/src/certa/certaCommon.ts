@@ -7,11 +7,18 @@ import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials }
 
 // Shared by both the frontend and backend side of the tests
 export const getTokenCallbackName = "getToken";
+export const getServiceAuthTokenCallbackName = "getServiceAuthToken";
 
 /**
  * Retrieves an access token from the backend using the specified user credentials.
  */
 export async function getAccessTokenFromBackend(user: TestUserCredentials, oidcConfig?: TestBrowserAuthorizationClientConfiguration): Promise<string> {
   const accessToken = await executeBackendCallback(getTokenCallbackName, user, oidcConfig);
+  return accessToken;
+}
+
+
+export async function getServiceAuthTokenFromBackend(): Promise<string> {
+  const accessToken = await executeBackendCallback(getServiceAuthTokenCallbackName);
   return accessToken;
 }

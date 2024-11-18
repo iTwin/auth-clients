@@ -7,9 +7,10 @@ import * as fs from "fs";
 import * as path from "path";
 import type { AccessToken } from "@itwin/core-bentley";
 import { registerBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "../TestUsers";
 import { TestUtility } from "../TestUtility";
-import { getTokenCallbackName } from "./certaCommon";
+import { getTokenCallbackName, getServiceAuthTokenCallbackName } from "./certaCommon";
 
 // A backend to use within Certa's `backendInitModule` to setup OIDC sign-in.
 
@@ -59,9 +60,39 @@ async function signin(user: TestUserCredentials, oidcConfig?: TestBrowserAuthori
   return token;
 }
 
+async function signinWithServiceAuthClient(): Promise<string> {
+  const clientId = process.env.IMJS_AGENT_TEST_CLIENT_ID;
+  const clientSecret = process.env.IMJS_AGENT_TEST_CLIENT_SECRET;
+  const scope = process.env.IMJS_AGENT_TEST_CLIENT_SCOPES;
+
+  if (!clientId || !clientSecret || !scope) {
+    throw new Error(
+      "Missing required environment variables: IMJS_AGENT_TEST_CLIENT_ID, IMJS_AGENT_TEST_CLIENT_SECRET, IMJS_AGENT_TEST_CLIENT_SCOPES."
+    );
+  }
+
+  const serviceAuthClient = new ServiceAuthorizationClient({
+    clientId,
+    clientSecret,
+    scope,
+  });
+
+  const accessToken = await serviceAuthClient.getAccessToken();
+  if (!accessToken) {
+    throw new Error("Failed to retrieve access token from ServiceAuthorizationClient.");
+  }
+
+  return accessToken;
+}
+
 registerBackendCallback(
   getTokenCallbackName,
   async (user: any, oidcConfig?: any): Promise<string> => {
     return signin(user, oidcConfig);
   },
 );
+
+
+registerBackendCallback(getServiceAuthTokenCallbackName, async (): Promise<string> => {
+  return await signinWithServiceAuthClient();
+});
