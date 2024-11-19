@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "a new backend function that uses the ServiceAuthorizationClient to get an access token",
+  "packageName": "@itwin/oidc-signin-tool",
+  "email": "Frank.Li@bentley.com",
+  "dependentChangeType": "patch"
+}
