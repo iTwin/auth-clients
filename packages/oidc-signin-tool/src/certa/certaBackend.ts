@@ -7,7 +7,7 @@ import * as fs from "fs";
 import * as path from "path";
 import type { AccessToken } from "@itwin/core-bentley";
 import { registerBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
-import { ServiceAuthorizationClient } from "@itwin/service-authorization";
+import { ServiceAuthorizationClient, ServiceAuthorizationClientConfiguration } from "@itwin/service-authorization";
 import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "../TestUsers";
 import { TestUtility } from "../TestUtility";
 import { getTokenCallbackName, getServiceAuthTokenCallbackName } from "./certaCommon";
@@ -57,26 +57,27 @@ async function signin(user: TestUserCredentials, oidcConfig?: TestBrowserAuthori
   if (undefined === token)
     throw new Error("Failed to get access token");
 
+
   return token;
 }
 
-async function signinWithServiceAuthClient(): Promise<string> {
-  const clientId = process.env.IMJS_AGENT_TEST_CLIENT_ID;
-  const clientSecret = process.env.IMJS_AGENT_TEST_CLIENT_SECRET;
-  const scope = process.env.IMJS_AGENT_TEST_CLIENT_SCOPES;
+async function signinWithServiceAuthClient(oidcConfig: ServiceAuthorizationClientConfiguration): Promise<string> {
+  // const clientId = process.env.IMJS_AGENT_TEST_CLIENT_ID;
+  // const clientSecret = process.env.IMJS_AGENT_TEST_CLIENT_SECRET;
+  // const scope = process.env.IMJS_AGENT_TEST_CLIENT_SCOPES;
 
-  if (!clientId || !clientSecret || !scope) {
-    throw new Error(
-      "Missing required environment variables: IMJS_AGENT_TEST_CLIENT_ID, IMJS_AGENT_TEST_CLIENT_SECRET, IMJS_AGENT_TEST_CLIENT_SCOPES."
-    );
-  }
+  // if (!clientId || !clientSecret || !scope) {
+  //   throw new Error(
+  //     "Missing required environment variables: IMJS_AGENT_TEST_CLIENT_ID, IMJS_AGENT_TEST_CLIENT_SECRET, IMJS_AGENT_TEST_CLIENT_SCOPES."
+  //   );
+  // }
 
-  const serviceAuthClient = new ServiceAuthorizationClient({
-    clientId,
-    clientSecret,
-    scope,
-  });
-
+  // const serviceAuthClient = new ServiceAuthorizationClient({
+  //   clientId,
+  //   clientSecret,
+  //   scope,
+  // });
+  const serviceAuthClient = new ServiceAuthorizationClient(oidcConfig);
   const accessToken = await serviceAuthClient.getAccessToken();
   if (!accessToken) {
     throw new Error("Failed to retrieve access token from ServiceAuthorizationClient.");
@@ -93,6 +94,6 @@ registerBackendCallback(
 );
 
 
-registerBackendCallback(getServiceAuthTokenCallbackName, async (): Promise<string> => {
-  return await signinWithServiceAuthClient();
+registerBackendCallback(getServiceAuthTokenCallbackName, async (oidcConfig: ServiceAuthorizationClientConfiguration): Promise<string> => {
+  return await signinWithServiceAuthClient(oidcConfig);
 });

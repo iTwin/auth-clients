@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 import { executeBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
 import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "../TestUsers";
+import { ServiceAuthorizationClientConfiguration } from "@itwin/service-authorization";
 
 // Shared by both the frontend and backend side of the tests
 export const getTokenCallbackName = "getToken";
@@ -18,7 +19,7 @@ export async function getAccessTokenFromBackend(user: TestUserCredentials, oidcC
 }
 
 
-export async function getServiceAuthTokenFromBackend(): Promise<string> {
-  const accessToken = await executeBackendCallback(getServiceAuthTokenCallbackName);
+export async function getServiceAuthTokenFromBackend(oidcConfig: ServiceAuthorizationClientConfiguration): Promise<string> {
+  const accessToken = await executeBackendCallback(getServiceAuthTokenCallbackName, oidcConfig);
   return accessToken;
 }
