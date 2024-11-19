@@ -36,7 +36,7 @@ jobs:
     inputs:
       versionSpec: 18.x
 
-  - script: npm install -g pnpm@8
+  - script: npm install -g pnpm@9
     displayName: Install pnpm
 
   - bash: |

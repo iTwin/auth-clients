@@ -4,7 +4,6 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-import * as OperatingSystemUserName from "username";
 import { safeStorage } from "electron";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
@@ -37,13 +36,7 @@ export class RefreshTokenStore {
 
   private async getUserName(): Promise<string | undefined> {
     if (!this._userName) {
-      try {
-        this._userName = await OperatingSystemUserName();
-      } catch {
-        // errors occur in testing when using asynchronous call
-        // https://github.com/iTwin/auth-clients/issues/163
-        this._userName = OperatingSystemUserName.sync();
-      }
+      this._userName = await (await import("username")).username();
     }
 
     return this._userName;
