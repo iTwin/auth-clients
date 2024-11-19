@@ -4,7 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 import { executeBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
 import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "../TestUsers";
-import { ServiceAuthorizationClientConfiguration } from "@itwin/service-authorization";
+import type { ServiceAuthorizationClientConfiguration } from "@itwin/service-authorization";
 
 // Shared by both the frontend and backend side of the tests
 export const getTokenCallbackName = "getToken";
