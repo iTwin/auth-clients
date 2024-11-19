@@ -62,21 +62,6 @@ async function signin(user: TestUserCredentials, oidcConfig?: TestBrowserAuthori
 }
 
 async function signinWithServiceAuthClient(oidcConfig: ServiceAuthorizationClientConfiguration): Promise<string> {
-  // const clientId = process.env.IMJS_AGENT_TEST_CLIENT_ID;
-  // const clientSecret = process.env.IMJS_AGENT_TEST_CLIENT_SECRET;
-  // const scope = process.env.IMJS_AGENT_TEST_CLIENT_SCOPES;
-
-  // if (!clientId || !clientSecret || !scope) {
-  //   throw new Error(
-  //     "Missing required environment variables: IMJS_AGENT_TEST_CLIENT_ID, IMJS_AGENT_TEST_CLIENT_SECRET, IMJS_AGENT_TEST_CLIENT_SCOPES."
-  //   );
-  // }
-
-  // const serviceAuthClient = new ServiceAuthorizationClient({
-  //   clientId,
-  //   clientSecret,
-  //   scope,
-  // });
   const serviceAuthClient = new ServiceAuthorizationClient(oidcConfig);
   const accessToken = await serviceAuthClient.getAccessToken();
   if (!accessToken) {
