@@ -80,5 +80,5 @@ registerBackendCallback(
 
 
 registerBackendCallback(getServiceAuthTokenCallbackName, async (oidcConfig: ServiceAuthorizationClientConfiguration): Promise<string> => {
-  return await signinWithServiceAuthClient(oidcConfig);
+  return signinWithServiceAuthClient(oidcConfig);
 });
