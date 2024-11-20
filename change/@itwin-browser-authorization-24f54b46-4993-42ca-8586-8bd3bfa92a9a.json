@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Update to @playwright/test 1.48.2",
-  "packageName": "@itwin/browser-authorization",
-  "email": "33036725+wgoehrig@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

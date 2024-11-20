@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 29 Oct 2024 21:49:00 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Nov 2024 18:34:06 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 0.19.7
+
+Wed, 20 Nov 2024 18:34:06 GMT
+
+### Patches
+
+- Update to username v7.0.0 (33036725+wgoehrig@users.noreply.github.com)
 
 ## 0.19.6
 
