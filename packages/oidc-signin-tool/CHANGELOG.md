@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 29 Oct 2024 21:49:00 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Nov 2024 18:34:06 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 4.3.8
+
+Wed, 20 Nov 2024 18:34:06 GMT
+
+### Patches
+
+- Update to @playwright/test 1.48.2 (33036725+wgoehrig@users.noreply.github.com)
 
 ## 4.3.7
 
