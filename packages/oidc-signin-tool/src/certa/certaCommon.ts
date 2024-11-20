@@ -18,7 +18,9 @@ export async function getAccessTokenFromBackend(user: TestUserCredentials, oidcC
   return accessToken;
 }
 
-
+/**
+ * Retrieves a service authorization token from the backend.
+ */
 export async function getServiceAuthTokenFromBackend(oidcConfig: ServiceAuthorizationClientConfiguration): Promise<string> {
   const accessToken = await executeBackendCallback(getServiceAuthTokenCallbackName, oidcConfig);
   return accessToken;
