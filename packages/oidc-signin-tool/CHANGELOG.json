@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Thu, 21 Nov 2024 16:05:10 GMT",
+      "version": "4.4.0",
+      "tag": "@itwin/oidc-signin-tool_v4.4.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "Frank.Li@bentley.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "ed9fb1256dd62bdd13a22b790df87bae951575e1",
+            "comment": "a new backend function that uses the ServiceAuthorizationClient to get an access token"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 20 Nov 2024 18:34:06 GMT",
       "version": "4.3.8",
       "tag": "@itwin/oidc-signin-tool_v4.3.8",

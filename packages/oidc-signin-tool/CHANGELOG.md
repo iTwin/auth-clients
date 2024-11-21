@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Wed, 20 Nov 2024 18:34:06 GMT and should not be manually modified.
+<!-- This log was last generated on Thu, 21 Nov 2024 16:05:10 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 4.4.0
+
+Thu, 21 Nov 2024 16:05:10 GMT
+
+### Minor changes
+
+- a new backend function that uses the ServiceAuthorizationClient to get an access token (Frank.Li@bentley.com)
 
 ## 4.3.8
 
