@@ -14,6 +14,7 @@ export interface IntrospectionResponse {
   iss?: string;
   jti?: string;
   username?: string;
+  email?: string;
   aud?: string | string[];
   scope: string;
   sub?: string;
