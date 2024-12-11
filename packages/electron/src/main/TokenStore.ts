@@ -46,7 +46,8 @@ export class RefreshTokenStore {
       return undefined;
     }
 
-    if (scopes && !(await this.scopesMatch(scopes))) return
+    if (scopes && !(await this.scopesMatch(scopes)))
+      return;
 
     const encryptedToken = this._store.get(key);
     const refreshToken = await this.decryptRefreshToken(encryptedToken).catch(() => undefined);
@@ -112,8 +113,7 @@ export class RefreshTokenStore {
   }
 
   private arrayEquals(arr1: string[], arr2: string[]): boolean {
-    return arr1.sort().join(" ") === arr2.sort().join(" ")
+    return arr1.sort().join(" ") === arr2.sort().join(" ");
   }
-
 
 }

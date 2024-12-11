@@ -1,6 +1,8 @@
-import { AuthorizationListener, AuthorizationNotifier, AuthorizationRequest, AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenRequest, TokenResponse } from "@openid/appauth";
-import { ElectronMainAuthorization, ElectronMainAuthorizationConfiguration } from "../../ElectronMain";
-import * as sinon from "sinon"
+import type { AuthorizationListener, AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
+import { AuthorizationNotifier, AuthorizationRequest, AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
+import type { ElectronMainAuthorizationConfiguration } from "../../ElectronMain";
+import { ElectronMainAuthorization } from "../../main/Client";
+import * as sinon from "sinon";
 import { LoopbackWebServer } from "../../main/LoopbackWebServer";
 import { ElectronMainAuthorizationRequestHandler } from "../../main/ElectronMainAuthorizationRequestHandler";
 import { RefreshTokenStore } from "../../main/TokenStore";
@@ -12,34 +14,44 @@ interface ClientConfig {
 }
 
 interface SetupMockAuthServerOptions {
-  performTokenRequestCb?: () => any
+  performTokenRequestCb?: () => any;
 }
 
+/**
+ * Get configuration for the test client
+ */
 export function getConfig({ clientId, scopes, redirectUris }: ClientConfig = {}): ElectronMainAuthorizationConfiguration {
   return {
     clientId: clientId ?? "testClientId",
     scopes: scopes ?? "testScope",
-    redirectUris: redirectUris ?? ["testRedirectUri_1", "testRedirectUri_2"]
+    redirectUris: redirectUris ?? ["testRedirectUri_1", "testRedirectUri_2"],
   };
 }
 
 interface GetMockTokenResponseProps {
-  access_token?: string;
-  refresh_token?: string;
-  issued_at?: number;
-  expires_in?: string;
+  accessToken?: string;
+  refreshToken?: string;
+  issuedAt?: number;
+  expiresIn?: string;
 }
 
-export function getMockTokenResponse({ access_token, refresh_token, issued_at, expires_in }: GetMockTokenResponseProps = {}): TokenResponse {
+/**
+ * Construct a mock token response
+ */
+export function getMockTokenResponse({ accessToken, refreshToken, issuedAt, expiresIn }: GetMockTokenResponseProps = {}): TokenResponse {
   return new TokenResponse(
     {
-      access_token: access_token ?? "testAccessTokenSignInTest",
-      refresh_token: refresh_token ?? "testRefreshToken",
-      issued_at: issued_at ?? (new Date()).getTime() / 1000,
-      expires_in: expires_in ?? "60000",
+      access_token: accessToken ?? "testAccessTokenSignInTest", // eslint-disable-line @typescript-eslint/naming-convention
+      refresh_token: refreshToken ?? "testRefreshToken", // eslint-disable-line @typescript-eslint/naming-convention
+      issued_at: issuedAt ?? (new Date()).getTime() / 1000, // eslint-disable-line @typescript-eslint/naming-convention
+      expires_in: expiresIn ?? "60000", // eslint-disable-line @typescript-eslint/naming-convention
     });
 }
 
+/**
+ * Setup a mock auth server and listen for refresh token calls
+ * @returns a spy which can be used to make assertions on the refresh token call
+ */
 export async function setupMockAuthServer(mockTokenResponse: TokenResponse, setupMockAuthServerOptions: SetupMockAuthServerOptions = {}): Promise<sinon.SinonSpy<any[], any>> {
   sinon.stub(LoopbackWebServer, "start").resolves();
   sinon.stub(ElectronMainAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
@@ -56,11 +68,11 @@ export async function setupMockAuthServer(mockTokenResponse: TokenResponse, setu
 
   sinon.stub(AuthorizationNotifier.prototype, "setAuthorizationListener").callsFake((listener: AuthorizationListener) => {
     const authRequest = new AuthorizationRequest({
-      response_type: "testResponseType",
-      client_id: "testClient",
-      redirect_uri: "testRedirect",
+      response_type: "testResponseType", // eslint-disable-line @typescript-eslint/naming-convention
+      client_id: "testClient", // eslint-disable-line @typescript-eslint/naming-convention
+      redirect_uri: "testRedirect", // eslint-disable-line @typescript-eslint/naming-convention
       scope: "testScope",
-      internal: { code_verifier: "testCodeVerifier" },
+      internal: { code_verifier: "testCodeVerifier" }, // eslint-disable-line @typescript-eslint/naming-convention
       state: "testState",
     });
 
@@ -68,11 +80,14 @@ export async function setupMockAuthServer(mockTokenResponse: TokenResponse, setu
     listener(authRequest, authResponse, null);
   });
 
-  return spy
+  return spy;
 }
 
+/**
+ * Convenience function to stub the token encryption/decryption methods
+ */
 export function stubTokenCrypto(token: string) {
   const encryptSpy = sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(token)));
   const decryptSpy = sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(token));
-  return { encryptSpy, decryptSpy }
+  return { encryptSpy, decryptSpy };
 }

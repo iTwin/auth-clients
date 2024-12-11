@@ -55,11 +55,11 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("Should load token response from token store", async () => {
-    const config = getConfig()
-    const mockTokenResponse = getMockTokenResponse({ access_token: "testAccessToken" });
+    const config = getConfig();
+    const mockTokenResponse = getMockTokenResponse({ accessToken: "testAccessToken" });
 
     const refreshToken = "old refresh token";
-    stubTokenCrypto(refreshToken)
+    stubTokenCrypto(refreshToken);
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
@@ -76,15 +76,15 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("Should sign in", async () => {
-    const config = getConfig()
+    const config = getConfig();
     const mockTokenResponse = getMockTokenResponse();
 
-    stubTokenCrypto(mockTokenResponse.refreshToken!)
+    stubTokenCrypto(mockTokenResponse.refreshToken!);
     // Clear token store
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.delete();
 
-    await setupMockAuthServer(mockTokenResponse)
+    await setupMockAuthServer(mockTokenResponse);
     // Create client and call initialize
     const client = new ElectronMainAuthorization(config);
     await client.signIn();
@@ -94,16 +94,16 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("Should refresh old token", async () => {
-    const config = getConfig()
+    const config = getConfig();
     const mockTokenResponse = getMockTokenResponse();
 
     const refreshToken = "old refresh token";
-    stubTokenCrypto(refreshToken)
+    stubTokenCrypto(refreshToken);
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
 
-    await setupMockAuthServer(mockTokenResponse)
+    await setupMockAuthServer(mockTokenResponse);
     // Create client and silent signin
     const client = new ElectronMainAuthorization(config);
     await client.signInSilent();
@@ -122,9 +122,9 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("should save new refresh token after signIn() when no electron-store token is present", async () => {
-    const config = getConfig()
-    const mockTokenResponse = getMockTokenResponse()
-    stubTokenCrypto(mockTokenResponse.refreshToken!)
+    const config = getConfig();
+    const mockTokenResponse = getMockTokenResponse();
+    stubTokenCrypto(mockTokenResponse.refreshToken!);
 
     // Clear token store
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
@@ -133,8 +133,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
     await setupMockAuthServer(mockTokenResponse, {
       performTokenRequestCb: async () => {
         await tokenStore.save(mockTokenResponse.refreshToken!);
-      }
-    })
+      },
+    });
 
     const saveSpy = sinon.spy(tokenStore, "save");
     // Create client and call initialize
@@ -147,18 +147,18 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("should load and decrypt refresh token on signIn() given an existing refresh token in electron-store", async () => {
-    const config = getConfig()
-    const mockTokenResponse = getMockTokenResponse({ access_token: "testAccessToken" })
+    const config = getConfig();
+    const mockTokenResponse = getMockTokenResponse({ accessToken: "testAccessToken" });
 
     const refreshToken = "old refresh token";
-    const { decryptSpy } = stubTokenCrypto(refreshToken)
+    const { decryptSpy } = stubTokenCrypto(refreshToken);
 
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.delete();
     await tokenStore.save(refreshToken);
 
-    const spy = await setupMockAuthServer(mockTokenResponse)
+    const spy = await setupMockAuthServer(mockTokenResponse);
 
     // Create client and silent sign in
     const client = new ElectronMainAuthorization(config);
@@ -175,7 +175,7 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
 
-  const config = getConfig()
+  const config = getConfig();
   const testAuthority = "https://test.authority.com";
 
   it("should use config authority without prefix", async () => {
@@ -215,9 +215,8 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
 
-  const config = getConfig()
-
   it("Should add offline_access scope", async () => {
+    const config = getConfig();
     const client = new ElectronMainAuthorization(config);
     expect(client.scopes).equals(`${config.scopes} offline_access`);
   });
@@ -238,67 +237,67 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
       sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
       sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
-    })
+    });
 
     it("delete the current refresh token", async () => {
-      const config = getConfig()
-      const mockTokenResponse = getMockTokenResponse()
+      const config = getConfig();
+      const mockTokenResponse = getMockTokenResponse();
 
-      stubTokenCrypto(mockTokenResponse.refreshToken!)
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
 
-      await setupMockAuthServer(mockTokenResponse)
+      await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
       expect(client.scopes).equals(`${config.scopes} offline_access`);
       await client.signIn();
 
       const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
-      const token = await tokenStore.load("testScope offline_access")
+      const token = await tokenStore.load("testScope offline_access");
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load("differetnTestScope offline_access")
+      const _token = await tokenStore.load("differetnTestScope offline_access");
       assert.equal(_token, undefined);
-    })
+    });
 
     it("delete the current refresh token regardless of order", async () => {
-      const config = getConfig({ scopes: "testScope blurgh-platform ReadTHINGS" })
-      const mockTokenResponse = getMockTokenResponse()
+      const config = getConfig({ scopes: "testScope blurgh-platform ReadTHINGS" });
+      const mockTokenResponse = getMockTokenResponse();
 
-      stubTokenCrypto(mockTokenResponse.refreshToken!)
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
 
-      await setupMockAuthServer(mockTokenResponse)
+      await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
       expect(client.scopes).equals("testScope blurgh-platform ReadTHINGS offline_access");
       await client.signIn();
 
       const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
-      const token = await tokenStore.load("ReadTHINGS blurgh-platform offline_access testScope")
+      const token = await tokenStore.load("ReadTHINGS blurgh-platform offline_access testScope");
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope")
+      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
       assert.equal(_token, undefined);
-    })
+    });
 
     it("delete the current refresh token works with explicit offline_access added", async () => {
-      const config = getConfig({ scopes: "testScope blurgh-platform offline_access ReadTHINGS" })
-      const mockTokenResponse = getMockTokenResponse()
+      const config = getConfig({ scopes: "testScope blurgh-platform offline_access ReadTHINGS" });
+      const mockTokenResponse = getMockTokenResponse();
 
-      stubTokenCrypto(mockTokenResponse.refreshToken!)
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
 
-      await setupMockAuthServer(mockTokenResponse)
+      await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
       expect(client.scopes).equals("testScope blurgh-platform offline_access ReadTHINGS");
       await client.signIn();
 
       const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
-      const token = await tokenStore.load("offline_access ReadTHINGS blurgh-platform testScope")
+      const token = await tokenStore.load("offline_access ReadTHINGS blurgh-platform testScope");
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope")
+      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
       assert.equal(_token, undefined);
-    })
-  })
+    });
+  });
 
 });
