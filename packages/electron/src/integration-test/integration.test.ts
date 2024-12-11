@@ -37,7 +37,7 @@ const userDataPath = getElectronUserDataPath();
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
-const tokenStore = new RefreshTokenStore(getTokenStoreFileName(),getTokenStoreKey(), userDataPath);
+const tokenStore = new RefreshTokenStore(getTokenStoreFileName(), getTokenStoreKey(), userDataPath);
 
 function getTokenStoreKey(issuerUrl?: string): string {
   const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
@@ -110,3 +110,18 @@ test("sign out successful", async ({ browser }) => {
   await testHelper.checkStatus(electronPage, false);
   await page.close();
 });
+
+
+test("when scopes change, sign in is required", async ({ browser }) => {
+  const page = await browser.newPage();
+  await testHelper.clickSignIn(electronPage);
+  await testHelper.signIn(page, await getUrl(electronApp));
+  await page.waitForLoadState("networkidle");
+  await testHelper.checkStatus(electronPage, true);
+
+  // Admittedly this is cheating: no user would interact
+  // with the tokenStore directly, but this is a tough
+  // case to test otherwise.
+  await tokenStore.load("itwin-platform realitydata:read")
+  await testHelper.checkStatus(electronPage, false);
+})
