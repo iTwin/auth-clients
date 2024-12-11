@@ -302,7 +302,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    * @return AccessToken if it's possible to get a valid access token, and undefined otherwise.
    */
   private async loadAccessToken(): Promise<AccessToken> {
-    const refreshToken = await this._refreshTokenStore.load();
+    const refreshToken = await this._refreshTokenStore.load(this._scopes);
+
     if (!refreshToken)
       return "";
 
@@ -526,7 +527,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   ): Promise<AccessToken> {
     this._refreshToken = tokenResponse.refreshToken;
     if (this._refreshToken)
-      await this._refreshTokenStore.save(this._refreshToken);
+      await this._refreshTokenStore.save(this._refreshToken, this._scopes);
 
     const expiresAtMilliseconds =
       (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000;
