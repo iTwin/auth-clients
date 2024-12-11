@@ -38,7 +38,10 @@ export class TestHelper {
   }
 
   public async signIn(page: Page, url: string) {
+    console.log("Attempting to goto url: ", url);
     await page.goto(url);
+    const title = await page.title()
+    console.log(`Sign in page title: ${title}`);
     await page.waitForSelector("#identifierInput", { timeout: 5000 });
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");

@@ -79,6 +79,12 @@ test.afterEach(async () => {
   await electronApp.close();
 });
 
+test("browser.newPage smoke test", async ({ browser }) => {
+  const page = await browser.newPage()
+  await page.goto("https://playwright.dev")
+  await expect(page.getByText("Playwright enables reliable end-to-end testing for modern web apps.")).toBeVisible()
+})
+
 test("buttons exist", async () => {
   await electronPage.waitForLoadState("domcontentloaded");
   const signInButton = electronPage.getByTestId("signIn");
