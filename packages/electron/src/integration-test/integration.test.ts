@@ -99,7 +99,9 @@ test("sign in successful", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.checkStatus(electronPage, false);
   await testHelper.clickSignIn(electronPage);
-  await testHelper.signIn(page, await getUrl(electronApp));
+  const url = await getUrl(electronApp);
+  console.log(url);
+  await testHelper.signIn(page, url);
   await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, true);
   await page.close();
