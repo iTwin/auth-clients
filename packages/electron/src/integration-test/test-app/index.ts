@@ -23,7 +23,6 @@ void app.whenReady().then(async () => {
   if (!process.env.IMJS_TEST_ELECTRON_SCOPES)
     throw new Error("Please provide scopes in env");
 
-  console.log(`scopes ${process.env.IMJS_TEST_ELECTRON_SCOPES}`)
   createWindow();
 
   new ElectronMainAuthorization({

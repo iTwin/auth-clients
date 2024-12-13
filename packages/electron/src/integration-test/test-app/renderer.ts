@@ -4,7 +4,7 @@ if (!process.env.IMJS_TEST_ELECTRON_CLIENT_ID)
   throw new Error("Please provide a clientId in env");
 
 const auth = new ElectronRendererAuthorization({
-  clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID
+  clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
 });
 
 const signOutButton = document.getElementById("signOut");

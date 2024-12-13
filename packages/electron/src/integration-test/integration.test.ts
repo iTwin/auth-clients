@@ -80,10 +80,10 @@ test.afterEach(async () => {
 });
 
 test("browser.newPage smoke test", async ({ browser }) => {
-  const page = await browser.newPage()
-  await page.goto("https://playwright.dev")
-  await expect(page.getByText("Playwright enables reliable end-to-end testing for modern web apps.")).toBeVisible()
-})
+  const page = await browser.newPage();
+  await page.goto("https://playwright.dev");
+  await expect(page.getByText("Playwright enables reliable end-to-end testing for modern web apps.")).toBeVisible();
+});
 
 test("buttons exist", async () => {
   await electronPage.waitForLoadState("domcontentloaded");
@@ -100,7 +100,6 @@ test("sign in successful", async ({ browser }) => {
   await testHelper.checkStatus(electronPage, false);
   await testHelper.clickSignIn(electronPage);
   const url = await getUrl(electronApp);
-  console.log(url);
   await testHelper.signIn(page, url);
   await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, true);
