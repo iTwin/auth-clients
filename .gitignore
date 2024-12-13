@@ -9,7 +9,6 @@ dist
 
 # testing
 .nyc_output
-.parcel-cache
 junit_results.xml
 /**/test-results/**/*
 generated-docs
