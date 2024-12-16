@@ -105,18 +105,10 @@ export class RefreshTokenStore {
     const key = await this.getKey();
     const savedScopes = this._store.get(`${key}:scopes`);
     if (savedScopes) {
-      return this.arrayEquals(savedScopes.split(" "), scopes.split(" "));
+      return savedScopes.split(" ").sort().join(" ") === scopes.split(" ").sort().join(" ");
     }
 
     // no stored scopes, so all good
     return true;
   }
-
-  /**
-   * Determines if two arrays are equal by sorting them and comparing them as joined strings.
-   */
-  private arrayEquals(arr1: string[], arr2: string[]): boolean {
-    return arr1.sort().join(" ") === arr2.sort().join(" ");
-  }
-
 }
