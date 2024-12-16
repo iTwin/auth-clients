@@ -80,7 +80,6 @@ test.afterEach(async () => {
 });
 
 test("buttons exist", async () => {
-  await electronPage.waitForLoadState("domcontentloaded");
   const signInButton = electronPage.getByTestId("signIn");
   const signOutButton = electronPage.getByTestId("signOut");
   const getStatusButton = electronPage.getByTestId("getStatus");
