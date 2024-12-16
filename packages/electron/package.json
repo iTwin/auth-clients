@@ -28,7 +28,7 @@
     "test:integration": "pnpm test:integration:build && pnpm exec playwright test",
     "test:integration:start": "pnpm test:integration:build && electron dist/integration-test/test-app/index.js",
     "test:integration:build": "pnpm test:integration:vite && tsc -p ./src/integration-test/",
-    "test:integration:vite": "vite build --config vite.config.mts",
+    "test:integration:vite": "vite build",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
   },

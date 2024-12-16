@@ -112,6 +112,9 @@ export class RefreshTokenStore {
     return true;
   }
 
+  /**
+   * Determines if two arrays are equal by sorting them and comparing them as joined strings.
+   */
   private arrayEquals(arr1: string[], arr2: string[]): boolean {
     return arr1.sort().join(" ") === arr2.sort().join(" ");
   }

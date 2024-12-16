@@ -41,10 +41,12 @@ interface GetMockTokenResponseProps {
 export function getMockTokenResponse({ accessToken, refreshToken, issuedAt, expiresIn }: GetMockTokenResponseProps = {}): TokenResponse {
   return new TokenResponse(
     {
-      access_token: accessToken ?? "testAccessTokenSignInTest", // eslint-disable-line @typescript-eslint/naming-convention
-      refresh_token: refreshToken ?? "testRefreshToken", // eslint-disable-line @typescript-eslint/naming-convention
-      issued_at: issuedAt ?? (new Date()).getTime() / 1000, // eslint-disable-line @typescript-eslint/naming-convention
-      expires_in: expiresIn ?? "60000", // eslint-disable-line @typescript-eslint/naming-convention
+      /* eslint-disable @typescript-eslint/naming-convention */
+      access_token: accessToken ?? "testAccessTokenSignInTest",
+      refresh_token: refreshToken ?? "testRefreshToken",
+      issued_at: issuedAt ?? (new Date()).getTime() / 1000,
+      expires_in: expiresIn ?? "60000",
+      /* eslint-disable @typescript-eslint/naming-convention */
     });
 }
 
@@ -68,12 +70,14 @@ export async function setupMockAuthServer(mockTokenResponse: TokenResponse, setu
 
   sinon.stub(AuthorizationNotifier.prototype, "setAuthorizationListener").callsFake((listener: AuthorizationListener) => {
     const authRequest = new AuthorizationRequest({
-      response_type: "testResponseType", // eslint-disable-line @typescript-eslint/naming-convention
-      client_id: "testClient", // eslint-disable-line @typescript-eslint/naming-convention
-      redirect_uri: "testRedirect", // eslint-disable-line @typescript-eslint/naming-convention
+      /* eslint-disable @typescript-eslint/naming-convention */
+      response_type: "testResponseType",
+      client_id: "testClient",
+      redirect_uri: "testRedirect",
       scope: "testScope",
-      internal: { code_verifier: "testCodeVerifier" }, // eslint-disable-line @typescript-eslint/naming-convention
+      internal: { code_verifier: "testCodeVerifier" },
       state: "testState",
+      /* eslint-disable @typescript-eslint/naming-convention */
     });
 
     const authResponse = new AuthorizationResponse({ code: "testCode", state: "testState" });
