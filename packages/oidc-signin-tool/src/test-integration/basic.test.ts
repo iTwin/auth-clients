@@ -28,7 +28,7 @@ test.describe("Sign in (#integration)", () => {
     const token = await getTestAccessToken(
       {
         ...oidcConfig,
-        scope: `${oidcConfig.scope} projects:read`,
+        scope: oidcConfig.scope,
       },
       validUser,
     );
