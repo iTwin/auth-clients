@@ -2,6 +2,21 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "date": "Mon, 16 Dec 2024 21:41:11 GMT",
+      "version": "1.2.3",
+      "tag": "@itwin/service-authorization_v1.2.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "f39647a2d8e7326ef0bef7594ce4baad35da03b8",
+            "comment": "Add email property to introspection response"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 18 Jun 2024 19:11:49 GMT",
       "version": "1.2.2",
       "tag": "@itwin/service-authorization_v1.2.2",

@@ -1,8 +1,16 @@
 # Change Log - @itwin/service-authorization
 
-This log was last generated on Tue, 18 Jun 2024 19:11:49 GMT and should not be manually modified.
+<!-- This log was last generated on Mon, 16 Dec 2024 21:41:11 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 1.2.3
+
+Mon, 16 Dec 2024 21:41:11 GMT
+
+### Patches
+
+- Add email property to introspection response (GytisCepk@users.noreply.github.com)
 
 ## 1.2.2
 

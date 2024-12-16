@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Wed, 20 Nov 2024 18:34:06 GMT and should not be manually modified.
+<!-- This log was last generated on Mon, 16 Dec 2024 21:41:11 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.19.8
+
+Mon, 16 Dec 2024 21:41:11 GMT
+
+### Patches
+
+- Delete stored token if application scopes change (ben-polinsky@users.noreply.github.com)
 
 ## 0.19.7
 
