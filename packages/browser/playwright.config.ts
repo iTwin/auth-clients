@@ -13,7 +13,7 @@ export default defineConfig({
   reporter,
   webServer: {
     command: "npm run test:integration:start-test-app",
-    url: "http://localhost:1234",
+    url: "http://localhost:5173",
   },
   use: {
     screenshot: "only-on-failure",

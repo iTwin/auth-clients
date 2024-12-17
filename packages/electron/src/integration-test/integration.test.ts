@@ -80,7 +80,6 @@ test.afterEach(async () => {
 });
 
 test("buttons exist", async () => {
-  await electronPage.waitForLoadState("domcontentloaded");
   const signInButton = electronPage.getByTestId("signIn");
   const signOutButton = electronPage.getByTestId("signOut");
   const getStatusButton = electronPage.getByTestId("getStatus");
@@ -95,7 +94,6 @@ test("sign in successful", async ({ browser }) => {
   await testHelper.clickSignIn(electronPage);
   const url = await getUrl(electronApp);
   await testHelper.signIn(page, url);
-  await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, true);
   await page.close();
 });
@@ -104,10 +102,8 @@ test("sign out successful", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await getUrl(electronApp));
-  await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, true);
   await testHelper.clickSignOut(electronPage);
-  await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, false);
   await page.close();
 });
@@ -116,7 +112,6 @@ test("when scopes change, sign in is required", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await getUrl(electronApp));
-  await page.waitForLoadState("networkidle");
   await testHelper.checkStatus(electronPage, true);
 
   // Admittedly this is cheating: no user would interact
