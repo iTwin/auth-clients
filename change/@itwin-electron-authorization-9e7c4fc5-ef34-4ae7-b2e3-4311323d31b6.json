@@ -1,0 +1,7 @@
+{
+  "type": "none",
+  "comment": "electron integration test fixtures",
+  "packageName": "@itwin/electron-authorization",
+  "email": "ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "none"
+}
