@@ -1,6 +1,6 @@
 import { loadConfig } from "./loadConfig";
 
-const { clientId, envPrefix } = loadConfig()
+const { clientId, envPrefix } = loadConfig();
 
 // Get the user data path that would be returned in app.getPath('userData') if ran in main electron process.
 export const getElectronUserDataPath = (): string | undefined => {
@@ -25,4 +25,4 @@ export const getTokenStoreKey = (issuerUrl?: string): string => {
   }
   issuerUrl = authority.href.replace(/\/$/, "");
   return `${getTokenStoreFileName()}:${issuerUrl}`;
-}
+};

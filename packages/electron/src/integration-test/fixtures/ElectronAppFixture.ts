@@ -1,14 +1,14 @@
-import { ElectronApplication, Page } from "@playwright/test";
+import type { ElectronApplication, Page } from "@playwright/test";
 
 export class ElectronAppFixture {
   constructor(private _page: Page, private _app: ElectronApplication) { }
 
-  get buttons() {
+  public get buttons() {
     return {
       signIn: this._page.getByTestId("signIn"),
       signOut: this._page.getByTestId("signOut"),
-      status: this._page.getByTestId("getStatus")
-    }
+      status: this._page.getByTestId("getStatus"),
+    };
   }
 
   /**
@@ -20,20 +20,13 @@ export class ElectronAppFixture {
     const clickPromise = button.click();
     const urlPromise = this.getUrl();
     const [, url] = await Promise.all([clickPromise, urlPromise]);
-    return url
+    return url;
   }
 
   public async clickSignOut() {
     await this._page.waitForSelector("button#signOut");
     const button = this._page.getByTestId("signOut");
     await button.click();
-  }
-
-  public async isSignedIn() {
-    const button = this._page.getByTestId("getStatus");
-    await button.click();
-    const locator = this._page.getByText("signed in");
-    return locator.isVisible();
   }
 
   public async checkStatus(expectedStatus: boolean) {
@@ -58,6 +51,6 @@ export class ElectronAppFixture {
 
   public async destroy() {
     await this._page.close();
-    await this._app.close()
+    await this._app.close();
   }
 }

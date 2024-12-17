@@ -1,14 +1,14 @@
 import type { Page } from "@playwright/test";
-import { RefreshTokenStore } from "../../main/TokenStore";
+import type { RefreshTokenStore } from "../../main/TokenStore";
 
 interface AuthFixtureProps {
   page: Page;
-  tokenStore: RefreshTokenStore
+  tokenStore: RefreshTokenStore;
 }
 
 export class AuthFixture {
   private _page: Page;
-  private _tokenStore: RefreshTokenStore
+  private _tokenStore: RefreshTokenStore;
 
   constructor(options: AuthFixtureProps) {
     this._page = options.page;

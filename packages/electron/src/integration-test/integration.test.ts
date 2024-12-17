@@ -3,7 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { loadConfig } from "./helpers/loadConfig";
-import { test, expect } from "./fixtures/ElectronFixtures";
+import { expect, test } from "./fixtures/ElectronFixtures";
 const { email, password } = loadConfig();
 
 test("buttons exist", async ({ app }) => {
@@ -26,7 +26,7 @@ test("sign out successful", async ({ app, auth }) => {
   await app.checkStatus(true);
 
   await app.clickSignOut();
-  await app.checkStatus(false)
+  await app.checkStatus(false);
 });
 
 test("when scopes change, sign in is required", async ({ app, auth }) => {
@@ -34,6 +34,6 @@ test("when scopes change, sign in is required", async ({ app, auth }) => {
   await auth.signInIMS(url, email, password);
   await app.checkStatus(true);
 
-  await auth.switchScopes("itwin-platform realitydata:read")
+  await auth.switchScopes("itwin-platform realitydata:read");
   await app.checkStatus(false);
 });

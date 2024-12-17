@@ -1,8 +1,8 @@
-import { _electron as electron, test as base } from '@playwright/test';
-import { AuthFixture } from './AuthFixture';
-import { ElectronAppFixture } from './ElectronAppFixture';
-import { RefreshTokenStore } from '../../main/TokenStore';
-import { getElectronUserDataPath, getTokenStoreFileName, getTokenStoreKey } from '../helpers/utils';
+import { test as base, _electron as electron } from "@playwright/test";
+import { AuthFixture } from "./AuthFixture";
+import { ElectronAppFixture } from "./ElectronAppFixture";
+import { RefreshTokenStore } from "../../main/TokenStore";
+import { getElectronUserDataPath, getTokenStoreFileName, getTokenStoreKey } from "../helpers/utils";
 
 const tokenStoreFileName = getTokenStoreFileName();
 const tokenStoreKey = getTokenStoreKey();
@@ -24,10 +24,10 @@ export const test = base.extend<{ auth: AuthFixture, app: ElectronAppFixture }>(
     const page = await browser.newPage();
     const auth = new AuthFixture({
       page,
-      tokenStore: new RefreshTokenStore(tokenStoreFileName, tokenStoreKey, userDataPath)
+      tokenStore: new RefreshTokenStore(tokenStoreFileName, tokenStoreKey, userDataPath),
     });
     await use(auth);
   },
 });
 
-export { expect } from '@playwright/test';
+export { expect } from "@playwright/test";
