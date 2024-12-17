@@ -15,7 +15,7 @@
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
     "test:integration": "playwright test src/integration-tests",
-    "test:integration:start-test-app": "vite dev --config ./vite.config.mts",
+    "test:integration:start-test-app": "vite dev",
     "cover": "nyc npm test",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
