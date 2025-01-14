@@ -1,6 +1,6 @@
 name: Publish Packages to npm
 
-on: [push]
+on: workflow_dispatch
 
 jobs:
   release-packages:
@@ -32,6 +32,6 @@ jobs:
         run: |
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin
-          # pnpm publish-packages -y --branch ${{ github.ref_name }} --message "Version bump [skip actions][publish docs]"
+          pnpm publish-packages -y --branch ${{ github.ref_name }} --message "Version bump [skip actions][publish docs]"
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPMJS_PUBLISH_ITWIN }}
