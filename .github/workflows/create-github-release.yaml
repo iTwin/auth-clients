@@ -1,9 +1,7 @@
 name: Create Release
 
-on:
-  push:
-    tags:
-      - "**"
+on: [push]
+
 jobs:
   create-release:
     runs-on: ubuntu-latest
