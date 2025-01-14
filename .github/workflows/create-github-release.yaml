@@ -1,6 +1,9 @@
 name: Create GitHub Release
 
-on: [push]
+on:
+  push:
+    tags:
+      - "**"
 
 jobs:
   create-release:
