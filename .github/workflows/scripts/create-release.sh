@@ -40,8 +40,18 @@ fi
 
 changelogMd="$packageDirectory/CHANGELOG.md"
 
+if [ ! -f "$changelogMd" ]; then
+  echo "Changelog file not found: $changelogMd"
+  exit 1
+fi
+
+# Extract the changelog text
+releaseNoteText=$(awk -v version="$packageVersion" '$0 ~ version {flag=1; print; next} /^## /{flag=0} flag' "$changelogMd")
+echo "Release note text was extracted as: $releaseNoteText"
+
 # remove the @itwin/ or @bentley/ scope from the tag name to create the zip file name since they have special characters
 zipFileName=$(echo "$tagName" | sed 's/@itwin\///; s/@bentley\///')
+echo "Zip file name was parsed as: $zipFileName"
 
 # Zip the package directory with just the specific package
 zip -r "$zipFileName.zip" "$packageDirectory"
@@ -51,8 +61,5 @@ tar -czvf "$zipFileName.tar.gz" "$packageDirectory"
 gh release create "$tagName" \
   "$zipFileName.zip" \
   "$zipFileName.tar.gz" \
-  --notes "# test
-  ## test2
-
-  another one tester" \
+  --notes "$releaseNoteText" \
   --verify-tag
