@@ -15,11 +15,14 @@ echo "Tag name was parsed as: $tagName"
 # gh release create $tagName /packages/service --verify-tag
 hardCodedTagName="@itwin/service-authorization_v1.2.3"
 hardCodedDirectory="./packages/service"
-zip -r "$hardCodedTagName.zip" $hardCodedDirectory
-tar -czvf "$hardCodedTagName.tar.gz" $hardCodedDirectory
+
+zipFileName=$(echo "$hardCodedTagName" | sed 's/@itwin\///; s/@bentley\///')
+
+zip -r "$zipFileName.zip" "$hardCodedDirectory"
+tar -czvf "$zipFileName.tar.gz" "$hardCodedDirectory"
 
 # Create a release and upload assets
 gh release create "$hardCodedTagName" \
-  "$hardCodedTagName.zip" \
-  "$hardCodedTagName.tar.gz" \
+  "$zipFileName.zip" \
+  "$zipFileName.tar.gz" \
   --verify-tag
