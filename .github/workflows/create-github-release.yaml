@@ -14,6 +14,7 @@ jobs:
       - name: Checkout branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref }} # checkouts the branch that triggered the workflow
           fetch-depth: 0
 
       - name: Configure git
