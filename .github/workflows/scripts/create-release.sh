@@ -11,4 +11,7 @@ echo "Ref name passed in: $refName"
 tagName=$(echo $refName | sed 's/refs\/tags\///')
 echo "Tag name was parsed as: $tagName"
 
-gh release create $tagName /packages/service --verify-tag
+# TODO: uncomment once verified working
+# gh release create $tagName /packages/service --verify-tag
+
+gh release create @itwin/service-authorization_v1.2.3 /packages/service --verify-tag
