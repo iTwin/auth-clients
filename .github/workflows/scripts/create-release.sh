@@ -13,5 +13,13 @@ echo "Tag name was parsed as: $tagName"
 
 # TODO: uncomment once verified working
 # gh release create $tagName /packages/service --verify-tag
+hardCodedTagName="@itwin/service-authorization_v1.2.3"
+hardCodedDirectory="./packages/service"
+zip -r "$hardCodedTagName.zip" $hardCodedDirectory
+tar -czvf "$hardCodedTagName.tar.gz" $hardCodedDirectory
 
-gh release create @itwin/service-authorization_v1.2.3 ./packages/service --verify-tag
+# Create a release and upload assets
+gh release create "$hardCodedTagName" \
+  "$hardCodedTagName.zip" \
+  "$hardCodedTagName.tar.gz" \
+  --verify-tag
