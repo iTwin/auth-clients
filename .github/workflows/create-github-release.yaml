@@ -25,6 +25,7 @@ jobs:
       - name: Create GitHub release
         run: |
           echo "Creating GitHub release for tag ${{ github.ref }}"
-          gh release create test-release --notes "test release"
+          gh release create @itwin/service-authorization_v1.2.3 /packages/service --verify-tag
+          # scripts/create-release.sh ${{ github.ref }}
         env:
           GITHUB_TOKEN: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
