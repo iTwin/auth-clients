@@ -8,6 +8,9 @@ fi
 refName=$1
 echo "Ref name passed in: $refName"
 
+# TODO: remove this line when ready to merge
+refName="@itwin/service-authorization_v1.2.3"
+
 tagName=$(echo $refName | sed 's/refs\/tags\///')
 echo "Tag name was parsed as: $tagName"
 packageName=$(echo $tagName | sed 's/_v.*//')
