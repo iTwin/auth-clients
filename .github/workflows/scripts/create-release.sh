@@ -51,5 +51,8 @@ tar -czvf "$zipFileName.tar.gz" "$packageDirectory"
 gh release create "$tagName" \
   "$zipFileName.zip" \
   "$zipFileName.tar.gz" \
-  --notes "# test \n \n ## test2 \n another one tester" \
+  --notes "# test
+  ## test2
+
+  another one tester" \
   --verify-tag
