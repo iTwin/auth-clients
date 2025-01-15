@@ -23,6 +23,8 @@ jobs:
           git config --local user.name imodeljs-admin
 
       - name: Create GitHub release
-        run: echo "Creating GitHub release for tag ${{ github.ref }}"
+        run: |
+          echo "Creating GitHub release for tag ${{ github.ref }}"
+          gh release create test-release --notes "test release"
         env:
           GITHUB_TOKEN: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
