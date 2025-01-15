@@ -10,19 +10,47 @@ echo "Ref name passed in: $refName"
 
 tagName=$(echo $refName | sed 's/refs\/tags\///')
 echo "Tag name was parsed as: $tagName"
+packageName=$(echo $tagName | sed 's/_v.*//')
+echo "Package name was parsed as: $packageName"
+packageVersion=$(echo $tagName | sed 's/.*_v//')
+echo "Package version was parsed as: $packageVersion"
 
-# TODO: uncomment once verified working
-# gh release create $tagName /packages/service --verify-tag
-hardCodedTagName="@itwin/service-authorization_v1.2.3"
-hardCodedDirectory="./packages/service"
+# The packageDirectory variable is determined by searching the ./packages directory for a subdirectory
+# that contains a package.json file with a name matching the parsed packageName.
+# determine package directory so that we can zip it up and also find the changelog
+packageDirectory=$(find ./packages -maxdepth 1 -type d | while read dir; do
+  if [ -f "$dir/package.json" ]; then
+    packageNameInJson=$(jq -r '.name' "$dir/package.json")
+    if [ "$packageNameInJson" == "$packageName" ]; then
+      echo "$dir"
+      break
+    fi
+  fi
+done)
 
-zipFileName=$(echo "$hardCodedTagName" | sed 's/@itwin\///; s/@bentley\///')
+if [ -z "$packageDirectory" ]; then
+  echo "No package directory found for package name: $packageName"
+  exit 1
+else
+  echo "Package directory was determined as: $packageDirectory"
+fi
 
-zip -r "$zipFileName.zip" "$hardCodedDirectory"
-tar -czvf "$zipFileName.tar.gz" "$hardCodedDirectory"
+changelogMd="$packageDirectory/CHANGELOG.md"
+
+# remove the @itwin/ or @bentley/ scope from the tag name to create the zip file name since they have special characters
+zipFileName=$(echo "$tagName" | sed 's/@itwin\///; s/@bentley\///')
+
+# Zip the package directory with just the specific package
+zip -r "$zipFileName.zip" "$packageDirectory"
+tar -czvf "$zipFileName.tar.gz" "$packageDirectory"
 
 # Create a release and upload assets
-gh release create "$hardCodedTagName" \
+gh release create "$tagName" \
   "$zipFileName.zip" \
   "$zipFileName.tar.gz" \
+  --notes-file "# test
+
+  ## test2
+  another one tester
+  " \
   --verify-tag
