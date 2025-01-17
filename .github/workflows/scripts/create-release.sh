@@ -54,7 +54,7 @@ echo "Release note text was extracted as: $releaseNoteText"
 zipFileName=$(echo "$tagName" | sed 's/@itwin\///; s/@bentley\///')
 echo "Zip file name was parsed as: $zipFileName"
 
-# Zip the package directory with just the specific package
+# Zip the package deliverables - lib and dist directories
 zip -r "$zipFileName.zip" lib dist
 tar -czvf "$zipFileName.tar.gz" lib dist
 
