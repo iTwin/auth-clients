@@ -5,7 +5,8 @@ if [ -z "$1" ]; then
   exit 1
 fi
 
-refName=$1
+# refName=$1
+refName="refs/tags/@itwin/electron-authorization_v0.19.8"
 echo "Ref name passed in: $refName"
 
 tagName=$(echo $refName | sed 's/refs\/tags\///')
