@@ -16,12 +16,6 @@ jobs:
       - name: Install pnpm
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js 18
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-          registry-url: https://registry.npmjs.org/
-
       - name: Install dependencies
         run: pnpm install
 

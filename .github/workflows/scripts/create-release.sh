@@ -35,12 +35,16 @@ else
   echo "Package directory was determined as: $packageDirectory"
 fi
 
-changelogMd="$packageDirectory/CHANGELOG.md"
+cd $packageDirectory
 
+changelogMd="CHANGELOG.md"
 if [ ! -f "$changelogMd" ]; then
   echo "Changelog file not found: $changelogMd"
   exit 1
 fi
+
+# build the package and create consumable to release
+pnpm build
 
 # Extract the changelog text
 releaseNoteText=$(awk -v version="$packageVersion" '$0 ~ version {flag=1; print; next} /^## /{flag=0} flag' "$changelogMd")
@@ -51,8 +55,8 @@ zipFileName=$(echo "$tagName" | sed 's/@itwin\///; s/@bentley\///')
 echo "Zip file name was parsed as: $zipFileName"
 
 # Zip the package directory with just the specific package
-zip -r "$zipFileName.zip" "$packageDirectory"
-tar -czvf "$zipFileName.tar.gz" "$packageDirectory"
+zip -r "$zipFileName.zip" lib dist
+tar -czvf "$zipFileName.tar.gz" lib dist
 
 # Create a release and upload assets
 gh release create "$tagName" \

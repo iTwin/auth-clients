@@ -11,11 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout branch
+      - name: Checkout tag
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }} # checkouts the branch that triggered the workflow
           fetch-depth: 0
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Configure git
         run: |
