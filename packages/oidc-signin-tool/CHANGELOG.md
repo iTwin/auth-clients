@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Thu, 21 Nov 2024 16:05:10 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 17 Feb 2025 21:20:34 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 4.4.1
+
+Mon, 17 Feb 2025 21:20:34 GMT
+
+### Patches
+
+- bump vite, drop crypto-browserify to address cve (50554904+hl662@users.noreply.github.com)
 
 ## 4.4.0
 

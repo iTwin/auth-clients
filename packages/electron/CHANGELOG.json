@@ -2,6 +2,27 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Mon, 17 Feb 2025 21:20:34 GMT",
+      "version": "0.19.8",
+      "tag": "@itwin/electron-authorization_v0.19.8",
+      "comments": {
+        "none": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "88804ed4738935fe185313037de31be288c01f58",
+            "comment": ""
+          },
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "88804ed4738935fe185313037de31be288c01f58",
+            "comment": "remove networkidle from electron integration tests"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 16 Dec 2024 21:41:11 GMT",
       "version": "0.19.8",
       "tag": "@itwin/electron-authorization_v0.19.8",
