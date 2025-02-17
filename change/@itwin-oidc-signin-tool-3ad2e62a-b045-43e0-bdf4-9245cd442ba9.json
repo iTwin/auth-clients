@@ -1,5 +1,5 @@
 {
-  "type": "none",
+  "type": "patch",
   "comment": "bump vite, drop crypto-browserify to address cve",
   "packageName": "@itwin/oidc-signin-tool",
   "email": "50554904+hl662@users.noreply.github.com",
