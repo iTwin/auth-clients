@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Fri, 28 Feb 2025 16:26:52 GMT",
+      "version": "0.20.0",
+      "tag": "@itwin/electron-authorization_v0.20.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "3654177+abeesh@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "9e41ad6e2bf1c9100f4958d9303e2e4d584fc1e0",
+            "comment": "Exposed a few methods to the derived class to support other clients"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 17 Feb 2025 21:20:34 GMT",
       "version": "0.19.8",
       "tag": "@itwin/electron-authorization_v0.19.8",
