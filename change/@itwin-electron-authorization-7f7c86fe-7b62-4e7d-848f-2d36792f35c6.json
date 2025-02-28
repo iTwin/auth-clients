@@ -1,6 +1,6 @@
 {
   "type": "minor",
-  "comment": "Exposed a few methods to the derived class to support connection client.",
+  "comment": "Exposed a few methods to the derived class to support other client.",
   "packageName": "@itwin/electron-authorization",
   "email": "3654177+abeesh@users.noreply.github.com",
   "dependentChangeType": "patch"
