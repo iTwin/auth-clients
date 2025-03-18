@@ -36,7 +36,7 @@ jobs:
         inputs:
           versionSpec: 20
 
-      - script: corepack enable pnpm
+      - script: npm install -g corepack && corepack enable pnpm
         displayName: Install pnpm
 
       - bash: |
