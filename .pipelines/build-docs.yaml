@@ -38,7 +38,7 @@ stages:
               versionSpec: 18
               checkLatest: true
 
-          - script: npm install -g corepack && corepack enable
+          - script: npm install -g corepack && corepack enable pnpm
             displayName: Install pnpm
 
           - script: |
