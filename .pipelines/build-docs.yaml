@@ -38,7 +38,7 @@ stages:
               versionSpec: 20
               checkLatest: true
 
-          - script: npm install -g corepack && corepack enable pnpm
+          - script: npm uninstall -g yarn && npm install -g corepack && corepack enable pnpm
             displayName: Install pnpm
 
           - script: |
