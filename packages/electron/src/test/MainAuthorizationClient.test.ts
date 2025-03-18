@@ -3,16 +3,14 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-import type { AuthorizationListener, AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
-import { AuthorizationNotifier, AuthorizationRequest, AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
+import type { AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
+import { BaseTokenRequestHandler } from "@openid/appauth";
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
-import type { ElectronMainAuthorizationConfiguration } from "../main/Client";
 import { ElectronMainAuthorization } from "../main/Client";
-import { ElectronMainAuthorizationRequestHandler } from "../main/ElectronMainAuthorizationRequestHandler";
-import { LoopbackWebServer } from "../main/LoopbackWebServer";
 import { RefreshTokenStore } from "../main/TokenStore";
+import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper";
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert = chai.assert;
 const expect = chai.expect;
@@ -57,33 +55,16 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("Should load token response from token store", async () => {
-    const config: ElectronMainAuthorizationConfiguration = {
-      clientId: "testClientId",
-      scopes: "testScope",
-      redirectUris: ["testRedirectUri_1", "testRedirectUri_2"],
-    };
-    const mockTokenResponseJson = {
-      access_token: "testAccessToken",
-      refresh_token: "testRefreshToken",
-      issued_at: (new Date()).getTime(),
-      expires_in: "60000",
-    };
-    const mockTokenResponse = new TokenResponse(mockTokenResponseJson);
+    const config = getConfig();
+    const mockTokenResponse = getMockTokenResponse({ accessToken: "testAccessToken" });
 
     const refreshToken = "old refresh token";
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(refreshToken)));
-    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(refreshToken));
+    stubTokenCrypto(refreshToken);
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
 
-    // Mock auth request
-    const spy = sinon.fake();
-    sinon.stub(ElectronMainAuthorization.prototype, "refreshToken").callsFake(spy);
-    sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
-      return mockTokenResponse;
-    });
-
+    const spy = await setupMockAuthServer(mockTokenResponse);
     // Create client and silent sign in
     const client = new ElectronMainAuthorization(config);
     await client.signInSilent();
@@ -95,47 +76,15 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("Should sign in", async () => {
-    const config: ElectronMainAuthorizationConfiguration = {
-      clientId: "testClientId",
-      scopes: "testScope",
-      redirectUris: ["testRedirectUri_1", "testRedirectUri_2"],
-    };
-    const mockTokenResponse: TokenResponse = new TokenResponse(
-      {
-        access_token: "testAccessTokenSignInTest",
-        refresh_token: "testRefreshToken",
-        issued_at: (new Date()).getTime() / 1000,
-        expires_in: "60000",
-      });
+    const config = getConfig();
+    const mockTokenResponse = getMockTokenResponse();
 
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(mockTokenResponse.refreshToken!)));
-    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(mockTokenResponse.refreshToken));
+    stubTokenCrypto(mockTokenResponse.refreshToken!);
     // Clear token store
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.delete();
 
-    // Mock auth request
-    sinon.stub(LoopbackWebServer, "start").resolves();
-    sinon.stub(ElectronMainAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
-      await new Promise((resolve) => setImmediate(resolve, () => { }));
-    });
-    sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
-      return mockTokenResponse;
-    });
-    sinon.stub(AuthorizationNotifier.prototype, "setAuthorizationListener").callsFake((listener: AuthorizationListener) => {
-      const authRequest = new AuthorizationRequest({
-        response_type: "testResponseType",
-        client_id: "testClient",
-        redirect_uri: "testRedirect",
-        scope: "testScope",
-        internal: { code_verifier: "testCodeVerifier" },
-        state: "testState",
-      });
-
-      const authResponse = new AuthorizationResponse({ code: "testCode", state: "testState" });
-      listener(authRequest, authResponse, null);
-    });
-
+    await setupMockAuthServer(mockTokenResponse);
     // Create client and call initialize
     const client = new ElectronMainAuthorization(config);
     await client.signIn();
@@ -145,31 +94,16 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("Should refresh old token", async () => {
-    const config: ElectronMainAuthorizationConfiguration = {
-      clientId: "testClientId",
-      scopes: "testScope",
-      redirectUris: ["testRedirectUri_1", "testRedirectUri_2"],
-    };
-    const mockTokenResponse: TokenResponse = new TokenResponse(
-      {
-        access_token: "testAccessToken",
-        refresh_token: "testRefreshToken",
-        issued_at: new Date().getTime() / 1000,
-        expires_in: "60000",
-      });
+    const config = getConfig();
+    const mockTokenResponse = getMockTokenResponse();
 
     const refreshToken = "old refresh token";
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(refreshToken)));
-    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(refreshToken));
+    stubTokenCrypto(refreshToken);
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
 
-    // Mock auth request
-    sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
-      return mockTokenResponse;
-    });
-
+    await setupMockAuthServer(mockTokenResponse);
     // Create client and silent signin
     const client = new ElectronMainAuthorization(config);
     await client.signInSilent();
@@ -188,47 +122,20 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("should save new refresh token after signIn() when no electron-store token is present", async () => {
-    const config: ElectronMainAuthorizationConfiguration = {
-      clientId: "testClientId",
-      scopes: "testScope",
-      redirectUris: ["testRedirectUri_1", "testRedirectUri_2"],
-    };
-    const mockTokenResponse: TokenResponse = new TokenResponse(
-      {
-        access_token: "testAccessTokenSignInTest",
-        refresh_token: "testRefreshToken",
-        issued_at: (new Date()).getTime() / 1000,
-        expires_in: "60000",
-      });
+    const config = getConfig();
+    const mockTokenResponse = getMockTokenResponse();
+    stubTokenCrypto(mockTokenResponse.refreshToken!);
 
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(mockTokenResponse.refreshToken!)));
-    sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(mockTokenResponse.refreshToken));
     // Clear token store
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.delete();
 
-    // Mock auth request
-    sinon.stub(LoopbackWebServer, "start").resolves();
-    sinon.stub(ElectronMainAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
-      await new Promise((resolve) => setImmediate(resolve, () => { }));
+    await setupMockAuthServer(mockTokenResponse, {
+      performTokenRequestCb: async () => {
+        await tokenStore.save(mockTokenResponse.refreshToken!);
+      },
     });
-    sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
-      await tokenStore.save(mockTokenResponse.refreshToken!);
-      return mockTokenResponse;
-    });
-    sinon.stub(AuthorizationNotifier.prototype, "setAuthorizationListener").callsFake((listener: AuthorizationListener) => {
-      const authRequest = new AuthorizationRequest({
-        response_type: "testResponseType",
-        client_id: "testClient",
-        redirect_uri: "testRedirect",
-        scope: "testScope",
-        internal: { code_verifier: "testCodeVerifier" },
-        state: "testState",
-      });
 
-      const authResponse = new AuthorizationResponse({ code: "testCode", state: "testState" });
-      listener(authRequest, authResponse, null);
-    });
     const saveSpy = sinon.spy(tokenStore, "save");
     // Create client and call initialize
     const client = new ElectronMainAuthorization(config);
@@ -240,33 +147,18 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   it("should load and decrypt refresh token on signIn() given an existing refresh token in electron-store", async () => {
-    const config: ElectronMainAuthorizationConfiguration = {
-      clientId: "testClientId",
-      scopes: "testScope",
-      redirectUris: ["testRedirectUri_1", "testRedirectUri_2"],
-    };
-    const mockTokenResponseJson = {
-      access_token: "testAccessToken",
-      refresh_token: "testRefreshToken",
-      issued_at: (new Date()).getTime(),
-      expires_in: "60000",
-    };
-    const mockTokenResponse = new TokenResponse(mockTokenResponseJson);
+    const config = getConfig();
+    const mockTokenResponse = getMockTokenResponse({ accessToken: "testAccessToken" });
 
     const refreshToken = "old refresh token";
-    sinon.stub(RefreshTokenStore.prototype, "encryptRefreshToken" as any).returns(Promise.resolve(Buffer.from(refreshToken)));
-    const decryptSpy = sinon.stub(RefreshTokenStore.prototype, "decryptRefreshToken" as any).returns(Promise.resolve(refreshToken));
+    const { decryptSpy } = stubTokenCrypto(refreshToken);
+
     // Load refresh token into token store - use clientId
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.delete();
     await tokenStore.save(refreshToken);
 
-    // Mock auth request
-    const spy = sinon.fake();
-    sinon.stub(ElectronMainAuthorization.prototype, "refreshToken").callsFake(spy);
-    sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
-      return mockTokenResponse;
-    });
+    const spy = await setupMockAuthServer(mockTokenResponse);
 
     // Create client and silent sign in
     const client = new ElectronMainAuthorization(config);
@@ -283,11 +175,7 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
 
-  const config: ElectronMainAuthorizationConfiguration = {
-    clientId: "testClientId",
-    scopes: "testScope",
-    redirectUris: ["testRedirectUri_1", "testRedirectUri_2"],
-  };
+  const config = getConfig();
   const testAuthority = "https://test.authority.com";
 
   it("should use config authority without prefix", async () => {
@@ -327,13 +215,8 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
 
-  const config: ElectronMainAuthorizationConfiguration = {
-    clientId: "testClientId",
-    scopes: "testScope",
-    redirectUris: ["testRedirectUri_1", "testRedirectUri_2"],
-  };
-
   it("Should add offline_access scope", async () => {
+    const config = getConfig();
     const client = new ElectronMainAuthorization(config);
     expect(client.scopes).equals(`${config.scopes} offline_access`);
   });
@@ -346,4 +229,75 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
     });
     expect(client.scopes).equals("testScope offline_access");
   });
+
+  describe("scope changes", () => {
+    beforeEach(() => {
+      sinon.restore();
+      // Stub Electron calls
+      sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
+      sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
+      sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
+    });
+
+    it("delete the current refresh token", async () => {
+      const config = getConfig();
+      const mockTokenResponse = getMockTokenResponse();
+
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
+
+      await setupMockAuthServer(mockTokenResponse);
+
+      const client = new ElectronMainAuthorization(config);
+      expect(client.scopes).equals(`${config.scopes} offline_access`);
+      await client.signIn();
+
+      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
+      const token = await tokenStore.load("testScope offline_access");
+      assert.equal(token, mockTokenResponse.refreshToken);
+
+      const _token = await tokenStore.load("differetnTestScope offline_access");
+      assert.equal(_token, undefined);
+    });
+
+    it("delete the current refresh token regardless of order", async () => {
+      const config = getConfig({ scopes: "testScope blurgh-platform ReadTHINGS" });
+      const mockTokenResponse = getMockTokenResponse();
+
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
+
+      await setupMockAuthServer(mockTokenResponse);
+
+      const client = new ElectronMainAuthorization(config);
+      expect(client.scopes).equals("testScope blurgh-platform ReadTHINGS offline_access");
+      await client.signIn();
+
+      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
+      const token = await tokenStore.load("ReadTHINGS blurgh-platform offline_access testScope");
+      assert.equal(token, mockTokenResponse.refreshToken);
+
+      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
+      assert.equal(_token, undefined);
+    });
+
+    it("delete the current refresh token works with explicit offline_access added", async () => {
+      const config = getConfig({ scopes: "testScope blurgh-platform offline_access ReadTHINGS" });
+      const mockTokenResponse = getMockTokenResponse();
+
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
+
+      await setupMockAuthServer(mockTokenResponse);
+
+      const client = new ElectronMainAuthorization(config);
+      expect(client.scopes).equals("testScope blurgh-platform offline_access ReadTHINGS");
+      await client.signIn();
+
+      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
+      const token = await tokenStore.load("offline_access ReadTHINGS blurgh-platform testScope");
+      assert.equal(token, mockTokenResponse.refreshToken);
+
+      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
+      assert.equal(_token, undefined);
+    });
+  });
+
 });

@@ -1,8 +1,16 @@
 # Change Log - @itwin/node-cli-authorization
 
-This log was last generated on Tue, 18 Jun 2024 19:11:49 GMT and should not be manually modified.
+This log was last generated on Wed, 20 Nov 2024 18:34:06 GMT and should not be manually modified.
 
 <!-- Start content -->
+
+## 2.0.4
+
+Wed, 20 Nov 2024 18:34:06 GMT
+
+### Patches
+
+- Update to username v7.0.0 (33036725+wgoehrig@users.noreply.github.com)
 
 ## 2.0.3
 

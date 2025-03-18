@@ -2,6 +2,101 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Fri, 28 Feb 2025 16:26:52 GMT",
+      "version": "0.20.0",
+      "tag": "@itwin/electron-authorization_v0.20.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "3654177+abeesh@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "9e41ad6e2bf1c9100f4958d9303e2e4d584fc1e0",
+            "comment": "Exposed a few methods to the derived class to support other clients"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Mon, 17 Feb 2025 21:20:34 GMT",
+      "version": "0.19.8",
+      "tag": "@itwin/electron-authorization_v0.19.8",
+      "comments": {
+        "none": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "88804ed4738935fe185313037de31be288c01f58",
+            "comment": ""
+          },
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "88804ed4738935fe185313037de31be288c01f58",
+            "comment": "remove networkidle from electron integration tests"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Mon, 16 Dec 2024 21:41:11 GMT",
+      "version": "0.19.8",
+      "tag": "@itwin/electron-authorization_v0.19.8",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "f39647a2d8e7326ef0bef7594ce4baad35da03b8",
+            "comment": "Delete stored token if application scopes change"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 20 Nov 2024 18:34:06 GMT",
+      "version": "0.19.7",
+      "tag": "@itwin/electron-authorization_v0.19.7",
+      "comments": {
+        "patch": [
+          {
+            "author": "33036725+wgoehrig@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "6aea6cc2225668d77e30e0902cdfca62e0ebb8d4",
+            "comment": "Update to username v7.0.0"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 29 Oct 2024 21:49:00 GMT",
+      "version": "0.19.6",
+      "tag": "@itwin/electron-authorization_v0.19.6",
+      "comments": {
+        "patch": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": "Add support for Electron 33"
+          },
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": "Add support for Electron 32"
+          }
+        ],
+        "none": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 02 Jul 2024 22:24:53 GMT",
       "version": "0.19.5",
       "tag": "@itwin/electron-authorization_v0.19.5",

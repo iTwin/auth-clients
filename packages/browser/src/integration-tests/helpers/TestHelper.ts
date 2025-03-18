@@ -56,7 +56,7 @@ export class TestHelper {
     if (authType === AuthType.PopUp)
       url += "signin-via-popup";
     if (authType === AuthType.RedirectStatic)
-      url = "http://localhost:1234/?callbackFromStorage=true";
+      url = "http://localhost:5173/?callbackFromStorage=true";
 
     expect(page.url()).toEqual(url);
   }

@@ -33,12 +33,12 @@ stages:
             clean: true
 
           - task: NodeTool@0
-            displayName: Use Node 18
+            displayName: Use Node 20
             inputs:
-              versionSpec: 18
+              versionSpec: 20
               checkLatest: true
 
-          - script: corepack enable
+          - script: npm install -g corepack && corepack enable
             displayName: Install pnpm
 
           - script: |

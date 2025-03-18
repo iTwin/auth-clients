@@ -1,8 +1,41 @@
 # Change Log - @itwin/electron-authorization
 
-This log was last generated on Tue, 02 Jul 2024 22:24:53 GMT and should not be manually modified.
+<!-- This log was last generated on Fri, 28 Feb 2025 16:26:52 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.20.0
+
+Fri, 28 Feb 2025 16:26:52 GMT
+
+### Minor changes
+
+- Exposed a few methods to the derived class to support other clients (3654177+abeesh@users.noreply.github.com)
+
+## 0.19.8
+
+Mon, 16 Dec 2024 21:41:11 GMT
+
+### Patches
+
+- Delete stored token if application scopes change (ben-polinsky@users.noreply.github.com)
+
+## 0.19.7
+
+Wed, 20 Nov 2024 18:34:06 GMT
+
+### Patches
+
+- Update to username v7.0.0 (33036725+wgoehrig@users.noreply.github.com)
+
+## 0.19.6
+
+Tue, 29 Oct 2024 21:49:00 GMT
+
+### Patches
+
+- Add support for Electron 33 (GytisCepk@users.noreply.github.com)
+- Add support for Electron 32 (GytisCepk@users.noreply.github.com)
 
 ## 0.19.5
 

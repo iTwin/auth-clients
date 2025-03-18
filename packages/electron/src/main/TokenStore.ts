@@ -4,10 +4,10 @@
 *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
-import * as OperatingSystemUserName from "username";
 import { safeStorage } from "electron";
 // eslint-disable-next-line @typescript-eslint/naming-convention
 const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
+
 /**
  * Utility class used to store and read OAuth refresh tokens.
  * @internal
@@ -35,15 +35,52 @@ export class RefreshTokenStore {
     });
   }
 
+  /** (Load) refresh token if available */
+  public async load(scopes?: string): Promise<string | undefined> {
+    const userName = await this.getUserName();
+    if (!userName)
+      return undefined;
+
+    const key = await this.getKey();
+    if (!this._store.has(key)) {
+      return undefined;
+    }
+
+    if (scopes && !(await this.scopesMatch(scopes)))
+      return;
+
+    const encryptedToken = this._store.get(key);
+    const refreshToken = await this.decryptRefreshToken(encryptedToken).catch(() => undefined);
+
+    return refreshToken;
+  }
+
+  /** Save refresh token after signin */
+  public async save(refreshToken: string, scopes?: string): Promise<void> {
+    const userName = await this.getUserName();
+    if (!userName)
+      return;
+    const encryptedToken = await this.encryptRefreshToken(refreshToken);
+    const key = await this.getKey();
+    this._store.set(key, encryptedToken);
+    if (scopes)
+      this._store.set(`${key}:scopes`, scopes);
+  }
+
+  /** Delete refresh token after signout */
+  public async delete(): Promise<void> {
+    const userName = await this.getUserName();
+    if (!userName)
+      return;
+
+    const key = await this.getKey();
+    await this._store.delete(key);
+    await this._store.delete(`${key}:scopes`);
+  }
+
   private async getUserName(): Promise<string | undefined> {
     if (!this._userName) {
-      try {
-        this._userName = await OperatingSystemUserName();
-      } catch {
-        // errors occur in testing when using asynchronous call
-        // https://github.com/iTwin/auth-clients/issues/163
-        this._userName = OperatingSystemUserName.sync();
-      }
+      this._userName = await (await import("username")).username();
     }
 
     return this._userName;
@@ -64,38 +101,14 @@ export class RefreshTokenStore {
     return `${this._appStorageKey}${userName}`;
   }
 
-  /** Load refresh token if available */
-  public async load(): Promise<string | undefined> {
-    const userName = await this.getUserName();
-    if (!userName)
-      return undefined;
-
+  private async scopesMatch(scopes: string): Promise<boolean> {
     const key = await this.getKey();
-    if (!this._store.has(key)) {
-      return undefined;
+    const savedScopes = this._store.get(`${key}:scopes`);
+    if (savedScopes) {
+      return savedScopes.split(" ").sort().join(" ") === scopes.split(" ").sort().join(" ");
     }
-    const encryptedToken = this._store.get(key);
-    const refreshToken = await this.decryptRefreshToken(encryptedToken).catch(() => undefined);
-    return refreshToken;
-  }
 
-  /** Save refresh token after signin */
-  public async save(refreshToken: string): Promise<void> {
-    const userName = await this.getUserName();
-    if (!userName)
-      return;
-    const encryptedToken = await this.encryptRefreshToken(refreshToken);
-    const key = await this.getKey();
-    this._store.set(key, encryptedToken);
-  }
-
-  /** Delete refresh token after signout */
-  public async delete(): Promise<void> {
-    const userName = await this.getUserName();
-    if (!userName)
-      return;
-
-    const key = await this.getKey();
-    await this._store.delete(key);
+    // no stored scopes, so all good
+    return true;
   }
 }

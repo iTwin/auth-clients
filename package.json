@@ -5,7 +5,7 @@
   "description": "Authorization clients for the iTwin platform",
   "scripts": {
     "build": "lage build",
-    "clean": "lage clean",
+    "clean": "lage clean --no-cache",
     "docs": "lage docs",
     "lint": "lage lint",
     "test": "lage test",
@@ -33,9 +33,13 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "devDependencies": {
-    "beachball": "^2.47.1",
-    "lage": "^2.10.1",
-    "process": "^0.11.10"
+    "beachball": "^2.51.0",
+    "lage": "^2.13.0"
   },
-  "packageManager": "pnpm@9.11.0+sha512.0a203ffaed5a3f63242cd064c8fb5892366c103e328079318f78062f24ea8c9d50bc6a47aa3567cabefd824d170e78fa2745ed1f16b132e16436146b7688f19b"
+  "pnpm": {
+    "overrides": {
+      "path-to-regexp": "0.1.12"
+    }
+  },
+  "packageManager": "pnpm@9.15.0+sha256.09a8fe31a34fda706354680619f4002f4ccef6dadff93240d24ef6c831f0fd28"
 }

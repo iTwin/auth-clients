@@ -1,6 +1,6 @@
 {
   "name": "@itwin/electron-authorization",
-  "version": "0.19.5",
+  "version": "0.20.0",
   "description": "Electron authorization client for iTwin platform",
   "exports": {
     "./Main": {
@@ -25,10 +25,10 @@
     "lint": "eslint -f visualstudio \"./src/**/*.ts\" 1>&2",
     "lint:fix": "npm run lint -- --fix",
     "test": "mocha \"./lib/cjs/test/**/*.test.js\"",
-    "test:integration": "npm run test:integration:build && npx playwright test",
-    "test:integration:start": "npm run test:integration:build && electron dist/integration-test/test-app/index.js",
-    "test:integration:build": "npm run test:integration:parcel && tsc -p ./src/integration-test/",
-    "test:integration:parcel": "parcel build src/integration-test/test-app/index.html --dist-dir dist/integration-test/test-app --public-url ./",
+    "test:integration": "pnpm test:integration:build && pnpm exec playwright test",
+    "test:integration:start": "pnpm test:integration:build && electron dist/integration-test/test-app/index.js",
+    "test:integration:build": "pnpm test:integration:vite && tsc -p ./src/integration-test/",
+    "test:integration:vite": "vite build",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
   },
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@itwin/build-tools": "^4.9.1",
-    "@itwin/core-bentley": "^3.8.0",
+    "@itwin/core-bentley": "^4.9.1",
     "@itwin/eslint-plugin": "^4.1.1",
     "@playwright/test": "~1.41.2",
     "@types/chai": "4.3.14",
@@ -62,20 +62,18 @@
     "chai-as-promised": "^7.1.2",
     "cpx2": "^5.0.0",
     "dotenv": "~16.0.3",
-    "electron": "^32.1.2",
-    "eslint": "^8.57.1",
-    "mocha": "^10.7.3",
-    "nyc": "^17.1.0",
-    "parcel": "~2.12.0",
-    "path-browserify": "~1.0.1",
-    "process": "~0.11.10",
+    "electron": "^33.0.0",
+    "eslint": "^8.56.0",
+    "mocha": "^10.2.0",
+    "nyc": "^17.0.0",
     "rimraf": "^3.0.2",
-    "sinon": "^15.2.0",
-    "source-map-support": "^0.5.21",
-    "typescript": "~5.3.3"
+    "sinon": "^15.0.1",
+    "source-map-support": "^0.5.9",
+    "typescript": "~5.3.3",
+    "vite": "^6.0.9"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0",
-    "electron": ">=23.0.0 <33.0.0"
+    "electron": ">=23.0.0 <34.0.0"
   }
 }

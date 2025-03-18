@@ -1,6 +1,4 @@
-# Workflow that will create a GitHub release a when a new release tag is pushed
-
-name: Create Release
+name: Publish Packages to npm
 
 on: workflow_dispatch
 
@@ -11,18 +9,18 @@ jobs:
     name: Release packages
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.IMJS_ADMIN_GH_TOKEN }}
 
-      - name: Use Node.js 18
-        uses: actions/setup-node@v3
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: 18.16.x
+          node-version: 20.x
           registry-url: https://registry.npmjs.org/
 
-      - name: Setup pnpm
-        run: corepack enable
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Install dependencies
         run: pnpm install
@@ -30,7 +28,7 @@ jobs:
       - name: Build, Lint, Test
         run: pnpm lage build lint cover
 
-      - name: Publish packages
+      - name: Publish packages and create git tags
         run: |
           git config --local user.email imodeljs-admin@users.noreply.github.com
           git config --local user.name imodeljs-admin

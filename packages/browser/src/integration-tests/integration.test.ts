@@ -63,8 +63,11 @@ test("signin popup", async ({ page }) => {
   await el.click();
   const popup = await popupPromise;
   await popup.waitForLoadState();
-  await testHelper.signIn(popup);
-  await popup.waitForEvent("close");
+
+  const signInPromise = testHelper.signIn(popup);
+  const closeEventPromise = popup.waitForEvent("close");
+
+  await Promise.all([signInPromise, closeEventPromise]);
   await testHelper.validateAuthenticated(page, AuthType.PopUp);
 });
 
@@ -75,8 +78,11 @@ test("signout popup", async ({ page }) => {
   await el.click();
   const popup = await popupPromise;
   await popup.waitForLoadState();
-  await testHelper.signIn(popup);
-  await popup.waitForEvent("close");
+
+  const signInPromise = testHelper.signIn(popup);
+  const closeEventPromise = popup.waitForEvent("close");
+
+  await Promise.all([signInPromise, closeEventPromise]);
   await testHelper.validateAuthenticated(page, AuthType.PopUp);
 
   const signoutPopupPromise = page.waitForEvent("popup");

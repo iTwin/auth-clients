@@ -7,9 +7,11 @@ import * as fs from "fs";
 import * as path from "path";
 import type { AccessToken } from "@itwin/core-bentley";
 import { registerBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
+import type { ServiceAuthorizationClientConfiguration } from "@itwin/service-authorization";
+import { ServiceAuthorizationClient } from "@itwin/service-authorization";
 import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "../TestUsers";
 import { TestUtility } from "../TestUtility";
-import { getTokenCallbackName } from "./certaCommon";
+import { getServiceAuthTokenCallbackName, getTokenCallbackName } from "./certaCommon";
 
 // A backend to use within Certa's `backendInitModule` to setup OIDC sign-in.
 
@@ -59,9 +61,23 @@ async function signin(user: TestUserCredentials, oidcConfig?: TestBrowserAuthori
   return token;
 }
 
+async function signinWithServiceAuthClient(oidcConfig: ServiceAuthorizationClientConfiguration): Promise<string> {
+  const serviceAuthClient = new ServiceAuthorizationClient(oidcConfig);
+  const accessToken = await serviceAuthClient.getAccessToken();
+  if (!accessToken) {
+    throw new Error("Failed to retrieve access token from ServiceAuthorizationClient.");
+  }
+
+  return accessToken;
+}
+
 registerBackendCallback(
   getTokenCallbackName,
   async (user: any, oidcConfig?: any): Promise<string> => {
     return signin(user, oidcConfig);
   },
 );
+
+registerBackendCallback(getServiceAuthTokenCallbackName, async (oidcConfig: ServiceAuthorizationClientConfiguration): Promise<string> => {
+  return signinWithServiceAuthClient(oidcConfig);
+});

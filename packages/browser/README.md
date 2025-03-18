@@ -35,7 +35,7 @@ await client.signInRedirect();
 Instead of a redirect, you may want to trigger a pop up to handle the sign in process:
 
 ```typescript
-await client.signinPopup();
+await client.signInPopup();
 ```
 
 After the user signs in, they will be redirected to the redirect url specified in your oidc configuration (developer.bentley.com)
@@ -76,5 +76,5 @@ For information about the browser authorization workflow please visit the [Autho
 - `rush test:integration` will run integration tests for the entire repo.
 - `rushx test:integration` runs the tests only in the Browser package.
 - Playwright options are in playwright.config.ts (head-ful vs headless, timeouts, etc).
-- The tests start the /test-app using parcel before running.
-- To run only the test app: `rushx test:integration:start-test-app` and access localhost:1234 in your browser.
+- The tests start the /test-app using vite before running.
+- To run only the test app: `rushx test:integration:start-test-app` and access <http://localhost:5173> in your browser.

@@ -2,6 +2,21 @@
   "name": "@itwin/node-cli-authorization",
   "entries": [
     {
+      "date": "Wed, 20 Nov 2024 18:34:06 GMT",
+      "version": "2.0.4",
+      "tag": "@itwin/node-cli-authorization_v2.0.4",
+      "comments": {
+        "patch": [
+          {
+            "author": "33036725+wgoehrig@users.noreply.github.com",
+            "package": "@itwin/node-cli-authorization",
+            "commit": "6aea6cc2225668d77e30e0902cdfca62e0ebb8d4",
+            "comment": "Update to username v7.0.0"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 18 Jun 2024 19:11:49 GMT",
       "version": "2.0.3",
       "tag": "@itwin/node-cli-authorization_v2.0.3",

@@ -2,6 +2,65 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "date": "Mon, 17 Feb 2025 21:20:34 GMT",
+      "version": "1.1.4",
+      "tag": "@itwin/browser-authorization_v1.1.4",
+      "comments": {
+        "none": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "88804ed4738935fe185313037de31be288c01f58",
+            "comment": ""
+          },
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "88804ed4738935fe185313037de31be288c01f58",
+            "comment": "remove parcel from browser e2e tests"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 20 Nov 2024 18:34:06 GMT",
+      "version": "1.1.4",
+      "tag": "@itwin/browser-authorization_v1.1.4",
+      "comments": {
+        "patch": [
+          {
+            "author": "33036725+wgoehrig@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "6aea6cc2225668d77e30e0902cdfca62e0ebb8d4",
+            "comment": "Update to @playwright/test 1.48.2"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 29 Oct 2024 21:49:00 GMT",
+      "version": "1.1.3",
+      "tag": "@itwin/browser-authorization_v1.1.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": "Fix method name in README.md"
+          }
+        ],
+        "none": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 18 Jun 2024 19:11:49 GMT",
       "version": "1.1.2",
       "tag": "@itwin/browser-authorization_v1.1.2",

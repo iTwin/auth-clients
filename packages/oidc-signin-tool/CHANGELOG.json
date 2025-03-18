@@ -2,6 +2,89 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Mon, 17 Feb 2025 21:20:34 GMT",
+      "version": "4.4.1",
+      "tag": "@itwin/oidc-signin-tool_v4.4.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "88804ed4738935fe185313037de31be288c01f58",
+            "comment": "bump vite, drop crypto-browserify to address cve"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Mon, 16 Dec 2024 21:41:11 GMT",
+      "version": "4.4.0",
+      "tag": "@itwin/oidc-signin-tool_v4.4.0",
+      "comments": {
+        "none": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "f39647a2d8e7326ef0bef7594ce4baad35da03b8",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
+      "date": "Thu, 21 Nov 2024 16:05:10 GMT",
+      "version": "4.4.0",
+      "tag": "@itwin/oidc-signin-tool_v4.4.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "Frank.Li@bentley.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "ed9fb1256dd62bdd13a22b790df87bae951575e1",
+            "comment": "a new backend function that uses the ServiceAuthorizationClient to get an access token"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Wed, 20 Nov 2024 18:34:06 GMT",
+      "version": "4.3.8",
+      "tag": "@itwin/oidc-signin-tool_v4.3.8",
+      "comments": {
+        "patch": [
+          {
+            "author": "33036725+wgoehrig@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "6aea6cc2225668d77e30e0902cdfca62e0ebb8d4",
+            "comment": "Update to @playwright/test 1.48.2"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 29 Oct 2024 21:49:00 GMT",
+      "version": "4.3.7",
+      "tag": "@itwin/oidc-signin-tool_v4.3.7",
+      "comments": {
+        "patch": [
+          {
+            "author": "108895074+MichaelSwigerAtBentley@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": "Remove discouraged 'networkidle'"
+          }
+        ],
+        "none": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "1934666d29263673fe8002d4f852d1f7a258f218",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 18 Jun 2024 19:11:49 GMT",
       "version": "4.3.6",
       "tag": "@itwin/oidc-signin-tool_v4.3.6",

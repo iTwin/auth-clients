@@ -1,8 +1,40 @@
 # Change Log - @itwin/oidc-signin-tool
 
-This log was last generated on Tue, 18 Jun 2024 19:11:49 GMT and should not be manually modified.
+<!-- This log was last generated on Mon, 17 Feb 2025 21:20:34 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 4.4.1
+
+Mon, 17 Feb 2025 21:20:34 GMT
+
+### Patches
+
+- bump vite, drop crypto-browserify to address cve (50554904+hl662@users.noreply.github.com)
+
+## 4.4.0
+
+Thu, 21 Nov 2024 16:05:10 GMT
+
+### Minor changes
+
+- a new backend function that uses the ServiceAuthorizationClient to get an access token (Frank.Li@bentley.com)
+
+## 4.3.8
+
+Wed, 20 Nov 2024 18:34:06 GMT
+
+### Patches
+
+- Update to @playwright/test 1.48.2 (33036725+wgoehrig@users.noreply.github.com)
+
+## 4.3.7
+
+Tue, 29 Oct 2024 21:49:00 GMT
+
+### Patches
+
+- Remove discouraged 'networkidle' (108895074+MichaelSwigerAtBentley@users.noreply.github.com)
 
 ## 4.3.6
 

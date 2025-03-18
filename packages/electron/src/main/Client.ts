@@ -281,7 +281,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     return this._accessToken;
   }
 
-  private setAccessToken(token: AccessToken) {
+  protected setAccessToken(token: AccessToken) {
     if (token === this._accessToken)
       return;
 
@@ -301,8 +301,9 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   /** Loads the access token from the store, and refreshes it if necessary and possible
    * @return AccessToken if it's possible to get a valid access token, and undefined otherwise.
    */
-  private async loadAccessToken(): Promise<AccessToken> {
-    const refreshToken = await this._refreshTokenStore.load();
+  protected async loadAccessToken(): Promise<AccessToken> {
+    const refreshToken = await this._refreshTokenStore.load(this._scopes);
+
     if (!refreshToken)
       return "";
 
@@ -521,12 +522,12 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       await electron.shell.openExternal(this._configuration.endSessionEndpoint);
   }
 
-  private async processTokenResponse(
+  protected async processTokenResponse(
     tokenResponse: TokenResponse,
   ): Promise<AccessToken> {
     this._refreshToken = tokenResponse.refreshToken;
     if (this._refreshToken)
-      await this._refreshTokenStore.save(this._refreshToken);
+      await this._refreshTokenStore.save(this._refreshToken, this._scopes);
 
     const expiresAtMilliseconds =
       (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000;
@@ -539,7 +540,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     return bearerToken;
   }
 
-  private async clearTokenCache() {
+  protected async clearTokenCache() {
     this._refreshToken = undefined;
     this._expiresAt = undefined;
 
