@@ -36,7 +36,7 @@ jobs:
         inputs:
           versionSpec: 20
 
-      - script: npm uninstall -g yarn && npm install -g corepack && corepack enable pnpm
+      - script: npm uninstall -g yarn && npm install -g corepack && corepack enable && corepack -v
         displayName: Install pnpm
 
       - bash: |
