@@ -11,7 +11,6 @@
 import { readFileSync } from "fs";
 import * as path from "path";
 import * as Http from "http";
-import * as open from "open";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationResponse,
