@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
 /** @packageDocumentation
@@ -13,16 +13,8 @@ import * as path from "path";
 import * as Http from "http";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import {
-  AuthorizationError,
-  AuthorizationNotifier,
-  AuthorizationRequest,
-  AuthorizationRequestHandler,
-  AuthorizationResponse,
-  AuthorizationServiceConfiguration,
-  BaseTokenRequestHandler,
-  BasicQueryStringUtils,
-  GRANT_TYPE_AUTHORIZATION_CODE,
-  GRANT_TYPE_REFRESH_TOKEN,
+  AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationResponse,
+  AuthorizationServiceConfiguration, BaseTokenRequestHandler, BasicQueryStringUtils, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
   TokenRequest,
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
@@ -32,13 +24,8 @@ import type { AccessToken } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 
 import type {
-  AuthorizationErrorJson,
-  AuthorizationRequestJson,
-  AuthorizationRequestResponse,
-  AuthorizationResponseJson,
-  TokenRequestHandler,
-  TokenRequestJson,
-  TokenResponse,
+  AuthorizationErrorJson, AuthorizationRequestJson, AuthorizationRequestResponse, AuthorizationResponseJson, TokenRequestHandler,
+  TokenRequestJson, TokenResponse,
 } from "@openid/appauth";
 
 /**
