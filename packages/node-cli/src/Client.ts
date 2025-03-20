@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
 /** @packageDocumentation
@@ -11,11 +11,18 @@
 import { readFileSync } from "fs";
 import * as path from "path";
 import * as Http from "http";
-import * as open from "open";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import {
-  AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationResponse,
-  AuthorizationServiceConfiguration, BaseTokenRequestHandler, BasicQueryStringUtils, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
+  AuthorizationError,
+  AuthorizationNotifier,
+  AuthorizationRequest,
+  AuthorizationRequestHandler,
+  AuthorizationResponse,
+  AuthorizationServiceConfiguration,
+  BaseTokenRequestHandler,
+  BasicQueryStringUtils,
+  GRANT_TYPE_AUTHORIZATION_CODE,
+  GRANT_TYPE_REFRESH_TOKEN,
   TokenRequest,
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
@@ -25,8 +32,13 @@ import type { AccessToken } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 
 import type {
-  AuthorizationErrorJson, AuthorizationRequestJson, AuthorizationRequestResponse, AuthorizationResponseJson, TokenRequestHandler,
-  TokenRequestJson, TokenResponse,
+  AuthorizationErrorJson,
+  AuthorizationRequestJson,
+  AuthorizationRequestResponse,
+  AuthorizationResponseJson,
+  TokenRequestHandler,
+  TokenRequestJson,
+  TokenResponse,
 } from "@openid/appauth";
 
 /**
@@ -61,8 +73,8 @@ export interface NodeCliAuthorizationConfiguration {
   readonly expiryBuffer?: number;
 
   /**
- * Directory path that overrides where the refresh token is stored, see {@link TokenStore}
- */
+   * Directory path that overrides where the refresh token is stored, see {@link TokenStore}
+   */
   readonly tokenStorePath?: string;
 }
 
@@ -100,7 +112,10 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
   public constructor(config: NodeCliAuthorizationConfiguration) {
     this._bakedConfig = new BakedAuthorizationConfiguration(config);
-    this._tokenStore = new TokenStore({ ...this._bakedConfig }, config.tokenStorePath);
+    this._tokenStore = new TokenStore(
+      { ...this._bakedConfig },
+      config.tokenStorePath
+    );
   }
 
   /**
@@ -110,15 +125,25 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
    */
   public async getAccessToken(): Promise<AccessToken> {
     if (!this._configuration) {
-      Logger.logError(NODE_CLI_AUTH_LOGGER_CATEGORY, "getAccessToken called but not initialized. Call signIn first");
+      Logger.logError(
+        NODE_CLI_AUTH_LOGGER_CATEGORY,
+        "getAccessToken called but not initialized. Call signIn first"
+      );
       return "";
     }
 
     // If we already acquired an AccessToken, make sure it's current
-    if (this._tokenResponse?.refreshToken !== undefined && this._expiresAt !== undefined) {
-      const hasExpired = (this._expiresAt.getTime() - Date.now()) <= this._bakedConfig.expiryBuffer * 1000;
+    if (
+      this._tokenResponse?.refreshToken !== undefined &&
+      this._expiresAt !== undefined
+    ) {
+      const hasExpired =
+        this._expiresAt.getTime() - Date.now() <=
+        this._bakedConfig.expiryBuffer * 1000;
       if (hasExpired) {
-        const refreshTokenResponse = await this.makeRefreshAccessTokenRequest(this._tokenResponse.refreshToken);
+        const refreshTokenResponse = await this.makeRefreshAccessTokenRequest(
+          this._tokenResponse.refreshToken
+        );
         await this.setTokenResponse(refreshTokenResponse);
       }
     }
@@ -152,7 +177,8 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
       await this._tokenStore.remove();
     }
 
-    if (this._accessToken !== "") // Will be defined if AccessToken was successfully loaded from store
+    if (this._accessToken !== "")
+      // Will be defined if AccessToken was successfully loaded from store
       return;
 
     return new Promise<void>((resolve, reject) => {
@@ -167,25 +193,34 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   private async initialize() {
     // Would ideally set up in constructor, but async...
     if (!this._configuration)
-      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._bakedConfig.issuerUrl, new NodeRequestor());
+      this._configuration =
+        await AuthorizationServiceConfiguration.fetchFromIssuer(
+          this._bakedConfig.issuerUrl,
+          new NodeRequestor()
+        );
 
     await this._tokenStore.initialize();
   }
 
   private async loadAndRefreshAccessToken() {
     const storedTokenResponse = await this._tokenStore.load();
-    if (storedTokenResponse?.refreshToken === undefined)
-      return;
+    if (storedTokenResponse?.refreshToken === undefined) return;
 
-    const newTokenResponse = await this.makeRefreshAccessTokenRequest(storedTokenResponse.refreshToken);
-    Logger.logTrace(NODE_CLI_AUTH_LOGGER_CATEGORY, "Refresh token completed, and issued access token");
+    const newTokenResponse = await this.makeRefreshAccessTokenRequest(
+      storedTokenResponse.refreshToken
+    );
+    Logger.logTrace(
+      NODE_CLI_AUTH_LOGGER_CATEGORY,
+      "Refresh token completed, and issued access token"
+    );
     await this.setTokenResponse(newTokenResponse);
   }
 
   private async setTokenResponse(tokenResponse: TokenResponse) {
     const accessToken = tokenResponse.accessToken;
     this._tokenResponse = tokenResponse;
-    const expiresAtMilliseconds = (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000;
+    const expiresAtMilliseconds =
+      (tokenResponse.issuedAt + (tokenResponse.expiresIn ?? 0)) * 1000;
     this._expiresAt = new Date(expiresAtMilliseconds);
 
     await this._tokenStore.save(this._tokenResponse);
@@ -198,7 +233,9 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
   private async beginSignIn() {
     if (!this._configuration)
-      throw new Error("Bug in NodeCliAuthorization client - _configuration not defined");
+      throw new Error(
+        "Bug in NodeCliAuthorization client - _configuration not defined"
+      );
 
     const authReqJson: AuthorizationRequestJson = {
       /* eslint-disable @typescript-eslint/naming-convention */
@@ -209,42 +246,79 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
       extras: { prompt: "consent", access_type: "offline" },
       /* eslint-enable @typescript-eslint/naming-convention */
     };
-    const authorizationRequest = new AuthorizationRequest(authReqJson, new NodeCrypto(), true /* = usePkce */);
+    const authorizationRequest = new AuthorizationRequest(
+      authReqJson,
+      new NodeCrypto(),
+      true /* = usePkce */
+    );
     await authorizationRequest.setupCodeVerifier();
 
     const authorizationEvents = new NodeCliAuthorizationEvents();
-    this.startLoopbackWebServer(authorizationRequest.state, authorizationEvents);
+    this.startLoopbackWebServer(
+      authorizationRequest.state,
+      authorizationEvents
+    );
 
-    const authorizationHandler = new NodeCliAuthorizationRequestHandler(authorizationEvents);
+    const authorizationHandler = new NodeCliAuthorizationRequestHandler(
+      authorizationEvents
+    );
     const notifier = new AuthorizationNotifier();
     authorizationHandler.setAuthorizationNotifier(notifier);
-    notifier.setAuthorizationListener(async (authRequest: AuthorizationRequest, authResponse: AuthorizationResponse | null, authError: AuthorizationError | null) => {
-      Logger.logTrace(NODE_CLI_AUTH_LOGGER_CATEGORY, "Authorization listener invoked", () => ({ authRequest, authResponse, authError }));
+    notifier.setAuthorizationListener(
+      async (
+        authRequest: AuthorizationRequest,
+        authResponse: AuthorizationResponse | null,
+        authError: AuthorizationError | null
+      ) => {
+        Logger.logTrace(
+          NODE_CLI_AUTH_LOGGER_CATEGORY,
+          "Authorization listener invoked",
+          () => ({ authRequest, authResponse, authError })
+        );
 
-      const tokenResponse = await this.handleAuthorizationResponse(authRequest, authResponse, authError);
-      authorizationEvents.onAuthorizationResponseCompleted.raiseEvent();
-      if (tokenResponse)
-        await this.setTokenResponse(tokenResponse);
-      else
-        throw new Error("No tokenResponse received from sign-in dialog");
-    });
+        const tokenResponse = await this.handleAuthorizationResponse(
+          authRequest,
+          authResponse,
+          authError
+        );
+        authorizationEvents.onAuthorizationResponseCompleted.raiseEvent();
+        if (tokenResponse) await this.setTokenResponse(tokenResponse);
+        else throw new Error("No tokenResponse received from sign-in dialog");
+      }
+    );
 
     // Open system browser to perform authorization request
-    await authorizationHandler.performAuthorizationRequest(this._configuration, authorizationRequest);
+    await authorizationHandler.performAuthorizationRequest(
+      this._configuration,
+      authorizationRequest
+    );
   }
 
-  private async handleAuthorizationResponse(authRequest: AuthorizationRequest, authResponse: AuthorizationResponse | null, authError: AuthorizationError | null): Promise<TokenResponse | undefined> {
+  private async handleAuthorizationResponse(
+    authRequest: AuthorizationRequest,
+    authResponse: AuthorizationResponse | null,
+    authError: AuthorizationError | null
+  ): Promise<TokenResponse | undefined> {
     // Phase 1 of login has completed to fetch the authorization code - check for errors
     if (authError) {
-      Logger.logError(NODE_CLI_AUTH_LOGGER_CATEGORY, "Authorization error. Unable to get authorization code.", () => authError);
+      Logger.logError(
+        NODE_CLI_AUTH_LOGGER_CATEGORY,
+        "Authorization error. Unable to get authorization code.",
+        () => authError
+      );
       return undefined;
     }
 
     if (!authResponse || authResponse.state !== authRequest.state) {
-      Logger.logError(NODE_CLI_AUTH_LOGGER_CATEGORY, "Authorization error. Unable to get authorization code", () => ({
-        error: "invalid_state",
-        errorDescription: "The login response state did not match the login request state.",
-      }));
+      Logger.logError(
+        NODE_CLI_AUTH_LOGGER_CATEGORY,
+        "Authorization error. Unable to get authorization code",
+        () => ({
+          error: "invalid_state",
+          errorDescription:
+            "The login response state did not match the login request state.",
+        })
+      );
       return undefined;
     }
 
@@ -252,25 +326,39 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     assert(authRequest.internal !== undefined);
     assert(this._configuration !== undefined);
     try {
-      const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(new NodeRequestor());
-      const tokenResponse = await tokenHandler.performTokenRequest(this._configuration, new TokenRequest({
-        /* eslint-disable @typescript-eslint/naming-convention */
-        grant_type: GRANT_TYPE_AUTHORIZATION_CODE,
-        code: authResponse.code,
-        redirect_uri: this._bakedConfig.redirectUri,
-        client_id: this._bakedConfig.clientId,
-        extras: { code_verifier: authRequest.internal.code_verifier },
-        /* eslint-enable @typescript-eslint/naming-convention */
-      }));
-      Logger.logTrace(NODE_CLI_AUTH_LOGGER_CATEGORY, "Authorization completed, and issued access token");
+      const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(
+        new NodeRequestor()
+      );
+      const tokenResponse = await tokenHandler.performTokenRequest(
+        this._configuration,
+        new TokenRequest({
+          /* eslint-disable @typescript-eslint/naming-convention */
+          grant_type: GRANT_TYPE_AUTHORIZATION_CODE,
+          code: authResponse.code,
+          redirect_uri: this._bakedConfig.redirectUri,
+          client_id: this._bakedConfig.clientId,
+          extras: { code_verifier: authRequest.internal.code_verifier },
+          /* eslint-enable @typescript-eslint/naming-convention */
+        })
+      );
+      Logger.logTrace(
+        NODE_CLI_AUTH_LOGGER_CATEGORY,
+        "Authorization completed, and issued access token"
+      );
       return tokenResponse;
     } catch (err) {
-      Logger.logError(NODE_CLI_AUTH_LOGGER_CATEGORY, `Error performing token request from token handler`, () => BentleyError.getErrorProps(err));
+      Logger.logError(
+        NODE_CLI_AUTH_LOGGER_CATEGORY,
+        `Error performing token request from token handler`,
+        () => BentleyError.getErrorProps(err)
+      );
       throw err;
     }
   }
 
-  private async makeRefreshAccessTokenRequest(refreshToken: string): Promise<TokenResponse> {
+  private async makeRefreshAccessTokenRequest(
+    refreshToken: string
+  ): Promise<TokenResponse> {
     if (!this._configuration)
       throw new Error("Not initialized. First call initialize()");
 
@@ -285,20 +373,27 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
     const tokenRequest = new TokenRequest(tokenRequestJson);
     const tokenRequestor = new NodeRequestor();
-    const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(tokenRequestor);
+    const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(
+      tokenRequestor
+    );
     return tokenHandler.performTokenRequest(this._configuration, tokenRequest);
   }
 
-  private startLoopbackWebServer(authState: string, authEvents: NodeCliAuthorizationEvents) {
-    const onBrowserRequest = (httpRequest: Http.IncomingMessage, httpResponse: Http.ServerResponse) => {
-      if (!httpRequest.url)
-        return;
+  private startLoopbackWebServer(
+    authState: string,
+    authEvents: NodeCliAuthorizationEvents
+  ) {
+    const onBrowserRequest = (
+      httpRequest: Http.IncomingMessage,
+      httpResponse: Http.ServerResponse
+    ) => {
+      if (!httpRequest.url) return;
 
       // Parse the request URL to determine the authorization code, state and errors if any
-      const { state, code, error, errorUri, errorDescription } = this.parseUrlSearchParams(httpRequest.url);
+      const { state, code, error, errorUri, errorDescription } =
+        this.parseUrlSearchParams(httpRequest.url);
 
-      if (!state || state !== authState)
-        return; // ignore irrelevant requests (e.g. favicon.ico)
+      if (!state || state !== authState) return; // ignore irrelevant requests (e.g. favicon.ico)
 
       // Notify listeners of the code response or error
       let authorizationResponse: AuthorizationResponseJson | null = null;
@@ -308,7 +403,12 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
       httpResponse.writeHead(200, { "Content-Type": "text/html" }); //  eslint-disable-line @typescript-eslint/naming-convention
 
       if (error) {
-        authorizationError = { error, error_description: errorDescription ?? undefined, error_uri: errorUri ?? undefined, state }; // eslint-disable-line @typescript-eslint/naming-convention
+        authorizationError = {
+          error,
+          error_description: errorDescription ?? undefined,
+          error_uri: errorUri ?? undefined,
+          state,
+        }; // eslint-disable-line @typescript-eslint/naming-convention
         httpResponseContent = {
           pageTitle: "iTwin Auth Sign in error",
           contentTitle: "Sign in Error",
@@ -316,23 +416,31 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
         };
       } else {
         if (!code)
-          throw new Error("Unexpected failure - AuthorizationResponse is missing a code value");
+          throw new Error(
+            "Unexpected failure - AuthorizationResponse is missing a code value"
+          );
 
         authorizationResponse = { code, state };
         httpResponseContent = {
           pageTitle: "iTwin Auth - Sign in successful",
           contentTitle: "Sign in was successful!",
-          contentMessage: "You can close this browser window and return to the application.",
+          contentMessage:
+            "You can close this browser window and return to the application.",
         };
       }
 
       const template = this.getHtmlTemplate(httpResponseContent);
       httpResponse.write(template);
       httpResponse.end();
-      authEvents.onAuthorizationResponse.raiseEvent(authorizationError, authorizationResponse);
+      authEvents.onAuthorizationResponse.raiseEvent(
+        authorizationError,
+        authorizationResponse
+      );
 
       // Stop the web server when the signin attempt has finished
-      authEvents.onAuthorizationResponseCompleted.addOnce(() => httpServer.close());
+      authEvents.onAuthorizationResponseCompleted.addOnce(() =>
+        httpServer.close()
+      );
     };
 
     const httpServer = Http.createServer(onBrowserRequest);
@@ -351,12 +459,23 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     const errorDescription = searchParams.get("error_description");
 
     return {
-      state, code, error, errorUri, errorDescription,
+      state,
+      code,
+      error,
+      errorUri,
+      errorDescription,
     };
   }
 
-  private getHtmlTemplate({ pageTitle, contentTitle, contentMessage }: HtmlTemplateParams): string {
-    let template = readFileSync(path.resolve(__dirname, "static", "auth-template.html"), "utf-8");
+  private getHtmlTemplate({
+    pageTitle,
+    contentTitle,
+    contentMessage,
+  }: HtmlTemplateParams): string {
+    let template = readFileSync(
+      path.resolve(__dirname, "static", "auth-template.html"),
+      "utf-8"
+    );
     template = template.replace("{--pageTitle--}", pageTitle);
     template = template.replace("{--contentTitle--}", contentTitle);
     template = template.replace("{--contentMessage--}", contentMessage);
@@ -377,15 +496,16 @@ export class BakedAuthorizationConfiguration {
 
   public constructor(config: NodeCliAuthorizationConfiguration) {
     if (!config.clientId || !config.scope)
-      throw new Error("Must specify a valid configuration with a clientId and scope when initializing NodeCliAuthorizationClient");
+      throw new Error(
+        "Must specify a valid configuration with a clientId and scope when initializing NodeCliAuthorizationClient"
+      );
 
     this.clientId = config.clientId;
 
     // If offline_access is not included, add it so that we can get a refresh token.
     if (!config.scope.includes("offline_access"))
       this.scopes = `${config.scope} offline_access`;
-    else
-      this.scopes = config.scope;
+    else this.scopes = config.scope;
 
     const defaultIssuerUrl = "https://ims.bentley.com";
     let prefix = process.env.IMJS_URL_PREFIX;
@@ -396,22 +516,25 @@ export class BakedAuthorizationConfiguration {
     }
     this.issuerUrl = authority.href.replace(/\/$/, "");
 
-    if (config.redirectUri)
-      this.redirectUri = config.redirectUri;
-    if (config.expiryBuffer)
-      this.expiryBuffer = config.expiryBuffer;
+    if (config.redirectUri) this.redirectUri = config.redirectUri;
+    if (config.expiryBuffer) this.expiryBuffer = config.expiryBuffer;
   }
 }
 
-type AuthorizationResponseListener = (error: AuthorizationErrorJson | null, response: AuthorizationResponseJson | null) => void;
+type AuthorizationResponseListener = (
+  error: AuthorizationErrorJson | null,
+  response: AuthorizationResponseJson | null
+) => void;
 
 class NodeCliAuthorizationEvents {
   public readonly onAuthorizationResponseCompleted = new BeEvent();
-  public readonly onAuthorizationResponse = new BeEvent<AuthorizationResponseListener>();
+  public readonly onAuthorizationResponse =
+    new BeEvent<AuthorizationResponseListener>();
 }
 
 class NodeCliAuthorizationRequestHandler extends AuthorizationRequestHandler {
-  private _authorizationPromise: Promise<AuthorizationRequestResponse> | null = null;
+  private _authorizationPromise: Promise<AuthorizationRequestResponse> | null =
+    null;
   private _authorizationEvents: NodeCliAuthorizationEvents;
 
   public constructor(authorizationEvents: NodeCliAuthorizationEvents) {
@@ -419,31 +542,48 @@ class NodeCliAuthorizationRequestHandler extends AuthorizationRequestHandler {
     this._authorizationEvents = authorizationEvents;
   }
 
-  public async performAuthorizationRequest(serviceConfiguration: AuthorizationServiceConfiguration, authRequest: AuthorizationRequest): Promise<void> {
-    Logger.logTrace(NODE_CLI_AUTH_LOGGER_CATEGORY, "Making authorization request", () => ({ serviceConfiguration, authRequest }));
+  public async performAuthorizationRequest(
+    serviceConfiguration: AuthorizationServiceConfiguration,
+    authRequest: AuthorizationRequest
+  ): Promise<void> {
+    Logger.logTrace(
+      NODE_CLI_AUTH_LOGGER_CATEGORY,
+      "Making authorization request",
+      () => ({ serviceConfiguration, authRequest })
+    );
 
     // Setup a promise to process the authorization response
-    this._authorizationPromise = new Promise<AuthorizationRequestResponse>((resolve, _reject) => {
+    this._authorizationPromise = new Promise<AuthorizationRequestResponse>(
+      (resolve, _reject) => {
+        // Wrap the response from the web browser (with the authorization code)
+        this._authorizationEvents.onAuthorizationResponse.addOnce(
+          (
+            authErrorJson: AuthorizationErrorJson | null,
+            authResponseJson: AuthorizationResponseJson | null
+          ) => {
+            // Resolve the full response including the request
+            const authRequestResponse: AuthorizationRequestResponse = {
+              request: authRequest,
+              error: authErrorJson
+                ? new AuthorizationError(authErrorJson)
+                : null,
+              response: authResponseJson
+                ? new AuthorizationResponse(authResponseJson)
+                : null,
+            };
+            resolve(authRequestResponse);
 
-      // Wrap the response from the web browser (with the authorization code)
-      this._authorizationEvents.onAuthorizationResponse.addOnce((authErrorJson: AuthorizationErrorJson | null, authResponseJson: AuthorizationResponseJson | null) => {
-
-        // Resolve the full response including the request
-        const authRequestResponse: AuthorizationRequestResponse = {
-          request: authRequest,
-          error: authErrorJson ? new AuthorizationError(authErrorJson) : null,
-          response: authResponseJson ? new AuthorizationResponse(authResponseJson) : null,
-        };
-        resolve(authRequestResponse);
-
-        // Ask the base class to call our completeAuthorizationRequest - this calls the registered notifier to broadcast the event outside of the client
-        this.completeAuthorizationRequestIfPossible(); // eslint-disable-line @typescript-eslint/no-floating-promises
-      });
-    });
+            // Ask the base class to call our completeAuthorizationRequest - this calls the registered notifier to broadcast the event outside of the client
+            this.completeAuthorizationRequestIfPossible(); // eslint-disable-line @typescript-eslint/no-floating-promises
+          }
+        );
+      }
+    );
 
     // Compose the request and invoke in the browser
     const authUrl = this.buildRequestUrl(serviceConfiguration, authRequest);
-    await open(authUrl);
+    const open = await import("open");
+    await open.default(authUrl);
   }
 
   /**
