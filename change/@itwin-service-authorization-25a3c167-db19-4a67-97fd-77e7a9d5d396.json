@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Add '@itwin/core-geometry' as a peer dep to service package",
+  "packageName": "@itwin/service-authorization",
+  "email": "GytisCepk@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
