@@ -318,6 +318,9 @@ importers:
       '@itwin/core-common':
         specifier: ^3.3.0 || ^4.0.0
         version: 4.0.6(@itwin/core-bentley@3.7.12)(@itwin/core-geometry@4.7.1)
+      '@itwin/core-geometry':
+        specifier: ^3.3.0 || ^4.0.0
+        version: 4.7.1
       got:
         specifier: ^12.6.1
         version: 12.6.1
