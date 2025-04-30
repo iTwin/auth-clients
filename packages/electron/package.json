@@ -70,7 +70,7 @@
     "sinon": "^15.0.1",
     "source-map-support": "^0.5.9",
     "typescript": "~5.3.3",
-    "vite": "^6.0.9"
+    "vite": "^6.1.6"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0",
