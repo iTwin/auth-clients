@@ -12,7 +12,7 @@ import { ElectronMainAuthorization } from "../main/Client";
 import { RefreshTokenStore } from "../main/TokenStore";
 import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper";
 /* eslint-disable @typescript-eslint/naming-convention */
-const assert = chai.assert;
+const assert: Chai.AssertStatic = chai.assert;
 const expect = chai.expect;
 
 chai.use(chaiAsPromised);
@@ -136,7 +136,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
       },
     });
 
-    const saveSpy = sinon.spy(tokenStore, "save");
+    const saveSpy: sinon.SinonSpy = sinon.spy(tokenStore, "save");
     // Create client and call initialize
     const client = new ElectronMainAuthorization(config);
     await client.signIn();
