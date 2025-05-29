@@ -62,7 +62,7 @@
     "chai-as-promised": "^7.1.1",
     "cpx2": "^5.0.0",
     "dotenv": "~16.0.3",
-    "electron": "^33.0.0",
+    "electron": "^36.3.2",
     "eslint": "^8.56.0",
     "mocha": "^10.2.0",
     "nyc": "^17.0.0",
@@ -74,6 +74,6 @@
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^3.3.0 || ^4.0.0",
-    "electron": ">=23.0.0 <34.0.0"
+    "electron": ">=23.0.0 <37.0.0"
   }
 }
