@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "add support for core 5.0.0",
+  "packageName": "@itwin/electron-authorization",
+  "email": "pankhur94@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}

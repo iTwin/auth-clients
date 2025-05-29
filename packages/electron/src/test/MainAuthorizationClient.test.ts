@@ -136,7 +136,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
       },
     });
 
-    const saveSpy: sinon.SinonSpy = sinon.spy(tokenStore, "save");
+    const saveSpy = sinon.spy(tokenStore, "save");
     // Create client and call initialize
     const client = new ElectronMainAuthorization(config);
     await client.signIn();
