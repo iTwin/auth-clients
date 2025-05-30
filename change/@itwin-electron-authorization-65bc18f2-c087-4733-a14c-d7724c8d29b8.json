@@ -1,0 +1,7 @@
+{
+  "type": "major",
+  "comment": "Drop support for core v3 and v4  & for electron version <34",
+  "packageName": "@itwin/electron-authorization",
+  "email": "pankhur94@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
