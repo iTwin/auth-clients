@@ -3,7 +3,6 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-// eslint@typescript-eslint/naming-convention
 import { config } from "dotenv";
 
 export function loadConfig() {

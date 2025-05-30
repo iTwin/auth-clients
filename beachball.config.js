@@ -9,12 +9,14 @@ module.exports = {
   tag: "latest",
   ignorePatterns: [
     ".nycrc",
-    ".eslintrc.json",
+    "eslint.config.js",
     "tsconfig.*",
     ".*ignore",
     ".github/**",
     ".vscode/**",
     "pnpm-lock.yaml",
+    "**/integration-test*/**",
+    "**/test/**",
   ],
   changehint: "Run 'pnpm change' to generate a change file",
 };
