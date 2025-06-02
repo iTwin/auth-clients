@@ -41,7 +41,7 @@ function assertOIDCConfig(obj: any): asserts obj is OIDCConfig {
       throw new Error(`Invalid OIDC discovery response: '${prop}' must be a boolean.`);
   }
   for (const prop of arrayProperties) {
-    if (prop in obj && (!Array.isArray(obj[prop]) || (obj[prop] as any[]).some((str) => typeof str !== "string")))
+    if (prop in obj && (!Array.isArray(obj[prop]) || obj[prop].some((str) => typeof str !== "string")))
       throw new Error(`Invalid OIDC discovery response: '${prop}' must be a boolean.`);
   }
 }
