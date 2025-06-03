@@ -11,7 +11,6 @@
 import { readFileSync } from "fs";
 import * as path from "path";
 import * as Http from "http";
-import * as open from "open";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
 import {
   AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationResponse,
@@ -443,7 +442,8 @@ class NodeCliAuthorizationRequestHandler extends AuthorizationRequestHandler {
 
     // Compose the request and invoke in the browser
     const authUrl = this.buildRequestUrl(serviceConfiguration, authRequest);
-    await open(authUrl);
+    const open = await import("open");
+    await open.default(authUrl);
   }
 
   /**
