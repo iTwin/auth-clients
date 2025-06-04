@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "update to support node v20",
+  "packageName": "@itwin/browser-authorization",
+  "email": "pankhur94@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
