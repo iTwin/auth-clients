@@ -1,6 +1,6 @@
 {
-  "type": "patch",
-  "comment": "electron build error changes not merged yet in main",
+  "type": "none",
+  "comment": "",
   "packageName": "@itwin/electron-authorization",
   "email": "pankhur94@users.noreply.github.com",
   "dependentChangeType": "patch"
