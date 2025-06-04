@@ -60,7 +60,7 @@ export class TokenStore {
    * @returns an object containing a hexadecimal encoded token, returned as a string, as well as the initialization vector.
    */
   private encryptCache(cacheEntry: CacheEntry): { encryptedCache: string, iv: string } {
-    const iv = randomBytes(16);;
+    const iv = randomBytes(16);
     const key = createSecretKey(new Uint8Array(this.generateCipherKey()));
     const cipher = createCipheriv("aes-256-cbc", key, new Uint8Array(iv));
 
