@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Add '@itwin/core-geometry' as a dependency",
-  "packageName": "@itwin/service-authorization",
-  "email": "GytisCepk@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

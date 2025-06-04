@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Mon, 17 Feb 2025 21:20:34 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 5.0.0
+
+Wed, 04 Jun 2025 20:44:05 GMT
+
+### Major changes
+
+- Drop support for core v3 and v4 and bump oidc-client-ts to latest major (pankhur94@users.noreply.github.com)
 
 ## 4.4.1
 

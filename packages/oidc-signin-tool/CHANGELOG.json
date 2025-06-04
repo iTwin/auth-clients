@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Wed, 04 Jun 2025 20:44:05 GMT",
+      "version": "5.0.0",
+      "tag": "@itwin/oidc-signin-tool_v5.0.0",
+      "comments": {
+        "major": [
+          {
+            "author": "pankhur94@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "ae310a6d34c939543963d3063c837370caafcdd9",
+            "comment": "Drop support for core v3 and v4 and bump oidc-client-ts to latest major"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 17 Feb 2025 21:20:34 GMT",
       "version": "4.4.1",
       "tag": "@itwin/oidc-signin-tool_v4.4.1",

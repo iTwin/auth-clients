@@ -1,8 +1,16 @@
 # Change Log - @itwin/node-cli-authorization
 
-This log was last generated on Wed, 20 Nov 2024 18:34:06 GMT and should not be manually modified.
+<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 3.0.0
+
+Wed, 04 Jun 2025 20:44:05 GMT
+
+### Major changes
+
+- Drop support for core v3 and v4 (pankhur94@users.noreply.github.com)
 
 ## 2.0.4
 

@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Fri, 28 Feb 2025 16:26:52 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.21.0
+
+Wed, 04 Jun 2025 20:44:05 GMT
+
+### Minor changes
+
+- Drop support for core v3 and v4  & for electron version <34 (pankhur94@users.noreply.github.com)
 
 ## 0.20.0
 

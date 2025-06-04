@@ -1,7 +1,0 @@
-{
-  "type": "major",
-  "comment": "Drop support for v3 and v4 and bump jwks-rsa to latest major",
-  "packageName": "@itwin/service-authorization",
-  "email": "pankhur94@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
