@@ -2,6 +2,29 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "date": "Wed, 04 Jun 2025 20:44:05 GMT",
+      "version": "2.0.0",
+      "tag": "@itwin/browser-authorization_v2.0.0",
+      "comments": {
+        "none": [
+          {
+            "author": "pankhur94@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "ae310a6d34c939543963d3063c837370caafcdd9",
+            "comment": ""
+          }
+        ],
+        "major": [
+          {
+            "author": "pankhur94@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "ae310a6d34c939543963d3063c837370caafcdd9",
+            "comment": "Drop support for core v3 and v4 and bump oidc-client-ts to latest major"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 17 Feb 2025 21:20:34 GMT",
       "version": "1.1.4",
       "tag": "@itwin/browser-authorization_v1.1.4",

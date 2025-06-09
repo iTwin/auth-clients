@@ -2,6 +2,29 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Wed, 04 Jun 2025 20:44:05 GMT",
+      "version": "0.21.0",
+      "tag": "@itwin/electron-authorization_v0.21.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "pankhur94@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "ae310a6d34c939543963d3063c837370caafcdd9",
+            "comment": "Drop support for core v3 and v4  & for electron version <34"
+          }
+        ],
+        "none": [
+          {
+            "author": "pankhur94@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "ae310a6d34c939543963d3063c837370caafcdd9",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Fri, 28 Feb 2025 16:26:52 GMT",
       "version": "0.20.0",
       "tag": "@itwin/electron-authorization_v0.20.0",

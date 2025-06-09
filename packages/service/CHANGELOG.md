@@ -1,8 +1,20 @@
 # Change Log - @itwin/service-authorization
 
-<!-- This log was last generated on Mon, 16 Dec 2024 21:41:11 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 2.0.0
+
+Wed, 04 Jun 2025 20:44:05 GMT
+
+### Major changes
+
+- Drop support for v3 and v4 and bump jwks-rsa to latest major (pankhur94@users.noreply.github.com)
+
+### Patches
+
+- Add '@itwin/core-geometry' as a dependency (GytisCepk@users.noreply.github.com)
 
 ## 1.2.3
 
