@@ -1,8 +1,16 @@
 # Change Log - @itwin/node-cli-authorization
 
-<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 09 Jun 2025 14:25:40 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 3.0.1
+
+Mon, 09 Jun 2025 14:25:40 GMT
+
+### Patches
+
+- Updating open package from 8.3.0 to 10.1.0 (vilius.albrechtas@bentley.com)
 
 ## 3.0.0
 
