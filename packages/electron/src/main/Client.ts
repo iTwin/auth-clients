@@ -39,7 +39,7 @@ import { ElectronAuthorizationEvents } from "./Events";
 import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler";
 import { RefreshTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
-import { BrowserWindow, ipcMain, shell } from "electron";
+import * as electron from "electron";
 import { defaultExpiryBufferInSeconds } from "../common/constants";
 import type { IpcChannelNames } from "../common/IpcChannelNames";
 import { getIpcChannelNames } from "../common/IpcChannelNames";
@@ -205,7 +205,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (this._ipcSocket) {
       this._ipcSocket.handle(channel, handler);
     } else {
-      ipcMain.handle(channel, handler);
+      electron.ipcMain.handle(channel, handler);
     }
   }
 
@@ -219,7 +219,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (this._ipcSocket) {
       this._ipcSocket.send(channel, ...data);
     } else {
-      const window = BrowserWindow.getAllWindows()[0];
+      const window = electron.BrowserWindow.getAllWindows()[0];
       window?.webContents.send(channel, ...data);
     }
   }
@@ -519,7 +519,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   public async signOut(): Promise<void> {
     await this.makeRevokeTokenRequest();
     if (this._configuration?.endSessionEndpoint)
-      await shell.openExternal(this._configuration.endSessionEndpoint);
+      await electron.shell.openExternal(this._configuration.endSessionEndpoint);
   }
 
   protected async processTokenResponse(
