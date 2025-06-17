@@ -1,13 +1,13 @@
 trigger:
   branches:
     include:
-     - main
+      - main
 
 pr:
   drafts: false
   branches:
     include:
-     - main
+      - main
 
 pool:
   vmImage: "windows-latest" # used because we publish from windows agents
@@ -23,64 +23,63 @@ resources:
 stages:
   - stage: Generate_Docs
     jobs:
-    - job:
-      displayName: iTwin Auth Clients Generate Docs
-      workspace:
-        clean: all
+      - job:
+        displayName: iTwin Auth Clients Generate Docs
+        workspace:
+          clean: all
 
-      steps:
-        - checkout: self
-          clean: true
+        steps:
+          - checkout: self
+            clean: true
 
-        - task: NodeTool@0
-          displayName: Use Node 20
-          inputs:
-            versionSpec: 20
-            checkLatest: true
+          - task: NodeTool@0
+            displayName: Use Node 20
+            inputs:
+              versionSpec: 20
+              checkLatest: true
 
-        - script: npm install -g pnpm@9
-          displayName: Install pnpm
+          - script: npm uninstall -g yarn && npm install -g corepack@>=0.32.0 && corepack enable && corepack -v
+            displayName: Install pnpm
 
-        - script: |
-            git config --local user.email imodeljs-admin@users.noreply.github.com
-            git config --local user.name imodeljs-admin
-          displayName: Setup git config
+          - script: |
+              git config --local user.email imodeljs-admin@users.noreply.github.com
+              git config --local user.name imodeljs-admin
+            displayName: Setup git config
 
-        - script: pnpm install
-          displayName: Install packages
+          - script: pnpm install
+            displayName: Install packages
 
-        - script: |
-            pnpm run docs
-          env:
-            RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
-          displayName: "Build auth-clients docs"
-          condition: eq(variables['Agent.OS'], 'Windows_NT')
+          - script: |
+              pnpm run docs
+            env:
+              RUSHSTACK_FILE_ERROR_BASE_FOLDER: $(Build.SourcesDirectory)
+            displayName: "Build auth-clients docs"
+            condition: eq(variables['Agent.OS'], 'Windows_NT')
 
-        - task: CopyFiles@2
-          displayName: "Copy generated docs to: $(Build.StagingDirectory)"
-          inputs:
-            SourceFolder: $(Build.SourcesDirectory)/generated-docs/auth-clients
-            TargetFolder: $(Build.StagingDirectory)/docs
-            OverWrite: true
-          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+          - task: CopyFiles@2
+            displayName: "Copy generated docs to: $(Build.StagingDirectory)"
+            inputs:
+              SourceFolder: $(Build.SourcesDirectory)/generated-docs/auth-clients
+              TargetFolder: $(Build.StagingDirectory)/docs
+              OverWrite: true
+            condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
-        - task: PublishBuildArtifacts@1
-          displayName: "Publish Artifact: Auth-Clients Docs"
-          inputs:
-            PathtoPublish: "$(Build.StagingDirectory)/docs/"
-            ArtifactName: "iTwin-Auth-Clients Docs"
-          condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
+          - task: PublishBuildArtifacts@1
+            displayName: "Publish Artifact: Auth-Clients Docs"
+            inputs:
+              PathtoPublish: "$(Build.StagingDirectory)/docs/"
+              ArtifactName: "iTwin-Auth-Clients Docs"
+            condition: and(succeeded(), eq(variables['Agent.OS'], 'Windows_NT'))
 
   - stage: Validate_Docs
     dependsOn: Generate_Docs
     condition: and(succeeded(), in(variables['Build.Reason'], 'IndividualCI', 'PullRequest', 'Manual'))
     jobs:
-    - template: common/config/azure-pipelines/jobs/docs-build.yaml@itwinjs-core
-      parameters:
-        checkout: itwinjs-core
-        ignoreAudit: true
-        useCurrentAuthClientsDocsArtifact: true
-
+      - template: common/config/azure-pipelines/jobs/docs-build.yaml@itwinjs-core
+        parameters:
+          checkout: itwinjs-core
+          ignoreAudit: true
+          useCurrentAuthClientsDocsArtifact: true
 
   - stage: Tag_Docs
     dependsOn: Validate_Docs
