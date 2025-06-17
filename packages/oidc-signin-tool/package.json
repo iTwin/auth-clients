@@ -1,6 +1,6 @@
 {
   "name": "@itwin/oidc-signin-tool",
-  "version": "4.4.1",
+  "version": "5.0.0",
   "description": "OIDC Signin Helper",
   "main": "lib/cjs/index.js",
   "typings": "lib/cjs/index",
@@ -33,23 +33,23 @@
     "url": "http://www.bentley.com"
   },
   "dependencies": {
-    "@itwin/certa": "^4.9.1",
-    "@itwin/core-common": "^4.9.1",
+    "@itwin/certa": "rc",
     "@itwin/service-authorization": "workspace:^",
     "@playwright/test": "~1.48.2",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^5.1.0",
-    "oidc-client-ts": "^2.4.0"
+    "oidc-client-ts": "^3.1.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^4.9.1",
-    "@itwin/core-bentley": "^4.9.1",
+    "@itwin/build-tools": "rc",
+    "@itwin/core-bentley": "rc",
+    "@itwin/core-common": "rc",
     "@itwin/eslint-plugin": "^4.1.1",
-    "@types/chai": "^4.3.20",
+    "@types/chai": "^4.2.22",
     "@types/chai-as-promised": "^7.1.8",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/mocha": "^8.2.3",
-    "@types/node": "^18.19.54",
+    "@types/node": "^20.14.8",
     "@types/sinon": "^10.0.20",
     "chai": "^4.5.0",
     "chai-as-promised": "^7.1.2",
@@ -58,9 +58,9 @@
     "nyc": "^17.1.0",
     "rimraf": "^3.0.2",
     "sinon": "15.0.4",
-    "typescript": "~5.3.3"
+    "typescript": "~5.6.2"
   },
   "peerDependencies": {
-    "@itwin/core-bentley": "^3.3.0 || ^4.0.0"
+    "@itwin/core-bentley": "^5.0.0"
   }
 }

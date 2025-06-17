@@ -91,16 +91,17 @@ jobs:
           sudo apt-get install -y dbus-x11
           sudo apt-get install -y gnome-keyring
         displayName: Install Packages - Linux
-        condition:
-          and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
+        condition: and(succeeded(), eq(variables['Agent.OS'], 'Linux'))
 
-          # By default linux agents do not have a real display so use the virtual framebuffer
-          # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
-          #   See packages/electron/README.md for more details
-      - script: >-
-          dbus-run-session -- sh -c
-          "echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
-            xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm test:integration --verbose"
+      # By default linux agents do not have a real display so use the virtual framebuffer
+      # Tests are run in a dbus session after creating a keyring password for compatibility with Keytar
+      #   See packages/electron/README.md for more details
+      - script: |
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+          dbus-run-session -- sh -c "
+            echo 'keyringPassword' | gnome-keyring-daemon -r -d --unlock ;
+            xvfb-run --auto-servernum --server-args='-screen 0, 1600x900x24' pnpm test:integration --verbose
+          "
         displayName: pnpm test:integration - Linux
         env:
           # Couldn't get this variable to be ingested in the steps above, but this works

@@ -5,7 +5,7 @@
 
 import type { TokenResponseJson } from "@openid/appauth";
 import { TokenResponse } from "@openid/appauth";
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
+import { createCipheriv, createDecipheriv, createSecretKey, randomBytes, scryptSync } from "node:crypto";
 import * as path from "node:path";
 import * as NodePersist from "node-persist";
 
@@ -61,7 +61,8 @@ export class TokenStore {
    */
   private encryptCache(cacheEntry: CacheEntry): { encryptedCache: string, iv: string } {
     const iv = randomBytes(16);
-    const cipher = createCipheriv("aes-256-cbc", this.generateCipherKey(), iv);
+    const key = createSecretKey(new Uint8Array(this.generateCipherKey()));
+    const cipher = createCipheriv("aes-256-cbc", key, new Uint8Array(iv));
 
     const encryptedCache = cipher.update(JSON.stringify(cacheEntry), "utf8", "hex") + cipher.final("hex");
     return {
@@ -71,7 +72,8 @@ export class TokenStore {
   }
 
   private decryptCache(encryptedCache: string, iv: Buffer): string {
-    const decipher = createDecipheriv("aes-256-cbc", this.generateCipherKey(), iv);
+    const key = createSecretKey(new Uint8Array(this.generateCipherKey()));
+    const decipher = createDecipheriv("aes-256-cbc", key, new Uint8Array(iv));
     const decryptedCache = decipher.update(encryptedCache, "hex", "utf8") + decipher.final("utf8");
     return decryptedCache;
   }

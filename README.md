@@ -22,7 +22,7 @@ There is also an [authorization client for command-line developer tools](./packa
 
 ## Prerequisites
 
-- [Node](https://nodejs.org/en/): an installation of the latest security patch of Node 18. The Node installation also includes the **npm** package manager.
+- [Node](https://nodejs.org/en/): an installation of the latest security patch of Node 20. The Node installation also includes the **npm** package manager.
 - [pnpm](https://pnpm.io/): [prefer installation via npm corepack](https://pnpm.io/installation#using-corepack)
 
 ## Build Instructions
