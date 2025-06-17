@@ -5,13 +5,16 @@
 
 import type { AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
 import { BaseTokenRequestHandler } from "@openid/appauth";
-import chai, { assert, expect } from "chai";
-import chaiAsPromised from "chai-as-promised";
-import sinon from "sinon";
+import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
+import * as sinon from "sinon";
 import { ElectronMainAuthorization } from "../main/Client";
 import { RefreshTokenStore } from "../main/TokenStore";
 import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper";
 /* eslint-disable @typescript-eslint/naming-convention */
+const assert: Chai.AssertStatic = chai.assert; // ts is not able to fully infer the type of assert, so we need to explicitly set it.
+const expect = chai.expect;
+
 chai.use(chaiAsPromised);
 
 /**
