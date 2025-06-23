@@ -33,13 +33,13 @@
     "url": "https://github.com/iTwin/auth-clients"
   },
   "devDependencies": {
-    "beachball": "^2.51.0",
-    "lage": "^2.12.20"
+    "beachball": "^2.54.0",
+    "lage": "^2.14.6"
   },
   "pnpm": {
     "overrides": {
       "path-to-regexp": "0.1.12"
     }
   },
-  "packageManager": "pnpm@9.15.0+sha256.09a8fe31a34fda706354680619f4002f4ccef6dadff93240d24ef6c831f0fd28"
+  "packageManager": "pnpm@9.15.9+sha512.68046141893c66fad01c079231128e9afb89ef87e2691d69e4d40eee228988295fd4682181bae55b58418c3a253bde65a505ec7c5f9403ece5cc3cd37dcf2531"
 }
