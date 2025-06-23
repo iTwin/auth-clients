@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Mon, 23 Jun 2025 14:20:52 GMT",
+      "version": "5.0.1",
+      "tag": "@itwin/oidc-signin-tool_v5.0.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "66480813+paulius-valiunas@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "2d522e180132be3d23818e570a1e7f6da9233560",
+            "comment": "log signin retries"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 04 Jun 2025 20:44:05 GMT",
       "version": "5.0.0",
       "tag": "@itwin/oidc-signin-tool_v5.0.0",

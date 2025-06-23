@@ -1,6 +1,6 @@
 {
   "name": "@itwin/electron-authorization",
-  "version": "0.21.0",
+  "version": "0.21.1",
   "description": "Electron authorization client for iTwin platform",
   "exports": {
     "./Main": {

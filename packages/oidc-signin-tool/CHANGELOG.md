@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 23 Jun 2025 14:20:52 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 5.0.1
+
+Mon, 23 Jun 2025 14:20:52 GMT
+
+### Patches
+
+- log signin retries (66480813+paulius-valiunas@users.noreply.github.com)
 
 ## 5.0.0
 

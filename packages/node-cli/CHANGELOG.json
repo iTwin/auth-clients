@@ -2,6 +2,21 @@
   "name": "@itwin/node-cli-authorization",
   "entries": [
     {
+      "date": "Mon, 23 Jun 2025 14:20:52 GMT",
+      "version": "3.0.1",
+      "tag": "@itwin/node-cli-authorization_v3.0.1",
+      "comments": {
+        "none": [
+          {
+            "author": "66480813+paulius-valiunas@users.noreply.github.com",
+            "package": "@itwin/node-cli-authorization",
+            "commit": "2d522e180132be3d23818e570a1e7f6da9233560",
+            "comment": "update dependencies"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 09 Jun 2025 14:25:40 GMT",
       "version": "3.0.1",
       "tag": "@itwin/node-cli-authorization_v3.0.1",

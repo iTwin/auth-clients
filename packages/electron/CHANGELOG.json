@@ -2,6 +2,29 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Mon, 23 Jun 2025 14:20:52 GMT",
+      "version": "0.21.1",
+      "tag": "@itwin/electron-authorization_v0.21.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "pankhur94@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "2d522e180132be3d23818e570a1e7f6da9233560",
+            "comment": "fix issue importing electron"
+          }
+        ],
+        "none": [
+          {
+            "author": "66480813+paulius-valiunas@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "2d522e180132be3d23818e570a1e7f6da9233560",
+            "comment": "update dependencies"
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 04 Jun 2025 20:44:05 GMT",
       "version": "0.21.0",
       "tag": "@itwin/electron-authorization_v0.21.0",
