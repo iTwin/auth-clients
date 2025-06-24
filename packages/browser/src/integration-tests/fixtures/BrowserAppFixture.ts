@@ -9,10 +9,18 @@ import { User } from "oidc-client-ts";
 import { AuthType } from "../types";
 import type { SignInOptions } from "../types";
 
-export class TestHelper {
-  constructor(private _signInOptions: SignInOptions) {}
+export class BrowserAppFixture {
+  constructor(private _page: Page, private _signInOptions: SignInOptions) { }
 
-  public async signIn(page: Page) {
+  get routes() {
+    return {
+      staticCallback: `${this._signInOptions.url}?callbackFromStorage=true`,
+      authViaPopup: `${this._signInOptions.url}/signin-via-popup`,
+      root: `${this._signInOptions.url}`,
+    }
+  }
+
+  public async signIn(page: Page = this._page) {
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);
@@ -24,8 +32,35 @@ export class TestHelper {
     }
   }
 
-  public async getUserFromLocalStorage(page: Page): Promise<User> {
-    const storageState = await page.context().storageState();
+  public async signInViaPopup() {
+    await this._page.goto(this.routes.authViaPopup);
+    const popupPromise = this._page.waitForEvent("popup");
+    const el = this._page.getByText("Signin via Popup");
+    await el.click();
+    const popup = await popupPromise;
+    await popup.waitForLoadState();
+
+    const signInPromise = this.signIn(popup);
+    const closeEventPromise = popup.waitForEvent("close");
+
+    await Promise.all([signInPromise, closeEventPromise]);
+  }
+
+  public async signOutViaPopup() {
+    const signoutPopupPromise = this._page.waitForEvent("popup");
+    const locator = this._page.getByTestId("signout-button-popup");
+    await locator.click();
+    const signOutPopup = await signoutPopupPromise;
+    return signOutPopup
+  }
+
+  public async signOut() {
+    const locator = this._page.getByTestId("signout-button");
+    await locator.click();
+  }
+
+  public async getUserFromLocalStorage(): Promise<User> {
+    const storageState = await this._page.context().storageState();
     const localStorage = storageState.origins.find(
       (o) => o.origin === this._signInOptions.url
     )?.localStorage;
@@ -44,12 +79,11 @@ export class TestHelper {
   }
 
   public async validateAuthenticated(
-    page: Page,
     authType: AuthType = AuthType.Redirect
   ) {
-    const locator = page.getByTestId("content");
+    const locator = this._page.getByTestId("content");
     await expect(locator).toContainText("Authorized");
-    const user = await this.getUserFromLocalStorage(page);
+    const user = await this.getUserFromLocalStorage();
     expect(user.access_token).toBeDefined();
 
     let url = `${this._signInOptions.url}/`;
@@ -58,10 +92,23 @@ export class TestHelper {
     if (authType === AuthType.RedirectStatic)
       url = "http://localhost:5173/?callbackFromStorage=true";
 
-    expect(page.url()).toEqual(url);
+    expect(this._page.url()).toEqual(url);
   }
 
-  private async handleConsentScreen(page: Page) {
+  public async validateUnauthenticated(page: Page = this._page) {
+    const content = page.getByText("Sign Off Successful");
+    await expect(content).toBeVisible();
+  }
+
+  public async goToPage(url: string) {
+    await this._page.goto(url);
+  }
+
+  public async waitForPageLoad(url: string = this._signInOptions.url, page: Page = this._page) {
+    await page.waitForURL(url);
+  }
+
+  private async handleConsentScreen(page: Page = this._page) {
     const consentAcceptButton = page.getByRole("link", {
       name: "Accept",
     });
