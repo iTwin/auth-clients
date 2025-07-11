@@ -33,7 +33,7 @@
     "url": "http://www.bentley.com"
   },
   "dependencies": {
-    "@itwin/certa": "rc",
+    "@itwin/certa": "^5.0.0",
     "@itwin/service-authorization": "workspace:^",
     "@playwright/test": "~1.48.2",
     "dotenv": "^10.0.0",
@@ -41,9 +41,9 @@
     "oidc-client-ts": "^3.3.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "rc",
-    "@itwin/core-bentley": "rc",
-    "@itwin/core-common": "rc",
+    "@itwin/build-tools": "^5.0.0",
+    "@itwin/core-bentley": "^5.0.0",
+    "@itwin/core-common": "^5.0.0",
     "@itwin/eslint-plugin": "^4.1.1",
     "@types/chai": "^4.3.20",
     "@types/chai-as-promised": "^7.1.8",

@@ -21,18 +21,18 @@ importers:
   packages/browser:
     dependencies:
       '@itwin/core-common':
-        specifier: ^4.11.6
-        version: 4.11.6(@itwin/core-bentley@5.0.0-dev.119)(@itwin/core-geometry@4.10.10)
+        specifier: ^5.0.0
+        version: 5.0.3(@itwin/core-bentley@5.0.3)(@itwin/core-geometry@4.10.10)
       oidc-client-ts:
         specifier: ^3.3.0
         version: 3.3.0
     devDependencies:
       '@itwin/build-tools':
-        specifier: rc
-        version: 5.0.0-dev.119(@types/node@20.19.1)
+        specifier: ^5.0.0
+        version: 5.0.3(@types/node@20.19.1)
       '@itwin/core-bentley':
-        specifier: rc
-        version: 5.0.0-dev.119
+        specifier: ^5.0.0
+        version: 5.0.3
       '@itwin/eslint-plugin':
         specifier: ^4.1.1
         version: 4.1.1(eslint@8.57.1)(typescript@5.6.3)
@@ -82,8 +82,8 @@ importers:
   packages/electron:
     dependencies:
       '@itwin/core-common':
-        specifier: ^4.11.6
-        version: 4.11.6(@itwin/core-bentley@5.0.0-dev.119)(@itwin/core-geometry@4.10.10)
+        specifier: ^5.0.0
+        version: 5.0.3(@itwin/core-bentley@5.0.3)(@itwin/core-geometry@4.10.10)
       '@openid/appauth':
         specifier: ^1.3.2
         version: 1.3.2
@@ -95,11 +95,11 @@ importers:
         version: 7.0.0
     devDependencies:
       '@itwin/build-tools':
-        specifier: rc
-        version: 5.0.0-dev.119(@types/node@20.19.1)
+        specifier: ^5.0.0
+        version: 5.0.3(@types/node@20.19.1)
       '@itwin/core-bentley':
-        specifier: rc
-        version: 5.0.0-dev.119
+        specifier: ^5.0.0
+        version: 5.0.3
       '@itwin/eslint-plugin':
         specifier: ^4.1.1
         version: 4.1.1(eslint@8.57.1)(typescript@5.6.3)
@@ -134,8 +134,8 @@ importers:
         specifier: ~16.0.3
         version: 16.0.3
       electron:
-        specifier: ^36.4.0
-        version: 36.4.0
+        specifier: ^37.2.0
+        version: 37.2.1
       eslint:
         specifier: ^8.57.1
         version: 8.57.1
@@ -164,8 +164,8 @@ importers:
   packages/node-cli:
     dependencies:
       '@itwin/core-common':
-        specifier: ^4.11.6
-        version: 4.11.6(@itwin/core-bentley@5.0.0-dev.119)(@itwin/core-geometry@4.10.10)
+        specifier: ^5.0.0
+        version: 5.0.3(@itwin/core-bentley@5.0.3)(@itwin/core-geometry@4.10.10)
       '@openid/appauth':
         specifier: ^1.3.2
         version: 1.3.2
@@ -180,11 +180,11 @@ importers:
         version: 7.0.0
     devDependencies:
       '@itwin/build-tools':
-        specifier: rc
-        version: 5.0.0-dev.119(@types/node@20.19.1)
+        specifier: ^5.0.0
+        version: 5.0.3(@types/node@20.19.1)
       '@itwin/core-bentley':
-        specifier: rc
-        version: 5.0.0-dev.119
+        specifier: ^5.0.0
+        version: 5.0.3
       '@itwin/eslint-plugin':
         specifier: ^4.1.1
         version: 4.1.1(eslint@8.57.1)(typescript@5.6.3)
@@ -240,8 +240,8 @@ importers:
   packages/oidc-signin-tool:
     dependencies:
       '@itwin/certa':
-        specifier: rc
-        version: 5.0.0-dev.119(electron@36.4.0)
+        specifier: ^5.0.0
+        version: 5.0.3
       '@itwin/service-authorization':
         specifier: workspace:^
         version: link:../service
@@ -259,14 +259,14 @@ importers:
         version: 3.3.0
     devDependencies:
       '@itwin/build-tools':
-        specifier: rc
-        version: 5.0.0-dev.119(@types/node@20.19.1)
+        specifier: ^5.0.0
+        version: 5.0.3(@types/node@20.19.1)
       '@itwin/core-bentley':
-        specifier: rc
-        version: 5.0.0-dev.119
+        specifier: ^5.0.0
+        version: 5.0.3
       '@itwin/core-common':
-        specifier: rc
-        version: 5.0.0-dev.119(@itwin/core-bentley@5.0.0-dev.119)(@itwin/core-geometry@4.10.10)
+        specifier: ^5.0.0
+        version: 5.0.3(@itwin/core-bentley@5.0.3)(@itwin/core-geometry@4.10.10)
       '@itwin/eslint-plugin':
         specifier: ^4.1.1
         version: 4.1.1(eslint@8.57.1)(typescript@5.6.3)
@@ -326,14 +326,14 @@ importers:
         version: 3.2.0
     devDependencies:
       '@itwin/build-tools':
-        specifier: rc
-        version: 5.0.0-dev.119(@types/node@20.19.1)
+        specifier: ^5.0.0
+        version: 5.0.3(@types/node@20.19.1)
       '@itwin/core-bentley':
-        specifier: rc
-        version: 5.0.0-dev.119
+        specifier: ^5.0.0
+        version: 5.0.3
       '@itwin/core-common':
-        specifier: rc
-        version: 5.0.0-dev.119(@itwin/core-bentley@5.0.0-dev.119)(@itwin/core-geometry@4.10.10)
+        specifier: ^5.0.0
+        version: 5.0.3(@itwin/core-bentley@5.0.3)(@itwin/core-geometry@4.10.10)
       '@itwin/eslint-plugin':
         specifier: ^4.1.1
         version: 4.1.1(eslint@8.57.1)(typescript@5.6.3)
@@ -658,12 +658,12 @@ packages:
     resolution: {integrity: sha512-ZXRY4jNvVgSVQ8DL3LTcakaAtXwTVUxE81hslsyD2AtoXW/wVob10HkOJ1X/pAlcI7D+2YoZKg5do8G/w6RYgA==}
     engines: {node: '>=8'}
 
-  '@itwin/build-tools@5.0.0-dev.119':
-    resolution: {integrity: sha512-+YOaOBvgCMcYL1nzZPgzYeEz+A8vDpktKwqrp42eXng0nw0B7khai48NadnP76sTOARrGn/ZAeYC1sKs0vh7kw==}
+  '@itwin/build-tools@5.0.3':
+    resolution: {integrity: sha512-XIqrMz0Fk53YnxPfSbX/X/ubyQ7kKaPh4sNr+P5J6YeVN+VPOivwocSfMP6Nwj1gs9UZtHlLovxpZadfePMJxw==}
     hasBin: true
 
-  '@itwin/certa@5.0.0-dev.119':
-    resolution: {integrity: sha512-kyaLHPy+p58pqoPvD719yR4HH5QmRxBxNMqJMiKvZarMmyDteNdBU+dC04R8ooFZ8/svMcH4Cx4JreMF4Y+lzQ==}
+  '@itwin/certa@5.0.3':
+    resolution: {integrity: sha512-5wAdS2GPWG0JYR7lOzJOJBSTPZeyPQQcqVzOShEBv81jOQB0Qv2sVNwFfY9w8sY+g5PkCBv+ReOfO5rjm4VWrQ==}
     hasBin: true
     peerDependencies:
       electron: ^35.0.0 || ^36.0.0
@@ -674,20 +674,14 @@ packages:
   '@itwin/core-bentley@4.10.10':
     resolution: {integrity: sha512-LVTAbXrRDhQplk2w2MQXjsLMYwSMI8tMFbSzFol8SlvnY72k/O9kzMbJopK1QSn5xYIUZDUWYz7U8jgqDYQnNg==}
 
-  '@itwin/core-bentley@5.0.0-dev.119':
-    resolution: {integrity: sha512-WlbGbc4Ua3dtTEuaroiyD31mOP/b2lHGzsRyAY/H4WX9T2RhtsRO5752RxpBCwgK9cwgKqFcmBqJTSvcKCkNfw==}
+  '@itwin/core-bentley@5.0.3':
+    resolution: {integrity: sha512-w57aot0U+KVshihh0HzH8NPuXmRBZt6acnuCNP4MmqnVUayGI2uxGmbmOQpTciA3iU1pKuH5XBBtB4SfqVgU7Q==}
 
-  '@itwin/core-common@4.11.6':
-    resolution: {integrity: sha512-YrZDUhFB629HKh942wpRUTQV5fZQEVDk0M5Bmx2AvtSbzUQCwVvgKsJq20ltmYbYePZyQexFkQ1JcHZISSPKfQ==}
+  '@itwin/core-common@5.0.3':
+    resolution: {integrity: sha512-FyDFVRohqhim3tTBP40Y00b0br5k6QZp2MnnCv3SviRc87KF7BIQrmzg6R3yMFA/BY2NuxANEj1R/B+LmLk9Ng==}
     peerDependencies:
-      '@itwin/core-bentley': ^4.11.6
-      '@itwin/core-geometry': ^4.11.6
-
-  '@itwin/core-common@5.0.0-dev.119':
-    resolution: {integrity: sha512-jfA0OeEyrv6XBTlYQQfsjXM76uZ/j7e36BlUon7NJTzivWLQkadOUGqXhu1n/HWrbPJArCd/htVDRWnHtl6n1Q==}
-    peerDependencies:
-      '@itwin/core-bentley': 5.0.0-dev.119
-      '@itwin/core-geometry': 5.0.0-dev.119
+      '@itwin/core-bentley': 5.0.3
+      '@itwin/core-geometry': 5.0.3
 
   '@itwin/core-geometry@4.10.10':
     resolution: {integrity: sha512-6cQnXcUmqYskVHwxumpp4HAbVlvO+uyy3nKhzQjK2TWzRnXft4N65T6l7z4WsiA5jfksPeZBz7+VNLxeA8lCdA==}
@@ -1746,8 +1740,8 @@ packages:
   electron-to-chromium@1.5.169:
     resolution: {integrity: sha512-q7SQx6mkLy0GTJK9K9OiWeaBMV4XQtBSdf6MJUzDB/H/5tFXfIiX38Lci1Kl6SsgiEhz1SQI1ejEOU5asWEhwQ==}
 
-  electron@36.4.0:
-    resolution: {integrity: sha512-LLOOZEuW5oqvnjC7HBQhIqjIIJAZCIFjQxltQGLfEC7XFsBoZgQ3u3iFj+Kzw68Xj97u1n57Jdt7P98qLvUibQ==}
+  electron@37.2.1:
+    resolution: {integrity: sha512-ae2EbzRNqIAHlftfCHtbbt6EgJUW8+zxWLONqNnn2iSrLF0O/pbxbff3xcpZYPpmFBs4uqjoi+s4QS7DQ+zZ/w==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -4382,7 +4376,7 @@ snapshots:
 
   '@istanbuljs/schema@0.1.3': {}
 
-  '@itwin/build-tools@5.0.0-dev.119(@types/node@20.19.1)':
+  '@itwin/build-tools@5.0.3(@types/node@20.19.1)':
     dependencies:
       '@microsoft/api-extractor': 7.52.8(@types/node@20.19.1)
       chalk: 3.0.0
@@ -4403,7 +4397,7 @@ snapshots:
       - '@types/node'
       - supports-color
 
-  '@itwin/certa@5.0.0-dev.119(electron@36.4.0)':
+  '@itwin/certa@5.0.3':
     dependencies:
       canonical-path: 1.0.0
       detect-port: 1.3.0
@@ -4414,25 +4408,16 @@ snapshots:
       playwright: 1.47.2
       source-map-support: 0.5.21
       yargs: 17.7.2
-    optionalDependencies:
-      electron: 36.4.0
     transitivePeerDependencies:
       - supports-color
 
   '@itwin/core-bentley@4.10.10': {}
 
-  '@itwin/core-bentley@5.0.0-dev.119': {}
+  '@itwin/core-bentley@5.0.3': {}
 
-  '@itwin/core-common@4.11.6(@itwin/core-bentley@5.0.0-dev.119)(@itwin/core-geometry@4.10.10)':
+  '@itwin/core-common@5.0.3(@itwin/core-bentley@5.0.3)(@itwin/core-geometry@4.10.10)':
     dependencies:
-      '@itwin/core-bentley': 5.0.0-dev.119
-      '@itwin/core-geometry': 4.10.10
-      flatbuffers: 1.12.0
-      js-base64: 3.7.7
-
-  '@itwin/core-common@5.0.0-dev.119(@itwin/core-bentley@5.0.0-dev.119)(@itwin/core-geometry@4.10.10)':
-    dependencies:
-      '@itwin/core-bentley': 5.0.0-dev.119
+      '@itwin/core-bentley': 5.0.3
       '@itwin/core-geometry': 4.10.10
       flatbuffers: 1.12.0
       js-base64: 3.7.7
@@ -5628,7 +5613,7 @@ snapshots:
 
   electron-to-chromium@1.5.169: {}
 
-  electron@36.4.0:
+  electron@37.2.1:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.15.32
