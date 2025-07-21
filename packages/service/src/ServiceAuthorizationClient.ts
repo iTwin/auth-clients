@@ -112,6 +112,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
 
   /** Returns a promise that resolves to the AccessToken of the currently authorized client.
   * The token is refreshed if necessary.
+  * @param additionalHeaders headers that will be added to requests to the authorization server
   */
   public async getAccessToken(additionalHeaders?: { [key: string]: string }): Promise<string> {
     if (this.isAuthorized)
