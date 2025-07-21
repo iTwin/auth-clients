@@ -67,7 +67,7 @@ export class OIDCDiscoveryClient {
   /**
   * Discover the endpoints of the service
   */
-  public async getConfig(): Promise<OIDCConfig> {
+  public async getConfig(additionalHeaders?: { [key: string]: string }): Promise<OIDCConfig> {
     if (this._discoveredConfig)
       return this._discoveredConfig;
 
@@ -77,6 +77,7 @@ export class OIDCDiscoveryClient {
       headers: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         Accept: "application/json",
+        ...additionalHeaders,
       },
       throwHttpErrors: false,
     });
