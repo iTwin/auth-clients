@@ -31,13 +31,13 @@
     "directory": "packages/browser"
   },
   "dependencies": {
-    "@itwin/core-common": "^4.11.6",
+    "@itwin/core-common": "^5.0.0",
     "oidc-client-ts": "^3.3.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "rc",
-    "@itwin/core-bentley": "rc",
-    "@itwin/core-common": "rc",
+    "@itwin/build-tools": "^5.0.0",
+    "@itwin/core-bentley": "^5.0.0",
+    "@itwin/core-common": "^5.0.0",
     "@itwin/eslint-plugin": "^4.1.1",
     "@playwright/test": "~1.48.2",
     "@types/chai": "^4.3.20",
