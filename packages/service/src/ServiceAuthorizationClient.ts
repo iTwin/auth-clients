@@ -51,12 +51,12 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     this._configuration = serviceConfiguration;
   }
 
-  private async generateAccessToken(): Promise<string> {
+  private async generateAccessToken(additionalHeaders?: { [key: string]: string }): Promise<string> {
     const scopes = this._configuration.scope.split(/\s+/);
     if (scopes.includes("openid") || scopes.includes("email") || scopes.includes("profile") || scopes.includes("organization"))
       throw new Error("Authorization error: Scopes for a service cannot include 'openid email profile organization'");
 
-    const issuer = await this._discoveryClient.getConfig();
+    const issuer = await this._discoveryClient.getConfig(additionalHeaders);
     if (!issuer.token_endpoint)
       throw new Error("Issuer does not support client credentials");
 
@@ -74,6 +74,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
         /* eslint-disable @typescript-eslint/naming-convention */
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": authHeader,
+        ...additionalHeaders,
         /* eslint-enable @typescript-eslint/naming-convention */
       },
       form: body,
@@ -111,10 +112,11 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
 
   /** Returns a promise that resolves to the AccessToken of the currently authorized client.
   * The token is refreshed if necessary.
+  * @param additionalHeaders headers that will be added to requests to the authorization server
   */
-  public async getAccessToken(): Promise<string> {
+  public async getAccessToken(additionalHeaders?: { [key: string]: string }): Promise<string> {
     if (this.isAuthorized)
       return this._accessToken;
-    return this.generateAccessToken();
+    return this.generateAccessToken(additionalHeaders);
   }
 }
