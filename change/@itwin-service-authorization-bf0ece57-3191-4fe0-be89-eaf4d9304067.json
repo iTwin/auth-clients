@@ -1,0 +1,7 @@
+{
+  "type": "none",
+  "comment": "pnpm up to bump form-data to 4.0.4",
+  "packageName": "@itwin/service-authorization",
+  "email": "ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "none"
+}
