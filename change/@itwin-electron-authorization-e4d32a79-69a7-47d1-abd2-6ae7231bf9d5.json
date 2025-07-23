@@ -1,7 +1,7 @@
 {
-  "type": "none",
+  "type": "patch",
   "comment": "pnpm up to bump form-data to 4.0.4",
   "packageName": "@itwin/electron-authorization",
   "email": "ben-polinsky@users.noreply.github.com",
-  "dependentChangeType": "none"
+  "dependentChangeType": "patch"
 }
