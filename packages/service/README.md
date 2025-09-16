@@ -27,7 +27,7 @@ const token = await client.getAccessToken()
 
 | Name           | Type                    | Description                                                                                                                             |
 | -------------- | ----------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| getAccessToken | () => Promise\<string\> | Returns the access token.                                                                                                               |
+| getAccessToken | (additionalHeaders?: { [key: string]: string }) => Promise\<string\> | Returns the access token. The additional headers specified in the argument will be appended to any request sent to the authorization server. |
 | hasExpired     | boolean                 | Returns true if the access token has expired.                                                                                           |
 | hasSignedIn    | boolean                 | Returns true if signed in - the accessToken may be active or may have expired and require a refresh                                     |
 | isAuthorized   | boolean                 | Returns true if there's a current authorized client Set to true if signed in and the access token has not expired, and false otherwise. |
