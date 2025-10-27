@@ -2,6 +2,29 @@
   "name": "@itwin/node-cli-authorization",
   "entries": [
     {
+      "date": "Mon, 27 Oct 2025 12:14:12 GMT",
+      "version": "3.0.2",
+      "tag": "@itwin/node-cli-authorization_v3.0.2",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/node-cli-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": "pnpm up to bump form-data to 4.0.4"
+          }
+        ],
+        "none": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/node-cli-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": " "
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 23 Jun 2025 14:20:52 GMT",
       "version": "3.0.1",
       "tag": "@itwin/node-cli-authorization_v3.0.1",

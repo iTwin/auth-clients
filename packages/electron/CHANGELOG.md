@@ -1,8 +1,18 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Mon, 23 Jun 2025 14:20:52 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 27 Oct 2025 12:14:12 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.21.2
+
+Mon, 27 Oct 2025 12:14:12 GMT
+
+### Patches
+
+- Add support for Electron 37 (GytisCepk@users.noreply.github.com)
+- pnpm up to bump form-data to 4.0.4 (ben-polinsky@users.noreply.github.com)
+- Add support for Electron 38 (GytisCepk@users.noreply.github.com)
 
 ## 0.21.1
 

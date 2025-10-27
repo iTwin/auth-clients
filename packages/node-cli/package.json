@@ -1,6 +1,6 @@
 {
   "name": "@itwin/node-cli-authorization",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "main": "lib/cjs/index.js",
   "types": "lib/cjs/index.d.ts",
   "description": "Node.js command-line authorization client for iTwin platform",

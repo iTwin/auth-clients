@@ -2,6 +2,35 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "date": "Mon, 27 Oct 2025 12:14:12 GMT",
+      "version": "2.1.0",
+      "tag": "@itwin/service-authorization_v2.1.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "66480813+paulius-valiunas@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": "Add the ability to send additional request headers to the authorization server"
+          }
+        ],
+        "none": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": " "
+          },
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 23 Jun 2025 14:20:52 GMT",
       "version": "2.0.0",
       "tag": "@itwin/service-authorization_v2.0.0",

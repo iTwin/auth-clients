@@ -1,8 +1,16 @@
 # Change Log - @itwin/node-cli-authorization
 
-<!-- This log was last generated on Mon, 09 Jun 2025 14:25:40 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 27 Oct 2025 12:14:12 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 3.0.2
+
+Mon, 27 Oct 2025 12:14:12 GMT
+
+### Patches
+
+- pnpm up to bump form-data to 4.0.4 (ben-polinsky@users.noreply.github.com)
 
 ## 3.0.1
 

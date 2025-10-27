@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Add the ability to send additional request headers to the authorization server",
-  "packageName": "@itwin/service-authorization",
-  "email": "66480813+paulius-valiunas@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

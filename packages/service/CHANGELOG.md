@@ -1,8 +1,16 @@
 # Change Log - @itwin/service-authorization
 
-<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 27 Oct 2025 12:14:12 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 2.1.0
+
+Mon, 27 Oct 2025 12:14:12 GMT
+
+### Minor changes
+
+- Add the ability to send additional request headers to the authorization server (66480813+paulius-valiunas@users.noreply.github.com)
 
 ## 2.0.0
 

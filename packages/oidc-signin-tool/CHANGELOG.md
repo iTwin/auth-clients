@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Mon, 23 Jun 2025 14:20:52 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 27 Oct 2025 12:14:12 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 5.0.2
+
+Mon, 27 Oct 2025 12:14:12 GMT
+
+### Patches
+
+- Bump `@playwright/test` dependency version to `~1.56.1`. (35135765+grigasp@users.noreply.github.com)
 
 ## 5.0.1
 

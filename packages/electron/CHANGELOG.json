@@ -2,6 +2,41 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Mon, 27 Oct 2025 12:14:12 GMT",
+      "version": "0.21.2",
+      "tag": "@itwin/electron-authorization_v0.21.2",
+      "comments": {
+        "none": [
+          {
+            "author": "35135765+grigasp@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": "Bump `@playwright/test` dev dependency version to `~1.56.1`."
+          }
+        ],
+        "patch": [
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": "Add support for Electron 37"
+          },
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": "pnpm up to bump form-data to 4.0.4"
+          },
+          {
+            "author": "GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "ca03d6d5b41fceee1a07639741327f59ffec3614",
+            "comment": "Add support for Electron 38"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 23 Jun 2025 14:20:52 GMT",
       "version": "0.21.1",
       "tag": "@itwin/electron-authorization_v0.21.1",
