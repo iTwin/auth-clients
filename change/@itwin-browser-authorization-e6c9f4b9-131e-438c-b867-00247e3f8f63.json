@@ -1,0 +1,7 @@
+{
+  "type": "none",
+  "comment": "Bump `@playwright/test` dev dependency version to `~1.56.1`.",
+  "packageName": "@itwin/browser-authorization",
+  "email": "35135765+grigasp@users.noreply.github.com",
+  "dependentChangeType": "none"
+}
