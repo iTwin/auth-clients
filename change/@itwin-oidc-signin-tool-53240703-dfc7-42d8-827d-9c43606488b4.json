@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Bump @itwin/certa to 5.3.0",
+  "packageName": "@itwin/oidc-signin-tool",
+  "email": "GytisCepk@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}

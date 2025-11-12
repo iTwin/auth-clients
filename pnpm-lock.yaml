@@ -134,8 +134,8 @@ importers:
         specifier: ~16.0.3
         version: 16.0.3
       electron:
-        specifier: ^38.1.2
-        version: 38.1.2
+        specifier: ^39.1.1
+        version: 39.1.1
       eslint:
         specifier: ^8.57.1
         version: 8.57.1
@@ -240,8 +240,8 @@ importers:
   packages/oidc-signin-tool:
     dependencies:
       '@itwin/certa':
-        specifier: ^5.0.0
-        version: 5.0.3
+        specifier: ^5.3.0
+        version: 5.3.1(electron@39.1.1)
       '@itwin/service-authorization':
         specifier: workspace:^
         version: link:../service
@@ -670,11 +670,11 @@ packages:
     resolution: {integrity: sha512-b5Wwq/U92tLUMOKvaE8X9Kc7HueYAnxxMGrS0YS2nRI9h0rt45B1w4x8mOH/b8zGIhFBOtsGa/lY2jVlWsoNjg==}
     hasBin: true
 
-  '@itwin/certa@5.0.3':
-    resolution: {integrity: sha512-5wAdS2GPWG0JYR7lOzJOJBSTPZeyPQQcqVzOShEBv81jOQB0Qv2sVNwFfY9w8sY+g5PkCBv+ReOfO5rjm4VWrQ==}
+  '@itwin/certa@5.3.1':
+    resolution: {integrity: sha512-KMMBldg01SQziOa704hXgZkHLl0ZmIcyzfDQbyGkcu2nKJSArDvWfC3Bxfq6R0G1JjhgW+sMNgVIUJN1btV63Q==}
     hasBin: true
     peerDependencies:
-      electron: ^35.0.0 || ^36.0.0
+      electron: ^35.0.0 || ^36.0.0 || ^37.0.0 || ^38.0.0 || ^39.0.0
     peerDependenciesMeta:
       electron:
         optional: true
@@ -1755,8 +1755,8 @@ packages:
   electron-to-chromium@1.5.190:
     resolution: {integrity: sha512-k4McmnB2091YIsdCgkS0fMVMPOJgxl93ltFzaryXqwip1AaxeDqKCGLxkXODDA5Ab/D+tV5EL5+aTx76RvLRxw==}
 
-  electron@38.1.2:
-    resolution: {integrity: sha512-WXUcN3W8h8NTTZViA3KNX0rV2YBU0X0mEUM3ubupXTDY4QtIN7tmiqYVOKSKpR2LckTmBWGuEeY4D6xVoffwKQ==}
+  electron@39.1.1:
+    resolution: {integrity: sha512-VuFEI1yQ7BH3RYI5VZtwFlzGp4rpPRd5oEc26ZQIItVLcLTbXt4/O7o4hs+1fyg9Q3NvGAifgX5Vp5EBOIFpAg==}
     engines: {node: '>= 12.20.55'}
     hasBin: true
 
@@ -3324,18 +3324,8 @@ packages:
     resolution: {integrity: sha512-nDywThFk1i4BQK4twPQ6TA4RT8bDY96yeuCVBWL3ePARCiEKDRSrNGbFIgUJpLp+XeIR65v8ra7WuJOFUBtkMA==}
     engines: {node: '>=8'}
 
-  playwright-core@1.47.2:
-    resolution: {integrity: sha512-3JvMfF+9LJfe16l7AbSmU555PaTl2tPyQsVInqm3id16pdDfvZ8TTZ/pyzmkbDrZTQefyzU7AIHlZqQnxpqHVQ==}
-    engines: {node: '>=18'}
-    hasBin: true
-
   playwright-core@1.56.1:
     resolution: {integrity: sha512-hutraynyn31F+Bifme+Ps9Vq59hKuUCz7H1kDOcBs+2oGguKkWTU50bBWrtz34OUWmIwpBTWDxaRPXrIXkgvmQ==}
-    engines: {node: '>=18'}
-    hasBin: true
-
-  playwright@1.47.2:
-    resolution: {integrity: sha512-nx1cLMmQWqmA3UsnjaaokyoUpdVaaDhJhMoxX2qj3McpjnsqFHs516QAKYhqHAgOP+oCFTEOCOAaD1RgD/RQfA==}
     engines: {node: '>=18'}
     hasBin: true
 
@@ -4464,17 +4454,19 @@ snapshots:
       - '@types/node'
       - supports-color
 
-  '@itwin/certa@5.0.3':
+  '@itwin/certa@5.3.1(electron@39.1.1)':
     dependencies:
       canonical-path: 1.0.0
       detect-port: 1.3.0
       express: 4.21.2
       jsonc-parser: 2.0.3
       lodash: 4.17.21
-      mocha: 11.6.0
-      playwright: 1.47.2
+      mocha: 11.7.1
+      playwright: 1.56.1
       source-map-support: 0.5.21
       yargs: 17.7.2
+    optionalDependencies:
+      electron: 39.1.1
     transitivePeerDependencies:
       - supports-color
 
@@ -5785,7 +5777,7 @@ snapshots:
 
   electron-to-chromium@1.5.190: {}
 
-  electron@38.1.2:
+  electron@39.1.1:
     dependencies:
       '@electron/get': 2.0.3
       '@types/node': 22.16.5
@@ -7662,15 +7654,7 @@ snapshots:
     dependencies:
       find-up: 3.0.0
 
-  playwright-core@1.47.2: {}
-
   playwright-core@1.56.1: {}
-
-  playwright@1.47.2:
-    dependencies:
-      playwright-core: 1.47.2
-    optionalDependencies:
-      fsevents: 2.3.2
 
   playwright@1.56.1:
     dependencies:
