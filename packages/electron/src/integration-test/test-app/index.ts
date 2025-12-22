@@ -31,17 +31,23 @@ void app.whenReady().then(async () => {
     redirectUris: ["http://localhost:3000/signin-callback"],
   });
 
+  new ElectronMainAuthorization({
+    clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
+    scopes: process.env.IMJS_TEST_ELECTRON_SCOPES,
+    redirectUris: ["http://localhost:3333/signin-callback"],
+
+    ipcChannelEnvPrefix: "prefixed",
+  });
+
   // TODO: revisit this lint problem later
   // eslint-disable-next-line deprecation/deprecation
   app.on("activate", () => {
-    if (BrowserWindow.getAllWindows().length === 0)
-      createWindow();
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
 });
 
 // TODO: revisit this lint problem later
 // eslint-disable-next-line deprecation/deprecation
 app.on("window-all-closed", () => {
-  if (process.platform !== "darwin")
-    app.quit();
+  if (process.platform !== "darwin") app.quit();
 });
