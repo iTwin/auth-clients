@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
 /**
  * IPC channel names used for exchanging messages between {@link ElectronRendererAuthorization} and
@@ -22,7 +22,14 @@ export interface IpcChannelNames {
  * @param clientId OIDC Client Id.
  * @internal
  */
-export function getIpcChannelNames(clientId: string): IpcChannelNames {
+export function getIpcChannelNames(
+  clientId: string,
+  envPrefix?: string
+): IpcChannelNames {
+  if (envPrefix) {
+    clientId = `${envPrefix}-${clientId}`;
+  }
+
   return {
     signIn: `itwin.electron.auth.signIn-${clientId}`,
     signOut: `itwin.electron.auth.signOut-${clientId}`,
