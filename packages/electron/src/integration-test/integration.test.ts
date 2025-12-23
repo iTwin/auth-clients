@@ -37,19 +37,26 @@ const userDataPath = getElectronUserDataPath();
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
-const tokenStore = new RefreshTokenStore(getTokenStoreFileName(), getTokenStoreKey(), userDataPath);
+const tokenStores = [
+  new RefreshTokenStore(getTokenStoreFileName(), getTokenStoreKey(), userDataPath),
+  new RefreshTokenStore(
+    getTokenStoreFileName("prefixed"),
+    getTokenStoreKey(undefined, "prefixed"),
+    userDataPath
+  ),
+];
 
-function getTokenStoreKey(issuerUrl?: string): string {
+function getTokenStoreKey(issuerUrl?: string, channelClientPrefix?: string): string {
   const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
   if (envPrefix && !issuerUrl) {
     authority.hostname = envPrefix + authority.hostname;
   }
   issuerUrl = authority.href.replace(/\/$/, "");
-  return `${getTokenStoreFileName()}:${issuerUrl}`;
+  return `${getTokenStoreFileName(channelClientPrefix)}:${issuerUrl}`;
 }
 
-function getTokenStoreFileName(): string {
-  return `iTwinJs_${clientId}`;
+function getTokenStoreFileName(channelClientPrefix?: string): string {
+  return `iTwinJs_${channelClientPrefix ?? ""}${clientId}`;
 }
 
 async function getUrl(app: ElectronApplication): Promise<string> {
@@ -66,7 +73,7 @@ async function getUrl(app: ElectronApplication): Promise<string> {
 
 test.beforeEach(async () => {
   try {
-    await tokenStore.delete();
+    await Promise.all(tokenStores.map((store) => store.delete()));
     electronApp = await electron.launch({
       args: ["./dist/integration-test/test-app/index.js"],
     });

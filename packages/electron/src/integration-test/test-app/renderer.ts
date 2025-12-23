@@ -15,26 +15,41 @@ const otherAuth = new ElectronRendererAuthorization({
 const signOutButton = document.getElementById("signOut");
 const signInButton = document.getElementById("signIn");
 const getStatusButton = document.getElementById("getStatus");
+const otherSignInButton = document.getElementById("otherSignIn");
+const otherGetStatusButton = document.getElementById("otherGetStatus");
 
 signOutButton?.addEventListener("click", async () => {
   try {
     await auth.signOut();
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 signInButton?.addEventListener("click", async () => {
   try {
     await auth.signIn();
-  } catch (error) {}
+  } catch (error) {
+    console.error(error);
+  }
+});
+
+otherSignInButton?.addEventListener("click", async () => {
+  try {
+    await otherAuth.signIn();
+  } catch (error) {
+    console.error(error);
+  }
 });
 
 getStatusButton?.addEventListener("click", async () => {
   const message: HTMLElement | null = document.getElementById("status");
   if (message)
     message.textContent = `Status: signed ${auth.isAuthorized ? "in" : "out"}`;
+});
 
-  const otherMessage: HTMLElement | null =
-    document.getElementById("otherStatus");
+otherGetStatusButton?.addEventListener("click", async () => {
+  const otherMessage: HTMLElement | null = document.getElementById("otherStatus");
   if (otherMessage)
     otherMessage.textContent = `Other Status: signed ${
       otherAuth.isAuthorized ? "in" : "out"

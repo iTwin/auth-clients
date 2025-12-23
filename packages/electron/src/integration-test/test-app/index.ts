@@ -34,8 +34,7 @@ void app.whenReady().then(async () => {
   new ElectronMainAuthorization({
     clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
     scopes: process.env.IMJS_TEST_ELECTRON_SCOPES,
-    redirectUris: ["http://localhost:3333/signin-callback"],
-
+    redirectUris: ["http://localhost:3001/signin-callback"],
     channelClientPrefix: "prefixed",
   });
 

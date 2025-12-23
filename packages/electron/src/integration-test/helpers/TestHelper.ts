@@ -18,6 +18,12 @@ export class TestHelper {
     await button.click();
   }
 
+  public async clickOtherSignIn(electronPage: Page) {
+    await electronPage.waitForSelector("button#otherSignIn");
+    const button = electronPage.getByTestId("otherSignIn");
+    await button.click();
+  }
+
   public async clickSignOut(electronPage: Page) {
     await electronPage.waitForSelector("button#signOut");
     const button = electronPage.getByTestId("signOut");
@@ -37,13 +43,20 @@ export class TestHelper {
     electronPage.getByText(expectedStatus ? "signed in" : "signed out");
   }
 
+  public async checkOtherStatus(electronPage: Page, expectedStatus: boolean) {
+    await electronPage.waitForSelector("button#otherGetStatus");
+    const button = electronPage.getByTestId("otherGetStatus");
+    await button.click();
+    electronPage.getByText(expectedStatus ? "signed in" : "signed out");
+  }
+
   public async signIn(page: Page, url: string) {
     await page.goto(url);
     await page.waitForSelector("#identifierInput", { timeout: 5000 });
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);
-    await page.getByRole("button", { name: "Sign In" }).click();
+    await page.getByText("Sign In", { exact: true }).click();
 
     const consentUrl = page.url();
     if (consentUrl.endsWith("resume/as/authorization.ping")) {
