@@ -149,9 +149,15 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private _expiresAt?: Date;
   private _extras?: AuthenticationOptions;
 
-  public static readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
+  /** Event raised whenever the access token changes on any instance of ElectronMainAuthorization */
+  public static readonly onUserStateChanged = new BeEvent<
+    (token: AccessToken) => void
+  >();
 
-  public readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
+  /** Event raised whenever the access token changes in this instance of ElectronMainAuthorization */
+  public readonly onUserStateChanged = new BeEvent<
+    (token: AccessToken) => void
+  >();
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
     if (!config.clientId || !config.scopes || config.redirectUris.length === 0)

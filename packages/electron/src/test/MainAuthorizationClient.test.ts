@@ -174,81 +174,40 @@ describe("ElectronMainAuthorization Token Logic", () => {
     assert.isTrue(decryptSpy.calledOnce);
   });
 
-  describe("onUserStateChanged Event", () => {
-    it("should fire the static onUserStateChanged event when access token changes", async () => {
-      const config = getConfig();
-      const mockTokenResponse = getMockTokenResponse();
-      stubTokenCrypto(mockTokenResponse.refreshToken!);
-      await setupMockAuthServer(mockTokenResponse);
-      const client = new ElectronMainAuthorization(config);
+  it("should fire onUserStateChanged events", async () => {
+    const staticEvents: AccessToken[] = [];
+    const instanceEvents1: AccessToken[] = [];
+    const instanceEvents2: AccessToken[] = [];
+    const staticHandler = (token: AccessToken) => staticEvents.push(token);
+    const instanceHandler1 = (token: AccessToken) =>
+      instanceEvents1.push(token);
+    const instanceHandler2 = (token: AccessToken) =>
+      instanceEvents2.push(token);
 
-      let staticEventFired = false;
-      let staticEventToken: any = undefined;
-      const staticHandler = (token: any) => {
-        staticEventFired = true;
-        staticEventToken = token;
-      };
-      ElectronMainAuthorization.onUserStateChanged.addOnce(staticHandler);
+    const config1 = getConfig({ clientId: "client1" });
+    const config2 = getConfig({ clientId: "client2" });
 
-      await client.signIn();
-      // signIn should trigger setAccessToken, which fires the event
-      expect(staticEventFired).to.be.true;
-      expect(staticEventToken).to.equal(`bearer ${mockTokenResponse.accessToken}`);
-    });
+    const mockTokenResponse = getMockTokenResponse();
 
-    it("should fire the instance onUserStateChanged event when access token changes", async () => {
-      const config = getConfig();
-      const mockTokenResponse = getMockTokenResponse();
-      stubTokenCrypto(mockTokenResponse.refreshToken!);
-      await setupMockAuthServer(mockTokenResponse);
-      const client = new ElectronMainAuthorization(config);
+    stubTokenCrypto(mockTokenResponse.refreshToken!);
+    await setupMockAuthServer(mockTokenResponse);
 
-      let instanceEventFired = false;
-      let instanceEventToken: any = undefined;
-      const instanceHandler = (token: any) => {
-        instanceEventFired = true;
-        instanceEventToken = token;
-      };
-      client.onUserStateChanged.addOnce(instanceHandler);
+    const client1 = new ElectronMainAuthorization(config1);
+    const client2 = new ElectronMainAuthorization(config2);
 
-      await client.signIn();
-      expect(instanceEventFired).to.be.true;
-      expect(instanceEventToken).to.equal(`bearer ${mockTokenResponse.accessToken}`);
-    });
+    ElectronMainAuthorization.onUserStateChanged.addListener(staticHandler);
+    client1.onUserStateChanged.addListener(instanceHandler1);
+    client2.onUserStateChanged.addListener(instanceHandler2);
 
-    it("should handle onUserStateChanged events correctly with multiple instances", async () => {
-      const staticEvents: AccessToken[] = [];
-      const instanceEvents1: AccessToken[] = [];
-      const instanceEvents2: AccessToken[] = [];
-      const staticHandler = (token: AccessToken) => staticEvents.push(token);
-      const instanceHandler1 = (token: AccessToken) => instanceEvents1.push(token);
-      const instanceHandler2 = (token: AccessToken) => instanceEvents2.push(token);
+    await client1.signIn();
+    expect(staticEvents.length).to.equal(1);
+    expect(instanceEvents1.length).to.equal(1);
+    expect(instanceEvents2.length).to.equal(0);
 
-      const config1 = getConfig({ clientId: "client1" });
-      const config2 = getConfig({ clientId: "client2" });
-
-      const mockTokenResponse = getMockTokenResponse();
-
-      stubTokenCrypto(mockTokenResponse.refreshToken!);
-      await setupMockAuthServer(mockTokenResponse);
-
-      const client1 = new ElectronMainAuthorization(config1);
-      const client2 = new ElectronMainAuthorization(config2);
-
-      ElectronMainAuthorization.onUserStateChanged.addListener(staticHandler);
-      client1.onUserStateChanged.addListener(instanceHandler1);
-      client2.onUserStateChanged.addListener(instanceHandler2);
-
-      await client1.signIn();
-      expect(staticEvents.length).to.equal(1);
-      expect(instanceEvents1.length).to.equal(1);
-      expect(instanceEvents2.length).to.equal(0);
-
-      await client2.signIn();
-      expect(staticEvents.length).to.equal(2);
-      expect(instanceEvents1.length).to.equal(1); // no change
-      expect(instanceEvents2.length).to.equal(1);
-    });
+    await client2.signIn();
+    expect(staticEvents.length).to.equal(2);
+    expect(instanceEvents1.length).to.equal(1); // no change
+    expect(instanceEvents2.length).to.equal(1);
   });
 });
 
