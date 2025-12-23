@@ -9,10 +9,7 @@
 
 import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
-import type {
-  AuthorizationClient,
-  IpcSocketFrontend,
-} from "@itwin/core-common";
+import type { AuthorizationClient, IpcSocketFrontend } from "@itwin/core-common";
 import { defaultExpiryBufferInSeconds } from "../common/constants";
 import type { IpcChannelNames } from "../common/IpcChannelNames";
 import { getIpcChannelNames } from "../common/IpcChannelNames";
@@ -37,22 +34,12 @@ class ElectronAuthIPC {
     return this._ipcSocket.invoke(this._ipcChannelNames.getAccessToken);
   }
 
-  public addAccessTokenChangeListener(
-    callback: (event: any, token: string) => void
-  ) {
-    this._ipcSocket.addListener(
-      this._ipcChannelNames.onAccessTokenChanged,
-      callback
-    );
+  public addAccessTokenChangeListener(callback: (event: any, token: string) => void) {
+    this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenChanged, callback);
   }
 
-  public addAccessTokenExpirationChangeListener(
-    callback: (event: any, expiresAt: Date) => void
-  ) {
-    this._ipcSocket.addListener(
-      this._ipcChannelNames.onAccessTokenExpirationChanged,
-      callback
-    );
+  public addAccessTokenExpirationChangeListener(callback: (event: any, expiresAt: Date) => void) {
+    this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenExpirationChanged, callback);
   }
 
   public async signInSilent(): Promise<void> {
@@ -66,8 +53,7 @@ class ElectronAuthIPC {
     } else {
       // use the methods on window.itwinjs exposed by ElectronPreload.ts, or ipcRenderer directly if running with nodeIntegration=true (**only** for tests).
       // Note that `require("electron")` doesn't work with nodeIntegration=false - that's what it stops
-      this._ipcSocket =
-        (window as any).itwinjs ?? require("electron").ipcRenderer; // eslint-disable-line @typescript-eslint/no-var-requires
+      this._ipcSocket = (window as any).itwinjs ?? require("electron").ipcRenderer; // eslint-disable-line @typescript-eslint/no-var-requires
     }
   }
 }
@@ -111,12 +97,8 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
   private _tokenRequest: Promise<AccessToken> | undefined;
   private _expiresAt?: Date;
   private _expiryBuffer = defaultExpiryBufferInSeconds;
-  public readonly onAccessTokenChanged = new BeEvent<
-    (token: AccessToken) => void
-  >();
-  public get hasSignedIn() {
-    return this._cachedToken !== "";
-  }
+  public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
+  public get hasSignedIn() { return this._cachedToken !== ""; }
   public get isAuthorized(): boolean {
     return this.hasSignedIn && !this._hasExpired;
   }
@@ -133,18 +115,15 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     this.onAccessTokenChanged.addListener((token: AccessToken) => {
       this._cachedToken = token;
     });
-    this._ipcAuthAPI.addAccessTokenChangeListener(
-      (_event: any, token: AccessToken) => {
+    this._ipcAuthAPI.addAccessTokenChangeListener((_event: any, token: AccessToken) => {
         this.onAccessTokenChanged.raiseEvent(token);
-      }
-    );
-    this._ipcAuthAPI.addAccessTokenExpirationChangeListener(
-      (_event: any, expiration: Date) => {
+    });
+    this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date) => {
         this._expiresAt = expiration;
-      }
-    );
+    });
 
-    if (config.expiryBuffer) this._expiryBuffer = config.expiryBuffer;
+    if (config.expiryBuffer)
+      this._expiryBuffer = config.expiryBuffer;
   }
 
   /**
@@ -180,9 +159,7 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
       }
 
       try {
-        this._tokenRequest = this._ipcAuthAPI
-          .getAccessToken()
-          .then((x) => x ?? "");
+        this._tokenRequest = this._ipcAuthAPI.getAccessToken().then((x) => x ?? "");
         this._cachedToken = await this._tokenRequest;
       } catch (err) {
         throw err;
@@ -195,7 +172,8 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
   }
 
   private get _hasExpired(): boolean {
-    if (!this._expiresAt) return false;
+    if (!this._expiresAt)
+      return false;
 
     return this._expiresAt.getTime() - Date.now() <= this._expiryBuffer * 1000; // Consider this.expireSafety's amount of time early as expired
   }

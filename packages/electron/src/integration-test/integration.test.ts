@@ -78,8 +78,7 @@ test.beforeEach(async () => {
       args: ["./dist/integration-test/test-app/index.js"],
     });
     electronPage = await electronApp.firstWindow();
-  } catch (error) {
-  }
+  } catch (error) {}
 });
 
 test.afterEach(async () => {
@@ -124,6 +123,42 @@ test("when scopes change, sign in is required", async ({ browser }) => {
   // Admittedly this is cheating: no user would interact
   // with the tokenStore directly, but this is a tough
   // case to test otherwise.
-  await tokenStore.load("itwin-platform realitydata:read");
+  await tokenStores[0].load("itwin-platform realitydata:read");
   await testHelper.checkStatus(electronPage, false);
+});
+
+test("handles multiple instances with different ipcChannelEnvPrefix", async ({
+  browser,
+}) => {
+  // Sign in with the default auth client
+  const page = await browser.newPage();
+  await testHelper.checkStatus(electronPage, false);
+  await testHelper.checkOtherStatus(electronPage, false);
+
+  await testHelper.clickSignIn(electronPage);
+  const url = await getUrl(electronApp);
+  await testHelper.signIn(page, url);
+  await page.close();
+
+  // only the default auth client should be signed in
+  await testHelper.checkStatus(electronPage, true);
+  await testHelper.checkOtherStatus(electronPage, false);
+
+  // Now sign in with the other auth client
+  const otherPage = await browser.newPage();
+  await testHelper.clickOtherSignIn(electronPage);
+  const otherUrl = await getUrl(electronApp);
+  await testHelper.signIn(otherPage, otherUrl);
+  await otherPage.close();
+
+  // both auth clients should be signed in
+  await testHelper.checkOtherStatus(electronPage, true);
+  await testHelper.checkStatus(electronPage, true);
+
+  // sign out the default auth client
+  await testHelper.clickSignOut(electronPage);
+
+  // the other auth client should still be signed in
+  await testHelper.checkStatus(electronPage, false);
+  await testHelper.checkOtherStatus(electronPage, true);
 });
