@@ -43,7 +43,7 @@ export class TestHelper {
     await page.getByLabel("Email address").fill(this._signInOptions.email);
     await page.getByLabel("Email address").press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);
-    await page.getByRole("button", { name: "Sign In" }).click();
+    await page.getByText("Sign In", { exact: true }).click();
 
     const consentUrl = page.url();
     if (consentUrl.endsWith("resume/as/authorization.ping")) {
