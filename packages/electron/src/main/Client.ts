@@ -149,9 +149,9 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private _expiresAt?: Date;
   private _extras?: AuthenticationOptions;
 
-  public static readonly onUserStateChanged = new BeEvent<
-  (token: AccessToken) => void
-  >();
+  public static readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
+
+  public readonly onUserStateChanged = new BeEvent<(token: AccessToken) => void>();
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
     if (!config.clientId || !config.scopes || config.redirectUris.length === 0)
@@ -288,6 +288,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
     ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
+    this.onUserStateChanged.raiseEvent(this._accessToken);
   }
 
   /** Forces a refresh of the user's access token regardless if the current token has expired. */

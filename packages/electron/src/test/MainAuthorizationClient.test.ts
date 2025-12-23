@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
 import type { AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
 import { BaseTokenRequestHandler } from "@openid/appauth";
@@ -11,6 +11,8 @@ import * as sinon from "sinon";
 import { ElectronMainAuthorization } from "../main/Client";
 import { RefreshTokenStore } from "../main/TokenStore";
 import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper";
+import type { AccessToken } from "@itwin/core-bentley";
+
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert: Chai.AssertStatic = chai.assert; // ts is not able to fully infer the type of assert, so we need to explicitly set it.
 const expect = chai.expect;
@@ -42,6 +44,10 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
+  });
+
+  afterEach(function () {
+    ElectronMainAuthorization.onUserStateChanged.clear();
   });
 
   it("Should throw if not signed in", async () => {
@@ -166,6 +172,83 @@ describe("ElectronMainAuthorization Token Logic", () => {
 
     sinon.assert.notCalled(spy);
     assert.isTrue(decryptSpy.calledOnce);
+  });
+
+  describe("onUserStateChanged Event", () => {
+    it("should fire the static onUserStateChanged event when access token changes", async () => {
+      const config = getConfig();
+      const mockTokenResponse = getMockTokenResponse();
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
+      await setupMockAuthServer(mockTokenResponse);
+      const client = new ElectronMainAuthorization(config);
+
+      let staticEventFired = false;
+      let staticEventToken: any = undefined;
+      const staticHandler = (token: any) => {
+        staticEventFired = true;
+        staticEventToken = token;
+      };
+      ElectronMainAuthorization.onUserStateChanged.addOnce(staticHandler);
+
+      await client.signIn();
+      // signIn should trigger setAccessToken, which fires the event
+      expect(staticEventFired).to.be.true;
+      expect(staticEventToken).to.equal(`bearer ${mockTokenResponse.accessToken}`);
+    });
+
+    it("should fire the instance onUserStateChanged event when access token changes", async () => {
+      const config = getConfig();
+      const mockTokenResponse = getMockTokenResponse();
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
+      await setupMockAuthServer(mockTokenResponse);
+      const client = new ElectronMainAuthorization(config);
+
+      let instanceEventFired = false;
+      let instanceEventToken: any = undefined;
+      const instanceHandler = (token: any) => {
+        instanceEventFired = true;
+        instanceEventToken = token;
+      };
+      client.onUserStateChanged.addOnce(instanceHandler);
+
+      await client.signIn();
+      expect(instanceEventFired).to.be.true;
+      expect(instanceEventToken).to.equal(`bearer ${mockTokenResponse.accessToken}`);
+    });
+
+    it("should handle onUserStateChanged events correctly with multiple instances", async () => {
+      const staticEvents: AccessToken[] = [];
+      const instanceEvents1: AccessToken[] = [];
+      const instanceEvents2: AccessToken[] = [];
+      const staticHandler = (token: AccessToken) => staticEvents.push(token);
+      const instanceHandler1 = (token: AccessToken) => instanceEvents1.push(token);
+      const instanceHandler2 = (token: AccessToken) => instanceEvents2.push(token);
+
+      const config1 = getConfig({ clientId: "client1" });
+      const config2 = getConfig({ clientId: "client2" });
+
+      const mockTokenResponse = getMockTokenResponse();
+
+      stubTokenCrypto(mockTokenResponse.refreshToken!);
+      await setupMockAuthServer(mockTokenResponse);
+
+      const client1 = new ElectronMainAuthorization(config1);
+      const client2 = new ElectronMainAuthorization(config2);
+
+      ElectronMainAuthorization.onUserStateChanged.addListener(staticHandler);
+      client1.onUserStateChanged.addListener(instanceHandler1);
+      client2.onUserStateChanged.addListener(instanceHandler2);
+
+      await client1.signIn();
+      expect(staticEvents.length).to.equal(1);
+      expect(instanceEvents1.length).to.equal(1);
+      expect(instanceEvents2.length).to.equal(0);
+
+      await client2.signIn();
+      expect(staticEvents.length).to.equal(2);
+      expect(instanceEvents1.length).to.equal(1); // no change
+      expect(instanceEvents2.length).to.equal(1);
+    });
   });
 });
 
@@ -299,5 +382,4 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       assert.equal(_token, undefined);
     });
   });
-
 });
