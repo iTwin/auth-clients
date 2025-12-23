@@ -3,22 +3,14 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import type {
-  AuthorizationServiceConfiguration,
-  TokenRequest,
-} from "@openid/appauth";
+import type { AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
 import { BaseTokenRequestHandler } from "@openid/appauth";
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
 import { ElectronMainAuthorization } from "../main/Client";
 import { RefreshTokenStore } from "../main/TokenStore";
-import {
-  getConfig,
-  getMockTokenResponse,
-  setupMockAuthServer,
-  stubTokenCrypto,
-} from "./helpers/testHelper";
+import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper";
 import { IpcChannelNames } from "../common/IpcChannelNames";
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert: Chai.AssertStatic = chai.assert; // ts is not able to fully infer the type of assert, so we need to explicitly set it.
@@ -49,14 +41,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.restore();
     // Stub Electron calls
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
-    sinon.stub(
-      ElectronMainAuthorization.prototype,
-      "notifyFrontendAccessTokenChange" as any
-    );
-    sinon.stub(
-      ElectronMainAuthorization.prototype,
-      "notifyFrontendAccessTokenExpirationChange" as any
-    );
+    sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
+    sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
   });
 
   it("Should throw if not signed in", async () => {
@@ -78,10 +64,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const refreshToken = "old refresh token";
     stubTokenCrypto(refreshToken);
     // Load refresh token into token store - use clientId
-    const tokenStore = new RefreshTokenStore(
-      getTokenStoreFileName(config.clientId),
-      getTokenStoreKey(config.clientId)
-    );
+    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
 
     const spy = await setupMockAuthServer(mockTokenResponse);
@@ -101,10 +84,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
 
     stubTokenCrypto(mockTokenResponse.refreshToken!);
     // Clear token store
-    const tokenStore = new RefreshTokenStore(
-      getTokenStoreFileName(config.clientId),
-      getTokenStoreKey(config.clientId)
-    );
+    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.delete();
 
     await setupMockAuthServer(mockTokenResponse);
@@ -123,10 +103,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const refreshToken = "old refresh token";
     stubTokenCrypto(refreshToken);
     // Load refresh token into token store - use clientId
-    const tokenStore = new RefreshTokenStore(
-      getTokenStoreFileName(config.clientId),
-      getTokenStoreKey(config.clientId)
-    );
+    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.save(refreshToken);
 
     await setupMockAuthServer(mockTokenResponse);
@@ -136,24 +113,13 @@ describe("ElectronMainAuthorization Token Logic", () => {
 
     // TODO: Need cleaner way to reset just one method (performTokenRequest)
     sinon.restore();
-    sinon.stub(
-      ElectronMainAuthorization.prototype,
-      "notifyFrontendAccessTokenChange" as any
-    );
-    sinon.stub(
-      ElectronMainAuthorization.prototype,
-      "notifyFrontendAccessTokenExpirationChange" as any
-    );
+    sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
+    sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
     sinon
       .stub(BaseTokenRequestHandler.prototype, "performTokenRequest")
-      .callsFake(
-        async (
-          _configuration: AuthorizationServiceConfiguration,
-          _request: TokenRequest
-        ) => {
-          return mockTokenResponse;
-        }
-      );
+      .callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
+        return mockTokenResponse;
+      });
 
     // Get access token and assert its response equals what mock
     const returnedToken = await client.getAccessToken();
@@ -166,10 +132,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     stubTokenCrypto(mockTokenResponse.refreshToken!);
 
     // Clear token store
-    const tokenStore = new RefreshTokenStore(
-      getTokenStoreFileName(config.clientId),
-      getTokenStoreKey(config.clientId)
-    );
+    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.delete();
 
     await setupMockAuthServer(mockTokenResponse, {
@@ -198,10 +161,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const { decryptSpy } = stubTokenCrypto(refreshToken);
 
     // Load refresh token into token store - use clientId
-    const tokenStore = new RefreshTokenStore(
-      getTokenStoreFileName(config.clientId),
-      getTokenStoreKey(config.clientId)
-    );
+    const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
     await tokenStore.delete();
     await tokenStore.save(refreshToken);
 
@@ -222,7 +182,7 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
 
-  describe("ipcChannelEnvPrefix option", () => {
+  describe("channelClientPrefix option", () => {
     const channelPrefix = `itwin.electron.auth`;
     const channelNames = [
       "signIn",
@@ -233,27 +193,22 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
       "signInSilent",
     ] as const;
 
-    it("should generate channel names without ipcChannelEnvPrefix", () => {
+    it("should generate channel names without channelClientPrefix", () => {
       const config = getConfig();
       const client = new ElectronMainAuthorization(config);
-      // The channel names should not be prefixed
-      expect(client["_ipcChannelNames"].signIn).to.equal(
-        `${channelPrefix}.signIn-${config.clientId}`
-      );
+      expect(client["_ipcChannelNames"].signIn).to.equal(`${channelPrefix}.signIn-${config.clientId}`);
     });
 
-    it("should prefix IPC channel names when an ipcChannelEnvPrefix is provided", () => {
+    it("should prefix IPC channel names when an channelClientPrefix is provided", () => {
       const config = getConfig();
       const prefix = "qa-";
       const client = new ElectronMainAuthorization({
         ...config,
-        ipcChannelEnvPrefix: prefix,
+        channelClientPrefix: prefix,
       });
 
       channelNames.forEach((name) => {
-        expect(client["_ipcChannelNames"][name]).to.eq(
-          `${channelPrefix}.${name}-${prefix}-${config.clientId}`
-        );
+        expect(client["_ipcChannelNames"][name]).to.eq(`${channelPrefix}.${name}-${prefix}-${config.clientId}`);
       });
     });
   });
@@ -323,18 +278,9 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
     beforeEach(() => {
       sinon.restore();
       // Stub Electron calls
-      sinon.stub(
-        ElectronMainAuthorization.prototype,
-        "setupIPCHandlers" as any
-      );
-      sinon.stub(
-        ElectronMainAuthorization.prototype,
-        "notifyFrontendAccessTokenChange" as any
-      );
-      sinon.stub(
-        ElectronMainAuthorization.prototype,
-        "notifyFrontendAccessTokenExpirationChange" as any
-      );
+      sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
+      sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
+      sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
     });
 
     it("delete the current refresh token", async () => {
@@ -371,23 +317,17 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
-      expect(client.scopes).equals(
-        "testScope blurgh-platform ReadTHINGS offline_access"
-      );
+      expect(client.scopes).equals("testScope blurgh-platform ReadTHINGS offline_access");
       await client.signIn();
 
       const tokenStore = new RefreshTokenStore(
         getTokenStoreFileName(config.clientId),
         getTokenStoreKey(config.clientId)
       );
-      const token = await tokenStore.load(
-        "ReadTHINGS blurgh-platform offline_access testScope"
-      );
+      const token = await tokenStore.load("ReadTHINGS blurgh-platform offline_access testScope");
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load(
-        "ReadTHINGS offline_access testScope blurgh-platform new-scope"
-      );
+      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
       assert.equal(_token, undefined);
     });
 
@@ -402,23 +342,17 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
-      expect(client.scopes).equals(
-        "testScope blurgh-platform offline_access ReadTHINGS"
-      );
+      expect(client.scopes).equals("testScope blurgh-platform offline_access ReadTHINGS");
       await client.signIn();
 
       const tokenStore = new RefreshTokenStore(
         getTokenStoreFileName(config.clientId),
         getTokenStoreKey(config.clientId)
       );
-      const token = await tokenStore.load(
-        "offline_access ReadTHINGS blurgh-platform testScope"
-      );
+      const token = await tokenStore.load("offline_access ReadTHINGS blurgh-platform testScope");
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load(
-        "ReadTHINGS offline_access testScope blurgh-platform new-scope"
-      );
+      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
       assert.equal(_token, undefined);
     });
   });

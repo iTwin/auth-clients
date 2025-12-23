@@ -20,14 +20,15 @@ export interface IpcChannelNames {
 /**
  * Construct an instance of {@link IpcChannelNames} with unique channel names per given clientId.
  * @param clientId OIDC Client Id.
+ * @param channelClientPrefix Optional prefix added to the clientId to allow further namespacing of the channels.
  * @internal
  */
 export function getIpcChannelNames(
   clientId: string,
-  envPrefix?: string
+  channelClientPrefix?: string
 ): IpcChannelNames {
-  if (envPrefix) {
-    clientId = `${envPrefix}-${clientId}`;
+  if (channelClientPrefix) {
+    clientId = `${channelClientPrefix}-${clientId}`;
   }
 
   return {

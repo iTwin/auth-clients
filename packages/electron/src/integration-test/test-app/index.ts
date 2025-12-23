@@ -36,7 +36,7 @@ void app.whenReady().then(async () => {
     scopes: process.env.IMJS_TEST_ELECTRON_SCOPES,
     redirectUris: ["http://localhost:3333/signin-callback"],
 
-    ipcChannelEnvPrefix: "prefixed",
+    channelClientPrefix: "prefixed",
   });
 
   // TODO: revisit this lint problem later

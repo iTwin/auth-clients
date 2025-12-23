@@ -97,7 +97,7 @@ export interface ElectronRendererAuthorizationConfiguration {
   /**
    * Optional prefix to use for IPC channel names. Useful to avoid conflicts when multiple clients are used in the same application.
    */
-  readonly ipcChannelEnvPrefix?: string;
+  readonly channelClientPrefix?: string;
 }
 
 /**
@@ -126,7 +126,7 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
   public constructor(config: ElectronRendererAuthorizationConfiguration) {
     const ipcChannelNames = getIpcChannelNames(
       config.clientId,
-      config.ipcChannelEnvPrefix
+      config.channelClientPrefix
     );
     this._ipcAuthAPI = new ElectronAuthIPC(ipcChannelNames, config.ipcSocket);
 

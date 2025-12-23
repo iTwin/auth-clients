@@ -9,7 +9,7 @@ const auth = new ElectronRendererAuthorization({
 
 const otherAuth = new ElectronRendererAuthorization({
   clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
-  ipcChannelEnvPrefix: "prefixed",
+  channelClientPrefix: "prefixed",
 });
 
 const signOutButton = document.getElementById("signOut");

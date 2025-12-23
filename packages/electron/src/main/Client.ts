@@ -133,7 +133,7 @@ export interface ElectronMainAuthorizationConfiguration {
    * {@link ElectronMainAuthorization} and {@link ../ElectronRendererAuthorization}.
    * Useful when multiple clients with different configurations are used within the same application.
    */
-  readonly ipcChannelEnvPrefix?: string;
+  readonly channelClientPrefix?: string;
 }
 
 /**
@@ -178,7 +178,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     this._redirectUris = config.redirectUris;
     this._ipcChannelNames = getIpcChannelNames(
       this._clientId,
-      config.ipcChannelEnvPrefix
+      config.channelClientPrefix
     );
     this._ipcSocket = config.ipcSocket;
     this._extras = config.authenticationOptions;

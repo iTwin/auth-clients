@@ -9,7 +9,7 @@ import * as sinon from "sinon";
 
 const expect = chai.expect;
 
-describe("ElectronRendererAuthorization ipcChannelEnvPrefix", () => {
+describe("ElectronRendererAuthorization channelClientPrefix", () => {
   const channelPrefix = `itwin.electron.auth`;
   const channelNames = [
     "signIn",
@@ -20,12 +20,12 @@ describe("ElectronRendererAuthorization ipcChannelEnvPrefix", () => {
     "signInSilent",
   ] as const;
 
-  it("should use prefixed IPC channel names when ipcChannelEnvPrefix is provided", () => {
+  it("should use prefixed IPC channel names when channelClientPrefix is provided", () => {
     const clientId = "test-client";
     const prefix = "customenv";
     const config = {
       clientId,
-      ipcChannelEnvPrefix: prefix,
+      channelClientPrefix: prefix,
       ipcSocket: createMockIpcSocket(),
     };
     const authClient = new ElectronRendererAuthorization(config);
@@ -36,7 +36,7 @@ describe("ElectronRendererAuthorization ipcChannelEnvPrefix", () => {
     });
   });
 
-  it("should use default IPC channel names when ipcChannelEnvPrefix is not provided", () => {
+  it("should use default IPC channel names when channelClientPrefix is not provided", () => {
     const clientId = "test-client";
     const config = {
       clientId,
