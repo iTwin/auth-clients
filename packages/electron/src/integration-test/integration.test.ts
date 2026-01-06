@@ -42,7 +42,7 @@ const tokenStores = [
   new RefreshTokenStore(
     getTokenStoreFileName("prefixed"),
     getTokenStoreKey(undefined, "prefixed"),
-    userDataPath
+    userDataPath,
   ),
 ];
 
@@ -73,7 +73,7 @@ async function getUrl(app: ElectronApplication): Promise<string> {
 
 test.beforeEach(async () => {
   try {
-    await Promise.all(tokenStores.map((store) => store.delete()));
+    await Promise.all(tokenStores.map(async (store) => store.delete()));
     electronApp = await electron.launch({
       args: ["./dist/integration-test/test-app/index.js"],
     });

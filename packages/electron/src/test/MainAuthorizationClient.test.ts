@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
 import type { AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
 import { BaseTokenRequestHandler } from "@openid/appauth";
@@ -11,7 +11,6 @@ import * as sinon from "sinon";
 import { ElectronMainAuthorization } from "../main/Client";
 import { RefreshTokenStore } from "../main/TokenStore";
 import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper";
-import { IpcChannelNames } from "../common/IpcChannelNames";
 /* eslint-disable @typescript-eslint/naming-convention */
 const assert: Chai.AssertStatic = chai.assert; // ts is not able to fully infer the type of assert, so we need to explicitly set it.
 const expect = chai.expect;
@@ -114,8 +113,8 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
     sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
-        return mockTokenResponse;
-      });
+      return mockTokenResponse;
+    });
 
     // Get access token and assert its response equals what mock
     const returnedToken = await client.getAccessToken();
@@ -188,21 +187,28 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
     ] as const;
 
     it("should generate channel names without channelClientPrefix", () => {
-      const config = getConfig();
-      const client = new ElectronMainAuthorization(config);
-      expect(client["_ipcChannelNames"].signIn).to.equal(`${channelPrefix}.signIn-${config.clientId}`);
+      const generatedConfig = getConfig();
+      const client = new ElectronMainAuthorization(generatedConfig);
+
+      /* eslint-disable-next-line @typescript-eslint/dot-notation */
+      expect(client["_ipcChannelNames"].signIn).to.equal(
+        `${channelPrefix}.signIn-${generatedConfig.clientId}`,
+      );
     });
 
     it("should prefix IPC channel names when an channelClientPrefix is provided", () => {
-      const config = getConfig();
+      const generatedConfig = getConfig();
       const prefix = "qa-";
       const client = new ElectronMainAuthorization({
-        ...config,
+        ...generatedConfig,
         channelClientPrefix: prefix,
       });
 
       channelNames.forEach((name) => {
-        expect(client["_ipcChannelNames"][name]).to.eq(`${channelPrefix}.${name}-${prefix}-${config.clientId}`);
+        /* eslint-disable-next-line @typescript-eslint/dot-notation */
+        expect(client["_ipcChannelNames"][name]).to.eq(
+          `${channelPrefix}.${name}-${prefix}-${generatedConfig.clientId}`,
+        );
       });
     });
   });
@@ -212,13 +218,19 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
 
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
+    const client = new ElectronMainAuthorization({
+      ...config,
+      issuerUrl: testAuthority,
+    });
     expect(client.issuerUrl).equals(testAuthority);
   });
 
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
+    const client = new ElectronMainAuthorization({
+      ...config,
+      issuerUrl: testAuthority,
+    });
     expect(client.issuerUrl).equals("https://test.authority.com");
   });
 
@@ -300,19 +312,30 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
-      expect(client.scopes).equals("testScope blurgh-platform ReadTHINGS offline_access");
+      expect(client.scopes).equals(
+        "testScope blurgh-platform ReadTHINGS offline_access",
+      );
       await client.signIn();
 
-      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
-      const token = await tokenStore.load("ReadTHINGS blurgh-platform offline_access testScope");
+      const tokenStore = new RefreshTokenStore(
+        getTokenStoreFileName(config.clientId),
+        getTokenStoreKey(config.clientId),
+      );
+      const token = await tokenStore.load(
+        "ReadTHINGS blurgh-platform offline_access testScope",
+      );
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
+      const _token = await tokenStore.load(
+        "ReadTHINGS offline_access testScope blurgh-platform new-scope",
+      );
       assert.equal(_token, undefined);
     });
 
     it("delete the current refresh token works with explicit offline_access added", async () => {
-      const config = getConfig({ scopes: "testScope blurgh-platform offline_access ReadTHINGS" });
+      const config = getConfig({
+        scopes: "testScope blurgh-platform offline_access ReadTHINGS",
+      });
       const mockTokenResponse = getMockTokenResponse();
 
       stubTokenCrypto(mockTokenResponse.refreshToken!);
@@ -320,16 +343,24 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
-      expect(client.scopes).equals("testScope blurgh-platform offline_access ReadTHINGS");
+      expect(client.scopes).equals(
+        "testScope blurgh-platform offline_access ReadTHINGS",
+      );
       await client.signIn();
 
-      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
-      const token = await tokenStore.load("offline_access ReadTHINGS blurgh-platform testScope");
+      const tokenStore = new RefreshTokenStore(
+        getTokenStoreFileName(config.clientId),
+        getTokenStoreKey(config.clientId),
+      );
+      const token = await tokenStore.load(
+        "offline_access ReadTHINGS blurgh-platform testScope",
+      );
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
+      const _token = await tokenStore.load(
+        "ReadTHINGS offline_access testScope blurgh-platform new-scope",
+      );
       assert.equal(_token, undefined);
     });
   });
-
 });

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
 /** @packageDocumentation
  * @module Renderer
@@ -108,7 +108,7 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
   public constructor(config: ElectronRendererAuthorizationConfiguration) {
     const ipcChannelNames = getIpcChannelNames(
       config.clientId,
-      config.channelClientPrefix
+      config.channelClientPrefix,
     );
     this._ipcAuthAPI = new ElectronAuthIPC(ipcChannelNames, config.ipcSocket);
 
@@ -116,10 +116,10 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
       this._cachedToken = token;
     });
     this._ipcAuthAPI.addAccessTokenChangeListener((_event: any, token: AccessToken) => {
-        this.onAccessTokenChanged.raiseEvent(token);
+      this.onAccessTokenChanged.raiseEvent(token);
     });
     this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date) => {
-        this._expiresAt = expiration;
+      this._expiresAt = expiration;
     });
 
     if (config.expiryBuffer)

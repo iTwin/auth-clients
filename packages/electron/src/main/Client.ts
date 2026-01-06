@@ -176,7 +176,10 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     this._clientId = config.clientId;
     this._redirectUris = config.redirectUris;
-    this._ipcChannelNames = getIpcChannelNames(this._clientId, config.channelClientPrefix);
+    this._ipcChannelNames = getIpcChannelNames(
+      this._clientId,
+      config.channelClientPrefix,
+    );
     this._ipcSocket = config.ipcSocket;
     this._extras = config.authenticationOptions;
 
@@ -190,10 +193,12 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     }
     this._issuerUrl = authority.href.replace(/\/$/, "");
 
-    if (config.expiryBuffer) 
+    if (config.expiryBuffer)
       this._expiryBuffer = config.expiryBuffer;
 
-    const configFileName = `iTwinJs_${config.channelClientPrefix ?? ""}${this._clientId}`;
+    const configFileName = `iTwinJs_${config.channelClientPrefix ?? ""}${
+      this._clientId
+    }`;
     const appStorageKey = `${configFileName}:${this._issuerUrl}`;
     this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey, config.tokenStorePath);
   }
@@ -495,7 +500,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
         loggerCategory,
         "Authorization error. Unable to get authorization code",
         () => ({
-        error: "invalid_state",
+          error: "invalid_state",
           errorDescription:
             "The login response state did not match the login request state.",
         }),

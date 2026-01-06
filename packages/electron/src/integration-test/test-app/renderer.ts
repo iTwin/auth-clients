@@ -22,7 +22,7 @@ signOutButton?.addEventListener("click", async () => {
   try {
     await auth.signOut();
   } catch (error) {
-    console.error(error);
+
   }
 });
 
@@ -30,7 +30,7 @@ signInButton?.addEventListener("click", async () => {
   try {
     await auth.signIn();
   } catch (error) {
-    console.error(error);
+
   }
 });
 
@@ -38,7 +38,7 @@ otherSignInButton?.addEventListener("click", async () => {
   try {
     await otherAuth.signIn();
   } catch (error) {
-    console.error(error);
+
   }
 });
 

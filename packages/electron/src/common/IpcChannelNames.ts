@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
- * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
- * See LICENSE.md in the project root for license terms and full copyright notice.
- *--------------------------------------------------------------------------------------------*/
+* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+* See LICENSE.md in the project root for license terms and full copyright notice.
+*--------------------------------------------------------------------------------------------*/
 
 /**
  * IPC channel names used for exchanging messages between {@link ElectronRendererAuthorization} and
@@ -25,7 +25,7 @@ export interface IpcChannelNames {
  */
 export function getIpcChannelNames(
   clientId: string,
-  channelClientPrefix?: string
+  channelClientPrefix?: string,
 ): IpcChannelNames {
   if (channelClientPrefix) {
     clientId = `${channelClientPrefix}-${clientId}`;

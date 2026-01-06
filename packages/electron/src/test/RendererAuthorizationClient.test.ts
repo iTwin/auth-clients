@@ -30,8 +30,9 @@ describe("ElectronRendererAuthorization channelClientPrefix", () => {
     };
     const authClient = new ElectronRendererAuthorization(config);
     channelNames.forEach((name) => {
+      /* eslint-disable-next-line @typescript-eslint/dot-notation */
       expect(authClient["_ipcAuthAPI"]["_ipcChannelNames"][name]).to.eq(
-        `${channelPrefix}.${name}-${prefix}-${clientId}`
+        `${channelPrefix}.${name}-${prefix}-${clientId}`,
       );
     });
   });
@@ -44,8 +45,9 @@ describe("ElectronRendererAuthorization channelClientPrefix", () => {
     };
     const authClient = new ElectronRendererAuthorization(config);
     channelNames.forEach((name) => {
+      /* eslint-disable-next-line @typescript-eslint/dot-notation */
       expect(authClient["_ipcAuthAPI"]["_ipcChannelNames"][name]).to.eq(
-        `${channelPrefix}.${name}-${clientId}`
+        `${channelPrefix}.${name}-${clientId}`,
       );
     });
   });
