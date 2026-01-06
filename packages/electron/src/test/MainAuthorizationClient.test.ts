@@ -47,6 +47,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   afterEach(function () {
+    // eslint-disable-next-line deprecation/deprecation
     ElectronMainAuthorization.onUserStateChanged.clear();
   });
 
@@ -195,6 +196,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const client1 = new ElectronMainAuthorization(config1);
     const client2 = new ElectronMainAuthorization(config2);
 
+    // eslint-disable-next-line deprecation/deprecation
     ElectronMainAuthorization.onUserStateChanged.addListener(staticHandler);
     client1.onUserStateChanged.addListener(instanceHandler1);
     client2.onUserStateChanged.addListener(instanceHandler2);
