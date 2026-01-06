@@ -57,9 +57,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
 
   it("Should load token response from token store", async () => {
     const config = getConfig();
-    const mockTokenResponse = getMockTokenResponse({
-      accessToken: "testAccessToken",
-    });
+    const mockTokenResponse = getMockTokenResponse({ accessToken: "testAccessToken" });
 
     const refreshToken = "old refresh token";
     stubTokenCrypto(refreshToken);
@@ -115,9 +113,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     sinon.restore();
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
     sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenExpirationChange" as any);
-    sinon
-      .stub(BaseTokenRequestHandler.prototype, "performTokenRequest")
-      .callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
+    sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
         return mockTokenResponse;
       });
 
@@ -153,9 +149,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
 
   it("should load and decrypt refresh token on signIn() given an existing refresh token in electron-store", async () => {
     const config = getConfig();
-    const mockTokenResponse = getMockTokenResponse({
-      accessToken: "testAccessToken",
-    });
+    const mockTokenResponse = getMockTokenResponse({ accessToken: "testAccessToken" });
 
     const refreshToken = "old refresh token";
     const { decryptSpy } = stubTokenCrypto(refreshToken);
@@ -218,19 +212,13 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
 
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = new ElectronMainAuthorization({
-      ...config,
-      issuerUrl: testAuthority,
-    });
+    const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
     expect(client.issuerUrl).equals(testAuthority);
   });
 
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = new ElectronMainAuthorization({
-      ...config,
-      issuerUrl: testAuthority,
-    });
+    const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
     expect(client.issuerUrl).equals("https://test.authority.com");
   });
 
@@ -295,10 +283,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       expect(client.scopes).equals(`${config.scopes} offline_access`);
       await client.signIn();
 
-      const tokenStore = new RefreshTokenStore(
-        getTokenStoreFileName(config.clientId),
-        getTokenStoreKey(config.clientId)
-      );
+      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
       const token = await tokenStore.load("testScope offline_access");
       assert.equal(token, mockTokenResponse.refreshToken);
 
@@ -307,9 +292,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
     });
 
     it("delete the current refresh token regardless of order", async () => {
-      const config = getConfig({
-        scopes: "testScope blurgh-platform ReadTHINGS",
-      });
+      const config = getConfig({ scopes: "testScope blurgh-platform ReadTHINGS" });
       const mockTokenResponse = getMockTokenResponse();
 
       stubTokenCrypto(mockTokenResponse.refreshToken!);
@@ -320,10 +303,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       expect(client.scopes).equals("testScope blurgh-platform ReadTHINGS offline_access");
       await client.signIn();
 
-      const tokenStore = new RefreshTokenStore(
-        getTokenStoreFileName(config.clientId),
-        getTokenStoreKey(config.clientId)
-      );
+      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
       const token = await tokenStore.load("ReadTHINGS blurgh-platform offline_access testScope");
       assert.equal(token, mockTokenResponse.refreshToken);
 
@@ -332,9 +312,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
     });
 
     it("delete the current refresh token works with explicit offline_access added", async () => {
-      const config = getConfig({
-        scopes: "testScope blurgh-platform offline_access ReadTHINGS",
-      });
+      const config = getConfig({ scopes: "testScope blurgh-platform offline_access ReadTHINGS" });
       const mockTokenResponse = getMockTokenResponse();
 
       stubTokenCrypto(mockTokenResponse.refreshToken!);
@@ -345,10 +323,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       expect(client.scopes).equals("testScope blurgh-platform offline_access ReadTHINGS");
       await client.signIn();
 
-      const tokenStore = new RefreshTokenStore(
-        getTokenStoreFileName(config.clientId),
-        getTokenStoreKey(config.clientId)
-      );
+      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
       const token = await tokenStore.load("offline_access ReadTHINGS blurgh-platform testScope");
       assert.equal(token, mockTokenResponse.refreshToken);
 
@@ -356,4 +331,5 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       assert.equal(_token, undefined);
     });
   });
+
 });

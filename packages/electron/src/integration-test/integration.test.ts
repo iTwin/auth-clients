@@ -78,7 +78,8 @@ test.beforeEach(async () => {
       args: ["./dist/integration-test/test-app/index.js"],
     });
     electronPage = await electronApp.firstWindow();
-  } catch (error) {}
+  } catch (error) {
+  }
 });
 
 test.afterEach(async () => {
