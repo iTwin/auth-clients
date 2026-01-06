@@ -341,4 +341,5 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       assert.equal(_token, undefined);
     });
   });
+
 });
