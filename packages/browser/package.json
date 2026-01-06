@@ -35,7 +35,7 @@
     "oidc-client-ts": "^3.3.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^5.0.0",
+    "@itwin/build-tools": "^5.5.0",
     "@itwin/core-bentley": "^5.0.0",
     "@itwin/core-common": "^5.0.0",
     "@itwin/eslint-plugin": "^4.1.1",

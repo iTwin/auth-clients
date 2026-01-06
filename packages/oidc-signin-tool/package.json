@@ -33,7 +33,7 @@
     "url": "http://www.bentley.com"
   },
   "dependencies": {
-    "@itwin/certa": "^5.3.0",
+    "@itwin/certa": "^5.5.0",
     "@itwin/service-authorization": "workspace:^",
     "@playwright/test": "~1.56.1",
     "dotenv": "^10.0.0",
@@ -41,7 +41,7 @@
     "oidc-client-ts": "^3.3.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^5.0.0",
+    "@itwin/build-tools": "^5.5.0",
     "@itwin/core-bentley": "^5.0.0",
     "@itwin/core-common": "^5.0.0",
     "@itwin/eslint-plugin": "^4.1.1",
