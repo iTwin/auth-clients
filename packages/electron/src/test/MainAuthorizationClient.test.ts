@@ -218,19 +218,13 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
 
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
-    const client = new ElectronMainAuthorization({
-      ...config,
-      issuerUrl: testAuthority,
-    });
+    const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
     expect(client.issuerUrl).equals(testAuthority);
   });
 
   it("should use config authority and ignore prefix", async () => {
     process.env.IMJS_URL_PREFIX = "prefix-";
-    const client = new ElectronMainAuthorization({
-      ...config,
-      issuerUrl: testAuthority,
-    });
+    const client = new ElectronMainAuthorization({ ...config, issuerUrl: testAuthority });
     expect(client.issuerUrl).equals("https://test.authority.com");
   });
 
@@ -312,30 +306,19 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
-      expect(client.scopes).equals(
-        "testScope blurgh-platform ReadTHINGS offline_access",
-      );
+      expect(client.scopes).equals("testScope blurgh-platform ReadTHINGS offline_access");
       await client.signIn();
 
-      const tokenStore = new RefreshTokenStore(
-        getTokenStoreFileName(config.clientId),
-        getTokenStoreKey(config.clientId),
-      );
-      const token = await tokenStore.load(
-        "ReadTHINGS blurgh-platform offline_access testScope",
-      );
+      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
+      const token = await tokenStore.load("ReadTHINGS blurgh-platform offline_access testScope");
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load(
-        "ReadTHINGS offline_access testScope blurgh-platform new-scope",
-      );
+      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
       assert.equal(_token, undefined);
     });
 
     it("delete the current refresh token works with explicit offline_access added", async () => {
-      const config = getConfig({
-        scopes: "testScope blurgh-platform offline_access ReadTHINGS",
-      });
+      const config = getConfig({ scopes: "testScope blurgh-platform offline_access ReadTHINGS" });
       const mockTokenResponse = getMockTokenResponse();
 
       stubTokenCrypto(mockTokenResponse.refreshToken!);
@@ -343,24 +326,16 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       await setupMockAuthServer(mockTokenResponse);
 
       const client = new ElectronMainAuthorization(config);
-      expect(client.scopes).equals(
-        "testScope blurgh-platform offline_access ReadTHINGS",
-      );
+      expect(client.scopes).equals("testScope blurgh-platform offline_access ReadTHINGS");
       await client.signIn();
 
-      const tokenStore = new RefreshTokenStore(
-        getTokenStoreFileName(config.clientId),
-        getTokenStoreKey(config.clientId),
-      );
-      const token = await tokenStore.load(
-        "offline_access ReadTHINGS blurgh-platform testScope",
-      );
+      const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
+      const token = await tokenStore.load("offline_access ReadTHINGS blurgh-platform testScope");
       assert.equal(token, mockTokenResponse.refreshToken);
 
-      const _token = await tokenStore.load(
-        "ReadTHINGS offline_access testScope blurgh-platform new-scope",
-      );
+      const _token = await tokenStore.load("ReadTHINGS offline_access testScope blurgh-platform new-scope");
       assert.equal(_token, undefined);
     });
   });
+
 });
