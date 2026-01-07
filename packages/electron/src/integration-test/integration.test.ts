@@ -128,7 +128,7 @@ test("when scopes change, sign in is required", async ({ browser }) => {
   await testHelper.checkStatus(electronPage, false);
 });
 
-test("handles multiple instances with different ipcChannelEnvPrefix", async ({
+test("handles multiple instances with different channelClientPrefix", async ({
   browser,
 }) => {
   // Sign in with the default auth client
