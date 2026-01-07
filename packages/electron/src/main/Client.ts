@@ -156,7 +156,16 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private _expiresAt?: Date;
   private _extras?: AuthenticationOptions;
 
+  /**
+   * Event raised whenever the access token changes on any instance of ElectronMainAuthorization
+   * @deprecated in 0.22 - please use the onUserStateChanged instance event instead.
+   */
   public static readonly onUserStateChanged = new BeEvent<
+  (token: AccessToken) => void
+  >();
+
+  /** Event raised whenever the access token changes in this instance of ElectronMainAuthorization */
+  public readonly onUserStateChanged = new BeEvent<
   (token: AccessToken) => void
   >();
 
@@ -298,7 +307,9 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
+    // eslint-disable-next-line deprecation/deprecation
     ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
+    this.onUserStateChanged.raiseEvent(this._accessToken);
   }
 
   /** Forces a refresh of the user's access token regardless if the current token has expired. */
