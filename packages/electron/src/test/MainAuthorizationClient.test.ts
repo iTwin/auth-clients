@@ -196,7 +196,7 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
       );
     });
 
-    it("should prefix IPC channel names when an channelClientPrefix is provided", () => {
+    it("should prefix IPC channel names when a channelClientPrefix is provided", () => {
       const generatedConfig = getConfig();
       const prefix = "qa-";
       const client = new ElectronMainAuthorization({
