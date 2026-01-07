@@ -20,23 +20,28 @@ export interface IpcChannelNames {
 /**
  * Construct an instance of {@link IpcChannelNames} with unique channel names per given clientId.
  * @param clientId OIDC Client Id.
- * @param channelClientPrefix Optional prefix to be prepended before the clientId (separated by a hyphen) to allow further namespacing of the channels.
+ * @param channelClientPrefix Optional prefix to be prepended before the clientId to allow further namespacing of the channels.
  * @internal
  */
-export function getIpcChannelNames(
-  clientId: string,
-  channelClientPrefix?: string,
-): IpcChannelNames {
-  if (channelClientPrefix) {
-    clientId = `${channelClientPrefix}-${clientId}`;
-  }
+export function getIpcChannelNames(clientId: string, channelClientPrefix?: string): IpcChannelNames {
+  const channelClientId = getPrefixedClientId(clientId, channelClientPrefix);
 
   return {
-    signIn: `itwin.electron.auth.signIn-${clientId}`,
-    signOut: `itwin.electron.auth.signOut-${clientId}`,
-    getAccessToken: `itwin.electron.auth.getAccessToken-${clientId}`,
-    onAccessTokenChanged: `itwin.electron.auth.onAccessTokenChanged-${clientId}`,
-    onAccessTokenExpirationChanged: `itwin.electron.auth.onAccessTokenExpirationChanged-${clientId}`,
-    signInSilent: `itwin.electron.auth.signInSilent-${clientId}`,
+    signIn: `itwin.electron.auth.signIn-${channelClientId}`,
+    signOut: `itwin.electron.auth.signOut-${channelClientId}`,
+    getAccessToken: `itwin.electron.auth.getAccessToken-${channelClientId}`,
+    onAccessTokenChanged: `itwin.electron.auth.onAccessTokenChanged-${channelClientId}`,
+    onAccessTokenExpirationChanged: `itwin.electron.auth.onAccessTokenExpirationChanged-${channelClientId}`,
+    signInSilent: `itwin.electron.auth.signInSilent-${channelClientId}`,
   };
+}
+
+/**
+ * Get the clientId with an optional prefix.
+ * @param clientId OIDC Client Id.
+ * @param channelClientPrefix Optional prefix to be prepended before the clientId.
+ * @internal
+ */
+export function getPrefixedClientId(clientId: string, channelClientPrefix?: string): string {
+  return channelClientPrefix ? `${channelClientPrefix}-${clientId}` : clientId;
 }

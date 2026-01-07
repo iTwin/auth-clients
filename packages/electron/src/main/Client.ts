@@ -42,7 +42,7 @@ import { LoopbackWebServer } from "./LoopbackWebServer";
 import * as electron from "electron";
 import { defaultExpiryBufferInSeconds } from "../common/constants";
 import type { IpcChannelNames } from "../common/IpcChannelNames";
-import { getIpcChannelNames } from "../common/IpcChannelNames";
+import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames";
 const loggerCategory = "electron-auth";
 
 /**
@@ -129,7 +129,7 @@ export interface ElectronMainAuthorizationConfiguration {
   readonly tokenStorePath?: string;
 
   /**
-   * Optional prefix to be added to IPC channel names used for communication between
+   * Optional prefix to be added before the clientId in IPC channel names used for communication between
    * {@link ElectronMainAuthorization} and {@link ../ElectronRendererAuthorization}.
    * Useful when multiple clients are used within the same application.
    */
@@ -196,9 +196,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (config.expiryBuffer)
       this._expiryBuffer = config.expiryBuffer;
 
-    const configFileName = `iTwinJs_${config.channelClientPrefix ?? ""}${
-      this._clientId
-    }`;
+    const clientIdWithPrefix = getPrefixedClientId(this._clientId, config.channelClientPrefix);
+    const configFileName = `iTwinJs_${clientIdWithPrefix}`;
     const appStorageKey = `${configFileName}:${this._issuerUrl}`;
     this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey, config.tokenStorePath);
   }

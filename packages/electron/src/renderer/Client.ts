@@ -81,7 +81,7 @@ export interface ElectronRendererAuthorizationConfiguration {
   readonly expiryBuffer?: number;
 
   /**
-   * Optional prefix to use for IPC channel names. Useful to avoid conflicts when multiple clients are used in the same application.
+   * Optional prefix to be added before the clientId in IPC channel names. Useful to avoid conflicts when multiple clients are used in the same application.
    */
   readonly channelClientPrefix?: string;
 }

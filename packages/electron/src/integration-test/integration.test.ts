@@ -9,6 +9,7 @@ import type { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
 import { TestHelper } from "./helpers/TestHelper";
 import { RefreshTokenStore } from "../main/TokenStore";
+import { getPrefixedClientId } from "../common/IpcChannelNames";
 
 const { clientId, envPrefix, email, password } = loadConfig();
 
@@ -56,7 +57,8 @@ function getTokenStoreKey(issuerUrl?: string, channelClientPrefix?: string): str
 }
 
 function getTokenStoreFileName(channelClientPrefix?: string): string {
-  return `iTwinJs_${channelClientPrefix ?? ""}${clientId}`;
+  const clientIdWithPrefix = getPrefixedClientId(clientId, channelClientPrefix);
+  return `iTwinJs_${clientIdWithPrefix}`;
 }
 
 async function getUrl(app: ElectronApplication): Promise<string> {
