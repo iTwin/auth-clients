@@ -6,8 +6,9 @@ module.exports = [
     ...iTwinPlugin.configs.iTwinjsRecommendedConfig,
   },
   {
-    files: ["**/*.{ts,tsx}"],
+    files: ["src/**/*.{ts,tsx}"],
     ...iTwinPlugin.configs.jsdocConfig,
+    ignores: ["src/integration-test/**/*", "src/test/**/*"],
   },
   {
     files: ["**/*.{ts,tsx}"],
