@@ -151,7 +151,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   /**
    * Event raised whenever the access token changes on any instance of ElectronMainAuthorization
-   * @deprecated in 0.21.2 - please use the onUserStateChanged instance event instead.
+   * @deprecated in 0.22 - please use the onUserStateChanged instance event instead.
    */
   public static readonly onUserStateChanged = new BeEvent<
   (token: AccessToken) => void
