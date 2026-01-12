@@ -79,6 +79,11 @@ export interface ElectronRendererAuthorizationConfiguration {
    * @note If unspecified this defaults to 10 minutes.
    */
   readonly expiryBuffer?: number;
+
+  /**
+   * Optional prefix to be added before the clientId in IPC channel names. Useful to avoid conflicts when multiple clients are used in the same application.
+   */
+  readonly channelClientPrefix?: string;
 }
 
 /**
@@ -101,7 +106,10 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
 
   /** Constructor for ElectronRendererAuthorization. Sets up listeners for when the access token changes both on the frontend and the backend. */
   public constructor(config: ElectronRendererAuthorizationConfiguration) {
-    const ipcChannelNames = getIpcChannelNames(config.clientId);
+    const ipcChannelNames = getIpcChannelNames(
+      config.clientId,
+      config.channelClientPrefix,
+    );
     this._ipcAuthAPI = new ElectronAuthIPC(ipcChannelNames, config.ipcSocket);
 
     this.onAccessTokenChanged.addListener((token: AccessToken) => {

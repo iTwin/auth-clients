@@ -9,6 +9,7 @@ import type { SignInOptions } from "./types";
 import { loadConfig } from "./helpers/loadConfig";
 import { TestHelper } from "./helpers/TestHelper";
 import { RefreshTokenStore } from "../main/TokenStore";
+import { getPrefixedClientId } from "../common/IpcChannelNames";
 
 const { clientId, envPrefix, email, password } = loadConfig();
 
@@ -37,19 +38,27 @@ const userDataPath = getElectronUserDataPath();
 let electronApp: ElectronApplication;
 let electronPage: Page;
 const testHelper = new TestHelper(signInOptions);
-const tokenStore = new RefreshTokenStore(getTokenStoreFileName(), getTokenStoreKey(), userDataPath);
+const tokenStores = [
+  new RefreshTokenStore(getTokenStoreFileName(), getTokenStoreKey(), userDataPath),
+  new RefreshTokenStore(
+    getTokenStoreFileName("prefixed"),
+    getTokenStoreKey(undefined, "prefixed"),
+    userDataPath,
+  ),
+];
 
-function getTokenStoreKey(issuerUrl?: string): string {
+function getTokenStoreKey(issuerUrl?: string, channelClientPrefix?: string): string {
   const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
   if (envPrefix && !issuerUrl) {
     authority.hostname = envPrefix + authority.hostname;
   }
   issuerUrl = authority.href.replace(/\/$/, "");
-  return `${getTokenStoreFileName()}:${issuerUrl}`;
+  return `${getTokenStoreFileName(channelClientPrefix)}:${issuerUrl}`;
 }
 
-function getTokenStoreFileName(): string {
-  return `iTwinJs_${clientId}`;
+function getTokenStoreFileName(channelClientPrefix?: string): string {
+  const clientIdWithPrefix = getPrefixedClientId(clientId, channelClientPrefix);
+  return `iTwinJs_${clientIdWithPrefix}`;
 }
 
 async function getUrl(app: ElectronApplication): Promise<string> {
@@ -66,7 +75,7 @@ async function getUrl(app: ElectronApplication): Promise<string> {
 
 test.beforeEach(async () => {
   try {
-    await tokenStore.delete();
+    await Promise.all(tokenStores.map(async (store) => store.delete()));
     electronApp = await electron.launch({
       args: ["./dist/integration-test/test-app/index.js"],
     });
@@ -117,6 +126,42 @@ test("when scopes change, sign in is required", async ({ browser }) => {
   // Admittedly this is cheating: no user would interact
   // with the tokenStore directly, but this is a tough
   // case to test otherwise.
-  await tokenStore.load("itwin-platform realitydata:read");
+  await tokenStores[0].load("itwin-platform realitydata:read");
   await testHelper.checkStatus(electronPage, false);
+});
+
+test("handles multiple instances with different channelClientPrefix", async ({
+  browser,
+}) => {
+  // Sign in with the default auth client
+  const page = await browser.newPage();
+  await testHelper.checkStatus(electronPage, false);
+  await testHelper.checkOtherStatus(electronPage, false);
+
+  await testHelper.clickSignIn(electronPage);
+  const url = await getUrl(electronApp);
+  await testHelper.signIn(page, url);
+  await page.close();
+
+  // only the default auth client should be signed in
+  await testHelper.checkStatus(electronPage, true);
+  await testHelper.checkOtherStatus(electronPage, false);
+
+  // Now sign in with the other auth client
+  const otherPage = await browser.newPage();
+  await testHelper.clickOtherSignIn(electronPage);
+  const otherUrl = await getUrl(electronApp);
+  await testHelper.signIn(otherPage, otherUrl);
+  await otherPage.close();
+
+  // both auth clients should be signed in
+  await testHelper.checkOtherStatus(electronPage, true);
+  await testHelper.checkStatus(electronPage, true);
+
+  // sign out the default auth client
+  await testHelper.clickSignOut(electronPage);
+
+  // the other auth client should still be signed in
+  await testHelper.checkStatus(electronPage, false);
+  await testHelper.checkOtherStatus(electronPage, true);
 });

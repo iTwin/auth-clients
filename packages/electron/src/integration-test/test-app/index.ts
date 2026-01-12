@@ -31,6 +31,14 @@ void app.whenReady().then(async () => {
     redirectUris: ["http://localhost:3000/signin-callback"],
   });
 
+  new ElectronMainAuthorization({
+    clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
+    scopes: process.env.IMJS_TEST_ELECTRON_SCOPES,
+    // it's ok to use the same port since sign-ins are sequential, not concurrent
+    redirectUris: ["http://localhost:3000/signin-callback"],
+    channelClientPrefix: "prefixed",
+  });
+
   // TODO: revisit this lint problem later
   // eslint-disable-next-line deprecation/deprecation
   app.on("activate", () => {

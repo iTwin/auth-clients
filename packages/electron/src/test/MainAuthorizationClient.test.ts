@@ -219,6 +219,44 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
 
+  describe("channelClientPrefix option", () => {
+    const channelPrefix = `itwin.electron.auth`;
+    const channelNames = [
+      "signIn",
+      "signOut",
+      "getAccessToken",
+      "onAccessTokenChanged",
+      "onAccessTokenExpirationChanged",
+      "signInSilent",
+    ] as const;
+
+    it("should generate channel names without channelClientPrefix", () => {
+      const generatedConfig = getConfig();
+      const client = new ElectronMainAuthorization(generatedConfig);
+
+      /* eslint-disable-next-line @typescript-eslint/dot-notation */
+      expect(client["_ipcChannelNames"].signIn).to.equal(
+        `${channelPrefix}.signIn-${generatedConfig.clientId}`,
+      );
+    });
+
+    it("should prefix IPC channel names when a channelClientPrefix is provided", () => {
+      const generatedConfig = getConfig();
+      const prefix = "qa-";
+      const client = new ElectronMainAuthorization({
+        ...generatedConfig,
+        channelClientPrefix: prefix,
+      });
+
+      channelNames.forEach((name) => {
+        /* eslint-disable-next-line @typescript-eslint/dot-notation */
+        expect(client["_ipcChannelNames"][name]).to.eq(
+          `${channelPrefix}.${name}-${prefix}-${generatedConfig.clientId}`,
+        );
+      });
+    });
+  });
+
   const config = getConfig();
   const testAuthority = "https://test.authority.com";
 
