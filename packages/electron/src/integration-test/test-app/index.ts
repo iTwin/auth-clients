@@ -34,7 +34,8 @@ void app.whenReady().then(async () => {
   new ElectronMainAuthorization({
     clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
     scopes: process.env.IMJS_TEST_ELECTRON_SCOPES,
-    redirectUris: ["http://localhost:3001/signin-callback"],
+    // it's ok to use the same port since sign-ins are sequential, not concurrent
+    redirectUris: ["http://localhost:3000/signin-callback"],
     channelClientPrefix: "prefixed",
   });
 
