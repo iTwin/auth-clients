@@ -1,8 +1,20 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Mon, 27 Oct 2025 12:14:12 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 12 Jan 2026 19:52:14 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 5.1.0
+
+Mon, 12 Jan 2026 19:52:14 GMT
+
+### Minor changes
+
+- Bump @itwin/certa to 5.5.0 (Gytis.Cepkauskas@bentley.com)
+
+### Patches
+
+- Bump @itwin/certa to 5.3.0 (GytisCepk@users.noreply.github.com)
 
 ## 5.0.2
 

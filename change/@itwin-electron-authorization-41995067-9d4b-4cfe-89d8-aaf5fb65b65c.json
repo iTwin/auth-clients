@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Add onUserStateChanged event to auth-client instances and deprecate onUserStateChanged static event",
-  "packageName": "@itwin/electron-authorization",
-  "email": "alex.dunae@bentley.com",
-  "dependentChangeType": "patch"
-}

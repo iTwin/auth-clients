@@ -2,6 +2,21 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "date": "Mon, 12 Jan 2026 19:52:14 GMT",
+      "version": "2.1.0",
+      "tag": "@itwin/service-authorization_v2.1.0",
+      "comments": {
+        "none": [
+          {
+            "author": "Gytis.Cepkauskas@bentley.com",
+            "package": "@itwin/service-authorization",
+            "commit": "0f3d2ee177b6109bad952c045846ebd4819dfbed",
+            "comment": " "
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 27 Oct 2025 12:14:12 GMT",
       "version": "2.1.0",
       "tag": "@itwin/service-authorization_v2.1.0",

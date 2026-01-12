@@ -1,8 +1,21 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Mon, 27 Oct 2025 12:14:12 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 12 Jan 2026 19:52:14 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.22.0
+
+Mon, 12 Jan 2026 19:52:14 GMT
+
+### Minor changes
+
+- Add onUserStateChanged event to auth-client instances and deprecate onUserStateChanged static event (alex.dunae@bentley.com)
+- Allow customizing IPC channel names (alex.dunae@bentley.com)
+
+### Patches
+
+- Add support for Electron 39 (GytisCepk@users.noreply.github.com)
 
 ## 0.21.2
 

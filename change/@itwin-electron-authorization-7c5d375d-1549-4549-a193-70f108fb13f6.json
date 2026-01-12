@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Allow customizing IPC channel names",
-  "packageName": "@itwin/electron-authorization",
-  "email": "alex.dunae@bentley.com",
-  "dependentChangeType": "patch"
-}

@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Bump @itwin/certa to 5.5.0",
-  "packageName": "@itwin/oidc-signin-tool",
-  "email": "Gytis.Cepkauskas@bentley.com",
-  "dependentChangeType": "patch"
-}
