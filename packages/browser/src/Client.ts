@@ -90,16 +90,21 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       userStore: new WebStorageStateStore({ store: window.localStorage }),
       prompt: basicSettings.prompt,
       response_mode: basicSettings.responseMode, // eslint-disable-line @typescript-eslint/naming-convention
-      extraHeaders: { // eslint-disable-line @typescript-eslint/naming-convention
-        /* eslint-disable @typescript-eslint/naming-convention */
-        "x-correlation-id": () => crypto.randomUUID(),
-        /* eslint-enable @typescript-eslint/naming-convention */
-      },
     };
 
     if (advancedSettings) {
       userManagerSettings = { ...userManagerSettings, ...advancedSettings };
     }
+
+    // Note: extraHeaders in UserManagerSettings is passed through to token requests.
+    // oidc-client-ts supports functions for ExtraHeader values, which will be invoked
+    // per request to generate dynamic headers.
+    if (!userManagerSettings.extraHeaders) {
+      userManagerSettings.extraHeaders = {}; // eslint-disable-line @typescript-eslint/naming-convention
+    }
+    /* eslint-disable @typescript-eslint/naming-convention */
+    userManagerSettings.extraHeaders["x-correlation-id"] = () => crypto.randomUUID();
+    /* eslint-enable @typescript-eslint/naming-convention */
 
     return userManagerSettings;
   }
