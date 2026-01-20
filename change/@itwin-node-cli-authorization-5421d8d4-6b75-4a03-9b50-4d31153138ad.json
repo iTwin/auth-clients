@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Add x-correlation-id header to node-cli and electron packages",
+  "packageName": "@itwin/node-cli-authorization",
+  "email": "198982749+Copilot@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
