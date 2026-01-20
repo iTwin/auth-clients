@@ -3,6 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 import { URL } from "node:url";
+import { randomUUID } from "node:crypto";
 
 const requiredProperties = ["issuer", "authorization_endpoint", "jwks_uri", "response_types_supported", "subject_types_supported", "id_token_signing_alg_values_supported"] as const;
 const stringProperties = ["issuer", "authorization_endpoint", "jwks_uri", "token_endpoint",
@@ -75,8 +76,10 @@ export class OIDCDiscoveryClient {
     issuerUrl.pathname = `${issuerUrl.pathname?.replace(/\/$/, "")}/.well-known/openid-configuration`;
     const response = await (await import("got")).default(issuerUrl, {
       headers: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Accept: "application/json",
+        /* eslint-disable @typescript-eslint/naming-convention */
+        "Accept": "application/json",
+        "x-correlation-id": randomUUID(),
+        /* eslint-enable @typescript-eslint/naming-convention */
         ...additionalHeaders,
       },
       throwHttpErrors: false,

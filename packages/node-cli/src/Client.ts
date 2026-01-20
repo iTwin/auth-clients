@@ -17,8 +17,9 @@ import {
   AuthorizationServiceConfiguration, BaseTokenRequestHandler, BasicQueryStringUtils, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
   TokenRequest,
 } from "@openid/appauth";
-import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
+import { NodeCrypto } from "@openid/appauth/built/node_support";
 import { TokenStore } from "./TokenStore";
+import { CorrelationIdRequestor } from "./CorrelationIdRequestor";
 
 import type { AccessToken } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
@@ -166,7 +167,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   private async initialize() {
     // Would ideally set up in constructor, but async...
     if (!this._configuration)
-      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._bakedConfig.issuerUrl, new NodeRequestor());
+      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._bakedConfig.issuerUrl, new CorrelationIdRequestor());
 
     await this._tokenStore.initialize();
   }
@@ -251,7 +252,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     assert(authRequest.internal !== undefined);
     assert(this._configuration !== undefined);
     try {
-      const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(new NodeRequestor());
+      const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(new CorrelationIdRequestor());
       const tokenResponse = await tokenHandler.performTokenRequest(this._configuration, new TokenRequest({
         /* eslint-disable @typescript-eslint/naming-convention */
         grant_type: GRANT_TYPE_AUTHORIZATION_CODE,
@@ -283,7 +284,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
     /* eslint-enable @typescript-eslint/naming-convention */
 
     const tokenRequest = new TokenRequest(tokenRequestJson);
-    const tokenRequestor = new NodeRequestor();
+    const tokenRequestor = new CorrelationIdRequestor();
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(tokenRequestor);
     return tokenHandler.performTokenRequest(this._configuration, tokenRequest);
   }
