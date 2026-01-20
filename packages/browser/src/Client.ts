@@ -90,6 +90,11 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       userStore: new WebStorageStateStore({ store: window.localStorage }),
       prompt: basicSettings.prompt,
       response_mode: basicSettings.responseMode, // eslint-disable-line @typescript-eslint/naming-convention
+      extraHeaders: { // eslint-disable-line @typescript-eslint/naming-convention
+        /* eslint-disable @typescript-eslint/naming-convention */
+        "x-correlation-id": () => crypto.randomUUID(),
+        /* eslint-enable @typescript-eslint/naming-convention */
+      },
     };
 
     if (advancedSettings) {
