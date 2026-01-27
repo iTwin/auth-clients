@@ -149,10 +149,10 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
   )
     return;
 
-  const choseAccountElement = page.getByText("Use another account");
-  const isChoseAccountInDom = await choseAccountElement.isVisible();
-  if (isChoseAccountInDom) {
-    await choseAccountElement.click();
+  const chooseAccountElement = page.getByText("Use another account");
+  const isChooseAccountInDom = await chooseAccountElement.isVisible();
+  if (isChooseAccountInDom) {
+    await chooseAccountElement.click();
   }
   await page.locator(testSelectors.pingEmail).fill(context.user.email);
 
