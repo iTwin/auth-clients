@@ -8,6 +8,7 @@
     "clean": "lage clean --no-cache",
     "docs": "lage docs",
     "lint": "lage lint",
+    "lint:fix": "lage lint:fix",
     "test": "lage test",
     "test:integration": "lage test:integration --reset-cache",
     "cover": "lage cover",
