@@ -41,7 +41,7 @@ export const isBrowserAuthorizationClient = (
  */
 export class BrowserAuthorizationClient implements AuthorizationClient {
   public readonly onAccessTokenChanged = new BeEvent<
-    (token: AccessToken) => void
+  (token: AccessToken) => void
   >();
   protected _userManager?: UserManager;
 
@@ -297,7 +297,8 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * @returns an AccessToken
    */
   public async getAccessToken(): Promise<AccessToken> {
-    if (this._accessToken) return this._accessToken;
+    if (this._accessToken)
+      return this._accessToken;
     throw new Error("Authorization error: Not signed in.");
   }
 
@@ -441,7 +442,8 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   public async handleSigninCallback(): Promise<void> {
     const url = new URL(this._basicSettings.redirectUri);
-    if (url.pathname !== window.location.pathname) return;
+    if (url.pathname !== window.location.pathname)
+      return;
 
     let errorMessage = "";
 
