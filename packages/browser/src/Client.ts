@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 
 /** @packageDocumentation
  * @module Authorization
@@ -15,20 +15,34 @@ import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 import { getImsAuthority } from "./utils";
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { User, UserManagerSettings } from "oidc-client-ts";
-import type { BrowserAuthorizationClientConfiguration, BrowserAuthorizationClientConfigurationOptions, BrowserAuthorizationClientRedirectState, BrowserAuthorizationClientRequestOptions, SettingsInStorage } from "./types";
+import type {
+  BrowserAuthorizationClientConfiguration,
+  BrowserAuthorizationClientConfigurationOptions,
+  BrowserAuthorizationClientRedirectState,
+  BrowserAuthorizationClientRequestOptions,
+  SettingsInStorage,
+} from "./types";
 
 /** BrowserAuthorization type guard.
  * @beta
  */
-export const isBrowserAuthorizationClient = (client: AuthorizationClient | undefined): client is BrowserAuthorizationClient => {
-  return client !== undefined && (client as BrowserAuthorizationClient).signIn !== undefined && (client as BrowserAuthorizationClient).signOut !== undefined;
+export const isBrowserAuthorizationClient = (
+  client: AuthorizationClient | undefined,
+): client is BrowserAuthorizationClient => {
+  return (
+    client !== undefined &&
+    (client as BrowserAuthorizationClient).signIn !== undefined &&
+    (client as BrowserAuthorizationClient).signOut !== undefined
+  );
 };
 
 /**
  * @beta
  */
 export class BrowserAuthorizationClient implements AuthorizationClient {
-  public readonly onAccessTokenChanged = new BeEvent<(token: AccessToken) => void>();
+  public readonly onAccessTokenChanged = new BeEvent<
+    (token: AccessToken) => void
+  >();
   protected _userManager?: UserManager;
 
   protected _basicSettings: BrowserAuthorizationClientConfigurationOptions;
@@ -69,7 +83,10 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       return this._userManager;
     }
 
-    const settings = await this.getUserManagerSettings(this._basicSettings, this._advancedSettings);
+    const settings = await this.getUserManagerSettings(
+      this._basicSettings,
+      this._advancedSettings,
+    );
     this._userManager = this.createUserManager(settings);
     return this._userManager;
   }
@@ -77,7 +94,18 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   /**
    * Merges the basic and advanced settings into a single configuration object consumable by the internal userManager.
    */
-  protected async getUserManagerSettings(basicSettings: BrowserAuthorizationClientConfiguration, advancedSettings?: UserManagerSettings): Promise<UserManagerSettings> {
+  protected async getUserManagerSettings(
+    basicSettings: BrowserAuthorizationClientConfiguration,
+    advancedSettings?: UserManagerSettings,
+  ): Promise<UserManagerSettings> {
+    if (!basicSettings.silentRedirectUri) {
+      Logger.logWarning(
+        BrowserAuthorizationLoggerCategory.Authorization,
+        "silentRedirectUri not configured. Automatic silent token renewal will not work. " +
+          "Provide a silentRedirectUri pointing to a lightweight HTML page for best performance. See README for details.",
+      );
+    }
+
     let userManagerSettings: UserManagerSettings = {
       authority: this.authorityUrl,
       redirect_uri: basicSettings.redirectUri, // eslint-disable-line @typescript-eslint/naming-convention
@@ -132,7 +160,10 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * @param successRedirectUrl - (optional) path to redirect to after a successful authorization
    * @param args (optional) additional BrowserAuthorizationClientRequestOptions passed to signIn methods
    */
-  public async signInRedirect(successRedirectUrl?: string, args?: BrowserAuthorizationClientRequestOptions): Promise<void> {
+  public async signInRedirect(
+    successRedirectUrl?: string,
+    args?: BrowserAuthorizationClientRequestOptions,
+  ): Promise<void> {
     const user = await this.nonInteractiveSignIn(args);
     if (user) {
       return;
@@ -151,7 +182,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * Attempts a sign-in via popup with the authorization provider
    * @param args - @see BrowserAuthorizationClientRequestOptions
    */
-  public async signInPopup(args?: BrowserAuthorizationClientRequestOptions): Promise<void> {
+  public async signInPopup(
+    args?: BrowserAuthorizationClientRequestOptions,
+  ): Promise<void> {
     let user = await this.nonInteractiveSignIn(args);
     if (user) {
       return;
@@ -160,7 +193,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     const userManager = await this.getUserManager();
     user = await userManager.signinPopup(args);
     if (!user || user.expired)
-      throw new Error("Expected userManager.signinPopup to always resolve to an authorized user");
+      throw new Error(
+        "Expected userManager.signinPopup to always resolve to an authorized user",
+      );
     return;
   }
 
@@ -179,11 +214,17 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * - tries to load the user from storage
    * - tries to silently sign-in the user
    */
-  protected async nonInteractiveSignIn(args?: BrowserAuthorizationClientRequestOptions): Promise<User | undefined> {
+  protected async nonInteractiveSignIn(
+    args?: BrowserAuthorizationClientRequestOptions,
+  ): Promise<User | undefined> {
     const userManager = await this.getUserManager();
-    const settingsPromptRequired = userManager.settings.prompt !== undefined && userManager.settings.prompt !== "none";
-    const argsPromptRequired = args?.prompt !== undefined && args.prompt !== "none";
-    if (settingsPromptRequired || argsPromptRequired) { // No need to even try a silent sign in if we know the prompt will force its failure.
+    const settingsPromptRequired =
+      userManager.settings.prompt !== undefined &&
+      userManager.settings.prompt !== "none";
+    const argsPromptRequired =
+      args?.prompt !== undefined && args.prompt !== "none";
+    if (settingsPromptRequired || argsPromptRequired) {
+      // No need to even try a silent sign in if we know the prompt will force its failure.
       return undefined;
     }
 
@@ -194,7 +235,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     // Attempt a silent sign-in
     try {
-      user = await userManager.signinSilent() ?? undefined; // calls events
+      user = (await userManager.signinSilent()) ?? undefined; // calls events
       return user;
     } catch (err) {
       return undefined;
@@ -225,7 +266,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       return;
     }
     this._accessToken = `Bearer ${user.access_token}`;
-    this._expiresAt = user.expires_at ? new Date(user.expires_at * 1000) : undefined;
+    this._expiresAt = user.expires_at
+      ? new Date(user.expires_at * 1000)
+      : undefined;
   }
 
   /**
@@ -254,8 +297,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * @returns an AccessToken
    */
   public async getAccessToken(): Promise<AccessToken> {
-    if (this._accessToken)
-      return this._accessToken;
+    if (this._accessToken) return this._accessToken;
     throw new Error("Authorization error: Not signed in.");
   }
 
@@ -268,7 +310,8 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     const userManager = await this.getUserManager();
     try {
       await userManager.querySessionStatus();
-    } catch (err) { // Access token is no longer valid in this session
+    } catch (err) {
+      // Access token is no longer valid in this session
       await userManager.removeUser();
       return false;
     }
@@ -281,7 +324,11 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     try {
       this.onAccessTokenChanged.raiseEvent(this._accessToken);
     } catch (err: any) {
-      Logger.logError(BrowserAuthorizationLoggerCategory.Authorization, "Error thrown when handing BrowserAuthorizationClient.onUserStateChanged event", () => ({ message: err.message }));
+      Logger.logError(
+        BrowserAuthorizationLoggerCategory.Authorization,
+        "Error thrown when handing BrowserAuthorizationClient.onUserStateChanged event",
+        () => ({ message: err.message }),
+      );
     }
   };
 
@@ -303,8 +350,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   /**
    * Raised prior to the access token expiring
    */
-  protected _onAccessTokenExpiring = async () => {
-  };
+  protected _onAccessTokenExpiring = async () => {};
 
   /**
    * Raised after the access token has expired.
@@ -316,8 +362,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   /**
    * Raised when the automatic silent renew has failed.
    */
-  protected _onSilentRenewError = () => {
-  };
+  protected _onSilentRenewError = () => {};
 
   /**
    * Raised when the user's sign-in status at the OP has changed.
@@ -330,8 +375,12 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   public dispose(): void {
     if (this._userManager) {
       this._userManager.events.removeUserLoaded(this._onUserLoaded);
-      this._userManager.events.removeAccessTokenExpiring(this._onAccessTokenExpiring);
-      this._userManager.events.removeAccessTokenExpired(this._onAccessTokenExpired);
+      this._userManager.events.removeAccessTokenExpiring(
+        this._onAccessTokenExpiring,
+      );
+      this._userManager.events.removeAccessTokenExpired(
+        this._onAccessTokenExpired,
+      );
       this._userManager.events.removeUserUnloaded(this._onUserUnloaded);
       this._userManager.events.removeSilentRenewError(this._onSilentRenewError);
       this._userManager.events.removeUserSignedOut(this._onUserSignedOut);
@@ -347,7 +396,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   public setAdvancedSettings(settings: UserManagerSettings): void {
     if (this._userManager) {
-      throw new Error("Cannot supply advanced settings to BrowserAuthorizationClient after the underlying UserManager has already been created.");
+      throw new Error(
+        "Cannot supply advanced settings to BrowserAuthorizationClient after the underlying UserManager has already been created.",
+      );
     }
 
     this._advancedSettings = settings;
@@ -359,22 +410,26 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * @param responseMode - Defines how OIDC auth reponse parameters are encoded.
    * @throws [[Error]] when this attempt fails for any reason.
    */
-  private async handleSigninCallbackInternal(responseMode: "query" | "fragment"): Promise<void> {
+  private async handleSigninCallbackInternal(
+    responseMode: "query" | "fragment",
+  ): Promise<void> {
     const userManager = await this.getUserManager();
     // oidc-client-js uses an over-eager regex to parse the url, which may match values from the hash string when targeting the query string (and vice-versa)
     // To ensure that this mismatching doesn't occur, we strip the unnecessary portion away here first.
-    const urlSuffix = responseMode === "query"
-      ? window.location.search
-      : window.location.hash;
+    const urlSuffix =
+      responseMode === "query" ? window.location.search : window.location.hash;
     const url = `${window.location.origin}${window.location.pathname}${urlSuffix}`;
 
     const user = await userManager.signinCallback(url); // For silent or popup callbacks, execution effectively ends here, since the context will be destroyed.
     if (!user || user.expired)
-      throw new Error("Authorization error: userManager.signinRedirectCallback does not resolve to authorized user");
+      throw new Error(
+        "Authorization error: userManager.signinRedirectCallback does not resolve to authorized user",
+      );
 
     if (user.state) {
       const state = user.state as BrowserAuthorizationClientRedirectState;
-      if (state.successRedirectUrl) { // Special case for signin via redirect used to return to the original location
+      if (state.successRedirectUrl) {
+        // Special case for signin via redirect used to return to the original location
         window.location.replace(state.successRedirectUrl);
       }
     }
@@ -386,8 +441,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    */
   public async handleSigninCallback(): Promise<void> {
     const url = new URL(this._basicSettings.redirectUri);
-    if (url.pathname !== window.location.pathname)
-      return;
+    if (url.pathname !== window.location.pathname) return;
 
     let errorMessage = "";
 
@@ -405,7 +459,8 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
       errorMessage += `${err.message}\n`;
     }
 
-    if (window.self !== window.top) { // simply destroy the window if a failure is detected in an iframe.
+    if (window.self !== window.top) {
+      // simply destroy the window if a failure is detected in an iframe.
       window.close();
       return;
     }
@@ -422,7 +477,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
    * @param store - A Storage object such as sessionStorage which stores configuration. Defaults to localStorage
    * which is also the default stateStore for this library. These stores should match.
    */
-  public static async handleSignInCallback(store: Storage = window.localStorage) {
+  public static async handleSignInCallback(
+    store: Storage = window.localStorage,
+  ) {
     const staticClient = new BrowserAuthorizationClient({} as any);
     this.loadSettingsFromStorage(staticClient, store);
     await staticClient.handleSigninCallback();
@@ -437,7 +494,9 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     const storageEntry = store.getItem(`oidc.${nonce}`);
     if (!storageEntry)
-      throw new Error("Could not load oidc settings from local storage. Ensure the client is configured properly");
+      throw new Error(
+        "Could not load oidc settings from local storage. Ensure the client is configured properly",
+      );
 
     const storageObject: SettingsInStorage = JSON.parse(storageEntry);
 

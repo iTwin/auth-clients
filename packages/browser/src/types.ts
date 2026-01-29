@@ -19,14 +19,13 @@ export interface BrowserAuthorizationClientRedirectState {
  * The internal configuration used by BrowserAuthorizationClient.
  */
 export type BrowserAuthorizationClientConfigurationOptions = MarkRequired<
-BrowserAuthorizationClientConfiguration,
-"authority"
+  BrowserAuthorizationClientConfiguration,
+  "authority"
 >;
 /**
  * @beta
  */
-export interface BrowserAuthorizationClientConfiguration
-  extends BrowserAuthorizationClientRequestOptions {
+export interface BrowserAuthorizationClientConfiguration extends BrowserAuthorizationClientRequestOptions {
   /** The URL of the OIDC/OAuth2 provider. If left undefined, the Bentley auth authority will be used by default. */
   readonly authority?: string;
   /** The unique client id registered through the issuing authority. Required to obtain authorization from the user. */
@@ -45,15 +44,20 @@ export interface BrowserAuthorizationClientConfiguration
   readonly scope: string;
   /** The mechanism (or authentication flow) used to acquire auth information from the user through the authority */
   readonly responseType?:
-  | "code"
-  | "id_token"
-  | "id_token token"
-  | "code id_token"
-  | "code token"
-  | "code id_token token";
+    | "code"
+    | "id_token"
+    | "id_token token"
+    | "code id_token"
+    | "code token"
+    | "code id_token token";
   /** if true, do NOT attempt a silent signIn on startup of the application */
   readonly noSilentSignInOnAppStartup?: boolean;
-  /** The redirect URL used for silent sign in and renew. If not provided, will default to redirectUri. */
+  /**
+   * The redirect URL used for silent sign in and automatic token renewal.
+   * Required for automatic token renewal to work. Without this, tokens will expire after ~1 hour.
+   * Silent renewal loads this URL in a hidden iframe every ~55 minutes. For best performance,
+   * use a dedicated lightweight HTML page rather than your main application. See README for an example.
+   */
   readonly silentRedirectUri?: string;
   readonly responseMode?: "query" | "fragment";
 }
