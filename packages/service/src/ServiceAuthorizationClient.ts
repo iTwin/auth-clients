@@ -12,6 +12,7 @@ import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthoriza
 // It also won't show up in the resulting .d.ts file because we don't re-export this type.
 import type { Options as GotOptions } from "got" with { "resolution-mode": "import" };
 import { OIDCDiscoveryClient } from "./OIDCDiscoveryClient";
+import { randomUUID } from "node:crypto";
 
 /**
   * Utility to generate OIDC/OAuth tokens for service or service applications
@@ -74,6 +75,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
         /* eslint-disable @typescript-eslint/naming-convention */
         "Content-Type": "application/x-www-form-urlencoded",
         "Authorization": authHeader,
+        "x-correlation-id": randomUUID(),
         ...additionalHeaders,
         /* eslint-enable @typescript-eslint/naming-convention */
       },

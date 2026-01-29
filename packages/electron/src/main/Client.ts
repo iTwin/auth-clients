@@ -34,11 +34,12 @@ import {
   RevokeTokenRequest,
   TokenRequest,
 } from "@openid/appauth";
-import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
+import { NodeCrypto } from "@openid/appauth/built/node_support";
 import { ElectronAuthorizationEvents } from "./Events";
 import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler";
 import { RefreshTokenStore } from "./TokenStore";
 import { LoopbackWebServer } from "./LoopbackWebServer";
+import { CorrelationIdRequestor } from "./CorrelationIdRequestor";
 import * as electron from "electron";
 import { defaultExpiryBufferInSeconds } from "../common/constants";
 import type { IpcChannelNames } from "../common/IpcChannelNames";
@@ -352,7 +353,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    */
   public async signIn(): Promise<void> {
     if (!this._configuration) {
-      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
+      const tokenRequestor = new CorrelationIdRequestor(); // the Node.js based HTTP client
       this._configuration =
         await AuthorizationServiceConfiguration.fetchFromIssuer(
           this._issuerUrl,
@@ -470,7 +471,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    */
   public async signInSilent(): Promise<void> {
     if (!this._configuration) {
-      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
+      const tokenRequestor = new CorrelationIdRequestor(); // the Node.js based HTTP client
       this._configuration =
         await AuthorizationServiceConfiguration.fetchFromIssuer(
           this._issuerUrl,
@@ -610,7 +611,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     };
 
     const tokenRequest = new TokenRequest(tokenRequestJson);
-    const tokenRequestor = new NodeRequestor();
+    const tokenRequestor = new CorrelationIdRequestor();
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(
       tokenRequestor,
     );
@@ -649,7 +650,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     };
 
     const tokenRequest = new TokenRequest(tokenRequestJson);
-    const tokenRequestor = new NodeRequestor();
+    const tokenRequestor = new CorrelationIdRequestor();
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(
       tokenRequestor,
     );
@@ -671,7 +672,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     };
 
     const revokeTokenRequest = new RevokeTokenRequest(revokeTokenRequestJson);
-    const tokenRequestor = new NodeRequestor();
+    const tokenRequestor = new CorrelationIdRequestor();
     const tokenHandler: TokenRequestHandler = new BaseTokenRequestHandler(
       tokenRequestor,
     );
