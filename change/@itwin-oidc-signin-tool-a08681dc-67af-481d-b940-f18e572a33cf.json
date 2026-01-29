@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Fix e2e re-login",
+  "packageName": "@itwin/oidc-signin-tool",
+  "email": "bilal.baig@bentley.com",
+  "dependentChangeType": "patch"
+}
