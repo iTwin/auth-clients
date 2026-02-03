@@ -6,15 +6,17 @@
 import { BrowserAuthorizationClient } from "../../Client";
 
 const oidcCallbackUrl = `${process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL}/oidc-callback`;
+const silentRenewUrl = `${process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL}/silent-renew.html`;
 const authority = `https://${process.env.IMJS_URL_PREFIX}ims.bentley.com`;
+
 const client = new BrowserAuthorizationClient({
   clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID!,
   redirectUri: oidcCallbackUrl,
-  scope: "itwins:read projects:read itwins:modify projects:modify users:read",
+  scope: "itwin-platform",
   authority,
   postSignoutRedirectUri: "",
   responseType: "code",
-  silentRedirectUri: oidcCallbackUrl,
+  silentRedirectUri: silentRenewUrl,
 });
 
 const contentArea = document.querySelector("div[data-testid='content']");
@@ -64,19 +66,72 @@ async function validateAuthenticated() {
 }
 
 async function signout(popup: boolean) {
-  if (popup)
-    await client.signOutPopup();
-  else
-    await client.signOutRedirect();
+  if (popup) await client.signOutPopup();
+  else await client.signOutRedirect();
 }
 
 function displayAuthorized() {
   if (contentArea) {
     contentArea.textContent = "Authorized!";
 
+    // Display token info for testing
+    displayTokenInfo();
+
+    // Listen for token changes (including automatic silent renewal)
+    client.onAccessTokenChanged.addListener((token: string) => {
+      // eslint-disable-next-line no-console
+      console.log("Access token changed");
+      displayTokenInfo();
+    });
+
     appendButton(contentArea, "Signout", "signout-button");
     appendButton(contentArea, "Signout Popup", "signout-button-popup", true);
+    appendButton(
+      contentArea,
+      "Silent Renew",
+      "silent-renew-button",
+      false,
+      async () => {
+        try {
+          // Access the internal userManager directly to force a silent renew
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const userManager = (client as any)._userManager;
+          if (userManager) {
+            await userManager.signinSilent();
+            // eslint-disable-next-line no-console
+            console.log("Silent renew succeeded");
+          }
+        } catch (error) {
+          // interaction_required is expected when IDP session can't be renewed silently
+          // eslint-disable-next-line no-console
+          console.error("Silent renew failed:", error);
+        }
+      },
+    );
   }
+}
+
+async function displayTokenInfo() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const userManager = (client as any)._userManager;
+  if (!userManager) return;
+
+  const user = await userManager.getUser();
+  if (!user) return;
+
+  let tokenInfoEl = document.getElementById("token-info");
+  if (!tokenInfoEl) {
+    tokenInfoEl = document.createElement("div");
+    tokenInfoEl.id = "token-info";
+    tokenInfoEl.setAttribute("data-testid", "token-info");
+    contentArea?.appendChild(tokenInfoEl);
+  }
+
+  const expiresAt = user.expires_at ? new Date(user.expires_at * 1000) : null;
+  tokenInfoEl.innerHTML = `
+    <p>Token expires at: <span data-testid="token-expires-at">${expiresAt?.toISOString() ?? "unknown"}</span></p>
+    <p>Token (last 10 chars): <span data-testid="token-suffix">${user.access_token.slice(-10)}</span></p>
+  `;
 }
 
 function appendButton(
@@ -84,15 +139,17 @@ function appendButton(
   text: string,
   testId: string,
   popup: boolean = false,
-  clickHandler?: () => void
+  clickHandler?: () => void,
 ) {
   const button = document.createElement("button");
   button.textContent = text;
   button.setAttribute("data-testid", testId);
   button.setAttribute("id", testId);
-  const handler = clickHandler ?? (async () => {
-    await signout(popup);
-  })
+  const handler =
+    clickHandler ??
+    (async () => {
+      await signout(popup);
+    });
   button.addEventListener("click", handler);
   parent.appendChild(button);
 }
