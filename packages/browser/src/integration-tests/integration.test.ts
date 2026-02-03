@@ -93,3 +93,29 @@ test("signout popup", async ({ page }) => {
   const content = signOutPopup.getByText("Sign Off Successful");
   expect(content).toBeDefined();
 });
+
+test("silent renew - manual token refresh", async ({ page }) => {
+  await page.goto(signInOptions.url);
+  await testHelper.signIn(page);
+  await page.waitForURL(signInOptions.url);
+
+  await testHelper.validateAuthenticated(page);
+
+  // Capture the initial access token
+  const initialUser = await testHelper.getUserFromLocalStorage(page);
+  const initialAccessToken = initialUser.access_token;
+
+  // Trigger manual silent renew
+  const silentRenewButton = page.getByTestId("silent-renew-button");
+  await silentRenewButton.click();
+
+  // Wait for silent renew to complete
+  await page.waitForTimeout(2000);
+
+  // Verify that a new token was obtained
+  const renewedUser = await testHelper.getUserFromLocalStorage(page);
+  const renewedAccessToken = renewedUser.access_token;
+
+  expect(renewedAccessToken).toBeDefined();
+  expect(renewedAccessToken).not.toEqual(initialAccessToken);
+});
