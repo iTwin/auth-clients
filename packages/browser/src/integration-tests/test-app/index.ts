@@ -10,7 +10,7 @@ const authority = `https://${process.env.IMJS_URL_PREFIX}ims.bentley.com`;
 const client = new BrowserAuthorizationClient({
   clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID!,
   redirectUri: oidcCallbackUrl,
-  scope: "itwins:read projects:read itwins:modify projects:modify users:read",
+  scope: "itwin-platform",
   authority,
   postSignoutRedirectUri: "",
   responseType: "code",
