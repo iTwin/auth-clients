@@ -1,8 +1,16 @@
 # Change Log - @itwin/browser-authorization
 
-<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 17 Mar 2026 07:19:34 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 2.0.1
+
+Tue, 17 Mar 2026 07:19:34 GMT
+
+### Patches
+
+-   (98940208+GytisCepk@users.noreply.github.com)
 
 ## 2.0.0
 

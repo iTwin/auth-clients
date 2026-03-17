@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Tue, 17 Mar 2026 07:19:34 GMT",
+      "version": "5.1.1",
+      "tag": "@itwin/oidc-signin-tool_v5.1.1",
+      "comments": {
+        "patch": [
+          {
+            "author": "bilal.baig@bentley.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "871457b35458addbe18d62997a4a6305d1e331da",
+            "comment": "Fix e2e re-login"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 12 Jan 2026 19:52:14 GMT",
       "version": "5.1.0",
       "tag": "@itwin/oidc-signin-tool_v5.1.0",

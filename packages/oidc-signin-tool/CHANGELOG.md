@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Mon, 12 Jan 2026 19:52:14 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 17 Mar 2026 07:19:34 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 5.1.1
+
+Tue, 17 Mar 2026 07:19:34 GMT
+
+### Patches
+
+- Fix e2e re-login (bilal.baig@bentley.com)
 
 ## 5.1.0
 
