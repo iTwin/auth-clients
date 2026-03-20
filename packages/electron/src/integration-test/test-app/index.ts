@@ -39,14 +39,12 @@ void app.whenReady().then(async () => {
     channelClientPrefix: "prefixed",
   });
 
-  // TODO: revisit this lint problem later
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0)
       createWindow();
   });
 });
 
-// TODO: revisit this lint problem later
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin")
     app.quit();
