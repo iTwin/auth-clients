@@ -1,11 +1,11 @@
 import type { AuthorizationListener, AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
 import { AuthorizationNotifier, AuthorizationRequest, AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
-import type { ElectronMainAuthorizationConfiguration } from "../../ElectronMain";
-import { ElectronMainAuthorization } from "../../main/Client";
+import type { ElectronMainAuthorizationConfiguration } from "../../ElectronMain.js";
+import { ElectronMainAuthorization } from "../../main/Client.js";
 import * as sinon from "sinon";
-import { LoopbackWebServer } from "../../main/LoopbackWebServer";
-import { ElectronMainAuthorizationRequestHandler } from "../../main/ElectronMainAuthorizationRequestHandler";
-import { RefreshTokenStore } from "../../main/TokenStore";
+import { LoopbackWebServer } from "../../main/LoopbackWebServer.js";
+import { ElectronMainAuthorizationRequestHandler } from "../../main/ElectronMainAuthorizationRequestHandler.js";
+import { RefreshTokenStore } from "../../main/TokenStore.js";
 
 interface ClientConfig {
   clientId?: string;

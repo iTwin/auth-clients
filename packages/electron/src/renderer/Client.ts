@@ -10,10 +10,10 @@
 import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient, IpcSocketFrontend } from "@itwin/core-common";
-import { defaultExpiryBufferInSeconds } from "../common/constants";
-import type { IpcChannelNames } from "../common/IpcChannelNames";
-import { getIpcChannelNames } from "../common/IpcChannelNames";
-import type { ITwinElectronApi } from "./ElectronPreload";
+import { defaultExpiryBufferInSeconds } from "../common/constants.js";
+import type { IpcChannelNames } from "../common/IpcChannelNames.js";
+import { getIpcChannelNames } from "../common/IpcChannelNames.js";
+import type { ITwinElectronApi } from "./ElectronPreload.js";
 
 /**
  * Frontend Ipc support for Electron apps.

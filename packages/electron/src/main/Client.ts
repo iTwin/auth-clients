@@ -35,14 +35,14 @@ import {
   TokenRequest,
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
-import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler";
-import { RefreshTokenStore } from "./TokenStore";
-import { LoopbackWebServer } from "./LoopbackWebServer";
+import { ElectronAuthorizationEvents } from "./Events.js";
+import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler.js";
+import { RefreshTokenStore } from "./TokenStore.js";
+import { LoopbackWebServer } from "./LoopbackWebServer.js";
 import * as electron from "electron";
-import { defaultExpiryBufferInSeconds } from "../common/constants";
-import type { IpcChannelNames } from "../common/IpcChannelNames";
-import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames";
+import { defaultExpiryBufferInSeconds } from "../common/constants.js";
+import type { IpcChannelNames } from "../common/IpcChannelNames.js";
+import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames.js";
 const loggerCategory = "electron-auth";
 
 /**
