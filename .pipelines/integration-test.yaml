@@ -119,14 +119,6 @@ jobs:
               IMJS_TEST_REGULAR_USER_PASSWORD: $(IMJS_TEST_REGULAR_USER_PASSWORD)
             condition: and(succeeded(), ne(variables['Agent.OS'], 'Linux'))
 
-      - task: PublishBuildArtifacts@1
-        displayName: "Publish Playwright Screenshots"
-        condition: always()
-        inputs:
-          PathtoPublish: "packages/electron/test-results"
-          ArtifactName: "playwright-test-results-$(Agent.OS)"
-          publishLocation: Container
-
       - task: PublishTestResults@2
         displayName: "Publish Integration Test Results"
         condition: always()

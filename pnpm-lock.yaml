@@ -8,7 +8,7 @@ overrides:
   path-to-regexp: 0.1.12
   minimatch@>=9.0.0 <9.0.7: '>=9.0.7'
   serialize-javascript@<=7.0.2: '>=7.0.3'
-  flatted@<=3.4.1: '>=3.4.2'
+  flat-cache>flatted: '>=3.4.2'
 
 importers:
 
