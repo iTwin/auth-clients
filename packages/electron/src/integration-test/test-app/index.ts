@@ -40,7 +40,6 @@ void app.whenReady().then(async () => {
   });
 
   // TODO: revisit this lint problem later
-  // eslint-disable-next-line deprecation/deprecation
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0)
       createWindow();
@@ -48,7 +47,6 @@ void app.whenReady().then(async () => {
 });
 
 // TODO: revisit this lint problem later
-// eslint-disable-next-line deprecation/deprecation
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin")
     app.quit();

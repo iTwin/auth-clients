@@ -26,7 +26,9 @@ const getElectronUserDataPath = (): string | undefined => {
     case "darwin": // For MacOS
       return `${process.env.HOME}/Library/Application Support/Electron`;
     case "win32": // For Windows
-      return `${process.env.APPDATA!}/Electron`;
+      return `${
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      process.env.APPDATA!}/Electron`;
     case "linux": // For Linux
       return undefined; // Linux uses the same path for both main and renderer processes, no need to manually resolve path.
     default:
@@ -80,7 +82,7 @@ test.beforeEach(async () => {
       args: ["./dist/integration-test/test-app/index.js"],
     });
     electronPage = await electronApp.firstWindow();
-  } catch (error) {
+  } catch {
   }
 });
 

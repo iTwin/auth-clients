@@ -53,7 +53,7 @@ class ElectronAuthIPC {
     } else {
       // use the methods on window.itwinjs exposed by ElectronPreload.ts, or ipcRenderer directly if running with nodeIntegration=true (**only** for tests).
       // Note that `require("electron")` doesn't work with nodeIntegration=false - that's what it stops
-      this._ipcSocket = (window as any).itwinjs ?? require("electron").ipcRenderer; // eslint-disable-line @typescript-eslint/no-var-requires
+      this._ipcSocket = (window as any).itwinjs ?? require("electron").ipcRenderer; // eslint-disable-line @typescript-eslint/no-require-imports
     }
   }
 }

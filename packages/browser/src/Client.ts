@@ -56,7 +56,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     this._basicSettings = {
       ...configuration,
-      authority: configuration.authority ?? getImsAuthority(), // eslint-disable-line deprecation/deprecation
+      authority: configuration.authority ?? getImsAuthority(), // eslint-disable-line @typescript-eslint/no-deprecated
     };
   }
 
@@ -237,7 +237,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     try {
       user = (await userManager.signinSilent()) ?? undefined; // calls events
       return user;
-    } catch (err) {
+    } catch {
       return undefined;
     }
   }
@@ -311,7 +311,7 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     const userManager = await this.getUserManager();
     try {
       await userManager.querySessionStatus();
-    } catch (err) {
+    } catch {
       // Access token is no longer valid in this session
       await userManager.removeUser();
       return false;

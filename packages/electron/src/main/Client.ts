@@ -158,7 +158,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   /**
    * Event raised whenever the access token changes on any instance of ElectronMainAuthorization
-   * @deprecated in 0.22 - please use the onUserStateChanged instance event instead.
+   * @deprecated in 0.22.0. Please use the onUserStateChanged instance event instead.
    */
   public static readonly onUserStateChanged = new BeEvent<
   (token: AccessToken) => void
@@ -307,7 +307,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
-    // eslint-disable-next-line deprecation/deprecation
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
     this.onUserStateChanged.raiseEvent(this._accessToken);
   }
@@ -378,7 +378,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
         await LoopbackWebServer.start(tryRedirectUri);
         redirectUri = tryRedirectUri;
         break;
-      } catch (e: unknown) {
+      } catch {
         // Most common error is EADDRINUSE (port already in use) - just continue with the next port
         continue;
       }
@@ -440,7 +440,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
             authRequest,
             authResponse,
             authError,
-          ).catch((e) => reject(e));
+          ).catch(reject);
 
           authorizationEvents.onAuthorizationResponseCompleted.raiseEvent(
             authError ? authError : undefined,
@@ -521,6 +521,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     // Phase 2: Swap the authorization code for the access token
     const tokenResponse = await this.swapAuthorizationCodeForTokens(
       authResponse.code,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       authRequest.internal!.code_verifier,
       authRequest.redirectUri,
     );
@@ -676,6 +677,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       tokenRequestor,
     );
     await tokenHandler.performRevokeTokenRequest(
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       this._configuration!,
       revokeTokenRequest,
     );

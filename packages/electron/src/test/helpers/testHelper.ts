@@ -46,7 +46,6 @@ export function getMockTokenResponse({ accessToken, refreshToken, issuedAt, expi
       refresh_token: refreshToken ?? "testRefreshToken",
       issued_at: issuedAt ?? (new Date()).getTime() / 1000,
       expires_in: expiresIn ?? "60000",
-      /* eslint-disable @typescript-eslint/naming-convention */
     });
 }
 
@@ -77,7 +76,6 @@ export async function setupMockAuthServer(mockTokenResponse: TokenResponse, setu
       scope: "testScope",
       internal: { code_verifier: "testCodeVerifier" },
       state: "testState",
-      /* eslint-disable @typescript-eslint/naming-convention */
     });
 
     const authResponse = new AuthorizationResponse({ code: "testCode", state: "testState" });

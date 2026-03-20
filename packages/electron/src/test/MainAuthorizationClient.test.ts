@@ -13,7 +13,6 @@ import { RefreshTokenStore } from "../main/TokenStore.js";
 import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper.js";
 import type { AccessToken } from "@itwin/core-bentley";
 
-/* eslint-disable @typescript-eslint/naming-convention */
 const assert: Chai.AssertStatic = chai.assert; // ts is not able to fully infer the type of assert, so we need to explicitly set it.
 const expect = chai.expect;
 
@@ -47,7 +46,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   afterEach(function () {
-    // eslint-disable-next-line deprecation/deprecation
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     ElectronMainAuthorization.onUserStateChanged.clear();
   });
 
@@ -86,6 +85,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const config = getConfig();
     const mockTokenResponse = getMockTokenResponse();
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     stubTokenCrypto(mockTokenResponse.refreshToken!);
     // Clear token store
     const tokenStore = new RefreshTokenStore(getTokenStoreFileName(config.clientId), getTokenStoreKey(config.clientId));
@@ -131,6 +131,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
   it("should save new refresh token after signIn() when no electron-store token is present", async () => {
     const config = getConfig();
     const mockTokenResponse = getMockTokenResponse();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     stubTokenCrypto(mockTokenResponse.refreshToken!);
 
     // Clear token store
@@ -139,6 +140,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
 
     await setupMockAuthServer(mockTokenResponse, {
       performTokenRequestCb: async () => {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         await tokenStore.save(mockTokenResponse.refreshToken!);
       },
     });
@@ -190,13 +192,14 @@ describe("ElectronMainAuthorization Token Logic", () => {
 
     const mockTokenResponse = getMockTokenResponse();
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     stubTokenCrypto(mockTokenResponse.refreshToken!);
     await setupMockAuthServer(mockTokenResponse);
 
     const client1 = new ElectronMainAuthorization(config1);
     const client2 = new ElectronMainAuthorization(config2);
 
-    // eslint-disable-next-line deprecation/deprecation
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     ElectronMainAuthorization.onUserStateChanged.addListener(staticHandler);
     client1.onUserStateChanged.addListener(instanceHandler1);
     client2.onUserStateChanged.addListener(instanceHandler2);
@@ -325,6 +328,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       const config = getConfig();
       const mockTokenResponse = getMockTokenResponse();
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       stubTokenCrypto(mockTokenResponse.refreshToken!);
 
       await setupMockAuthServer(mockTokenResponse);
@@ -345,6 +349,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       const config = getConfig({ scopes: "testScope blurgh-platform ReadTHINGS" });
       const mockTokenResponse = getMockTokenResponse();
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       stubTokenCrypto(mockTokenResponse.refreshToken!);
 
       await setupMockAuthServer(mockTokenResponse);
@@ -365,6 +370,7 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
       const config = getConfig({ scopes: "testScope blurgh-platform offline_access ReadTHINGS" });
       const mockTokenResponse = getMockTokenResponse();
 
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       stubTokenCrypto(mockTokenResponse.refreshToken!);
 
       await setupMockAuthServer(mockTokenResponse);

@@ -53,6 +53,7 @@ export class IntrospectionClient {
     if (header.kid) { // if `kid` is undefined, always get a new signing key
       if (!this._signingKeyCache.has(header.kid))
         this._signingKeyCache.set(header.kid, await jwksClient.getSigningKey(header.kid));
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       return this._signingKeyCache.get(header.kid)!;
     }
     return jwksClient.getSigningKey();

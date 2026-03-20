@@ -2,7 +2,7 @@ import { config } from "dotenv";
 import * as path from "path";
 import type { TestBrowserAuthorizationClientConfiguration } from "../TestUsers";
 
-const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
+const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-require-imports
 
 /**
  * Determines auth sign in flow.
