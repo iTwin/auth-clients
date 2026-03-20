@@ -5,11 +5,11 @@
 
 import type { ElectronApplication, Page } from "@playwright/test";
 import { _electron as electron, expect, test } from "@playwright/test";
-import type { SignInOptions } from "./types";
-import { loadConfig } from "./helpers/loadConfig";
-import { TestHelper } from "./helpers/TestHelper";
-import { RefreshTokenStore } from "../main/TokenStore";
-import { getPrefixedClientId } from "../common/IpcChannelNames";
+import type { SignInOptions } from "./types.js";
+import { loadConfig } from "./helpers/loadConfig.js";
+import { TestHelper } from "./helpers/TestHelper.js";
+import { RefreshTokenStore } from "../main/TokenStore.js";
+import { getPrefixedClientId } from "../common/IpcChannelNames.js";
 
 const { clientId, envPrefix, email, password } = loadConfig();
 

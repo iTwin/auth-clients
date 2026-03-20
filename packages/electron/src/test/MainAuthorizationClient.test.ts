@@ -8,9 +8,9 @@ import { BaseTokenRequestHandler } from "@openid/appauth";
 import * as chai from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as sinon from "sinon";
-import { ElectronMainAuthorization } from "../main/Client";
-import { RefreshTokenStore } from "../main/TokenStore";
-import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper";
+import { ElectronMainAuthorization } from "../main/Client.js";
+import { RefreshTokenStore } from "../main/TokenStore.js";
+import { getConfig, getMockTokenResponse, setupMockAuthServer, stubTokenCrypto } from "./helpers/testHelper.js";
 import type { AccessToken } from "@itwin/core-bentley";
 
 /* eslint-disable @typescript-eslint/naming-convention */

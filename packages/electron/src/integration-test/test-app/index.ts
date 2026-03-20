@@ -1,4 +1,4 @@
-import { ElectronMainAuthorization } from "../../main/Client";
+import { ElectronMainAuthorization } from "../../main/Client.js";
 import { app, BrowserWindow } from "electron";
 import { config } from "dotenv";
 
