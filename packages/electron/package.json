@@ -18,7 +18,7 @@
     "build": "pnpm run -s build:cjs && pnpm run -s build:esm && pnpm run copy:assets",
     "build:cjs": "tsc 1>&2 -p tsconfig.cjs.json",
     "build:esm": "tsc 1>&2 -p tsconfig.esm.json",
-    "copy:assets": "cpx src/static/* dist/main/static && cpx src/static/* lib/cjs/main/static && cpx src/static/* lib/esm/main/static && echo '{\"type\":\"module\"}' > lib/esm/package.json",
+    "copy:assets": "cpx src/static/* dist/main/static && cpx src/static/* lib/cjs/main/static && cpx src/static/* lib/esm/main/static && node -e \"require('fs').writeFileSync('lib/esm/package.json', JSON.stringify({type:'module'}))\"",
     "cover": "nyc npm test",
     "clean": "rimraf lib",
     "docs": "RUSHSTACK_FILE_ERROR_BASE_FOLDER='../..' betools docs --includes=../../generated-docs/extract --json=../../generated-docs/auth-clients/electron-authorization/file.json --tsIndexFile=./docsIndex.ts --onlyJson",
