@@ -6,7 +6,7 @@
 
 import { safeStorage } from "electron";
 // eslint-disable-next-line @typescript-eslint/naming-convention
-const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-var-requires
+const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-require-imports
 
 /**
  * Utility class used to store and read OAuth refresh tokens.

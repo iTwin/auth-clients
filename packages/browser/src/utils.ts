@@ -11,7 +11,7 @@
  * Returns the IMS authority URL.
  * A prefix will be prepended based on the value of the IMJS_URL_PREFIX environment variable.
  * The prefix "dev-" will automatically be converted to "qa-".
- * @deprecated in 1.1.x Please set the authority in `BrowserAuthorizationClientConfiguration` configuration object.
+ * @deprecated in 1.1.0. Please set the authority in `BrowserAuthorizationClientConfiguration` configuration object.
  */
 export function getImsAuthority(): string {
   try {
@@ -22,7 +22,7 @@ export function getImsAuthority(): string {
       prefix = "qa-";
 
     return `https://${prefix}ims.bentley.com`;
-  } catch (_) {
+  } catch {
     // swallow error
   }
 

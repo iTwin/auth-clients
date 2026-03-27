@@ -53,7 +53,10 @@ export class IntrospectionClient {
     if (header.kid) { // if `kid` is undefined, always get a new signing key
       if (!this._signingKeyCache.has(header.kid))
         this._signingKeyCache.set(header.kid, await jwksClient.getSigningKey(header.kid));
-      return this._signingKeyCache.get(header.kid)!;
+      const signingKey = this._signingKeyCache.get(header.kid);
+      if (!signingKey)
+        throw new Error(`Signing key ${header.kid} not found in cache`);
+      return signingKey;
     }
     return jwksClient.getSigningKey();
   }

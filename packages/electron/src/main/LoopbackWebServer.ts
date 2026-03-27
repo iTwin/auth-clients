@@ -117,7 +117,7 @@ export class LoopbackWebServer {
     let authorizationError: AuthorizationErrorJson | null = null;
     let httpResponseContent: HtmlTemplateParams;
 
-    httpResponse.writeHead(200, { "Content-Type": "text/html" }); //  eslint-disable-line @typescript-eslint/naming-convention
+    httpResponse.writeHead(200, { "Content-Type": "text/html" });
 
     if (error) {
       authorizationError = { error, error_description: errorDescription ?? undefined, error_uri: errorUri ?? undefined, state }; // eslint-disable-line @typescript-eslint/naming-convention

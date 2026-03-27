@@ -78,7 +78,7 @@ export async function automatedSignIn<T>(
 
     try {
       await handleConsentPage(context);
-    } catch (error) {
+    } catch {
       // ignore, if we get the callback Url, we're good.
     }
 
@@ -217,7 +217,7 @@ async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Pro
   let errorExists = false;
   try {
     errorExists = await checkSelectorExists(page, "#errorText");
-  } catch (err) {
+  } catch {
     // continue with navigation even if throws
   }
 
