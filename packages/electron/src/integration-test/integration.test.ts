@@ -25,10 +25,12 @@ const getElectronUserDataPath = (): string | undefined => {
   switch (process.platform) {
     case "darwin": // For MacOS
       return `${process.env.HOME}/Library/Application Support/Electron`;
-    case "win32": // For Windows
-      return `${
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      process.env.APPDATA!}/Electron`;
+    case "win32": { // For Windows
+      const appData = process.env.APPDATA;
+      if (!appData)
+        throw new Error("APPDATA environment variable not set on Windows");
+      return `${appData}/Electron`;
+    }
     case "linux": // For Linux
       return undefined; // Linux uses the same path for both main and renderer processes, no need to manually resolve path.
     default:

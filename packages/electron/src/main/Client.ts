@@ -519,10 +519,11 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     }
 
     // Phase 2: Swap the authorization code for the access token
+    if (!authRequest.internal)
+      throw new Error("Missing internal state in authorization request");
     const tokenResponse = await this.swapAuthorizationCodeForTokens(
       authResponse.code,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      authRequest.internal!.code_verifier,
+      authRequest.internal.code_verifier,
       authRequest.redirectUri,
     );
     Logger.logTrace(
@@ -663,6 +664,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       throw new Error(
         "Missing refresh token. First call signIn() and ensure it's successful",
       );
+    if (!this._configuration)
+      throw new Error("Not initialized. First call initialize()");
     assert(this._clientId !== "");
 
     const revokeTokenRequestJson: RevokeTokenRequestJson = {
@@ -677,8 +680,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       tokenRequestor,
     );
     await tokenHandler.performRevokeTokenRequest(
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      this._configuration!,
+      this._configuration,
       revokeTokenRequest,
     );
 
