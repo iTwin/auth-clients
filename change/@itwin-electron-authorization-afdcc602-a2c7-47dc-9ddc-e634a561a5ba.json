@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Fix ESM exports by adding .js extensions to all relative imports and emitting lib/esm/package.json with type module",
-  "packageName": "@itwin/electron-authorization",
-  "email": "50554904+hl662@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

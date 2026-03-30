@@ -1,8 +1,16 @@
 # Change Log - @itwin/service-authorization
 
-<!-- This log was last generated on Mon, 27 Oct 2025 12:14:12 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 30 Mar 2026 16:53:21 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 2.1.1
+
+Mon, 30 Mar 2026 16:53:21 GMT
+
+### Patches
+
+- chore: upgrade all packages to @itwin/eslint-plugin@6 and eslint@9 (50554904+hl662@users.noreply.github.com)
 
 ## 2.1.0
 

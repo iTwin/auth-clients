@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Tue, 17 Mar 2026 07:19:34 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 30 Mar 2026 16:53:21 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 5.1.2
+
+Mon, 30 Mar 2026 16:53:21 GMT
+
+### Patches
+
+- chore: upgrade all packages to @itwin/eslint-plugin@6 and eslint@9 (50554904+hl662@users.noreply.github.com)
 
 ## 5.1.1
 

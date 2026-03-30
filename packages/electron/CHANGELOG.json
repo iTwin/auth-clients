@@ -2,6 +2,27 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Mon, 30 Mar 2026 16:53:21 GMT",
+      "version": "0.22.3",
+      "tag": "@itwin/electron-authorization_v0.22.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "517ef259cdf12176123433b63c56331cdb5db936",
+            "comment": "chore: upgrade all packages to @itwin/eslint-plugin@6 and eslint@9"
+          },
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "517ef259cdf12176123433b63c56331cdb5db936",
+            "comment": "Fix ESM exports by adding .js extensions to all relative imports and emitting lib/esm/package.json with type module"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 17 Mar 2026 07:19:34 GMT",
       "version": "0.22.2",
       "tag": "@itwin/electron-authorization_v0.22.2",
