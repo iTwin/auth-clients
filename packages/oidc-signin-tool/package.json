@@ -34,17 +34,17 @@
   },
   "dependencies": {
     "@itwin/certa": "^5.5.0",
-    "@itwin/service-authorization": "workspace:^",
     "@playwright/test": "~1.56.1",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^12.0.3",
     "oidc-client-ts": "^3.3.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^5.5.0",
+    "@itwin/build-tools": "^5.8.2",
     "@itwin/core-bentley": "^5.0.0",
     "@itwin/core-common": "^5.0.0",
     "@itwin/eslint-plugin": "^6.0.0",
+    "@itwin/service-authorization": "workspace:^",
     "@types/chai": "^4.3.20",
     "@types/chai-as-promised": "^7.1.8",
     "@types/jsonwebtoken": "^9.0.10",
@@ -57,10 +57,11 @@
     "mocha": "^11.7.5",
     "nyc": "^17.1.0",
     "rimraf": "^3.0.2",
-    "sinon": "15.0.4",
+    "sinon": "21.1.2",
     "typescript": "~5.6.3"
   },
   "peerDependencies": {
-    "@itwin/core-bentley": "^5.0.0"
+    "@itwin/core-bentley": "^5.0.0",
+    "@itwin/service-authorization": "^2.1.0"
   }
 }
