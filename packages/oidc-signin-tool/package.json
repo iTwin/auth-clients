@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@itwin/certa": "^5.5.0",
-    "@itwin/service-authorization": "workspace:^",
     "@playwright/test": "~1.56.1",
     "dotenv": "^10.0.0",
     "dotenv-expand": "^12.0.3",
@@ -42,6 +41,7 @@
   },
   "devDependencies": {
     "@itwin/build-tools": "^5.5.0",
+    "@itwin/service-authorization": "workspace:^",
     "@itwin/core-bentley": "^5.0.0",
     "@itwin/core-common": "^5.0.0",
     "@itwin/eslint-plugin": "^6.0.0",
@@ -61,6 +61,7 @@
     "typescript": "~5.6.3"
   },
   "peerDependencies": {
-    "@itwin/core-bentley": "^5.0.0"
+    "@itwin/core-bentley": "^5.0.0",
+    "@itwin/service-authorization": "^2.1.0"
   }
 }
