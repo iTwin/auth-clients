@@ -26,8 +26,9 @@ describe("TestUtility", () => {
   let constructorStub: sinon.SinonStub;
 
   beforeEach(() => {
-    constructorStub = sinon.stub(TestBrowserAuthorizationClientModule, "TestBrowserAuthorizationClient").returns(
-      (user: TestUserCredentials, config: TestBrowserAuthorizationClientConfiguration) => { return { ...user, ...config }; });
+    constructorStub = sinon.stub(TestBrowserAuthorizationClientModule, "TestBrowserAuthorizationClient").callsFake(
+      (config: TestBrowserAuthorizationClientConfiguration, user: TestUserCredentials) => ({ ...user, ...config }),
+    );
     sinon.stub(TestUsers, "getTestBrowserAuthorizationClientConfiguration").returns({ ...defaultConfig });
   });
 
