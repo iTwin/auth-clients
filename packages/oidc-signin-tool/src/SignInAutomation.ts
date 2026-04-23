@@ -156,9 +156,7 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
   }
   await page.locator(testSelectors.pingEmail).fill(context.user.email);
 
-  await page.waitForSelector(testSelectors.pingAllowSubmit);
-  let allow = page.locator(testSelectors.pingAllowSubmit);
-  await allow.click();
+  await page.locator(testSelectors.pingAllowSubmit).click();
 
   // Cut out for federated sign-in
   if (-1 !== page.url().indexOf("microsoftonline"))
@@ -166,9 +164,7 @@ async function handlePingLoginPage<T>(context: AutomatedSignInContext<T>): Promi
 
   await page.locator(testSelectors.pingPassword).fill(context.user.password);
 
-  await page.waitForSelector(testSelectors.pingAllowSubmit);
-  allow = page.locator(testSelectors.pingAllowSubmit);
-  await allow.click();
+  await page.locator(testSelectors.pingAllowSubmit).click();
 
   const error = page.getByText(
     "We didn't recognize the email address or password you entered. Please try again.",
@@ -194,14 +190,16 @@ async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Pro
     return;
 
   // Wait for either msUserNameField or fedPassword to be visible
-  const msUserNameFieldPromise = page.waitForSelector(testSelectors.msUserNameField, { state: "visible" });
-  const fedPasswordPromise = page.waitForSelector(testSelectors.fedPassword, { state: "visible" });
-  await Promise.race([msUserNameFieldPromise, fedPasswordPromise]);
+  const msPromise = page.locator(testSelectors.msUserNameField).waitFor({ state: "visible" }).then(() => "ms" as const);
+  const fedPromise = page.locator(testSelectors.fedPassword).waitFor({ state: "visible" }).then(() => "fed" as const);
+  // Suppress unhandled rejection from the losing race participant
+  msPromise.catch(() => {});
+  fedPromise.catch(() => {});
+  const winner = await Promise.race([msPromise, fedPromise]);
 
-  if (await checkSelectorExists(page, testSelectors.msUserNameField)) {
+  if (winner === "ms") {
     await page.locator(testSelectors.msUserNameField).fill(context.user.email);
-    const msSubmit = await page.waitForSelector(testSelectors.msSubmit);
-    await msSubmit.click();
+    await page.locator(testSelectors.msSubmit).click();
 
     // Checks for the error in username entered
     await checkErrorOnPage(page, "#usernameError");
@@ -210,8 +208,7 @@ async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Pro
   }
 
   await page.locator(testSelectors.fedPassword).fill(context.user.password);
-  const submit = await page.waitForSelector(testSelectors.fedSubmit);
-  await submit.click();
+  await page.locator(testSelectors.fedSubmit).click();
 
   // Need to check for invalid username/password directly after the submit button is pressed
   let errorExists = false;
@@ -229,8 +226,7 @@ async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Pro
     -1 !== page.url().indexOf("microsoftonline") &&
     (await checkSelectorExists(page, testSelectors.msSubmit))
   ) {
-    const msSubmit = await page.waitForSelector(testSelectors.msSubmit);
-    await msSubmit.click();
+    await page.locator(testSelectors.msSubmit).click();
   }
 }
 
@@ -247,13 +243,10 @@ async function handleConsentPage<T>(context: AutomatedSignInContext<T>): Promise
   const pageTitle = await page.title();
 
   if (pageTitle === "Request for Approval") {
-    const pingSubmit = await page.waitForSelector(
-      testSelectors.pingAllowSubmit,
-    );
-    await pingSubmit.click();
+    await page.locator(testSelectors.pingAllowSubmit).click();
   } else if ((await page.title()) === "Permissions") {
     // Another new consent page...
-    const acceptButton = await page.waitForSelector(
+    const acceptButton = page.locator(
       "xpath=(//button/span[text()='Accept'] | //div[contains(@class, 'ping-buttons')]/a[text()='Accept'])[1]",
     );
 
@@ -272,17 +265,27 @@ async function checkSelectorExists(
   page: Page,
   selector: string,
 ): Promise<boolean> {
-  const element = await page.$(selector);
-  return !!element;
+  try {
+    return (await page.locator(selector).count()) > 0;
+  } catch {
+    // Page likely navigated away — element doesn't exist in the new context
+    return false;
+  }
 }
 
 async function checkErrorOnPage(page: Page, selector: string): Promise<void> {
-  const errMsgElement = await page.$(selector);
-  if (errMsgElement) {
-    const errMsgText = await errMsgElement.textContent();
-    if (undefined !== errMsgText && null !== errMsgText)
-      throw new Error(errMsgText);
+  let errMsgText: string | null | undefined;
+  try {
+    const errMsgElement = page.locator(selector).first();
+    if ((await errMsgElement.count()) === 0)
+      return;
+    errMsgText = await errMsgElement.textContent();
+  } catch {
+    // Page likely navigated away — no error to check
+    return;
   }
+  if (undefined !== errMsgText && null !== errMsgText)
+    throw new Error(errMsgText);
 }
 
 /** @internal use playwright to launch the default automation page, which is a chromium instance */
