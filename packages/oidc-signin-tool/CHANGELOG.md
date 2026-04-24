@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Mon, 30 Mar 2026 16:53:21 GMT and should not be manually modified. -->
+<!-- This log was last generated on Fri, 24 Apr 2026 16:41:54 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 5.1.3
+
+Fri, 24 Apr 2026 16:41:54 GMT
+
+### Patches
+
+- Replace deprecated Playwright page.$() and page.waitForSelector() APIs with modern locator-based equivalents to fix "Execution context was destroyed" errors on Chromium 146+ (Electron 41) (50554904+hl662@users.noreply.github.com)
 
 ## 5.1.2
 

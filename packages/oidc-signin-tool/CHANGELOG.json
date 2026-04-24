@@ -2,6 +2,21 @@
   "name": "@itwin/oidc-signin-tool",
   "entries": [
     {
+      "date": "Fri, 24 Apr 2026 16:41:54 GMT",
+      "version": "5.1.3",
+      "tag": "@itwin/oidc-signin-tool_v5.1.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/oidc-signin-tool",
+            "commit": "f7e34ac59a02c8d1d09219329d483c32f280fd80",
+            "comment": "Replace deprecated Playwright page.$() and page.waitForSelector() APIs with modern locator-based equivalents to fix \"Execution context was destroyed\" errors on Chromium 146+ (Electron 41)"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 30 Mar 2026 16:53:21 GMT",
       "version": "5.1.2",
       "tag": "@itwin/oidc-signin-tool_v5.1.2",

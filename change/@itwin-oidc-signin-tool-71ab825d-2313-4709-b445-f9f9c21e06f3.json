@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Replace deprecated Playwright page.$() and page.waitForSelector() APIs with modern locator-based equivalents to fix \"Execution context was destroyed\" errors on Chromium 146+ (Electron 41)",
-  "packageName": "@itwin/oidc-signin-tool",
-  "email": "50554904+hl662@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}
