@@ -193,8 +193,8 @@ async function handleFederatedSignin<T>(context: AutomatedSignInContext<T>): Pro
   const msPromise = page.locator(testSelectors.msUserNameField).waitFor({ state: "visible" }).then(() => "ms" as const);
   const fedPromise = page.locator(testSelectors.fedPassword).waitFor({ state: "visible" }).then(() => "fed" as const);
   // Suppress unhandled rejection from the losing race participant
-  msPromise.catch(() => {});
-  fedPromise.catch(() => {});
+  void msPromise.catch(() => {});
+  void fedPromise.catch(() => {});
   const winner = await Promise.race([msPromise, fedPromise]);
 
   if (winner === "ms") {
