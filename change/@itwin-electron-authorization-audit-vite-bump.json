@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Bump vite devDependency to ^6.4.3 to resolve high-severity audit findings (server.fs.deny bypass, launch-editor NTLMv2 disclosure)",
+  "packageName": "@itwin/electron-authorization",
+  "email": "HoangNam.Le@bentley.com",
+  "dependentChangeType": "none"
+}
