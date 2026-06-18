@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Fri, 24 Apr 2026 16:41:54 GMT",
+      "version": "0.22.3",
+      "tag": "@itwin/electron-authorization_v0.22.3",
+      "comments": {
+        "none": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "f7e34ac59a02c8d1d09219329d483c32f280fd80",
+            "comment": "Update vite devDependency to fix audit vulnerability"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 30 Mar 2026 16:53:21 GMT",
       "version": "0.22.3",
       "tag": "@itwin/electron-authorization_v0.22.3",
