@@ -60,9 +60,11 @@ describe("BrowserAuthorizationClient", () => {
 
   describe("#constructor", () => {
     const TEST_AUTHORITY = "https://test.authority.com";
+    const IMS_AUTHORITY = "https://qa-ims.bentley.com";
 
     let testClient: BrowserAuthorizationClient;
     let testConfig: BrowserAuthorizationClientConfiguration;
+    let imsConfig: BrowserAuthorizationClientConfiguration;
     let testConfigWithoutAuthority: BrowserAuthorizationClientConfiguration;
 
     before(() => {
@@ -80,6 +82,11 @@ describe("BrowserAuthorizationClient", () => {
       testConfig = {
         ...testConfigWithoutAuthority,
         authority: TEST_AUTHORITY,
+      };
+
+      imsConfig = {
+        ...testConfigWithoutAuthority,
+        authority: IMS_AUTHORITY,
       };
 
       testClient = new BrowserAuthorizationClient(testConfig);
@@ -191,8 +198,8 @@ describe("BrowserAuthorizationClient", () => {
     });
 
     it("adds a unique x-correlation-id header generator", async () => {
-      const client = new TestableBrowserAuthorizationClient(testConfig);
-      const settings = await client.getSettingsForTest(testConfig);
+      const client = new TestableBrowserAuthorizationClient(imsConfig);
+      const settings = await client.getSettingsForTest(imsConfig);
 
       const correlationIdHeader = getCorrelationIdHeader(settings.extraHeaders?.["x-correlation-id"]);
       const firstCorrelationId = correlationIdHeader();
@@ -201,6 +208,23 @@ describe("BrowserAuthorizationClient", () => {
       assert.match(firstCorrelationId, uuidRegex);
       assert.match(secondCorrelationId, uuidRegex);
       assert.notEqual(firstCorrelationId, secondCorrelationId);
+    });
+
+    it("adds IMS metadata when x-correlation-id headers are configured", async () => {
+      const client = new TestableBrowserAuthorizationClient(imsConfig);
+      const settings = await client.getSettingsForTest(imsConfig);
+
+      assert.equal(settings.metadata?.issuer, IMS_AUTHORITY);
+      assert.equal(settings.metadata?.authorization_endpoint, `${IMS_AUTHORITY}/connect/authorize`);
+      assert.equal(settings.metadata?.token_endpoint, `${IMS_AUTHORITY}/connect/token`);
+      assert.equal(settings.metadata?.end_session_endpoint, `${IMS_AUTHORITY}/connect/endsession`);
+    });
+
+    it("does not add x-correlation-id headers for non-IMS authorities", async () => {
+      const client = new TestableBrowserAuthorizationClient(testConfig);
+      const settings = await client.getSettingsForTest(testConfig);
+
+      assert.isUndefined(settings.extraHeaders?.["x-correlation-id"]);
     });
 
     it("preserves configured extra headers", async () => {
