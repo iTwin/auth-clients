@@ -18,7 +18,6 @@ export class CorrelationIdRequestor extends NodeRequestor {
       ...settings,
       headers: {
         ...settings.headers,
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         "x-correlation-id": randomUUID(),
       },
     };

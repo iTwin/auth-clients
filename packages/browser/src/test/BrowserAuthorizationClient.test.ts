@@ -3,11 +3,61 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { assert } from "chai";
+import type { ExtraHeader, UserManagerSettings } from "oidc-client-ts";
 import { BrowserAuthorizationClient } from "../Client";
 import { getImsAuthority } from "../utils";
 import type { BrowserAuthorizationClientConfiguration } from "../types";
 
+const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+class TestableBrowserAuthorizationClient extends BrowserAuthorizationClient {
+  public async getSettingsForTest(
+    basicSettings: BrowserAuthorizationClientConfiguration,
+    advancedSettings?: UserManagerSettings,
+  ) {
+    return this.getUserManagerSettings(basicSettings, advancedSettings);
+  }
+}
+
+function getCorrelationIdHeader(header: ExtraHeader | undefined): () => string {
+  if (typeof header !== "function")
+    throw new Error("Expected x-correlation-id extra header to be a function");
+
+  return header;
+}
+
+function createStorage(): Storage {
+  const items = new Map<string, string>();
+  return {
+    get length() { return items.size; },
+    clear: () => items.clear(),
+    getItem: (key: string) => items.get(key) ?? null,
+    key: (index: number) => Array.from(items.keys())[index] ?? null,
+    removeItem: (key: string) => items.delete(key),
+    setItem: (key: string, value: string) => items.set(key, value),
+  };
+}
+
 describe("BrowserAuthorizationClient", () => {
+  let originalWindowDescriptor: PropertyDescriptor | undefined;
+
+  before(() => {
+    originalWindowDescriptor = Object.getOwnPropertyDescriptor(globalThis, "window");
+    Object.defineProperty(globalThis, "window", {
+      configurable: true,
+      value: { localStorage: createStorage() },
+    });
+  });
+
+  after(() => {
+    if (originalWindowDescriptor) {
+      Object.defineProperty(globalThis, "window", originalWindowDescriptor);
+      return;
+    }
+
+    Reflect.deleteProperty(globalThis, "window");
+  });
+
   describe("#constructor", () => {
     const TEST_AUTHORITY = "https://test.authority.com";
 
@@ -138,6 +188,36 @@ describe("BrowserAuthorizationClient", () => {
       });
 
       assert.equal(client["_basicSettings"].responseMode, "fragment"); // eslint-disable-line @typescript-eslint/dot-notation
+    });
+
+    it("adds a unique x-correlation-id header generator", async () => {
+      const client = new TestableBrowserAuthorizationClient(testConfig);
+      const settings = await client.getSettingsForTest(testConfig);
+
+      const correlationIdHeader = getCorrelationIdHeader(settings.extraHeaders?.["x-correlation-id"]);
+      const firstCorrelationId = correlationIdHeader();
+      const secondCorrelationId = correlationIdHeader();
+
+      assert.match(firstCorrelationId, uuidRegex);
+      assert.match(secondCorrelationId, uuidRegex);
+      assert.notEqual(firstCorrelationId, secondCorrelationId);
+    });
+
+    it("preserves configured extra headers", async () => {
+      const client = new TestableBrowserAuthorizationClient(testConfig);
+      const settings = await client.getSettingsForTest(testConfig, {
+        /* eslint-disable @typescript-eslint/naming-convention */
+        authority: TEST_AUTHORITY,
+        client_id: testConfig.clientId,
+        redirect_uri: testConfig.redirectUri,
+        /* eslint-enable @typescript-eslint/naming-convention */
+        scope: testConfig.scope,
+        extraHeaders: {
+          "x-existing-header": "existing-value",
+        },
+      });
+
+      assert.equal(settings.extraHeaders?.["x-existing-header"], "existing-value");
     });
   });
 });
