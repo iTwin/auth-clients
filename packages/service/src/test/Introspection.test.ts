@@ -117,6 +117,7 @@ describe("IntrospectionClient", () => {
     expect(keyStub.lastCall.firstArg).to.equal("kid1");
 
     // this is ugly, but not remotely as ugly as the spaghetti monster that hides inside jwks-rsa. I'm fighting fire with fire here.
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     client["_jwks"]!.getSigningKey = jwks.JwksClient.prototype.getSigningKey.bind(client["_jwks"]);
 
     // call with kid2 - added to cache

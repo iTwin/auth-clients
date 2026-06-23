@@ -6,6 +6,7 @@ module.exports = {
     "clean": [],
     "docs": [],
     "lint": [],
+    "lint:fix": [],
     "test": [
       "build"
     ],

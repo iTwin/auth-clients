@@ -35,15 +35,15 @@ import {
   TokenRequest,
 } from "@openid/appauth";
 import { NodeCrypto } from "@openid/appauth/built/node_support";
-import { ElectronAuthorizationEvents } from "./Events";
-import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler";
-import { RefreshTokenStore } from "./TokenStore";
-import { LoopbackWebServer } from "./LoopbackWebServer";
-import { CorrelationIdRequestor } from "./CorrelationIdRequestor";
+import { ElectronAuthorizationEvents } from "./Events.js";
+import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthorizationRequestHandler.js";
+import { RefreshTokenStore } from "./TokenStore.js";
+import { LoopbackWebServer } from "./LoopbackWebServer.js";
+import { CorrelationIdRequestor } from "./CorrelationIdRequestor.js";
 import * as electron from "electron";
-import { defaultExpiryBufferInSeconds } from "../common/constants";
-import type { IpcChannelNames } from "../common/IpcChannelNames";
-import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames";
+import { defaultExpiryBufferInSeconds } from "../common/constants.js";
+import type { IpcChannelNames } from "../common/IpcChannelNames.js";
+import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames.js";
 const loggerCategory = "electron-auth";
 
 /**
@@ -159,7 +159,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   /**
    * Event raised whenever the access token changes on any instance of ElectronMainAuthorization
-   * @deprecated in 0.22 - please use the onUserStateChanged instance event instead.
+   * @deprecated in 0.22.0. Please use the onUserStateChanged instance event instead.
    */
   public static readonly onUserStateChanged = new BeEvent<
   (token: AccessToken) => void
@@ -308,7 +308,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
-    // eslint-disable-next-line deprecation/deprecation
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
     this.onUserStateChanged.raiseEvent(this._accessToken);
   }
@@ -379,7 +379,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
         await LoopbackWebServer.start(tryRedirectUri);
         redirectUri = tryRedirectUri;
         break;
-      } catch (e: unknown) {
+      } catch {
         // Most common error is EADDRINUSE (port already in use) - just continue with the next port
         continue;
       }
@@ -441,7 +441,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
             authRequest,
             authResponse,
             authError,
-          ).catch((e) => reject(e));
+          ).catch(reject);
 
           authorizationEvents.onAuthorizationResponseCompleted.raiseEvent(
             authError ? authError : undefined,
@@ -520,9 +520,11 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     }
 
     // Phase 2: Swap the authorization code for the access token
+    if (!authRequest.internal)
+      throw new Error("Missing internal state in authorization request");
     const tokenResponse = await this.swapAuthorizationCodeForTokens(
       authResponse.code,
-      authRequest.internal!.code_verifier,
+      authRequest.internal.code_verifier,
       authRequest.redirectUri,
     );
     Logger.logTrace(
@@ -663,6 +665,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       throw new Error(
         "Missing refresh token. First call signIn() and ensure it's successful",
       );
+    if (!this._configuration)
+      throw new Error("Not initialized. First call initialize()");
     assert(this._clientId !== "");
 
     const revokeTokenRequestJson: RevokeTokenRequestJson = {
@@ -677,7 +681,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       tokenRequestor,
     );
     await tokenHandler.performRevokeTokenRequest(
-      this._configuration!,
+      this._configuration,
       revokeTokenRequest,
     );
 

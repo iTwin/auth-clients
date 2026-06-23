@@ -65,16 +65,49 @@ Other notable methods:
 `client.signOutPopup()` - starts the signout flow via popup.
 `client.setAdvancedSettings(userManagerSettings)` - Allows for advanced options to be supplied to the underlying UserManager.
 
-## Authorization Overview
+## Silent Redirect URI (Required for Automatic Token Renewal)
 
-For information about the browser authorization workflow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizingwebapplications).
+The `silentRedirectUri` is required for automatic token renewal to work. Without it, your access token will expire after approximately 1 hour with no warning.
 
-## Running integration tests
+Token renewal happens in a hidden iframe approximately every 55 minutes. For best performance, this should point to a dedicated lightweight page rather than your main application.
 
-- Ensure you've run `rush update` (or `rush install`) and `rush build`
-- Create an .env file based on .env.example - ask Arun G or Ben P for the values.
-- `rush test:integration` will run integration tests for the entire repo.
-- `rushx test:integration` runs the tests only in the Browser package.
-- Playwright options are in playwright.config.ts (head-ful vs headless, timeouts, etc).
-- The tests start the /test-app using vite before running.
-- To run only the test app: `rushx test:integration:start-test-app` and access <http://localhost:5173> in your browser.
+### Create a minimal silent callback page
+
+_(Your implementation may vary)_
+
+Create a lightweight HTML file (e.g., `silent-callback.html`) in your public/static folder:
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Silent Callback</title>
+  </head>
+  <body>
+    <script type="module">
+      import { BrowserAuthorizationClient } from "@itwin/browser-authorization";
+      const client = new BrowserAuthorizationClient({
+        clientId: "...",
+        redirectUri: "https://yourapp.com/callback",
+        silentRedirectUri: "https://yourapp.com/silent-callback.html", // dedicated lightweight page
+        scope: "...",
+      });
+      await client.handleSignInCallback();
+    </script>
+  </body>
+</html>
+
+> **Note:** The `silentRedirectUri` must also be registered as a valid redirect
+URI for your client in the [developer portal](https://developer.bentley.com). ##
+Authorization Overview For information about the browser authorization workflow
+please visit the [Authorization Overview
+Page](https://developer.bentley.com/apis/overview/authorization/#authorizingwebapplications).
+## Running integration tests - Ensure you've run `rush update` (or `rush
+install`) and `rush build` - Create an .env file based on .env.example - ask
+Arun G or Ben P for the values. - `rush test:integration` will run integration
+tests for the entire repo. - `rushx test:integration` runs the tests only in the
+Browser package. - Playwright options are in playwright.config.ts (head-ful vs
+headless, timeouts, etc). - The tests start the /test-app using vite before
+running. - To run only the test app: `rushx test:integration:start-test-app` and
+access <http://localhost:5173> in your browser.
+```

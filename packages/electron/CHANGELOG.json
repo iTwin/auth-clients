@@ -2,6 +2,86 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Tue, 23 Jun 2026 16:38:48 GMT",
+      "version": "0.23.0",
+      "tag": "@itwin/electron-authorization_v0.23.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "98940208+GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "Add support for Electron 42"
+          }
+        ],
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "fix: resolve all pnpm audit vulnerabilities"
+          },
+          {
+            "author": "HoangNam.Le@bentley.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "Bump vite devDependency to ^6.4.3 to resolve high-severity audit findings (server.fs.deny bypass, launch-editor NTLMv2 disclosure)"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Fri, 24 Apr 2026 16:41:54 GMT",
+      "version": "0.22.3",
+      "tag": "@itwin/electron-authorization_v0.22.3",
+      "comments": {
+        "none": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "f7e34ac59a02c8d1d09219329d483c32f280fd80",
+            "comment": "Update vite devDependency to fix audit vulnerability"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Mon, 30 Mar 2026 16:53:21 GMT",
+      "version": "0.22.3",
+      "tag": "@itwin/electron-authorization_v0.22.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "517ef259cdf12176123433b63c56331cdb5db936",
+            "comment": "chore: upgrade all packages to @itwin/eslint-plugin@6 and eslint@9"
+          },
+          {
+            "author": "50554904+hl662@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "517ef259cdf12176123433b63c56331cdb5db936",
+            "comment": "Fix ESM exports by adding .js extensions to all relative imports and emitting lib/esm/package.json with type module"
+          }
+        ]
+      }
+    },
+    {
+      "date": "Tue, 17 Mar 2026 07:19:34 GMT",
+      "version": "0.22.2",
+      "tag": "@itwin/electron-authorization_v0.22.2",
+      "comments": {
+        "patch": [
+          {
+            "author": "98940208+GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "871457b35458addbe18d62997a4a6305d1e331da",
+            "comment": "Add support for Electron 41"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 19 Jan 2026 08:38:00 GMT",
       "version": "0.22.1",
       "tag": "@itwin/electron-authorization_v0.22.1",

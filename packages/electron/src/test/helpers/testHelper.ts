@@ -1,11 +1,11 @@
 import type { AuthorizationListener, AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
 import { AuthorizationNotifier, AuthorizationRequest, AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
-import type { ElectronMainAuthorizationConfiguration } from "../../ElectronMain";
-import { ElectronMainAuthorization } from "../../main/Client";
+import type { ElectronMainAuthorizationConfiguration } from "../../ElectronMain.js";
+import { ElectronMainAuthorization } from "../../main/Client.js";
 import * as sinon from "sinon";
-import { LoopbackWebServer } from "../../main/LoopbackWebServer";
-import { ElectronMainAuthorizationRequestHandler } from "../../main/ElectronMainAuthorizationRequestHandler";
-import { RefreshTokenStore } from "../../main/TokenStore";
+import { LoopbackWebServer } from "../../main/LoopbackWebServer.js";
+import { ElectronMainAuthorizationRequestHandler } from "../../main/ElectronMainAuthorizationRequestHandler.js";
+import { RefreshTokenStore } from "../../main/TokenStore.js";
 
 interface ClientConfig {
   clientId?: string;
@@ -46,7 +46,6 @@ export function getMockTokenResponse({ accessToken, refreshToken, issuedAt, expi
       refresh_token: refreshToken ?? "testRefreshToken",
       issued_at: issuedAt ?? (new Date()).getTime() / 1000,
       expires_in: expiresIn ?? "60000",
-      /* eslint-disable @typescript-eslint/naming-convention */
     });
 }
 
@@ -77,7 +76,6 @@ export async function setupMockAuthServer(mockTokenResponse: TokenResponse, setu
       scope: "testScope",
       internal: { code_verifier: "testCodeVerifier" },
       state: "testState",
-      /* eslint-disable @typescript-eslint/naming-convention */
     });
 
     const authResponse = new AuthorizationResponse({ code: "testCode", state: "testState" });

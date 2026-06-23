@@ -1,8 +1,38 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Mon, 19 Jan 2026 08:38:00 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.23.0
+
+Tue, 23 Jun 2026 16:38:48 GMT
+
+### Minor changes
+
+- Add support for Electron 42 (98940208+GytisCepk@users.noreply.github.com)
+
+### Patches
+
+- fix: resolve all pnpm audit vulnerabilities (ben-polinsky@users.noreply.github.com)
+- Bump vite devDependency to ^6.4.3 to resolve high-severity audit findings (server.fs.deny bypass, launch-editor NTLMv2 disclosure) (HoangNam.Le@bentley.com)
+
+## 0.22.3
+
+Mon, 30 Mar 2026 16:53:21 GMT
+
+### Patches
+
+- chore: upgrade all packages to @itwin/eslint-plugin@6 and eslint@9 (50554904+hl662@users.noreply.github.com)
+- Fix ESM exports by adding .js extensions to all relative imports and emitting lib/esm/package.json with type module (50554904+hl662@users.noreply.github.com)
+
+## 0.22.2
+
+Tue, 17 Mar 2026 07:19:34 GMT
+
+### Patches
+
+- Add support for Electron 41 (98940208+GytisCepk@users.noreply.github.com)
 
 ## 0.22.1
 

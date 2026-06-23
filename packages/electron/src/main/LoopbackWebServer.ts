@@ -8,7 +8,7 @@ import * as Http from "http";
 import * as path from "path";
 import { readFileSync } from "fs";
 import type { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
-import type { ElectronAuthorizationEvents } from "./Events";
+import type { ElectronAuthorizationEvents } from "./Events.js";
 import { assert, Logger } from "@itwin/core-bentley";
 const loggerCategory = "electron-auth";
 
@@ -117,7 +117,7 @@ export class LoopbackWebServer {
     let authorizationError: AuthorizationErrorJson | null = null;
     let httpResponseContent: HtmlTemplateParams;
 
-    httpResponse.writeHead(200, { "Content-Type": "text/html" }); //  eslint-disable-line @typescript-eslint/naming-convention
+    httpResponse.writeHead(200, { "Content-Type": "text/html" });
 
     if (error) {
       authorizationError = { error, error_description: errorDescription ?? undefined, error_uri: errorUri ?? undefined, state }; // eslint-disable-line @typescript-eslint/naming-convention

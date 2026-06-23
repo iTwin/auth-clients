@@ -1,8 +1,33 @@
 # Change Log - @itwin/browser-authorization
 
-<!-- This log was last generated on Wed, 04 Jun 2025 20:44:05 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 2.0.3
+
+Tue, 23 Jun 2026 16:38:48 GMT
+
+### Patches
+
+- Bump vite devDependency to ^6.4.3 to resolve high-severity audit findings (server.fs.deny bypass, launch-editor NTLMv2 disclosure) (HoangNam.Le@bentley.com)
+- fix: resolve all pnpm audit vulnerabilities (ben-polinsky@users.noreply.github.com)
+
+## 2.0.2
+
+Mon, 30 Mar 2026 16:53:21 GMT
+
+### Patches
+
+- chore: upgrade all packages to @itwin/eslint-plugin@6 and eslint@9 (50554904+hl662@users.noreply.github.com)
+
+## 2.0.1
+
+Tue, 17 Mar 2026 07:19:34 GMT
+
+### Patches
+
+-   (98940208+GytisCepk@users.noreply.github.com)
 
 ## 2.0.0
 

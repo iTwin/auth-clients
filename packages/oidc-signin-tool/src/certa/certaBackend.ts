@@ -5,6 +5,8 @@
 
 import * as fs from "fs";
 import * as path from "path";
+import * as dotenv from "dotenv";
+import { expand as dotenvExpand } from "dotenv-expand";
 import type { AccessToken } from "@itwin/core-bentley";
 import { registerBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
 import type { ServiceAuthorizationClientConfiguration } from "@itwin/service-authorization";
@@ -22,8 +24,6 @@ function loadEnv(envFile: string) {
   if (!fs.existsSync(envFile))
     return;
 
-  const dotenv = require("dotenv"); // eslint-disable-line @typescript-eslint/no-var-requires
-  const dotenvExpand = require("dotenv-expand"); // eslint-disable-line @typescript-eslint/no-var-requires
   const envResult = dotenv.config({ path: envFile });
   if (envResult.error) {
     throw envResult.error;
