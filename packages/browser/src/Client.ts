@@ -14,7 +14,7 @@ import { BrowserAuthorizationLogger } from "./Logger";
 import { BrowserAuthorizationLoggerCategory } from "./LoggerCategory";
 import { getImsAuthority } from "./utils";
 import type { AuthorizationClient } from "@itwin/core-common";
-import type { OidcMetadata, User, UserManagerSettings } from "oidc-client-ts";
+import type { User, UserManagerSettings } from "oidc-client-ts";
 import type {
   BrowserAuthorizationClientConfiguration,
   BrowserAuthorizationClientConfigurationOptions,
@@ -35,28 +35,6 @@ export const isBrowserAuthorizationClient = (
     (client as BrowserAuthorizationClient).signOut !== undefined
   );
 };
-
-function isImsAuthority(authority: string): boolean {
-  const hostname = new URL(authority).hostname.toLowerCase();
-  return hostname === "ims.bentley.com"
-    || hostname.endsWith("-ims.bentley.com")
-    || hostname.endsWith(".ims.bentley.com");
-}
-
-function getImsMetadata(authority: string): Partial<OidcMetadata> {
-  const issuer = authority.replace(/\/$/, "");
-  return {
-    /* eslint-disable @typescript-eslint/naming-convention */
-    issuer,
-    authorization_endpoint: `${issuer}/connect/authorize`,
-    token_endpoint: `${issuer}/connect/token`,
-    revocation_endpoint: `${issuer}/connect/revocation`,
-    userinfo_endpoint: `${issuer}/connect/userinfo`,
-    end_session_endpoint: `${issuer}/connect/endsession`,
-    jwks_uri: `${issuer}/.well-known/openid-configuration/jwks`,
-    /* eslint-enable @typescript-eslint/naming-convention */
-  };
-}
 
 /**
  * @beta
@@ -144,19 +122,6 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     if (advancedSettings) {
       userManagerSettings = { ...userManagerSettings, ...advancedSettings };
-    }
-
-    if (isImsAuthority(userManagerSettings.authority)) {
-      // oidc-client-ts sends extraHeaders on metadata requests too. IMS browser metadata
-      // requests do not allow custom CORS headers, so use known IMS metadata locally and
-      // reserve x-correlation-id for token/userinfo calls that support custom headers.
-      if (!userManagerSettings.metadata)
-        userManagerSettings.metadata = getImsMetadata(userManagerSettings.authority);
-
-      if (!userManagerSettings.extraHeaders)
-        userManagerSettings.extraHeaders = {};
-
-      userManagerSettings.extraHeaders["x-correlation-id"] = () => crypto.randomUUID();
     }
 
     return userManagerSettings;
