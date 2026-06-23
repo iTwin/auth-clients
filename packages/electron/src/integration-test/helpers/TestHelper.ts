@@ -54,7 +54,7 @@ export class TestHelper {
     await page.goto(url);
     await page.waitForSelector("#identifierInput", { timeout: 5000 });
     await page.getByLabel("Email address").fill(this._signInOptions.email);
-    await page.getByLabel("Email address").press("Enter");
+    await page.keyboard.press("Enter");
     await page.getByLabel("Password").fill(this._signInOptions.password);
     await page.getByText("Sign In", { exact: true }).click();
 
