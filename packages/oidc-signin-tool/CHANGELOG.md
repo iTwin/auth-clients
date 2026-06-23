@@ -1,8 +1,17 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Fri, 24 Apr 2026 16:41:54 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 6.0.0
+
+Tue, 23 Jun 2026 16:38:48 GMT
+
+### Major changes
+
+- @itwin/service-authorization is now a peer-dependency of @itwin/oidc-signin-tool (ben-polinsky@users.noreply.github.com)
+- Bump @itwin/service-authorization to v2.1.2
 
 ## 5.1.3
 

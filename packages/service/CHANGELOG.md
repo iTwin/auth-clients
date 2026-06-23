@@ -1,8 +1,16 @@
 # Change Log - @itwin/service-authorization
 
-<!-- This log was last generated on Mon, 30 Mar 2026 16:53:21 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 2.1.2
+
+Tue, 23 Jun 2026 16:38:48 GMT
+
+### Patches
+
+- fix: resolve all pnpm audit vulnerabilities (ben-polinsky@users.noreply.github.com)
 
 ## 2.1.1
 

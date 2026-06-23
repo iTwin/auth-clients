@@ -2,6 +2,35 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Tue, 23 Jun 2026 16:38:48 GMT",
+      "version": "0.23.0",
+      "tag": "@itwin/electron-authorization_v0.23.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "98940208+GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "Add support for Electron 42"
+          }
+        ],
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "fix: resolve all pnpm audit vulnerabilities"
+          },
+          {
+            "author": "HoangNam.Le@bentley.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "Bump vite devDependency to ^6.4.3 to resolve high-severity audit findings (server.fs.deny bypass, launch-editor NTLMv2 disclosure)"
+          }
+        ]
+      }
+    },
+    {
       "date": "Fri, 24 Apr 2026 16:41:54 GMT",
       "version": "0.22.3",
       "tag": "@itwin/electron-authorization_v0.22.3",

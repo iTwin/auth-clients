@@ -2,6 +2,27 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "date": "Tue, 23 Jun 2026 16:38:48 GMT",
+      "version": "2.0.3",
+      "tag": "@itwin/browser-authorization_v2.0.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "HoangNam.Le@bentley.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "Bump vite devDependency to ^6.4.3 to resolve high-severity audit findings (server.fs.deny bypass, launch-editor NTLMv2 disclosure)"
+          },
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "fix: resolve all pnpm audit vulnerabilities"
+          }
+        ]
+      }
+    },
+    {
       "date": "Fri, 24 Apr 2026 16:41:54 GMT",
       "version": "2.0.2",
       "tag": "@itwin/browser-authorization_v2.0.2",

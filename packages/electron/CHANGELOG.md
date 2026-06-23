@@ -1,8 +1,21 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Mon, 30 Mar 2026 16:53:21 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.23.0
+
+Tue, 23 Jun 2026 16:38:48 GMT
+
+### Minor changes
+
+- Add support for Electron 42 (98940208+GytisCepk@users.noreply.github.com)
+
+### Patches
+
+- fix: resolve all pnpm audit vulnerabilities (ben-polinsky@users.noreply.github.com)
+- Bump vite devDependency to ^6.4.3 to resolve high-severity audit findings (server.fs.deny bypass, launch-editor NTLMv2 disclosure) (HoangNam.Le@bentley.com)
 
 ## 0.22.3
 

@@ -1,8 +1,17 @@
 # Change Log - @itwin/browser-authorization
 
-<!-- This log was last generated on Mon, 30 Mar 2026 16:53:21 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 2.0.3
+
+Tue, 23 Jun 2026 16:38:48 GMT
+
+### Patches
+
+- Bump vite devDependency to ^6.4.3 to resolve high-severity audit findings (server.fs.deny bypass, launch-editor NTLMv2 disclosure) (HoangNam.Le@bentley.com)
+- fix: resolve all pnpm audit vulnerabilities (ben-polinsky@users.noreply.github.com)
 
 ## 2.0.2
 

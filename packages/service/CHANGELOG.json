@@ -2,6 +2,21 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "date": "Tue, 23 Jun 2026 16:38:48 GMT",
+      "version": "2.1.2",
+      "tag": "@itwin/service-authorization_v2.1.2",
+      "comments": {
+        "patch": [
+          {
+            "author": "ben-polinsky@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "792ffaf9807bd9518e9d1ece31b02913f2f5b7e5",
+            "comment": "fix: resolve all pnpm audit vulnerabilities"
+          }
+        ]
+      }
+    },
+    {
       "date": "Mon, 30 Mar 2026 16:53:21 GMT",
       "version": "2.1.1",
       "tag": "@itwin/service-authorization_v2.1.1",
