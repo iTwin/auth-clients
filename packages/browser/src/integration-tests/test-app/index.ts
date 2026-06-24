@@ -6,7 +6,9 @@
 import { BrowserAuthorizationClient } from "../../Client";
 
 const oidcCallbackUrl = `${process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL}/oidc-callback`;
+const silentRenewUrl = `${process.env.ITJS_AUTH_CLIENTS_BROWSER_BASE_URL}/silent-renew.html`;
 const authority = `https://${process.env.IMJS_URL_PREFIX}ims.bentley.com`;
+
 const client = new BrowserAuthorizationClient({
   clientId: process.env.ITJS_AUTH_CLIENTS_BROWSER_CLIENT_ID!,
   redirectUri: oidcCallbackUrl,
@@ -14,7 +16,7 @@ const client = new BrowserAuthorizationClient({
   authority,
   postSignoutRedirectUri: "",
   responseType: "code",
-  silentRedirectUri: oidcCallbackUrl,
+  silentRedirectUri: silentRenewUrl,
 });
 
 const contentArea = document.querySelector("div[data-testid='content']");
@@ -64,19 +66,87 @@ async function validateAuthenticated() {
 }
 
 async function signout(popup: boolean) {
-  if (popup)
-    await client.signOutPopup();
-  else
-    await client.signOutRedirect();
+  if (popup) await client.signOutPopup();
+  else await client.signOutRedirect();
 }
 
 function displayAuthorized() {
   if (contentArea) {
     contentArea.textContent = "Authorized!";
 
+    // Display token info for testing
+    void displayTokenInfo();
+
+    // Listen for token changes (including automatic silent renewal)
+    client.onAccessTokenChanged.addListener(() => {
+      // eslint-disable-next-line no-console
+      console.log("Access token changed");
+      void displayTokenInfo();
+    });
+
     appendButton(contentArea, "Signout", "signout-button");
     appendButton(contentArea, "Signout Popup", "signout-button-popup", true);
+    appendButton(
+      contentArea,
+      "Silent Renew",
+      "silent-renew-button",
+      false,
+      async () => {
+        try {
+          await client.forceSilentRenew();
+          // eslint-disable-next-line no-console
+          console.log("Silent renew succeeded");
+        } catch (error) {
+          // interaction_required is expected when IDP session can't be renewed silently
+          // eslint-disable-next-line no-console
+          console.error("Silent renew failed:", error);
+        }
+      },
+    );
   }
+}
+
+async function displayTokenInfo() {
+  let tokenInfoEl = document.getElementById("token-info");
+  if (!client.hasSignedIn) {
+    tokenInfoEl?.remove();
+    return;
+  }
+
+  const accessToken = await client.getAccessToken();
+  if (!tokenInfoEl) {
+    tokenInfoEl = document.createElement("div");
+    tokenInfoEl.id = "token-info";
+    tokenInfoEl.setAttribute("data-testid", "token-info");
+    contentArea?.appendChild(tokenInfoEl);
+  }
+
+  const expiresAt = client.accessTokenExpiresAt;
+  tokenInfoEl.replaceChildren(
+    createTokenInfoRow(
+      "Token expires at:",
+      "token-expires-at",
+      expiresAt?.toISOString() ?? "unknown",
+    ),
+    createTokenInfoRow(
+      "Token (last 10 chars):",
+      "token-suffix",
+      accessToken.slice(-10),
+    ),
+  );
+}
+
+function createTokenInfoRow(
+  labelText: string,
+  testId: string,
+  value: string,
+): HTMLParagraphElement {
+  const row = document.createElement("p");
+  const valueEl = document.createElement("span");
+  valueEl.setAttribute("data-testid", testId);
+  valueEl.textContent = value;
+  row.append(`${labelText} `, valueEl);
+  return row;
 }
 
 function appendButton(
@@ -84,15 +154,17 @@ function appendButton(
   text: string,
   testId: string,
   popup: boolean = false,
-  clickHandler?: () => void
+  clickHandler?: () => void,
 ) {
   const button = document.createElement("button");
   button.textContent = text;
   button.setAttribute("data-testid", testId);
   button.setAttribute("id", testId);
-  const handler = clickHandler ?? (async () => {
-    await signout(popup);
-  })
+  const handler =
+    clickHandler ??
+    (async () => {
+      await signout(popup);
+    });
   button.addEventListener("click", handler);
   parent.appendChild(button);
 }
