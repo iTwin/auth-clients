@@ -1,6 +1,6 @@
 {
   "type": "none",
-  "comment": "add silent renew test",
+  "comment": "",
   "packageName": "@itwin/browser-authorization",
   "email": "ben-polinsky@users.noreply.github.com",
   "dependentChangeType": "none"

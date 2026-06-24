@@ -74,6 +74,10 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
     return !!this._accessToken;
   }
 
+  public get accessTokenExpiresAt(): Date | undefined {
+    return this._expiresAt ? new Date(this._expiresAt) : undefined;
+  }
+
   public get authorityUrl(): string {
     return this._advancedSettings?.authority ?? this._basicSettings.authority;
   }
@@ -210,6 +214,16 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
   }
 
   /**
+   * Forces a silent token renewal against the authorization provider even when a cached user exists locally.
+   * @throws [Error] If the silent sign in fails
+   */
+  public async forceSilentRenew(): Promise<void> {
+    const user = await this.performSilentSignIn();
+    if (user === undefined || user.expired)
+      throw new Error("Authorization error: Silent sign-in failed");
+  }
+
+  /**
    * Attempts a non-interactive signIn
    * - tries to load the user from storage
    * - tries to silently sign-in the user
@@ -235,11 +249,16 @@ export class BrowserAuthorizationClient implements AuthorizationClient {
 
     // Attempt a silent sign-in
     try {
-      user = (await userManager.signinSilent()) ?? undefined; // calls events
+      user = await this.performSilentSignIn(); // calls events
       return user;
     } catch {
       return undefined;
     }
+  }
+
+  protected async performSilentSignIn(): Promise<User | undefined> {
+    const userManager = await this.getUserManager();
+    return (await userManager.signinSilent()) ?? undefined;
   }
 
   /**

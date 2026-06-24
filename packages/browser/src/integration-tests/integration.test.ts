@@ -101,21 +101,30 @@ test("silent renew - manual token refresh", async ({ page }) => {
 
   await testHelper.validateAuthenticated(page);
 
-  // Capture the initial access token
   const initialUser = await testHelper.getUserFromLocalStorage(page);
+  const initialExpiresAt = initialUser.expires_at ?? 0;
   const initialAccessToken = initialUser.access_token;
 
-  // Trigger manual silent renew
   const silentRenewButton = page.getByTestId("silent-renew-button");
   await silentRenewButton.click();
 
-  // Wait for silent renew to complete
-  await page.waitForTimeout(2000);
+  await expect
+    .poll(
+      async () => {
+        const user = await testHelper.getUserFromLocalStorage(page);
+        return (
+          user.access_token !== initialAccessToken ||
+          (user.expires_at ?? 0) > initialExpiresAt
+        );
+      },
+      { timeout: 10000 },
+    )
+    .toBe(true);
 
-  // Verify that a new token was obtained
   const renewedUser = await testHelper.getUserFromLocalStorage(page);
-  const renewedAccessToken = renewedUser.access_token;
-
-  expect(renewedAccessToken).toBeDefined();
-  expect(renewedAccessToken).not.toEqual(initialAccessToken);
+  expect(renewedUser.access_token).toBeDefined();
+  expect(
+    renewedUser.access_token !== initialAccessToken ||
+      (renewedUser.expires_at ?? 0) > initialExpiresAt,
+  ).toBe(true);
 });

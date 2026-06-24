@@ -75,13 +75,13 @@ function displayAuthorized() {
     contentArea.textContent = "Authorized!";
 
     // Display token info for testing
-    displayTokenInfo();
+    void displayTokenInfo();
 
     // Listen for token changes (including automatic silent renewal)
-    client.onAccessTokenChanged.addListener((token: string) => {
+    client.onAccessTokenChanged.addListener(() => {
       // eslint-disable-next-line no-console
       console.log("Access token changed");
-      displayTokenInfo();
+      void displayTokenInfo();
     });
 
     appendButton(contentArea, "Signout", "signout-button");
@@ -93,14 +93,9 @@ function displayAuthorized() {
       false,
       async () => {
         try {
-          // Access the internal userManager directly to force a silent renew
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const userManager = (client as any)._userManager;
-          if (userManager) {
-            await userManager.signinSilent();
-            // eslint-disable-next-line no-console
-            console.log("Silent renew succeeded");
-          }
+          await client.forceSilentRenew();
+          // eslint-disable-next-line no-console
+          console.log("Silent renew succeeded");
         } catch (error) {
           // interaction_required is expected when IDP session can't be renewed silently
           // eslint-disable-next-line no-console
@@ -112,14 +107,13 @@ function displayAuthorized() {
 }
 
 async function displayTokenInfo() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const userManager = (client as any)._userManager;
-  if (!userManager) return;
-
-  const user = await userManager.getUser();
-  if (!user) return;
-
   let tokenInfoEl = document.getElementById("token-info");
+  if (!client.hasSignedIn) {
+    tokenInfoEl?.remove();
+    return;
+  }
+
+  const accessToken = await client.getAccessToken();
   if (!tokenInfoEl) {
     tokenInfoEl = document.createElement("div");
     tokenInfoEl.id = "token-info";
@@ -127,11 +121,32 @@ async function displayTokenInfo() {
     contentArea?.appendChild(tokenInfoEl);
   }
 
-  const expiresAt = user.expires_at ? new Date(user.expires_at * 1000) : null;
-  tokenInfoEl.innerHTML = `
-    <p>Token expires at: <span data-testid="token-expires-at">${expiresAt?.toISOString() ?? "unknown"}</span></p>
-    <p>Token (last 10 chars): <span data-testid="token-suffix">${user.access_token.slice(-10)}</span></p>
-  `;
+  const expiresAt = client.accessTokenExpiresAt;
+  tokenInfoEl.replaceChildren(
+    createTokenInfoRow(
+      "Token expires at:",
+      "token-expires-at",
+      expiresAt?.toISOString() ?? "unknown",
+    ),
+    createTokenInfoRow(
+      "Token (last 10 chars):",
+      "token-suffix",
+      accessToken.slice(-10),
+    ),
+  );
+}
+
+function createTokenInfoRow(
+  labelText: string,
+  testId: string,
+  value: string,
+): HTMLParagraphElement {
+  const row = document.createElement("p");
+  const valueEl = document.createElement("span");
+  valueEl.setAttribute("data-testid", testId);
+  valueEl.textContent = value;
+  row.append(`${labelText} `, valueEl);
+  return row;
 }
 
 function appendButton(

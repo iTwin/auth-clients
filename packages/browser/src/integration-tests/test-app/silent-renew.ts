@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { BrowserAuthorizationClient } from "../../Client";
-// // This page handles the silent renew callback in an iframe
-// // It's intentionally minimal to load quickly
+// This page handles the silent renew callback in an iframe.
+// It's intentionally minimal to load quickly.
 
-BrowserAuthorizationClient.handleSignInCallback();
+void BrowserAuthorizationClient.handleSignInCallback();
