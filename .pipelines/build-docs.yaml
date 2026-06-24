@@ -32,11 +32,11 @@ stages:
           - checkout: self
             clean: true
 
-          - task: NodeTool@0
-            displayName: Use Node 20
+          - task: UseNode@1
+            displayName: Use Node 24.15.0
             inputs:
-              versionSpec: 20
-              checkLatest: true
+              version: 24.15.0
+              checkLatest: false
 
           - script: npm uninstall -g yarn && npm install -g corepack@>=0.32.0 && corepack enable && corepack -v
             displayName: Install pnpm
@@ -78,7 +78,6 @@ stages:
       - template: common/config/azure-pipelines/jobs/docs-build.yaml@itwinjs-core
         parameters:
           checkout: itwinjs-core
-          ignoreAudit: true
           useCurrentAuthClientsDocsArtifact: true
 
   - stage: Tag_Docs

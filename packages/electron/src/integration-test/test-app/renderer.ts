@@ -1,4 +1,4 @@
-import { ElectronRendererAuthorization } from "../../renderer/Client";
+import { ElectronRendererAuthorization } from "../../renderer/Client.js";
 
 if (!process.env.IMJS_TEST_ELECTRON_CLIENT_ID)
   throw new Error("Please provide a clientId in env");
@@ -21,7 +21,7 @@ const otherGetStatusButton = document.getElementById("otherGetStatus");
 signOutButton?.addEventListener("click", async () => {
   try {
     await auth.signOut();
-  } catch (error) {
+  } catch {
 
   }
 });
@@ -29,7 +29,7 @@ signOutButton?.addEventListener("click", async () => {
 signInButton?.addEventListener("click", async () => {
   try {
     await auth.signIn();
-  } catch (error) {
+  } catch {
 
   }
 });
@@ -37,7 +37,7 @@ signInButton?.addEventListener("click", async () => {
 otherSignInButton?.addEventListener("click", async () => {
   try {
     await otherAuth.signIn();
-  } catch (error) {
+  } catch {
 
   }
 });

@@ -156,9 +156,9 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
     return new Promise<void>((resolve, reject) => {
       this._onAccessTokenSet.addOnce(() => resolve());
-      this.beginSignIn().catch((reason) => {
+      this.beginSignIn().catch((reason: unknown) => {
         this._onAccessTokenSet.clear();
-        reject(reason);
+        reject(reason instanceof Error ? reason : new Error(String(reason)));
       });
     });
   }

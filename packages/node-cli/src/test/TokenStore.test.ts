@@ -42,6 +42,7 @@ describe("TokenStore", () => {
     await tokenStore.save(testTokenResponse);
 
     let retrievedToken = await tokenStore.load();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     chai.expect(retrievedToken!.refreshToken).equals(testTokenResponse.refreshToken);
 
     await tokenStore.remove();
@@ -56,6 +57,7 @@ describe("TokenStore", () => {
     await tokenStore.save(testTokenResponse);
 
     const retrievedToken = await tokenStore.load();
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     chai.expect(retrievedToken!.refreshToken).equals(testTokenResponse.refreshToken);
   });
 

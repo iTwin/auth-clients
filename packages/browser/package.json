@@ -1,6 +1,6 @@
 {
   "name": "@itwin/browser-authorization",
-  "version": "2.0.0",
+  "version": "2.0.3",
   "description": "Browser authorization client for iTwin platform",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
@@ -35,10 +35,10 @@
     "oidc-client-ts": "^3.3.0"
   },
   "devDependencies": {
-    "@itwin/build-tools": "^5.5.0",
+    "@itwin/build-tools": "^5.8.2",
     "@itwin/core-bentley": "^5.0.0",
     "@itwin/core-common": "^5.0.0",
-    "@itwin/eslint-plugin": "^4.1.1",
+    "@itwin/eslint-plugin": "^6.0.0",
     "@playwright/test": "~1.56.1",
     "@types/chai": "^4.3.20",
     "@types/mocha": "^8.2.3",
@@ -46,13 +46,13 @@
     "@types/sinon": "^10.0.20",
     "chai": "^4.5.0",
     "dotenv": "~16.0.3",
-    "eslint": "^8.57.1",
-    "mocha": "^10.8.2",
+    "eslint": "^9.11.1",
+    "mocha": "^11.7.5",
     "nyc": "^17.1.0",
     "rimraf": "^3.0.2",
-    "sinon": "^15.2.0",
+    "sinon": "^21.1.2",
     "typescript": "~5.6.3",
-    "vite": "^6.3.5"
+    "vite": "^6.4.3"
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^5.0.0"

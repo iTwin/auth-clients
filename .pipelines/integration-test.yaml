@@ -31,10 +31,11 @@ jobs:
       - checkout: self
         persistCredentials: true
 
-      - task: NodeTool@0
-        displayName: Use Node 20
+      - task: UseNode@1
+        displayName: Use Node 24.15.0
         inputs:
-          versionSpec: 20
+          version: 24.15.0
+          checkLatest: false
 
       - script: npm uninstall -g yarn && npm install -g corepack@>=0.32.0 && corepack enable && corepack -v
         displayName: Install pnpm
@@ -87,6 +88,7 @@ jobs:
         displayName: Build packages
 
       - script: |
+          sudo apt-get update
           sudo apt-get install -y libsecret-1-dev
           sudo apt-get install -y dbus-x11
           sudo apt-get install -y gnome-keyring

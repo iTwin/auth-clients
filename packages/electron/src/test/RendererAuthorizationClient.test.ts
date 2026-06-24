@@ -3,7 +3,7 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
-import { ElectronRendererAuthorization } from "../renderer/Client";
+import { ElectronRendererAuthorization } from "../renderer/Client.js";
 import * as chai from "chai";
 import * as sinon from "sinon";
 

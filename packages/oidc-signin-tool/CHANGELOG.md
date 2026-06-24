@@ -1,8 +1,41 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Mon, 12 Jan 2026 19:52:14 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 6.0.0
+
+Tue, 23 Jun 2026 16:38:48 GMT
+
+### Major changes
+
+- @itwin/service-authorization is now a peer-dependency of @itwin/oidc-signin-tool (ben-polinsky@users.noreply.github.com)
+- Bump @itwin/service-authorization to v2.1.2
+
+## 5.1.3
+
+Fri, 24 Apr 2026 16:41:54 GMT
+
+### Patches
+
+- Replace deprecated Playwright page.$() and page.waitForSelector() APIs with modern locator-based equivalents to fix "Execution context was destroyed" errors on Chromium 146+ (Electron 41) (50554904+hl662@users.noreply.github.com)
+
+## 5.1.2
+
+Mon, 30 Mar 2026 16:53:21 GMT
+
+### Patches
+
+- chore: upgrade all packages to @itwin/eslint-plugin@6 and eslint@9 (50554904+hl662@users.noreply.github.com)
+
+## 5.1.1
+
+Tue, 17 Mar 2026 07:19:34 GMT
+
+### Patches
+
+- Fix e2e re-login (bilal.baig@bentley.com)
 
 ## 5.1.0
 

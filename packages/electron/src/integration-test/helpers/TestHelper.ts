@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { Page } from "@playwright/test";
-import type { SignInOptions } from "../types";
+import type { SignInOptions } from "../types.js";
 
 /**
  * Helper class for tests
