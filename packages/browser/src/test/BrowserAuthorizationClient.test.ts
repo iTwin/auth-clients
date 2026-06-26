@@ -3,14 +3,27 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 import { assert } from "chai";
+import * as sinon from "sinon";
+import type { User } from "oidc-client-ts";
 import { BrowserAuthorizationClient } from "../Client";
 import { getImsAuthority } from "../utils";
 import type { BrowserAuthorizationClientConfiguration } from "../types";
 
 describe("BrowserAuthorizationClient", () => {
-  describe("#constructor", () => {
-    const TEST_AUTHORITY = "https://test.authority.com";
+  const TEST_AUTHORITY = "https://test.authority.com";
+  const TEST_CONFIG: BrowserAuthorizationClientConfiguration = {
+    authority: TEST_AUTHORITY,
+    clientId: "test_clientId",
+    redirectUri: "test_redirectUri",
+    postSignoutRedirectUri: "test_postSignoutRedirectUri",
+    scope: "test_scope",
+    responseType: "code",
+    noSilentSignInOnAppStartup: false,
+    silentRedirectUri: "test_silentRedirectUri",
+    responseMode: "query",
+  };
 
+  describe("#constructor", () => {
     let testClient: BrowserAuthorizationClient;
     let testConfig: BrowserAuthorizationClientConfiguration;
     let testConfigWithoutAuthority: BrowserAuthorizationClientConfiguration;
@@ -138,6 +151,52 @@ describe("BrowserAuthorizationClient", () => {
       });
 
       assert.equal(client["_basicSettings"].responseMode, "fragment"); // eslint-disable-line @typescript-eslint/dot-notation
+    });
+  });
+
+  describe("#forceSilentRenew", () => {
+    afterEach(() => {
+      sinon.restore();
+    });
+
+    it("calls signinSilent on the underlying user manager", async () => {
+      const client = new BrowserAuthorizationClient(TEST_CONFIG);
+      const signinSilent = sinon.stub().resolves({ expired: false } as User);
+      sinon
+        .stub(client as any, "getUserManager")
+        .resolves({ signinSilent } as any);
+
+      await client.forceSilentRenew();
+
+      sinon.assert.calledOnce(signinSilent);
+    });
+
+    it("throws when silent renew does not return an active user", async () => {
+      const client = new BrowserAuthorizationClient(TEST_CONFIG);
+      const signinSilent = sinon.stub().resolves({ expired: true } as User);
+      sinon
+        .stub(client as any, "getUserManager")
+        .resolves({ signinSilent } as any);
+
+      try {
+        await client.forceSilentRenew();
+        assert.fail("Expected forceSilentRenew to throw");
+      } catch (error: any) {
+        assert.equal(error.message, "Authorization error: Silent sign-in failed");
+      }
+    });
+  });
+
+  describe("#accessTokenExpiresAt", () => {
+    it("returns a copy of the current access token expiration time", () => {
+      const client = new BrowserAuthorizationClient(TEST_CONFIG);
+      const expiresAt = new Date("2026-01-01T00:00:00.000Z");
+      client["_expiresAt"] = expiresAt; // eslint-disable-line @typescript-eslint/dot-notation
+
+      const result = client.accessTokenExpiresAt;
+
+      assert.deepEqual(result, expiresAt);
+      assert.notStrictEqual(result, expiresAt);
     });
   });
 });

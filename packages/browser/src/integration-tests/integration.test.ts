@@ -93,3 +93,38 @@ test("signout popup", async ({ page }) => {
   const content = signOutPopup.getByText("Sign Off Successful");
   expect(content).toBeDefined();
 });
+
+test("silent renew - manual token refresh", async ({ page }) => {
+  await page.goto(signInOptions.url);
+  await testHelper.signIn(page);
+  await page.waitForURL(signInOptions.url);
+
+  await testHelper.validateAuthenticated(page);
+
+  const initialUser = await testHelper.getUserFromLocalStorage(page);
+  const initialExpiresAt = initialUser.expires_at ?? 0;
+  const initialAccessToken = initialUser.access_token;
+
+  const silentRenewButton = page.getByTestId("silent-renew-button");
+  await silentRenewButton.click();
+
+  await expect
+    .poll(
+      async () => {
+        const user = await testHelper.getUserFromLocalStorage(page);
+        return (
+          user.access_token !== initialAccessToken ||
+          (user.expires_at ?? 0) > initialExpiresAt
+        );
+      },
+      { timeout: 10000 },
+    )
+    .toBe(true);
+
+  const renewedUser = await testHelper.getUserFromLocalStorage(page);
+  expect(renewedUser.access_token).toBeDefined();
+  expect(
+    renewedUser.access_token !== initialAccessToken ||
+      (renewedUser.expires_at ?? 0) > initialExpiresAt,
+  ).toBe(true);
+});
