@@ -33,6 +33,10 @@ interface AutomatedContextBase<T> {
 
   /** whether or not to kill the entire browser when cleaning up */
   doNotKillBrowser?: boolean;
+
+  /** whether or not to leave the page open when cleaning up.
+   * Useful when the consumer supplies their own page and owns its lifecycle. */
+  doNotClosePage?: boolean;
 }
 
 /** @internal context for automated sign in functions */
@@ -87,7 +91,7 @@ export async function automatedSignIn<T>(
       // eslint-disable-next-line @typescript-eslint/return-await
       return await context.resultFromCallback(await waitForCallback);
   } finally {
-    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser);
+    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser, context.doNotClosePage);
   }
 }
 
@@ -106,7 +110,7 @@ export async function automatedSignOut<T>(
   try {
     await page.goto(context.signOutInitUrl);
   } finally {
-    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser);
+    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser, context.doNotClosePage);
   }
 }
 
@@ -351,10 +355,15 @@ async function cleanup(
   signal: AbortSignal,
   waitForCallbackUrl: Promise<any>,
   doNotKillBrowser = false,
+  doNotClosePage = false,
 ) {
   if (signal.aborted)
     await page.reload();
   await waitForCallbackUrl;
+
+  if (doNotClosePage)
+    return;
+
   await page.close();
 
   const doKillBrowser = !doNotKillBrowser;
