@@ -6,12 +6,34 @@ import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import { OIDCDiscoveryClient } from "@itwin/service-authorization";
+import type { Page } from "@playwright/test";
 import { InMemoryWebStorage, OidcClient, WebStorageStateStore } from "oidc-client-ts";
 import type {
   TestBrowserAuthorizationClientConfiguration,
   TestUserCredentials,
 } from "./TestUsers";
 import * as SignInAutomation from "./SignInAutomation";
+
+/**
+ * Options controlling how a token is acquired.
+ * @alpha
+ */
+export interface GetAccessTokenOptions {
+  /**
+   * A Playwright `Page` used to drive the sign-in UI.
+   *
+   * When provided, the tool uses this page instead of dynamically importing its
+   * own copy of `@playwright/test` and launching a browser. Supply this when you
+   * already depend on Playwright to avoid loading two Playwright instances,
+   * which throws a "multiple playwright dependencies active" runtime error.
+   *
+   * The tool does **not** close your page or browser — you own their lifecycle.
+   *
+   * When omitted, the tool falls back to importing its own `@playwright/test`
+   * and launching its own browser.
+   */
+  page?: Page;
+}
 
 /**
  * Implementation of AuthorizationClient used for the iModel.js integration tests.
@@ -69,7 +91,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
    * The token is refreshed if necessary and possible.
    * @throws [[BentleyError]] If the client was not used to authorize, or there was an authorization error.
    */
-  public async getAccessToken(): Promise<AccessToken> {
+  public async getAccessToken(options?: GetAccessTokenOptions): Promise<AccessToken> {
     if (this.isAuthorized)
       return this._accessToken;
 
@@ -77,7 +99,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     let numRetries = 0;
     while (numRetries < 3) {
       try {
-        await this.signIn();
+        await this.signIn(options);
       } catch (err) {
         // eslint-disable-next-line no-console
         console.log("Error signing in", err);
@@ -103,7 +125,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
     return this._accessToken;
   }
 
-  public async signIn(): Promise<void> {
+  public async signIn(options?: GetAccessTokenOptions): Promise<void> {
     const config = await this._discoveryClient.getConfig();
 
     // eslint-disable-next-line no-console
@@ -128,7 +150,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 
     const controller = new AbortController();
 
-    const page = await SignInAutomation.launchDefaultAutomationPage();
+    const consumerOwnsPage = options?.page !== undefined;
+    const page = options?.page ?? await SignInAutomation.launchDefaultAutomationPage();
 
     const oidcConfig = await this._discoveryClient.getConfig();
 
@@ -141,6 +164,11 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
         authorizationEndpoint: oidcConfig.authorization_endpoint,
       },
       abortController: controller,
+
+      // when the consumer brings their own page, they own its lifecycle:
+      // leave both the page and the browser open after sign-in
+      doNotKillBrowser: consumerOwnsPage,
+      doNotClosePage: consumerOwnsPage,
 
       // Eventually, we'll get a redirect to the callback url
       // including the params we need to retrieve a token
@@ -176,7 +204,8 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
 export async function getTestAccessToken(
   config: TestBrowserAuthorizationClientConfiguration,
   user: TestUserCredentials,
+  options?: GetAccessTokenOptions,
 ): Promise<AccessToken | undefined> {
   const client = new TestBrowserAuthorizationClient(config, user);
-  return client.getAccessToken();
+  return client.getAccessToken(options);
 }
