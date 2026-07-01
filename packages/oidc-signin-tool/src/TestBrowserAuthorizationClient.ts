@@ -6,13 +6,13 @@ import type { AccessToken } from "@itwin/core-bentley";
 import { BeEvent } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 import { OIDCDiscoveryClient } from "@itwin/service-authorization";
-import type { Page } from "@playwright/test";
 import { InMemoryWebStorage, OidcClient, WebStorageStateStore } from "oidc-client-ts";
 import type {
   TestBrowserAuthorizationClientConfiguration,
   TestUserCredentials,
 } from "./TestUsers";
 import * as SignInAutomation from "./SignInAutomation";
+import type { PageLike } from "./SignInAutomation";
 
 /**
  * Options controlling how a token is acquired.
@@ -31,8 +31,13 @@ export interface GetAccessTokenOptions {
    *
    * When omitted, the tool falls back to importing its own `@playwright/test`
    * and launching its own browser.
+   *
+   * Typed as the minimal structural {@link PageLike} rather than Playwright's
+   * concrete `Page` so a page from any Playwright installation/version is
+   * accepted without forcing consumers onto this package's `@playwright/test`
+   * types. A real Playwright `Page` satisfies {@link PageLike}.
    */
-  page?: Page;
+  page?: PageLike;
 }
 
 /**
