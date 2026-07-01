@@ -25,7 +25,7 @@ Obtain inputs from one of the following sources, in priority order:
    npm view electron dist-tags.latest
    ```
 
-The **starting branch** defaults to `master` when not specified.
+The **starting branch** defaults to `main` when not specified.
 
 Derive the following values from the version number (using `43` as the example):
 
@@ -190,28 +190,13 @@ If `pnpm install` fails because the new Electron version is not yet published to
 
 ### Step 5: Create beachball change file
 
-This repo uses beachball (not Rush) for change management. Generate a change file:
+This repo uses beachball (not Rush) for change management. Generate a change file non-interactively using CLI flags:
 
 ```bash
-pnpm change
+npx beachball change --package @itwin/electron-authorization --type patch --message "Add support for Electron <NEW_MAJOR>" --no-fetch
 ```
 
-When prompted:
-- Package: `@itwin/electron-authorization`
-- Change type: `patch`
-- Description: `Add support for Electron <NEW_MAJOR>`
-
-Alternatively, create the change file manually. The file goes in `change/` at the repo root and follows this naming pattern: `@itwin-electron-authorization-<timestamp>.json`:
-
-```json
-{
-  "type": "patch",
-  "comment": "Add support for Electron <NEW_MAJOR>",
-  "packageName": "@itwin/electron-authorization",
-  "email": "not-used@example.com",
-  "dependentChangeType": "patch"
-}
-```
+This avoids interactive prompts and creates the change file with the correct metadata (including the git user's email from git config). **Do not manually create change files** — always use the `beachball change` CLI to ensure proper formatting and email population.
 
 ### Step 6: Validate
 
@@ -221,6 +206,7 @@ Run validation to ensure nothing is broken:
 pnpm build
 pnpm lint
 pnpm test
+pnpm test:integration
 ```
 
 These commands use `lage` to orchestrate builds across the monorepo.
@@ -292,7 +278,7 @@ If not requested: stop after commit and final report (no push, no PR).
 - `devDependencies.electron` updated in `packages/electron/package.json`.
 - `pnpm-lock.yaml` regenerated via `pnpm install`.
 - Beachball change file created for `@itwin/electron-authorization`.
-- `pnpm build`, `pnpm lint`, and `pnpm test` pass (or failures are clearly reported).
+- `pnpm build`, `pnpm lint`, `pnpm test`, and `pnpm test:integration` pass (or failures are clearly reported).
 - `pnpm check` passes.
 - **All changes committed on a feature branch — not on `main`, `master`, or any protected branch.**
 - Optional: PR URL provided only when PR creation was requested.
@@ -303,6 +289,6 @@ If not requested: stop after commit and final report (no push, no PR).
 2. Breaking changes reviewed (list each, with "affected" / "not affected" status)
 3. Code changes made for breaking change compatibility (if any)
 4. Files modified (list)
-5. Validation results (`pnpm install`, `pnpm build`, `pnpm lint`, `pnpm test`)
+5. Validation results (`pnpm install`, `pnpm build`, `pnpm lint`, `pnpm test`, `pnpm test:integration`)
 6. Any issues encountered
 7. Next recommendation
