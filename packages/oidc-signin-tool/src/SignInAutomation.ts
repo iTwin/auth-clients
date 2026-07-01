@@ -8,6 +8,77 @@ import type { Browser, LaunchOptions, Page } from "@playwright/test";
 import type { TestUserCredentials } from "./TestUsers";
 import { testSelectors } from "./TestSelectors";
 
+/* The following `*Like` interfaces describe the minimal subset of the Playwright
+ * API that the sign-in automation actually uses. They are declared structurally
+ * so that a `Page` from *any* Playwright installation/version satisfies them,
+ * without baking this package's exact `@playwright/test` type identity into the
+ * public API. A real Playwright `Page` is assignable to `PageLike`.
+ *
+ * Return types for calls whose results are ignored are widened to
+ * `Promise<unknown>` so that Playwright's more specific return types (e.g.
+ * `Promise<Response | null>`) remain assignable. */
+
+/**
+ * The minimal subset of the Playwright `Locator` API used by the automation.
+ * @alpha
+ */
+export interface LocatorLike {
+  fill(value: string): Promise<unknown>;
+  click(): Promise<unknown>;
+  isVisible(): Promise<boolean>;
+  count(): Promise<number>;
+  textContent(): Promise<string | null>;
+  first(): LocatorLike;
+  waitFor(options?: { state?: "attached" | "detached" | "visible" | "hidden" }): Promise<unknown>;
+}
+
+/**
+ * The minimal subset of the Playwright `Browser` API used by the automation.
+ * @alpha
+ */
+export interface BrowserLike {
+  close(): Promise<unknown>;
+}
+
+/**
+ * The minimal subset of the Playwright `BrowserContext` API used by the automation.
+ * @alpha
+ */
+export interface BrowserContextLike {
+  close(): Promise<unknown>;
+  browser(): BrowserLike | null;
+}
+
+/**
+ * The minimal subset of the Playwright `Request` API used by the automation.
+ * @alpha
+ */
+export interface RequestLike {
+  url(): string;
+}
+
+/**
+ * The minimal subset of the Playwright `Page` API used by the automation.
+ *
+ * A real Playwright `Page` satisfies this interface, so you can supply a page
+ * created by *your own* Playwright installation/version without being forced
+ * onto this package's exact `@playwright/test` types.
+ * @alpha
+ */
+export interface PageLike {
+  goto(url: string): Promise<unknown>;
+  title(): Promise<string>;
+  content(): Promise<string>;
+  url(): string;
+  reload(): Promise<unknown>;
+  close(): Promise<unknown>;
+  click(selector: string): Promise<unknown>;
+  locator(selector: string): LocatorLike;
+  getByText(text: string): LocatorLike;
+  context(): BrowserContextLike;
+  waitForRequest(urlOrPredicate: (request: RequestLike) => boolean): Promise<RequestLike>;
+}
+
 /** @internal configuration for automated sign in */
 export interface AutomatedSignInConfig {
   issuer: string;
@@ -17,7 +88,7 @@ export interface AutomatedSignInConfig {
 
 /** @internal base context for automated sign in and sign out functions */
 interface AutomatedContextBase<T> {
-  page: Page;
+  page: PageLike;
   /** a promise that resolves once the sign in callback is reached,
    * with any data, e.g. a callback URL
    * @defaults Promise.resolve()
@@ -33,6 +104,10 @@ interface AutomatedContextBase<T> {
 
   /** whether or not to kill the entire browser when cleaning up */
   doNotKillBrowser?: boolean;
+
+  /** whether or not to leave the page open when cleaning up.
+   * Useful when the consumer supplies their own page and owns its lifecycle. */
+  doNotClosePage?: boolean;
 }
 
 /** @internal context for automated sign in functions */
@@ -87,7 +162,7 @@ export async function automatedSignIn<T>(
       // eslint-disable-next-line @typescript-eslint/return-await
       return await context.resultFromCallback(await waitForCallback);
   } finally {
-    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser);
+    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser, context.doNotClosePage);
   }
 }
 
@@ -106,7 +181,7 @@ export async function automatedSignOut<T>(
   try {
     await page.goto(context.signOutInitUrl);
   } finally {
-    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser);
+    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser, context.doNotClosePage);
   }
 }
 
@@ -262,7 +337,7 @@ async function handleConsentPage<T>(context: AutomatedSignInContext<T>): Promise
 }
 
 async function checkSelectorExists(
-  page: Page,
+  page: PageLike,
   selector: string,
 ): Promise<boolean> {
   try {
@@ -273,7 +348,7 @@ async function checkSelectorExists(
   }
 }
 
-async function checkErrorOnPage(page: Page, selector: string): Promise<void> {
+async function checkErrorOnPage(page: PageLike, selector: string): Promise<void> {
   let errMsgText: string | null | undefined;
   try {
     const errMsgElement = page.locator(selector).first();
@@ -347,14 +422,19 @@ export async function launchDefaultAutomationPage(enableSlowNetworkConditions = 
 }
 
 async function cleanup(
-  page: Page,
+  page: PageLike,
   signal: AbortSignal,
   waitForCallbackUrl: Promise<any>,
   doNotKillBrowser = false,
+  doNotClosePage = false,
 ) {
   if (signal.aborted)
     await page.reload();
   await waitForCallbackUrl;
+
+  if (doNotClosePage)
+    return;
+
   await page.close();
 
   const doKillBrowser = !doNotKillBrowser;

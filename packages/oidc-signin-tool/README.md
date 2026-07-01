@@ -50,6 +50,42 @@ client.hasSignedIn
 
 ```
 
+## Bring your own Playwright
+
+By default the tool dynamically imports its own copy of `@playwright/test` to
+launch the headless browser that drives the sign-in UI. If your project already
+depends on Playwright, loading two Playwright instances at once throws:
+
+> Could not load @playwright/test. Do you have multiple playwright dependencies active? ...
+
+To avoid this, build a Playwright `Page` with your own Playwright and pass it via
+the `page` option. The tool then drives that page instead of importing its own
+Playwright, so no second instance is loaded:
+
+```typescript
+import { chromium } from "@playwright/test";
+import { getTestAccessToken, TestBrowserAuthorizationClient } from "@itwin/oidc-signin-tool";
+
+const browser = await chromium.launch();
+const page = await browser.newPage();
+
+// convenience function
+const accessToken = await getTestAccessToken(config, user, { page });
+
+// or on the client
+const client = new TestBrowserAuthorizationClient(config, user);
+const token = await client.getAccessToken({ page });
+
+// you own the lifecycle of the page and browser:
+await browser.close();
+```
+
+The option is also available on `client.signIn()` and
+`TestUtility.getAccessToken()`. When you supply a `page`, the tool does **not**
+close your page or browser — you are responsible for cleaning them up. When the
+option is omitted, the existing dynamic-import behavior is used, so this is fully
+backwards compatible.
+
 ## Mocha leaks
 
 If you use this package with mocha, you may notice a global leak.
@@ -65,6 +101,9 @@ used to ignore because it was created during the import phase. Now it is created
 conditional import where mocha doesn't expect it and it "leaks". **You should configure mocha to ignore
 this leak.** In the future, the API requiring the dynamic import will be moved to a separate package
 to avoid this situation.
+
+> Note: passing your own `page` (see [Bring your own Playwright](#bring-your-own-playwright))
+> skips the dynamic import entirely, which also avoids this leak.
 
 You can ignore the leak like so:
 

@@ -4,6 +4,7 @@
 *--------------------------------------------------------------------------------------------*/
 import type { AccessToken } from "@itwin/core-bentley";
 import { TestBrowserAuthorizationClient } from "./TestBrowserAuthorizationClient";
+import type { GetAccessTokenOptions } from "./TestBrowserAuthorizationClient";
 import type { TestBrowserAuthorizationClientConfiguration, TestUserCredentials } from "./TestUsers";
 import { TestUsers } from "./TestUsers";
 
@@ -47,10 +48,12 @@ export class TestUtility {
    * to signin the user through a headless browser.
    * - Uses the default iModel.js internal OIDC SPA client registration
    * @param user Test user credentials
+   * @param options Optionally supply your own Playwright `page` to avoid
+   * importing a second copy of `@playwright/test`
    * @internal
    */
-  public static async getAccessToken(user: TestUserCredentials): Promise<AccessToken> {
+  public static async getAccessToken(user: TestUserCredentials, options?: GetAccessTokenOptions): Promise<AccessToken> {
     const client = this.getAuthorizationClient(user);
-    return client.getAccessToken();
+    return client.getAccessToken(options);
   }
 }
