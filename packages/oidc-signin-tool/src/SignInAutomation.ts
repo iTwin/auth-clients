@@ -162,7 +162,7 @@ export async function automatedSignIn<T>(
       // eslint-disable-next-line @typescript-eslint/return-await
       return await context.resultFromCallback(await waitForCallback);
   } finally {
-    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser, context.doNotClosePage);
+    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser, context.closePage);
   }
 }
 
@@ -181,7 +181,7 @@ export async function automatedSignOut<T>(
   try {
     await page.goto(context.signOutInitUrl);
   } finally {
-    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser, context.doNotClosePage);
+    await cleanup(page, controller.signal, waitForCallback, context.doNotKillBrowser, context.closePage);
   }
 }
 
@@ -426,13 +426,13 @@ async function cleanup(
   signal: AbortSignal,
   waitForCallbackUrl: Promise<any>,
   doNotKillBrowser = false,
-  doNotClosePage = false,
+  closePage = true,
 ) {
   if (signal.aborted)
     await page.reload();
   await waitForCallbackUrl;
 
-  if (doNotClosePage)
+  if (!closePage)
     return;
 
   await page.close();

@@ -166,7 +166,7 @@ export class TestBrowserAuthorizationClient implements AuthorizationClient {
       // when the consumer brings their own page, they own its lifecycle:
       // leave both the page and the browser open after sign-in
       doNotKillBrowser: consumerOwnsPage,
-      doNotClosePage: consumerOwnsPage,
+      closePage: !consumerOwnsPage,
 
       // Eventually, we'll get a redirect to the callback url
       // including the params we need to retrieve a token
