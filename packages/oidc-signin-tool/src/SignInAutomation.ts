@@ -107,7 +107,7 @@ interface AutomatedContextBase<T> {
 
   /** whether or not to leave the page open when cleaning up.
    * Useful when the consumer supplies their own page and owns its lifecycle. */
-  doNotClosePage?: boolean;
+  closePage?: boolean;
 }
 
 /** @internal context for automated sign in functions */

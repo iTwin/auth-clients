@@ -83,8 +83,7 @@ await browser.close();
 The option is also available on `client.signIn()` and
 `TestUtility.getAccessToken()`. When you supply a `page`, the tool does **not**
 close your page or browser — you are responsible for cleaning them up. When the
-option is omitted, the existing dynamic-import behavior is used, so this is fully
-backwards compatible.
+option is omitted, the default dynamic import behavior is used.
 
 ## Mocha leaks
 

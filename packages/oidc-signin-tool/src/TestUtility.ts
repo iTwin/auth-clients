@@ -48,7 +48,7 @@ export class TestUtility {
    * to signin the user through a headless browser.
    * - Uses the default iModel.js internal OIDC SPA client registration
    * @param user Test user credentials
-   * @param options Optionally supply your own Playwright `page` to avoid
+   * @param options Optionally supply your a Playwright `page` to avoid
    * importing a second copy of `@playwright/test`
    * @internal
    */

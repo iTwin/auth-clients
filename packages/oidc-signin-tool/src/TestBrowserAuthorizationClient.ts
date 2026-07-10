@@ -24,18 +24,11 @@ export interface GetAccessTokenOptions {
    *
    * When provided, the tool uses this page instead of dynamically importing its
    * own copy of `@playwright/test` and launching a browser. Supply this when you
-   * already depend on Playwright to avoid loading two Playwright instances,
-   * which throws a "multiple playwright dependencies active" runtime error.
+   * already depend on Playwright to avoid loading two Playwright instances.
    *
-   * The tool does **not** close your page or browser — you own their lifecycle.
+   * The tool does not close the page or browser, caller is responsible for the page's lifecycle.
    *
-   * When omitted, the tool falls back to importing its own `@playwright/test`
-   * and launching its own browser.
    *
-   * Typed as the minimal structural {@link PageLike} rather than Playwright's
-   * concrete `Page` so a page from any Playwright installation/version is
-   * accepted without forcing consumers onto this package's `@playwright/test`
-   * types. A real Playwright `Page` satisfies {@link PageLike}.
    */
   page?: PageLike;
 }
