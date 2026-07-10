@@ -12,11 +12,7 @@ import { testSelectors } from "./TestSelectors";
  * API that the sign-in automation actually uses. They are declared structurally
  * so that a `Page` from *any* Playwright installation/version satisfies them,
  * without baking this package's exact `@playwright/test` type identity into the
- * public API. A real Playwright `Page` is assignable to `PageLike`.
- *
- * Return types for calls whose results are ignored are widened to
- * `Promise<unknown>` so that Playwright's more specific return types (e.g.
- * `Promise<Response | null>`) remain assignable. */
+ * public API. A real Playwright `Page` is assignable to `PageLike`. */
 
 /**
  * The minimal subset of the Playwright `Locator` API used by the automation.
@@ -59,10 +55,6 @@ export interface RequestLike {
 
 /**
  * The minimal subset of the Playwright `Page` API used by the automation.
- *
- * A real Playwright `Page` satisfies this interface, so you can supply a page
- * created by *your own* Playwright installation/version without being forced
- * onto this package's exact `@playwright/test` types.
  * @alpha
  */
 export interface PageLike {
