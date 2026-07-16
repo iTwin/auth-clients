@@ -159,7 +159,10 @@ export class TokenStore {
     try {
       const fd = openSync(keyFilePath, "wx", 0o600);
       try {
-        writeSync(fd, newKey);
+        // writeSync isn't guaranteed to write the whole buffer in one call - keep writing until it's all out.
+        let written = 0;
+        while (written < newKey.length)
+          written += writeSync(fd, newKey, written);
       } finally {
         closeSync(fd);
       }
