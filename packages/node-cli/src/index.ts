@@ -3,6 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 export * from "./Client";
+export * from "./TokenEncryption";
 
 /** @docs-package-description
  * Provides auth functionality for node command-line applications.
@@ -35,10 +36,15 @@ const authClient = new NodeCliAuthorizationClient({
    // @note If unspecified this defaults to 10 minutes.
 
   readonly expiryBuffer ?: number;
+
+  // Custom encryption for the persisted refresh token cache, e.g. an OS-backed store like
+  // Electron's safeStorage. See the package README for details.
+  readonly tokenEncryption ?: TokenEncryption;
 });
 
 // start the authorization processs:
 await authClient.signIn();
+```
 */
 
 /**
