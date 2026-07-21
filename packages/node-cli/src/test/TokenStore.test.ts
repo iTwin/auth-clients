@@ -46,6 +46,12 @@ describe("TokenStore", () => {
     const saveSpy = sinon.spy(tokenStore as any, "encryptCache");
     await tokenStore.save(testTokenResponse);
     chai.assert.isTrue(saveSpy.calledOnce);
+
+    const key = await asInternals(tokenStore).getKey();
+    const storedObj = await asInternals(tokenStore)._store.getItem(key);
+    chai.expect(storedObj).to.include.keys(["encryptedCache", "iv", "authTag"]);
+    chai.expect(storedObj.iv).to.have.length(24);
+    chai.expect(storedObj.authTag).to.have.length(32);
   });
   it("should be able to remove response", async () => {
     if (process.platform === "linux")
@@ -156,6 +162,24 @@ describe("TokenStore", () => {
       const store = asInternals(tokenStore)._store;
       // A malformed/undecryptable blob (wrong key, wrong format, or bit-rot) should be a clean cache miss.
       await store.setItem(key, { encryptedCache: "deadbeef".repeat(8), iv: "00".repeat(16) });
+
+      const retrievedToken = await tokenStore.load();
+      chai.assert(typeof retrievedToken === "undefined");
+
+      const storeKeys: string[] = await store.keys();
+      chai.expect(storeKeys).to.not.include(key);
+    });
+
+    it("load() should return undefined and clear the entry when the stored auth tag is tampered", async () => {
+      if (process.platform === "linux")
+        return;
+
+      await tokenStore.save(testTokenResponse);
+
+      const key = await asInternals(tokenStore).getKey();
+      const store = asInternals(tokenStore)._store;
+      const storedObj = await store.getItem(key);
+      await store.setItem(key, { ...storedObj, authTag: "00".repeat(16) });
 
       const retrievedToken = await tokenStore.load();
       chai.assert(typeof retrievedToken === "undefined");

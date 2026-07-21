@@ -3,20 +3,23 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
+import { BentleyError, Logger } from "@itwin/core-bentley";
 import type { TokenResponseJson } from "@openid/appauth";
 import { TokenResponse } from "@openid/appauth";
 import { createCipheriv, createDecipheriv, createSecretKey, randomBytes } from "node:crypto";
 import { chmodSync, closeSync, existsSync, lstatSync, mkdirSync, openSync, readFileSync, unlinkSync, writeSync } from "node:fs";
 import * as path from "node:path";
 import * as NodePersist from "node-persist";
+import { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Client";
 import type { TokenEncryption } from "./TokenEncryption";
 
 type CacheEntry = TokenResponseJson & { scopesForCacheValidation?: string };
 
-/** Cache entry encrypted with the built-in AES-256-CBC cipher (hex-encoded, with its IV). */
+/** Cache entry encrypted with the built-in AES-256-GCM cipher (hex-encoded, with its IV and auth tag). */
 interface BuiltInEncryptedEntry {
   encryptedCache: string;
   iv: string;
+  authTag: string;
 }
 
 /** Cache entry encrypted via a custom {@link TokenEncryption} hook (base64-encoded). */
@@ -105,8 +108,9 @@ export class TokenStore {
     if (process.platform !== "win32") {
       try {
         chmodSync(this._dir, 0o700);
-      } catch {
-        // May not own the directory - silently move on.
+      } catch (err) {
+        // May not own the directory - move on.
+        Logger.logTrace(NODE_CLI_AUTH_LOGGER_CATEGORY, `Unable to restrict permissions on token store directory ${this._dir}`, () => BentleyError.getErrorProps(err));
       }
     }
   }
@@ -130,7 +134,9 @@ export class TokenStore {
 
     try {
       unlinkSync(keyFilePath);
-    } catch { }
+    } catch (err) {
+      Logger.logTrace(NODE_CLI_AUTH_LOGGER_CATEGORY, `Unable to delete untrusted cipher key file ${keyFilePath}`, () => BentleyError.getErrorProps(err));
+    }
     return undefined;
   }
 
@@ -155,7 +161,7 @@ export class TokenStore {
    * following a symlink or overwriting anything already at that path).
    */
   private createKeyFile(keyFilePath: string): Buffer {
-    const newKey = randomBytes(32); // aes-256-cbc requires a key length of 32 bytes.
+    const newKey = randomBytes(32); // aes-256-gcm requires a key length of 32 bytes.
     try {
       const fd = openSync(keyFilePath, "wx", 0o600);
       try {
@@ -181,7 +187,7 @@ export class TokenStore {
 
   /**
    * Encrypts the given cache entry, using the supplied {@link TokenEncryption} hook if one was provided,
-   * otherwise falling back to the built-in AES-256-CBC cipher (keyed by {@link getCipherKey}).
+   * otherwise falling back to the built-in AES-256-GCM cipher (keyed by {@link getCipherKey}).
    */
   private async encryptCache(cacheEntry: CacheEntry): Promise<StoredCacheEntry> {
     const plaintext = JSON.stringify(cacheEntry);
@@ -191,11 +197,12 @@ export class TokenStore {
       return { encryptedCache: encryptedBuffer.toString("base64") };
     }
 
-    const iv = randomBytes(16);
+    const iv = randomBytes(12);
     const key = createSecretKey(new Uint8Array(this.getCipherKey()));
-    const cipher = createCipheriv("aes-256-cbc", key, new Uint8Array(iv));
+    const cipher = createCipheriv("aes-256-gcm", key, new Uint8Array(iv));
     const encryptedCache = cipher.update(plaintext, "utf8", "hex") + cipher.final("hex");
-    return { encryptedCache, iv: iv.toString("hex") };
+    const authTag = cipher.getAuthTag();
+    return { encryptedCache, iv: iv.toString("hex"), authTag: authTag.toString("hex") };
   }
 
   /**
@@ -213,8 +220,12 @@ export class TokenStore {
     if (this._tokenEncryption)
       throw new Error("Stored cache entry was encrypted with the built-in cipher, but a custom tokenEncryption hook is configured.");
 
+    if (!("authTag" in storedObj))
+      throw new Error("Stored cache entry is missing the AES-256-GCM auth tag.");
+
     const key = createSecretKey(new Uint8Array(this.getCipherKey()));
-    const decipher = createDecipheriv("aes-256-cbc", key, new Uint8Array(Buffer.from(storedObj.iv, "hex")));
+    const decipher = createDecipheriv("aes-256-gcm", key, new Uint8Array(Buffer.from(storedObj.iv, "hex")));
+    decipher.setAuthTag(new Uint8Array(Buffer.from(storedObj.authTag, "hex")));
     return decipher.update(storedObj.encryptedCache, "hex", "utf8") + decipher.final("utf8");
   }
 
