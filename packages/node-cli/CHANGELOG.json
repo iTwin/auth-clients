@@ -2,6 +2,21 @@
   "name": "@itwin/node-cli-authorization",
   "entries": [
     {
+      "date": "Wed, 22 Jul 2026 17:07:42 GMT",
+      "version": "3.1.0",
+      "tag": "@itwin/node-cli-authorization_v3.1.0",
+      "comments": {
+        "minor": [
+          {
+            "author": "anmolshres98@users.noreply.github.com",
+            "package": "@itwin/node-cli-authorization",
+            "commit": "29badfb9389ff9cc3d81290a1489c186e6ee03b3",
+            "comment": "Added an optional tokenEncryption hook (e.g. Electron's safeStorage) for custom encryption; fixed refresh token cache encryption key being derivable from public data."
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 23 Jun 2026 16:38:48 GMT",
       "version": "3.0.4",
       "tag": "@itwin/node-cli-authorization_v3.0.4",

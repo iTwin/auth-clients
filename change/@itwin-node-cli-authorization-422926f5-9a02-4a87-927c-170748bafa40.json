@@ -1,7 +1,0 @@
-{
-  "type": "minor",
-  "comment": "Added an optional tokenEncryption hook (e.g. Electron's safeStorage) for custom encryption; fixed refresh token cache encryption key being derivable from public data.",
-  "packageName": "@itwin/node-cli-authorization",
-  "email": "anmolshres98@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

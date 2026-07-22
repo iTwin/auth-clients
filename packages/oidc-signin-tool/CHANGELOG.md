@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 22 Jul 2026 17:07:42 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 6.1.0
+
+Wed, 22 Jul 2026 17:07:42 GMT
+
+### Minor changes
+
+- Add optional Playwright `page` parameter to getAccessToken/getTestAccessToken/TestUtility.getAccessToken so consumers can supply their own Page. (24278440+saskliutas@users.noreply.github.com)
 
 ## 6.0.0
 

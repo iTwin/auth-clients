@@ -1,8 +1,16 @@
 # Change Log - @itwin/node-cli-authorization
 
-<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 22 Jul 2026 17:07:42 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 3.1.0
+
+Wed, 22 Jul 2026 17:07:42 GMT
+
+### Minor changes
+
+- Added an optional tokenEncryption hook (e.g. Electron's safeStorage) for custom encryption; fixed refresh token cache encryption key being derivable from public data. (anmolshres98@users.noreply.github.com)
 
 ## 3.0.4
 
