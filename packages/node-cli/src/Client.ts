@@ -19,6 +19,7 @@ import {
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
 import { TokenStore } from "./TokenStore";
+import type { TokenEncryption } from "./TokenEncryption";
 
 import type { AccessToken } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
@@ -63,6 +64,18 @@ export interface NodeCliAuthorizationConfiguration {
  * Directory path that overrides where the refresh token is stored, see {@link TokenStore}
  */
   readonly tokenStorePath?: string;
+
+  /**
+   * Custom encryption to use for the persisted refresh token cache, instead of the built-in
+   * (file-based, per-install) cipher key. For example, an Electron main-process host can supply
+   * an adapter around `safeStorage.encryptString`/`decryptString` so tokens are protected by the
+   * OS credential store (DPAPI/Keychain) rather than a key stored alongside the cache file.
+   * @note If provided, it is the caller's responsibility to ensure the same `tokenEncryption` is
+   * used consistently for a given `tokenStorePath`; otherwise, previously cached tokens become
+   * unreadable and the user is prompted to sign in again.
+   * @beta
+   */
+  readonly tokenEncryption?: TokenEncryption;
 }
 
 interface HtmlTemplateParams {
@@ -99,7 +112,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
 
   public constructor(config: NodeCliAuthorizationConfiguration) {
     this._bakedConfig = new BakedAuthorizationConfiguration(config);
-    this._tokenStore = new TokenStore({ ...this._bakedConfig }, config.tokenStorePath);
+    this._tokenStore = new TokenStore({ ...this._bakedConfig }, config.tokenStorePath, config.tokenEncryption);
   }
 
   /**
