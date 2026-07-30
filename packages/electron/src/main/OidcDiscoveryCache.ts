@@ -40,8 +40,7 @@ export class OidcDiscoveryCache {
 
   public async getConfiguration(): Promise<AuthorizationServiceConfiguration> {
     const cached = await this.load();
-    if (cached)
-      return new AuthorizationServiceConfiguration(cached);
+    if (cached) return new AuthorizationServiceConfiguration(cached);
 
     const response = await fetch(
       `${this._issuer}/.well-known/openid-configuration`,
@@ -120,23 +119,13 @@ export class OidcDiscoveryCache {
       return undefined;
 
     const maxAgeMatch = /(?:^|,)\s*max-age\s*=\s*"?(\d+)"?/i.exec(cacheControl);
-    if (!maxAgeMatch)
-      return undefined;
+    if (!maxAgeMatch) return undefined;
 
-    const ageHeader = Number.parseInt(headers.get("age") ?? "0", 10);
-    const responseDate = Date.parse(headers.get("date") ?? "");
-    const apparentAge = Number.isFinite(responseDate)
-      ? Math.max(0, (Date.now() - responseDate) / 1000)
-      : 0;
-    const age = Math.max(
-      Number.isFinite(ageHeader) ? ageHeader : 0,
-      apparentAge,
-    );
     const maxAge = Math.min(
       Number.parseInt(maxAgeMatch[1], 10),
       maximumCacheAgeSeconds,
     );
-    const remainingAge = Math.max(0, maxAge - age);
+    return maxAge > 0 ? Date.now() + maxAge * 1000 : undefined;
     return remainingAge > 0 ? Date.now() + remainingAge * 1000 : undefined;
   }
 
