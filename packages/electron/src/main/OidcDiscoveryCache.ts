@@ -69,9 +69,10 @@ export class OidcDiscoveryCache {
     return configuration;
   }
 
-  private async load(): Promise<AuthorizationServiceConfigurationJson | undefined> {
-    if (!this._store.has(this._cacheKey))
-      return undefined;
+  private async load(): Promise<
+    AuthorizationServiceConfigurationJson | undefined
+  > {
+    if (!this._store.has(this._cacheKey)) return undefined;
 
     try {
       const encrypted = this._store.get(this._cacheKey) as Buffer;
@@ -126,7 +127,6 @@ export class OidcDiscoveryCache {
       maximumCacheAgeSeconds,
     );
     return maxAge > 0 ? Date.now() + maxAge * 1000 : undefined;
-    return remainingAge > 0 ? Date.now() + remainingAge * 1000 : undefined;
   }
 
   private validate(document: DiscoveryDocument): void {
@@ -155,18 +155,11 @@ export class OidcDiscoveryCache {
       document.end_session_endpoint,
       document.userinfo_endpoint,
     ]) {
-      if (!endpoint)
-        continue;
+      if (!endpoint) continue;
 
-      const endpointUrl = new URL(endpoint);
-      if (endpointUrl.protocol !== "https:")
-        throw new Error("OIDC endpoints must use HTTPS");
-      if (
-        issuer.hostname.endsWith(".bentley.com") &&
-        endpointUrl.origin !== issuer.origin
-      )
+      if (!isValidEndpointUrl(endpoint, issuer))
         throw new Error(
-          "Bentley OIDC endpoints must use the configured issuer origin",
+          `OIDC endpoints must use HTTPS and Bentley endpoints must use the configured issuer origin: issuer=${issuer}, endpoint=${endpoint}`,
         );
     }
   }
@@ -177,5 +170,18 @@ export class OidcDiscoveryCache {
 
   private async decrypt(value: Buffer): Promise<string> {
     return safeStorage.decryptString(Buffer.from(value));
+  }
+}
+
+function isValidEndpointUrl(endpoint: string, issuer: URL): boolean {
+  try {
+    const endpointUrl = new URL(endpoint);
+    return (
+      endpointUrl.protocol === "https:" &&
+      (!issuer.hostname.endsWith(".bentley.com") ||
+        endpointUrl.origin === issuer.origin)
+    );
+  } catch {
+    return false;
   }
 }

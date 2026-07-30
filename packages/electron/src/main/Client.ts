@@ -357,8 +357,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    *   (ii) an interactive signin that requires user input.
    */
   public async signIn(): Promise<void> {
-    await this.initializeConfiguration();
-    assert(!!this._configuration);
+    const configuration = await this.initializeConfiguration();
 
     // Attempt to load the access token from store
     const token = await this.loadAccessToken();
@@ -453,7 +452,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     // Start the signin
     await authorizationHandler.performAuthorizationRequest(
-      this._configuration,
+      configuration,
       authorizationRequest,
     );
 
@@ -473,8 +472,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     }
   }
 
-  private async initializeConfiguration(): Promise<void> {
-    if (this._configuration) return;
+  private async initializeConfiguration(): Promise<AuthorizationServiceConfiguration> {
+    if (this._configuration) return this._configuration;
 
     this._configuration = await this._oidcDiscoveryCache.getConfiguration();
     Logger.logTrace(
@@ -482,6 +481,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
       "Initialized service configuration",
       () => ({ configuration: this._configuration }),
     );
+    return this._configuration;
   }
 
   private async _onAuthorizationResponse(
