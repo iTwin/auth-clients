@@ -6,8 +6,7 @@
 import type { AuthorizationServiceConfigurationJson } from "@openid/appauth";
 import { AuthorizationServiceConfiguration } from "@openid/appauth";
 import { safeStorage } from "electron";
-// eslint-disable-next-line @typescript-eslint/naming-convention, @typescript-eslint/no-var-requires
-const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires
+const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-require-imports, @typescript-eslint/naming-convention
 
 const cacheVersion = 1;
 const maximumCacheAgeSeconds = 24 * 60 * 60;

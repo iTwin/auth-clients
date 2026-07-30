@@ -11,6 +11,7 @@ import * as sinon from "sinon";
 import { OidcDiscoveryCache } from "../main/OidcDiscoveryCache.js";
 
 const issuer = "https://qa-ims.bentley.com";
+/* eslint-disable @typescript-eslint/naming-convention */
 const discoveryDocument = {
   issuer,
   authorization_endpoint: `${issuer}/connect/authorize`,
@@ -18,6 +19,7 @@ const discoveryDocument = {
   revocation_endpoint: `${issuer}/connect/revoke`,
   end_session_endpoint: `${issuer}/connect/endsession`,
 };
+/* eslint-enable @typescript-eslint/naming-convention */
 
 describe("OidcDiscoveryCache", () => {
   let cacheDirectory: string;
@@ -83,6 +85,7 @@ describe("OidcDiscoveryCache", () => {
   });
 
   it("rejects a Bentley token endpoint on another origin", async () => {
+    /* eslint-disable @typescript-eslint/naming-convention */
     sinon.stub(globalThis, "fetch").resolves({
       ok: true,
       status: 200,
@@ -92,6 +95,7 @@ describe("OidcDiscoveryCache", () => {
         token_endpoint: "https://example.com/connect/token",
       }),
     } as Response);
+    /* eslint-enable @typescript-eslint/naming-convention */
 
     await assert.isRejected(
       new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration(),
@@ -101,6 +105,7 @@ describe("OidcDiscoveryCache", () => {
 
   it("rejects an HTTP loopback issuer", async () => {
     const loopbackIssuer = "http://127.0.0.1:3000";
+    /* eslint-disable @typescript-eslint/naming-convention */
     sinon.stub(globalThis, "fetch").resolves({
       ok: true,
       status: 200,
@@ -112,6 +117,7 @@ describe("OidcDiscoveryCache", () => {
         revocation_endpoint: `${loopbackIssuer}/revoke`,
       }),
     } as Response);
+    /* eslint-enable @typescript-eslint/naming-convention */
 
     await assert.isRejected(
       new OidcDiscoveryCache(loopbackIssuer, cacheDirectory).getConfiguration(),

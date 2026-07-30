@@ -1,5 +1,5 @@
 import type { AuthorizationListener, TokenRequest } from "@openid/appauth";
-import { AuthorizationNotifier, AuthorizationServiceConfiguration, AuthorizationRequest, AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
+import { AuthorizationNotifier, AuthorizationRequest, AuthorizationResponse, AuthorizationServiceConfiguration, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
 import type { ElectronMainAuthorizationConfiguration } from "../../ElectronMain.js";
 import { ElectronMainAuthorization } from "../../main/Client.js";
 import * as sinon from "sinon";

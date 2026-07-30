@@ -18,6 +18,7 @@ import type {
   AuthorizationError,
   AuthorizationRequestJson,
   AuthorizationResponse,
+  AuthorizationServiceConfiguration,
   RevokeTokenRequestJson,
   StringMap,
   TokenRequestHandler,
@@ -27,7 +28,6 @@ import type {
 import {
   AuthorizationNotifier,
   AuthorizationRequest,
-  AuthorizationServiceConfiguration,
   BaseTokenRequestHandler,
   GRANT_TYPE_AUTHORIZATION_CODE,
   GRANT_TYPE_REFRESH_TOKEN,
