@@ -43,6 +43,7 @@ import * as electron from "electron";
 import { defaultExpiryBufferInSeconds } from "../common/constants.js";
 import type { IpcChannelNames } from "../common/IpcChannelNames.js";
 import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames.js";
+import { OidcDiscoveryCache } from "./OidcDiscoveryCache.js";
 const loggerCategory = "electron-auth";
 
 /**
@@ -153,6 +154,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private _configuration: AuthorizationServiceConfiguration | undefined;
   private _refreshToken: string | undefined;
   private _refreshTokenStore: RefreshTokenStore;
+  private _oidcDiscoveryCache: OidcDiscoveryCache;
   private _expiresAt?: Date;
   private _extras?: AuthenticationOptions;
 
@@ -209,6 +211,10 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     const configFileName = `iTwinJs_${clientIdWithPrefix}`;
     const appStorageKey = `${configFileName}:${this._issuerUrl}`;
     this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey, config.tokenStorePath);
+    this._oidcDiscoveryCache = new OidcDiscoveryCache(
+      this._issuerUrl,
+      config.tokenStorePath,
+    );
   }
 
   /**
@@ -351,19 +357,8 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    *   (ii) an interactive signin that requires user input.
    */
   public async signIn(): Promise<void> {
-    if (!this._configuration) {
-      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-      this._configuration =
-        await AuthorizationServiceConfiguration.fetchFromIssuer(
-          this._issuerUrl,
-          tokenRequestor,
-        );
-      Logger.logTrace(
-        loggerCategory,
-        "Initialized service configuration",
-        () => ({ configuration: this._configuration }),
-      );
-    }
+    await this.initializeConfiguration();
+    assert(!!this._configuration);
 
     // Attempt to load the access token from store
     const token = await this.loadAccessToken();
@@ -469,25 +464,24 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    * Attempts a silent sign in with the authorization provider
    */
   public async signInSilent(): Promise<void> {
-    if (!this._configuration) {
-      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-      this._configuration =
-        await AuthorizationServiceConfiguration.fetchFromIssuer(
-          this._issuerUrl,
-          tokenRequestor,
-        );
-      Logger.logTrace(
-        loggerCategory,
-        "Initialized service configuration",
-        () => ({ configuration: this._configuration }),
-      );
-    }
+    await this.initializeConfiguration();
     try {
       // Attempt to load the access token from store
       await this.loadAccessToken();
     } catch (error: any) {
       Logger.logError(loggerCategory, error.message);
     }
+  }
+
+  private async initializeConfiguration(): Promise<void> {
+    if (this._configuration) return;
+
+    this._configuration = await this._oidcDiscoveryCache.getConfiguration();
+    Logger.logTrace(
+      loggerCategory,
+      "Initialized service configuration",
+      () => ({ configuration: this._configuration }),
+    );
   }
 
   private async _onAuthorizationResponse(

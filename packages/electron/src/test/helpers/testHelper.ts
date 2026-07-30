@@ -1,11 +1,12 @@
-import type { AuthorizationListener, AuthorizationServiceConfiguration, TokenRequest } from "@openid/appauth";
-import { AuthorizationNotifier, AuthorizationRequest, AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
+import type { AuthorizationListener, TokenRequest } from "@openid/appauth";
+import { AuthorizationNotifier, AuthorizationServiceConfiguration, AuthorizationRequest, AuthorizationResponse, BaseTokenRequestHandler, TokenResponse } from "@openid/appauth";
 import type { ElectronMainAuthorizationConfiguration } from "../../ElectronMain.js";
 import { ElectronMainAuthorization } from "../../main/Client.js";
 import * as sinon from "sinon";
 import { LoopbackWebServer } from "../../main/LoopbackWebServer.js";
 import { ElectronMainAuthorizationRequestHandler } from "../../main/ElectronMainAuthorizationRequestHandler.js";
 import { RefreshTokenStore } from "../../main/TokenStore.js";
+import { OidcDiscoveryCache } from "../../main/OidcDiscoveryCache.js";
 
 interface ClientConfig {
   clientId?: string;
@@ -53,34 +54,66 @@ export function getMockTokenResponse({ accessToken, refreshToken, issuedAt, expi
  * Setup a mock auth server and listen for refresh token calls
  * @returns a spy which can be used to make assertions on the refresh token call
  */
-export async function setupMockAuthServer(mockTokenResponse: TokenResponse, setupMockAuthServerOptions: SetupMockAuthServerOptions = {}): Promise<sinon.SinonSpy<any[], any>> {
-  sinon.stub(LoopbackWebServer, "start").resolves();
-  sinon.stub(ElectronMainAuthorizationRequestHandler.prototype, "performAuthorizationRequest").callsFake(async () => {
-    await new Promise((resolve) => setImmediate(resolve, () => { }));
-  });
-  const spy = sinon.fake();
-  sinon.stub(ElectronMainAuthorization.prototype, "refreshToken").callsFake(spy);
-  sinon.stub(BaseTokenRequestHandler.prototype, "performTokenRequest").callsFake(async (_configuration: AuthorizationServiceConfiguration, _request: TokenRequest) => {
-    if (setupMockAuthServerOptions.performTokenRequestCb) {
-      await setupMockAuthServerOptions.performTokenRequestCb();
-    }
-    return mockTokenResponse;
-  });
-
-  sinon.stub(AuthorizationNotifier.prototype, "setAuthorizationListener").callsFake((listener: AuthorizationListener) => {
-    const authRequest = new AuthorizationRequest({
+export async function setupMockAuthServer(
+  mockTokenResponse: TokenResponse,
+  setupMockAuthServerOptions: SetupMockAuthServerOptions = {},
+): Promise<sinon.SinonSpy<any[], any>> {
+  sinon.stub(OidcDiscoveryCache.prototype, "getConfiguration").resolves(
+    new AuthorizationServiceConfiguration({
       /* eslint-disable @typescript-eslint/naming-convention */
-      response_type: "testResponseType",
-      client_id: "testClient",
-      redirect_uri: "testRedirect",
-      scope: "testScope",
-      internal: { code_verifier: "testCodeVerifier" },
-      state: "testState",
+      authorization_endpoint: "https://ims.bentley.com/connect/authorize",
+      token_endpoint: "https://ims.bentley.com/connect/token",
+      revocation_endpoint: "https://ims.bentley.com/connect/revoke",
+      end_session_endpoint: "https://ims.bentley.com/connect/endsession",
+      /* eslint-enable @typescript-eslint/naming-convention */
+    }),
+  );
+  sinon.stub(LoopbackWebServer, "start").resolves();
+  sinon
+    .stub(
+      ElectronMainAuthorizationRequestHandler.prototype,
+      "performAuthorizationRequest",
+    )
+    .callsFake(async () => {
+      await new Promise((resolve) => setImmediate(resolve, () => {}));
     });
+  const spy = sinon.fake();
+  sinon
+    .stub(ElectronMainAuthorization.prototype, "refreshToken")
+    .callsFake(spy);
+  sinon
+    .stub(BaseTokenRequestHandler.prototype, "performTokenRequest")
+    .callsFake(
+      async (
+        _configuration: AuthorizationServiceConfiguration,
+        _request: TokenRequest,
+      ) => {
+        if (setupMockAuthServerOptions.performTokenRequestCb) {
+          await setupMockAuthServerOptions.performTokenRequestCb();
+        }
+        return mockTokenResponse;
+      },
+    );
 
-    const authResponse = new AuthorizationResponse({ code: "testCode", state: "testState" });
-    listener(authRequest, authResponse, null);
-  });
+  sinon
+    .stub(AuthorizationNotifier.prototype, "setAuthorizationListener")
+    .callsFake((listener: AuthorizationListener) => {
+      const authRequest = new AuthorizationRequest({
+        /* eslint-disable @typescript-eslint/naming-convention */
+        response_type: "testResponseType",
+        client_id: "testClient",
+        redirect_uri: "testRedirect",
+        scope: "testScope",
+        internal: { code_verifier: "testCodeVerifier" },
+        state: "testState",
+      });
+
+      const authResponse = new AuthorizationResponse({
+        code: "testCode",
+        state: "testState",
+      });
+      listener(authRequest, authResponse, null);
+    });
 
   return spy;
 }
