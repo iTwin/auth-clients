@@ -30,7 +30,7 @@ export class OidcDiscoveryCache {
 
   public constructor(issuer: string, dir?: string) {
     this._issuer = issuer;
-    this._cacheKey = encodeURIComponent(issuer);
+    this._cacheKey = encodeCacheKey(issuer);
     this._store = new Store({
       name: "iTwinJs_oidcDiscoveryCache",
       encryptionKey: "iTwin",
@@ -171,6 +171,13 @@ export class OidcDiscoveryCache {
   private async decrypt(value: Buffer): Promise<string> {
     return safeStorage.decryptString(Buffer.from(value));
   }
+}
+
+/**
+ * Encode a string to be used as a cache key, returning a value with only alphanumeric, dash and underscore characters.
+ */
+function encodeCacheKey(value: string): string {
+  return Buffer.from(value, "utf8").toString("base64url");
 }
 
 function isValidEndpointUrl(endpoint: string, issuer: URL): boolean {
