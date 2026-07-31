@@ -1,6 +1,6 @@
 {
   "type": "patch",
-  "comment": "Cache OIDC configuration when using Electron client",
+  "comment": "Cache OIDC configuration when using the Electron and node-cli clients",
   "packageName": "@itwin/electron-authorization",
   "email": "alex.dunae@bentley.com",
   "dependentChangeType": "patch"
