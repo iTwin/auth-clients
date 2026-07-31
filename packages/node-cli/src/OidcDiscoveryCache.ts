@@ -5,8 +5,8 @@
 
 import type { AuthorizationServiceConfigurationJson } from "@openid/appauth";
 import { AuthorizationServiceConfiguration } from "@openid/appauth";
-import { safeStorage } from "electron";
-const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-require-imports, @typescript-eslint/naming-convention
+import * as path from "node:path";
+import * as NodePersist from "node-persist";
 
 const cacheVersion = 1;
 const maximumCacheAgeSeconds = 24 * 60 * 60;
@@ -25,17 +25,15 @@ interface DiscoveryDocument extends AuthorizationServiceConfigurationJson {
 /** Persistently caches validated OIDC discovery metadata. */
 export class OidcDiscoveryCache {
   private readonly _issuer: string;
-  private readonly _store: typeof Store;
+  private readonly _store: NodePersist.LocalStorage;
   private readonly _cacheKey: string;
+  private _initialization?: Promise<unknown>;
 
   public constructor(issuer: string, dir?: string) {
     this._issuer = issuer;
-    this._cacheKey = encodeCacheKey(issuer);
-    this._store = new Store({
-      name: "iTwinJs_oidcDiscoveryCache",
-      encryptionKey: "iTwin",
-      cwd: dir ?? null,
-    });
+    this._cacheKey = `oidcDiscovery_${encodeCacheKey(issuer)}`;
+    const cacheDirectory = dir ?? path.join(process.cwd(), ".configStore");
+    this._store = NodePersist.create({ dir: cacheDirectory });
   }
 
   public async getConfiguration(): Promise<AuthorizationServiceConfiguration> {
@@ -58,51 +56,59 @@ export class OidcDiscoveryCache {
 
     const configuration = new AuthorizationServiceConfiguration(document);
     const expiresAt = this.getExpiration(response.headers);
-    if (expiresAt)
+    if (expiresAt) {
       await this.save({
         version: cacheVersion,
         issuer: this._issuer,
         expiresAt,
         configuration: configuration.toJson(),
       });
+    }
 
     return configuration;
+  }
+
+  private async initialize(): Promise<void> {
+    this._initialization ??= this._store.init();
+    await this._initialization;
   }
 
   private async load(): Promise<
     AuthorizationServiceConfigurationJson | undefined
   > {
-    if (!this._store.has(this._cacheKey)) return undefined;
-
     try {
-      const encrypted = this._store.get(this._cacheKey) as Buffer;
-      const cached = JSON.parse(
-        await this.decrypt(encrypted),
-      ) as CachedDiscoveryConfiguration;
+      await this.initialize();
+      const cached = (await this._store.getItem(this._cacheKey)) as
+        | CachedDiscoveryConfiguration
+        | undefined;
+      if (!cached) return undefined;
+
       if (
         cached.version !== cacheVersion ||
         isCachedExpired(cached.expiresAt)
       ) {
-        this._store.delete(this._cacheKey);
+        await this._store.removeItem(this._cacheKey);
         return undefined;
       }
 
       this.validate({ issuer: cached.issuer, ...cached.configuration });
       return cached.configuration;
     } catch {
-      this._store.delete(this._cacheKey);
+      try {
+        await this._store.removeItem(this._cacheKey);
+      } catch {
+        // Discovery caching is an optimization; we continue on failure.
+      }
       return undefined;
     }
   }
 
   private async save(cached: CachedDiscoveryConfiguration): Promise<void> {
     try {
-      this._store.set(
-        this._cacheKey,
-        await this.encrypt(JSON.stringify(cached)),
-      );
+      await this.initialize();
+      await this._store.setItem(this._cacheKey, cached);
     } catch {
-      // Discovery caching is an optimization; failure to persist must not prevent authorization.
+      // Discovery caching is an optimization; we continue on failure.
     }
   }
 
@@ -158,19 +164,8 @@ export class OidcDiscoveryCache {
         );
     }
   }
-
-  private async encrypt(value: string): Promise<Buffer> {
-    return safeStorage.encryptString(value);
-  }
-
-  private async decrypt(value: Buffer): Promise<string> {
-    return safeStorage.decryptString(Buffer.from(value));
-  }
 }
 
-/**
- * Encode a string to be used as a cache key, returning a value with only alphanumeric, dash and underscore characters.
- */
 function encodeCacheKey(value: string): string {
   return Buffer.from(value, "utf8").toString("base64url");
 }

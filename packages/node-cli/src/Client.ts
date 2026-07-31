@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
 /** @packageDocumentation
@@ -12,12 +12,21 @@ import { readFileSync } from "fs";
 import * as path from "path";
 import * as Http from "http";
 import { assert, BeEvent, BentleyError, Logger } from "@itwin/core-bentley";
+import type { AuthorizationServiceConfiguration } from "@openid/appauth";
 import {
-  AuthorizationError, AuthorizationNotifier, AuthorizationRequest, AuthorizationRequestHandler, AuthorizationResponse,
-  AuthorizationServiceConfiguration, BaseTokenRequestHandler, BasicQueryStringUtils, GRANT_TYPE_AUTHORIZATION_CODE, GRANT_TYPE_REFRESH_TOKEN,
+  AuthorizationError,
+  AuthorizationNotifier,
+  AuthorizationRequest,
+  AuthorizationRequestHandler,
+  AuthorizationResponse,
+  BaseTokenRequestHandler,
+  BasicQueryStringUtils,
+  GRANT_TYPE_AUTHORIZATION_CODE,
+  GRANT_TYPE_REFRESH_TOKEN,
   TokenRequest,
 } from "@openid/appauth";
 import { NodeCrypto, NodeRequestor } from "@openid/appauth/built/node_support";
+import { OidcDiscoveryCache } from "./OidcDiscoveryCache";
 import { TokenStore } from "./TokenStore";
 import type { TokenEncryption } from "./TokenEncryption";
 
@@ -25,8 +34,13 @@ import type { AccessToken } from "@itwin/core-bentley";
 import type { AuthorizationClient } from "@itwin/core-common";
 
 import type {
-  AuthorizationErrorJson, AuthorizationRequestJson, AuthorizationRequestResponse, AuthorizationResponseJson, TokenRequestHandler,
-  TokenRequestJson, TokenResponse,
+  AuthorizationErrorJson,
+  AuthorizationRequestJson,
+  AuthorizationRequestResponse,
+  AuthorizationResponseJson,
+  TokenRequestHandler,
+  TokenRequestJson,
+  TokenResponse,
 } from "@openid/appauth";
 
 /**
@@ -104,6 +118,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   private _bakedConfig: BakedAuthorizationConfiguration;
 
   private _tokenStore: TokenStore;
+  private _oidcDiscoveryCache: OidcDiscoveryCache;
   private _configuration?: AuthorizationServiceConfiguration;
   private _tokenResponse?: TokenResponse;
   private _expiresAt?: Date;
@@ -113,6 +128,10 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   public constructor(config: NodeCliAuthorizationConfiguration) {
     this._bakedConfig = new BakedAuthorizationConfiguration(config);
     this._tokenStore = new TokenStore({ ...this._bakedConfig }, config.tokenStorePath, config.tokenEncryption);
+    this._oidcDiscoveryCache = new OidcDiscoveryCache(
+      this._bakedConfig.issuerUrl,
+      config.tokenStorePath,
+    );
   }
 
   /**
@@ -179,7 +198,7 @@ export class NodeCliAuthorizationClient implements AuthorizationClient {
   private async initialize() {
     // Would ideally set up in constructor, but async...
     if (!this._configuration)
-      this._configuration = await AuthorizationServiceConfiguration.fetchFromIssuer(this._bakedConfig.issuerUrl, new NodeRequestor());
+      this._configuration = await this._oidcDiscoveryCache.getConfiguration();
 
     await this._tokenStore.initialize();
   }
