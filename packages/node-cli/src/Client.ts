@@ -42,12 +42,13 @@ import type {
   TokenRequestJson,
   TokenResponse,
 } from "@openid/appauth";
+import { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Constants";
 
 /**
  * Logger category used in this package
  * @public
  */
-export const NODE_CLI_AUTH_LOGGER_CATEGORY = "node-cli-auth";
+export { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Constants";
 
 /**
  * Client configuration to generate OIDC/OAuth tokens for command-line applications

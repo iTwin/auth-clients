@@ -3,10 +3,12 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
+import { Logger } from "@itwin/core-bentley";
 import type { AuthorizationServiceConfigurationJson } from "@openid/appauth";
 import { AuthorizationServiceConfiguration } from "@openid/appauth";
 import * as path from "node:path";
 import * as NodePersist from "node-persist";
+import { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Constants";
 
 const cacheVersion = 1;
 const maximumCacheAgeSeconds = 24 * 60 * 60;
@@ -83,15 +85,26 @@ export class OidcDiscoveryCache {
         | undefined;
       if (!cached) return undefined;
 
-      if (
-        cached.version !== cacheVersion ||
-        isCachedExpired(cached.expiresAt)
-      ) {
+      if (cached.version !== cacheVersion) {
+        await this._store.removeItem(this._cacheKey);
+        return undefined;
+      }
+      if (isCachedExpired(cached.expiresAt)) {
+        Logger.logTrace(
+          NODE_CLI_AUTH_LOGGER_CATEGORY,
+          "Cached OIDC configuration expired",
+          () => ({ issuer: this._issuer, expiresAt: cached.expiresAt }),
+        );
         await this._store.removeItem(this._cacheKey);
         return undefined;
       }
 
       this.validate({ issuer: cached.issuer, ...cached.configuration });
+      Logger.logTrace(
+        NODE_CLI_AUTH_LOGGER_CATEGORY,
+        "Using cached OIDC configuration",
+        () => ({ issuer: this._issuer, expiresAt: cached.expiresAt }),
+      );
       return cached.configuration;
     } catch {
       try {

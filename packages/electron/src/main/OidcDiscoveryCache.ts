@@ -3,9 +3,11 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
+import { Logger } from "@itwin/core-bentley";
 import type { AuthorizationServiceConfigurationJson } from "@openid/appauth";
 import { AuthorizationServiceConfiguration } from "@openid/appauth";
 import { safeStorage } from "electron";
+import { electronAuthLoggerCategory } from "../common/constants.js";
 const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-require-imports, @typescript-eslint/naming-convention
 
 const cacheVersion = 1;
@@ -79,15 +81,26 @@ export class OidcDiscoveryCache {
       const cached = JSON.parse(
         await this.decrypt(encrypted),
       ) as CachedDiscoveryConfiguration;
-      if (
-        cached.version !== cacheVersion ||
-        isCachedExpired(cached.expiresAt)
-      ) {
+      if (cached.version !== cacheVersion) {
+        this._store.delete(this._cacheKey);
+        return undefined;
+      }
+      if (isCachedExpired(cached.expiresAt)) {
+        Logger.logTrace(
+          electronAuthLoggerCategory,
+          "Cached OIDC configuration expired",
+          () => ({ issuer: this._issuer, expiresAt: cached.expiresAt }),
+        );
         this._store.delete(this._cacheKey);
         return undefined;
       }
 
       this.validate({ issuer: cached.issuer, ...cached.configuration });
+      Logger.logTrace(
+        electronAuthLoggerCategory,
+        "Using cached OIDC configuration",
+        () => ({ issuer: this._issuer, expiresAt: cached.expiresAt }),
+      );
       return cached.configuration;
     } catch {
       this._store.delete(this._cacheKey);

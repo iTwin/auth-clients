@@ -40,11 +40,16 @@ import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthoriza
 import { RefreshTokenStore } from "./TokenStore.js";
 import { LoopbackWebServer } from "./LoopbackWebServer.js";
 import * as electron from "electron";
-import { defaultExpiryBufferInSeconds } from "../common/constants.js";
+import {
+  defaultExpiryBufferInSeconds,
+  electronAuthLoggerCategory as loggerCategory,
+} from "../common/constants.js";
 import type { IpcChannelNames } from "../common/IpcChannelNames.js";
-import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames.js";
+import {
+  getIpcChannelNames,
+  getPrefixedClientId,
+} from "../common/IpcChannelNames.js";
 import { OidcDiscoveryCache } from "./OidcDiscoveryCache.js";
-const loggerCategory = "electron-auth";
 
 /**
  * - "none" - The Authorization Server MUST NOT display any authentication or consent user interface pages.
