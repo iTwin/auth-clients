@@ -10,6 +10,9 @@ import * as path from "node:path";
 import * as NodePersist from "node-persist";
 import { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Constants";
 
+// NOTE: this logic is almost identical to the logic in the Electron OidcDiscoveryCache.
+// A future refactor could extract this logic into a shared class.
+
 const cacheVersion = 1;
 const maximumCacheAgeSeconds = 24 * 60 * 60;
 
@@ -32,8 +35,8 @@ export class OidcDiscoveryCache {
   private _initialization?: Promise<unknown>;
 
   public constructor(issuer: string, dir?: string) {
-    this._issuer = issuer;
-    this._cacheKey = `oidcDiscovery_${encodeCacheKey(issuer)}`;
+    this._issuer = normalizeIssuerUrl(issuer);
+    this._cacheKey = `oidcDiscovery_${encodeCacheKey(this._issuer)}`;
     const cacheDirectory = dir ?? path.join(process.cwd(), ".configStore");
     this._store = NodePersist.create({ dir: cacheDirectory });
   }
@@ -57,7 +60,7 @@ export class OidcDiscoveryCache {
     this.validate(document);
 
     const configuration = new AuthorizationServiceConfiguration(document);
-    const expiresAt = this.getExpiration(response.headers);
+    const expiresAt = getExpiration(response.headers);
     if (expiresAt) {
       await this.save({
         version: cacheVersion,
@@ -125,62 +128,66 @@ export class OidcDiscoveryCache {
     }
   }
 
-  private getExpiration(headers: Headers): number | undefined {
-    const cacheControl = headers.get("cache-control");
-    if (
-      !cacheControl ||
-      /(?:^|,)\s*(?:no-store|no-cache)\s*(?:,|$)/i.test(cacheControl)
-    )
-      return undefined;
-
-    const maxAgeMatch = /(?:^|,)\s*max-age\s*=\s*"?(\d+)"?/i.exec(cacheControl);
-    if (!maxAgeMatch) return undefined;
-
-    const maxAge = Math.min(
-      Number.parseInt(maxAgeMatch[1], 10),
-      maximumCacheAgeSeconds,
-    );
-    return maxAge > 0 ? Date.now() + maxAge * 1000 : undefined;
-  }
-
   private validate(document: DiscoveryDocument): void {
-    if (document.issuer !== this._issuer)
+    if (
+      typeof document.issuer !== "string" ||
+      normalizeIssuerUrl(document.issuer) !== this._issuer
+    )
       throw new Error(
         "OIDC discovery response issuer does not match the configured issuer",
       );
 
-    for (const [name, endpoint] of [
+    const requiredEndpoints = [
       ["authorization_endpoint", document.authorization_endpoint],
       ["token_endpoint", document.token_endpoint],
+    ] as const;
+    const optionalEndpoints = [
       ["revocation_endpoint", document.revocation_endpoint],
-    ]) {
-      if (typeof endpoint !== "string" || endpoint.length === 0)
-        throw new Error(`OIDC discovery response is missing ${name}`);
-    }
+      ["end_session_endpoint", document.end_session_endpoint],
+      ["userinfo_endpoint", document.userinfo_endpoint],
+    ] as const;
 
     const issuer = new URL(this._issuer);
     if (issuer.protocol !== "https:")
       throw new Error("OIDC issuer must use HTTPS");
 
-    for (const endpoint of [
-      document.authorization_endpoint,
-      document.token_endpoint,
-      document.revocation_endpoint,
-      document.end_session_endpoint,
-      document.userinfo_endpoint,
-    ]) {
-      if (!endpoint) continue;
-
-      if (!isValidEndpointUrl(endpoint, issuer))
-        throw new Error(
-          `OIDC endpoints must use HTTPS and Bentley endpoints must use the configured issuer origin: issuer=${issuer}, endpoint=${endpoint}`,
-        );
-    }
+    validateEndpoints(requiredEndpoints, issuer, false);
+    validateEndpoints(optionalEndpoints, issuer, true);
   }
 }
 
 function encodeCacheKey(value: string): string {
   return Buffer.from(value, "utf8").toString("base64url");
+}
+
+function normalizeIssuerUrl(value: string): string {
+  return new URL(value).href.replace(/\/$/, "");
+}
+
+function getExpiration(headers: Headers): number | undefined {
+  const cacheControl = headers.get("cache-control");
+  if (
+    !cacheControl ||
+    /(?:^|,)\s*(?:no-store|no-cache)\s*(?:,|$)/i.test(cacheControl)
+  )
+    return undefined;
+
+  const maxAgeMatch = /(?:^|,)\s*max-age\s*=\s*"?(\d+)"?/i.exec(cacheControl);
+  if (!maxAgeMatch) return undefined;
+
+  const maxAge = Math.min(
+    Number.parseInt(maxAgeMatch[1], 10),
+    maximumCacheAgeSeconds,
+  );
+  const ageHeader = headers.get("age");
+  const age =
+    ageHeader && /^\d+$/.test(ageHeader.trim())
+      ? Number.parseInt(ageHeader, 10)
+      : 0;
+  const remainingMaxAge = maxAge - age;
+  return remainingMaxAge > 0
+    ? Date.now() + remainingMaxAge * 1000
+    : undefined;
 }
 
 function isCachedExpired(expiresAt: unknown): boolean {
@@ -203,5 +210,23 @@ function isValidEndpointUrl(endpoint: string, issuer: URL): boolean {
     );
   } catch {
     return false;
+  }
+}
+
+function validateEndpoints(
+  endpoints: ReadonlyArray<readonly [string, unknown]>,
+  issuer: URL,
+  optional: boolean,
+): void {
+  for (const [name, endpoint] of endpoints) {
+    if (endpoint === undefined && optional) continue;
+
+    if (typeof endpoint !== "string" || endpoint.length === 0)
+      throw new Error(`OIDC discovery response is missing ${name}`);
+
+    if (!isValidEndpointUrl(endpoint, issuer))
+      throw new Error(
+        `OIDC endpoints must use HTTPS and Bentley endpoints must use the configured issuer origin: issuer=${issuer}, endpoint=${endpoint}`,
+      );
   }
 }

@@ -19,6 +19,13 @@ const discoveryDocument = {
   revocation_endpoint: `${issuer}/connect/revoke`,
   end_session_endpoint: `${issuer}/connect/endsession`,
 };
+
+type TestDiscoveryDocument = Omit<
+  typeof discoveryDocument,
+  "revocation_endpoint"
+> & {
+  revocation_endpoint?: string;
+};
 /* eslint-enable @typescript-eslint/naming-convention */
 
 describe("OidcDiscoveryCache", () => {
@@ -43,12 +50,19 @@ describe("OidcDiscoveryCache", () => {
     await rm(cacheDirectory, { recursive: true, force: true });
   });
 
-  function stubDiscovery(cacheControl = "max-age=86400") {
+  function stubDiscovery(
+    cacheControl = "max-age=86400",
+    document: TestDiscoveryDocument = discoveryDocument,
+    age?: string,
+  ) {
     return sinon.stub(globalThis, "fetch").resolves({
       ok: true,
       status: 200,
-      headers: new Headers({ "cache-control": cacheControl }),
-      json: async () => discoveryDocument,
+      headers: new Headers({
+        "cache-control": cacheControl,
+        ...(age ? { age } : {}),
+      }),
+      json: async () => document,
     } as Response);
   }
 
@@ -72,6 +86,41 @@ describe("OidcDiscoveryCache", () => {
     await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
 
     sinon.assert.calledTwice(fetchStub);
+  });
+
+  it("does not persist a stale response based on its Age header", async () => {
+    const fetchStub = stubDiscovery(
+      "max-age=86400",
+      discoveryDocument,
+      "86400",
+    );
+
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
+
+    sinon.assert.calledTwice(fetchStub);
+  });
+
+  it("allows optional endpoints to be omitted", async () => {
+    const { revocation_endpoint: _, ...documentWithoutRevocation } =
+      discoveryDocument;
+    stubDiscovery("max-age=86400", documentWithoutRevocation);
+
+    const configuration = await new OidcDiscoveryCache(
+      issuer,
+      cacheDirectory,
+    ).getConfiguration();
+
+    assert.isUndefined(configuration.revocationEndpoint);
+  });
+
+  it("accepts an equivalent issuer with a trailing slash", async () => {
+    stubDiscovery("max-age=86400", {
+      ...discoveryDocument,
+      issuer: `${issuer}/`,
+    });
+
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
   });
 
   it("treats an undecryptable cache entry as a miss", async () => {
