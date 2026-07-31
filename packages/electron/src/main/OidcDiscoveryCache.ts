@@ -190,9 +190,7 @@ function getExpiration(headers: Headers): number | undefined {
       ? Number.parseInt(ageHeader, 10)
       : 0;
   const remainingMaxAge = maxAge - age;
-  return remainingMaxAge > 0
-    ? Date.now() + remainingMaxAge * 1000
-    : undefined;
+  return remainingMaxAge > 0 ? Date.now() + remainingMaxAge * 1000 : undefined;
 }
 
 function isCachedExpired(expiresAt: unknown): boolean {
