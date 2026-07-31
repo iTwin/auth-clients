@@ -45,10 +45,7 @@ import {
   electronAuthLoggerCategory as loggerCategory,
 } from "../common/constants.js";
 import type { IpcChannelNames } from "../common/IpcChannelNames.js";
-import {
-  getIpcChannelNames,
-  getPrefixedClientId,
-} from "../common/IpcChannelNames.js";
+import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames.js";
 import { OidcDiscoveryCache } from "./OidcDiscoveryCache.js";
 
 /**
