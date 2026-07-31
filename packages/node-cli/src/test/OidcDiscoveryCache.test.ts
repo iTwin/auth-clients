@@ -1,0 +1,128 @@
+/*---------------------------------------------------------------------------------------------
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
+
+import { mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { assert } from "chai";
+import * as NodePersist from "node-persist";
+import * as sinon from "sinon";
+import { OidcDiscoveryCache } from "../OidcDiscoveryCache";
+
+const issuer = "https://qa-ims.bentley.com";
+/* eslint-disable @typescript-eslint/naming-convention */
+const discoveryDocument = {
+  issuer,
+  authorization_endpoint: `${issuer}/connect/authorize`,
+  token_endpoint: `${issuer}/connect/token`,
+  revocation_endpoint: `${issuer}/connect/revoke`,
+  end_session_endpoint: `${issuer}/connect/endsession`,
+};
+/* eslint-enable @typescript-eslint/naming-convention */
+
+describe("OidcDiscoveryCache", () => {
+  let cacheDirectory: string;
+
+  beforeEach(async () => {
+    sinon.restore();
+    cacheDirectory = await mkdtemp(join(tmpdir(), "node-cli-oidc-discovery-"));
+  });
+
+  afterEach(async () => {
+    sinon.restore();
+    await rm(cacheDirectory, { recursive: true, force: true });
+  });
+
+  function stubDiscovery(cacheControl = "max-age=86400") {
+    return sinon.stub(globalThis, "fetch").resolves({
+      ok: true,
+      status: 200,
+      headers: new Headers({ "cache-control": cacheControl }),
+      json: async () => discoveryDocument,
+    } as Response);
+  }
+
+  it("reuses a fresh configuration across instances", async () => {
+    const fetchStub = stubDiscovery();
+
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
+    const cached = await new OidcDiscoveryCache(
+      issuer,
+      cacheDirectory,
+    ).getConfiguration();
+
+    sinon.assert.calledOnce(fetchStub);
+    assert.equal(cached.tokenEndpoint, discoveryDocument.token_endpoint);
+  });
+
+  it("does not persist a response marked no-store", async () => {
+    const fetchStub = stubDiscovery("no-store, max-age=86400");
+
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
+
+    sinon.assert.calledTwice(fetchStub);
+  });
+
+  it("treats malformed persisted metadata as a miss", async () => {
+    const fetchStub = stubDiscovery();
+    const store = NodePersist.create({ dir: cacheDirectory });
+    await store.init();
+    await store.setItem(
+      `oidcDiscovery_${Buffer.from(issuer, "utf8").toString("base64url")}`,
+      {
+        version: 1,
+        issuer,
+        expiresAt: "invalid",
+        configuration: discoveryDocument,
+      },
+    );
+
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
+
+    sinon.assert.calledOnce(fetchStub);
+  });
+
+  it("rejects a Bentley token endpoint on another origin", async () => {
+    /* eslint-disable @typescript-eslint/naming-convention */
+    sinon.stub(globalThis, "fetch").resolves({
+      ok: true,
+      status: 200,
+      headers: new Headers({ "cache-control": "max-age=86400" }),
+      json: async () => ({
+        ...discoveryDocument,
+        token_endpoint: "https://example.com/connect/token",
+      }),
+    } as Response);
+    /* eslint-enable @typescript-eslint/naming-convention */
+
+    await assert.isRejected(
+      new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration(),
+      "configured issuer origin",
+    );
+  });
+
+  it("rejects an HTTP loopback issuer", async () => {
+    const loopbackIssuer = "http://127.0.0.1:3000";
+    /* eslint-disable @typescript-eslint/naming-convention */
+    sinon.stub(globalThis, "fetch").resolves({
+      ok: true,
+      status: 200,
+      headers: new Headers({ "cache-control": "max-age=86400" }),
+      json: async () => ({
+        issuer: loopbackIssuer,
+        authorization_endpoint: `${loopbackIssuer}/authorize`,
+        token_endpoint: `${loopbackIssuer}/token`,
+        revocation_endpoint: `${loopbackIssuer}/revoke`,
+      }),
+    } as Response);
+    /* eslint-enable @typescript-eslint/naming-convention */
+
+    await assert.isRejected(
+      new OidcDiscoveryCache(loopbackIssuer, cacheDirectory).getConfiguration(),
+      "issuer must use HTTPS",
+    );
+  });
+});
