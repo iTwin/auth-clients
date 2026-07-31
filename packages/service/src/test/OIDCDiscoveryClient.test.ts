@@ -7,8 +7,6 @@ import * as chai from "chai";
 import type { OIDCConfig } from "../OIDCDiscoveryClient";
 import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 
- // @eslint-disable @typescript-eslint/naming-convention
-
 describe("BaseOpenidClient", () => {
   const testAuthority = "https://test.authority.com";
 
