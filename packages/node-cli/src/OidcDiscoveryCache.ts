@@ -148,8 +148,6 @@ export class OidcDiscoveryCache {
     ] as const;
 
     const issuer = new URL(this._issuer);
-    if (issuer.protocol !== "https:")
-      throw new Error("OIDC issuer must use HTTPS");
 
     validateEndpoints(requiredEndpoints, issuer, false);
     validateEndpoints(optionalEndpoints, issuer, true);
@@ -161,7 +159,11 @@ function encodeCacheKey(value: string): string {
 }
 
 function normalizeIssuerUrl(value: string): string {
-  return new URL(value).href.replace(/\/$/, "");
+  const issuer = new URL(value);
+  if (issuer.protocol !== "https:")
+    throw new Error("OIDC issuer must use HTTPS");
+
+  return issuer.href.replace(/\/$/, "");
 }
 
 function getExpiration(headers: Headers): number | undefined {

@@ -153,24 +153,10 @@ describe("OidcDiscoveryCache", () => {
     );
   });
 
-  it("rejects an HTTP loopback issuer", async () => {
+  it("rejects an HTTP loopback issuer", () => {
     const loopbackIssuer = "http://127.0.0.1:3000";
-    /* eslint-disable @typescript-eslint/naming-convention */
-    sinon.stub(globalThis, "fetch").resolves({
-      ok: true,
-      status: 200,
-      headers: new Headers({ "cache-control": "max-age=86400" }),
-      json: async () => ({
-        issuer: loopbackIssuer,
-        authorization_endpoint: `${loopbackIssuer}/authorize`,
-        token_endpoint: `${loopbackIssuer}/token`,
-        revocation_endpoint: `${loopbackIssuer}/revoke`,
-      }),
-    } as Response);
-    /* eslint-enable @typescript-eslint/naming-convention */
-
-    await assert.isRejected(
-      new OidcDiscoveryCache(loopbackIssuer, cacheDirectory).getConfiguration(),
+    assert.throws(
+      () => new OidcDiscoveryCache(loopbackIssuer, cacheDirectory),
       "issuer must use HTTPS",
     );
   });
