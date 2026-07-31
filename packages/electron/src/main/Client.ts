@@ -478,11 +478,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     if (this._configuration) return this._configuration;
 
     this._configuration = await this._oidcDiscoveryCache.getConfiguration();
-    Logger.logTrace(
-      loggerCategory,
-      "Initialized service configuration",
-      () => ({ configuration: this._configuration }),
-    );
+    Logger.logTrace(loggerCategory, "Initialized service configuration");
     return this._configuration;
   }
 
