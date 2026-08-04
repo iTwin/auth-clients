@@ -70,3 +70,11 @@ Note that your registered application's redirectUri must start with `http://loca
 See the [AccessToken](https://www.itwinjs.org/learning/common/accesstoken/) article in the iTwin.js documentation for background on authorization in iTwin.js.
 
 The OAuth2.0 workflow used in this package is Authorization Code + PKCE, for more information about the flow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizesinglepageapplicationsspaanddesktopmobileapplicationsnative).
+
+## Manually verify authorization
+
+Run the interactive authorization flow against a registered Native application:
+
+```sh
+IMJS_OIDC_CLIENT_ID=native-... IMJS_OIDC_ISSUER_URL=https://qa-ims.bentley.com pnpm --filter @itwin/node-cli-authorization verify:flow
+```
