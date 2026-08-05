@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
-* Copyright (c) Bentley Systems, Incorporated. All rights reserved.
-* See LICENSE.md in the project root for license terms and full copyright notice.
-*--------------------------------------------------------------------------------------------*/
+ * Copyright (c) Bentley Systems, Incorporated. All rights reserved.
+ * See LICENSE.md in the project root for license terms and full copyright notice.
+ *--------------------------------------------------------------------------------------------*/
 // Code based on the blog article @ https://authguidance.com
 
 import { Logger } from "@itwin/core-bentley";
@@ -13,10 +13,10 @@ import {
   AuthorizationError, AuthorizationRequestHandler, AuthorizationResponse, BasicQueryStringUtils,
 } from "@openid/appauth";
 import { NodeCrypto } from "@openid/appauth/built/node_support";
+import { electronAuthLoggerCategory } from "../common/constants.js";
 import type { ElectronAuthorizationEvents } from "./Events.js";
 import { shell } from "electron";
 
-const electronAuthLoggerCategory = "electron-auth";
 /**
  * Utility to setup a local web server that listens to authorization responses to the browser and make the necessary redirections
  * @internal

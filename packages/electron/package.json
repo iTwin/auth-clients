@@ -29,6 +29,7 @@
     "test:integration:start": "pnpm test:integration:build && electron dist/integration-test/test-app/index.js",
     "test:integration:build": "pnpm test:integration:vite && tsc -p ./src/integration-test/",
     "test:integration:vite": "vite build",
+    "verify:flow": "pnpm build && electron scripts/verify-flow.cjs",
     "pack": "npm pack",
     "rebuild": "npm run clean && npm run build"
   },

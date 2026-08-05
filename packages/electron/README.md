@@ -134,3 +134,11 @@ The `redirectUris` property is an array of strings that represent the URIs that 
 - `http://localhost:31234/signin-callback`
 - `http://localhost:41234/signin-callback`
 - `http://localhost:51234/signin-callback`
+
+## Manually verify authorization
+
+Run the interactive authorization flow against a registered Native application:
+
+```sh
+IMJS_OIDC_CLIENT_ID=native-... IMJS_OIDC_ISSUER_URL=https://qa-ims.bentley.com pnpm --filter @itwin/electron-authorization verify:flow
+```

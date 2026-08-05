@@ -4,13 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 /** @packageDocumentation
- * @module Main
+ * @module Authorization
  */
 
-/**
- * Refresh token 10 minutes before real expiration time (by default)
- * @internal
- */
-export const defaultExpiryBufferInSeconds = 600;
-
-export const electronAuthLoggerCategory = "electron-auth";
+/** Logger category used in this package. */
+export const NODE_CLI_AUTH_LOGGER_CATEGORY = "node-cli-auth";

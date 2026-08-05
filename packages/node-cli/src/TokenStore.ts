@@ -10,7 +10,7 @@ import { createCipheriv, createDecipheriv, createSecretKey, randomBytes } from "
 import { chmodSync, closeSync, existsSync, lstatSync, mkdirSync, openSync, readFileSync, unlinkSync, writeSync } from "node:fs";
 import * as path from "node:path";
 import * as NodePersist from "node-persist";
-import { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Client";
+import { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Constants";
 import type { TokenEncryption } from "./TokenEncryption";
 
 type CacheEntry = TokenResponseJson & { scopesForCacheValidation?: string };

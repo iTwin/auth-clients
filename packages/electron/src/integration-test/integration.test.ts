@@ -104,17 +104,18 @@ test("buttons exist", async () => {
 test("sign in successful", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.checkStatus(electronPage, false);
+  const urlPromise = getUrl(electronApp);
   await testHelper.clickSignIn(electronPage);
-  const url = await getUrl(electronApp);
-  await testHelper.signIn(page, url);
+  await testHelper.signIn(page, await urlPromise);
   await testHelper.checkStatus(electronPage, true);
   await page.close();
 });
 
 test("sign out successful", async ({ browser }) => {
   const page = await browser.newPage();
+  const urlPromise = getUrl(electronApp);
   await testHelper.clickSignIn(electronPage);
-  await testHelper.signIn(page, await getUrl(electronApp));
+  await testHelper.signIn(page, await urlPromise);
   await testHelper.checkStatus(electronPage, true);
   await testHelper.clickSignOut(electronPage);
   await testHelper.checkStatus(electronPage, false);
@@ -123,8 +124,9 @@ test("sign out successful", async ({ browser }) => {
 
 test("when scopes change, sign in is required", async ({ browser }) => {
   const page = await browser.newPage();
+  const urlPromise = getUrl(electronApp);
   await testHelper.clickSignIn(electronPage);
-  await testHelper.signIn(page, await getUrl(electronApp));
+  await testHelper.signIn(page, await urlPromise);
   await testHelper.checkStatus(electronPage, true);
 
   // Admittedly this is cheating: no user would interact
@@ -142,9 +144,9 @@ test("handles multiple instances with different channelClientPrefix", async ({
   await testHelper.checkStatus(electronPage, false);
   await testHelper.checkOtherStatus(electronPage, false);
 
+  const urlPromise = getUrl(electronApp);
   await testHelper.clickSignIn(electronPage);
-  const url = await getUrl(electronApp);
-  await testHelper.signIn(page, url);
+  await testHelper.signIn(page, await urlPromise);
   await page.close();
 
   // only the default auth client should be signed in
@@ -153,9 +155,9 @@ test("handles multiple instances with different channelClientPrefix", async ({
 
   // Now sign in with the other auth client
   const otherPage = await browser.newPage();
+  const otherUrlPromise = getUrl(electronApp);
   await testHelper.clickOtherSignIn(electronPage);
-  const otherUrl = await getUrl(electronApp);
-  await testHelper.signIn(otherPage, otherUrl);
+  await testHelper.signIn(otherPage, await otherUrlPromise);
   await otherPage.close();
 
   // both auth clients should be signed in

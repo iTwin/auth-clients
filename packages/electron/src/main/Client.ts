@@ -18,6 +18,7 @@ import type {
   AuthorizationError,
   AuthorizationRequestJson,
   AuthorizationResponse,
+  AuthorizationServiceConfiguration,
   RevokeTokenRequestJson,
   StringMap,
   TokenRequestHandler,
@@ -27,7 +28,6 @@ import type {
 import {
   AuthorizationNotifier,
   AuthorizationRequest,
-  AuthorizationServiceConfiguration,
   BaseTokenRequestHandler,
   GRANT_TYPE_AUTHORIZATION_CODE,
   GRANT_TYPE_REFRESH_TOKEN,
@@ -40,10 +40,13 @@ import { ElectronMainAuthorizationRequestHandler } from "./ElectronMainAuthoriza
 import { RefreshTokenStore } from "./TokenStore.js";
 import { LoopbackWebServer } from "./LoopbackWebServer.js";
 import * as electron from "electron";
-import { defaultExpiryBufferInSeconds } from "../common/constants.js";
+import {
+  defaultExpiryBufferInSeconds,
+  electronAuthLoggerCategory as loggerCategory,
+} from "../common/constants.js";
 import type { IpcChannelNames } from "../common/IpcChannelNames.js";
 import { getIpcChannelNames, getPrefixedClientId } from "../common/IpcChannelNames.js";
-const loggerCategory = "electron-auth";
+import { OidcDiscoveryCache } from "./OidcDiscoveryCache.js";
 
 /**
  * - "none" - The Authorization Server MUST NOT display any authentication or consent user interface pages.
@@ -153,6 +156,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
   private _configuration: AuthorizationServiceConfiguration | undefined;
   private _refreshToken: string | undefined;
   private _refreshTokenStore: RefreshTokenStore;
+  private _oidcDiscoveryCache: OidcDiscoveryCache;
   private _expiresAt?: Date;
   private _extras?: AuthenticationOptions;
 
@@ -209,6 +213,10 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     const configFileName = `iTwinJs_${clientIdWithPrefix}`;
     const appStorageKey = `${configFileName}:${this._issuerUrl}`;
     this._refreshTokenStore = new RefreshTokenStore(configFileName, appStorageKey, config.tokenStorePath);
+    this._oidcDiscoveryCache = new OidcDiscoveryCache(
+      this._issuerUrl,
+      config.tokenStorePath,
+    );
   }
 
   /**
@@ -351,19 +359,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    *   (ii) an interactive signin that requires user input.
    */
   public async signIn(): Promise<void> {
-    if (!this._configuration) {
-      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-      this._configuration =
-        await AuthorizationServiceConfiguration.fetchFromIssuer(
-          this._issuerUrl,
-          tokenRequestor,
-        );
-      Logger.logTrace(
-        loggerCategory,
-        "Initialized service configuration",
-        () => ({ configuration: this._configuration }),
-      );
-    }
+    const configuration = await this.initializeConfiguration();
 
     // Attempt to load the access token from store
     const token = await this.loadAccessToken();
@@ -458,7 +454,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     // Start the signin
     await authorizationHandler.performAuthorizationRequest(
-      this._configuration,
+      configuration,
       authorizationRequest,
     );
 
@@ -469,25 +465,21 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    * Attempts a silent sign in with the authorization provider
    */
   public async signInSilent(): Promise<void> {
-    if (!this._configuration) {
-      const tokenRequestor = new NodeRequestor(); // the Node.js based HTTP client
-      this._configuration =
-        await AuthorizationServiceConfiguration.fetchFromIssuer(
-          this._issuerUrl,
-          tokenRequestor,
-        );
-      Logger.logTrace(
-        loggerCategory,
-        "Initialized service configuration",
-        () => ({ configuration: this._configuration }),
-      );
-    }
+    await this.initializeConfiguration();
     try {
       // Attempt to load the access token from store
       await this.loadAccessToken();
     } catch (error: any) {
       Logger.logError(loggerCategory, error.message);
     }
+  }
+
+  private async initializeConfiguration(): Promise<AuthorizationServiceConfiguration> {
+    if (this._configuration) return this._configuration;
+
+    this._configuration = await this._oidcDiscoveryCache.getConfiguration();
+    Logger.logTrace(loggerCategory, "Initialized service configuration");
+    return this._configuration;
   }
 
   private async _onAuthorizationResponse(

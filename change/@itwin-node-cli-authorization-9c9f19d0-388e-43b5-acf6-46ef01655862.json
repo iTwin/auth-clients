@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Cache OIDC configuration",
+  "packageName": "@itwin/node-cli-authorization",
+  "email": "alex.dunae@bentley.com",
+  "dependentChangeType": "patch"
+}

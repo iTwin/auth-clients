@@ -8,9 +8,9 @@ import * as Http from "http";
 import * as path from "path";
 import { readFileSync } from "fs";
 import type { AuthorizationErrorJson, AuthorizationResponseJson } from "@openid/appauth";
+import { electronAuthLoggerCategory as loggerCategory } from "../common/constants.js";
 import type { ElectronAuthorizationEvents } from "./Events.js";
 import { assert, Logger } from "@itwin/core-bentley";
-const loggerCategory = "electron-auth";
 
 type StateEventsPair = [string, ElectronAuthorizationEvents];
 
