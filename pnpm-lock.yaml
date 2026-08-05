@@ -6,6 +6,7 @@ settings:
 
 overrides:
   serialize-javascript@<=7.0.2: '>=7.0.3'
+  cacheable-request@13.0.20: 13.0.19
 
 importers:
 
@@ -316,7 +317,7 @@ importers:
   packages/service:
     dependencies:
       got:
-        specifier: ^12.6.1
+        specifier: 12.6.1
         version: 12.6.1
       jsonwebtoken:
         specifier: ^9.0.2
