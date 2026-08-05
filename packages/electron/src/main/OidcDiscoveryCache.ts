@@ -3,6 +3,10 @@
  * See LICENSE.md in the project root for license terms and full copyright notice.
  *--------------------------------------------------------------------------------------------*/
 
+/** @packageDocumentation
+ * @module Main
+ */
+
 import { Logger } from "@itwin/core-bentley";
 import type { AuthorizationServiceConfigurationJson } from "@openid/appauth";
 import { AuthorizationServiceConfiguration } from "@openid/appauth";
