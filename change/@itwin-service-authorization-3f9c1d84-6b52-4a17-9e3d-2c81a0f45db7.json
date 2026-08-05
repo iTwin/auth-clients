@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Pin got to 12.6.1 and cacheable-request to 13.0.19 to prevent consumers from receiving compromised cacheable-request@13.0.20.",
+  "packageName": "@itwin/service-authorization",
+  "email": "223556219+Copilot@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
