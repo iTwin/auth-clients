@@ -48,7 +48,7 @@ import { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Constants";
  * Logger category used in this package
  * @public
  */
-export { NODE_CLI_AUTH_LOGGER_CATEGORY } from "./Constants";
+export { NODE_CLI_AUTH_LOGGER_CATEGORY };
 
 /**
  * Client configuration to generate OIDC/OAuth tokens for command-line applications
