@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "Remove got from service authorization HTTP requests.",
+  "packageName": "@itwin/service-authorization",
+  "email": "aayushtiwari1001@gmail.com",
+  "dependentChangeType": "patch"
+}

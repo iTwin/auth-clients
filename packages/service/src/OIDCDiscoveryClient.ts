@@ -3,6 +3,7 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 import { URL } from "node:url";
+import { fetchWithRetry } from "./FetchUtils";
 
 const requiredProperties = ["issuer", "authorization_endpoint", "jwks_uri", "response_types_supported", "subject_types_supported", "id_token_signing_alg_values_supported"] as const;
 const stringProperties = ["issuer", "authorization_endpoint", "jwks_uri", "token_endpoint",
@@ -73,19 +74,18 @@ export class OIDCDiscoveryClient {
 
     const issuerUrl = new URL(this.url);
     issuerUrl.pathname = `${issuerUrl.pathname?.replace(/\/$/, "")}/.well-known/openid-configuration`;
-    const response = await (await import("got")).default(issuerUrl, {
+    const response = await fetchWithRetry(issuerUrl, {
       headers: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         Accept: "application/json",
         ...additionalHeaders,
       },
-      throwHttpErrors: false,
-    });
+    }, { retries: 3, timeout: 12000 });
 
-    if (response.statusCode < 200 || response.statusCode >= 300 || !response.body)
+    if (!response.ok)
       throw new Error("Failed to retrieve OpenID configuration from authority");
 
-    const body = JSON.parse(response.body);
+    const body = await response.json();
     assertOIDCConfig(body);
     return this._discoveredConfig = body;
   }
