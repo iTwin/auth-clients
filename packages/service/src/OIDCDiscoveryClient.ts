@@ -80,7 +80,7 @@ export class OIDCDiscoveryClient {
         Accept: "application/json",
         ...additionalHeaders,
       },
-    }, { retries: 3, timeout: 12000 });
+    });
 
     if (!response.ok)
       throw new Error("Failed to retrieve OpenID configuration from authority");

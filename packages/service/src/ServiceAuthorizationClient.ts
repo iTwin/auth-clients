@@ -25,17 +25,11 @@ import { OIDCDiscoveryClient } from "./OIDCDiscoveryClient";
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected _configuration: ServiceAuthorizationClientConfiguration;
   private _discoveryClient: OIDCDiscoveryClient;
-  private _fetchOptions: { retries: number, timeout: number };
 
   private _accessToken: string = "";
   private _expiresAt?: Date;
 
   constructor(serviceConfiguration: ServiceAuthorizationClientConfiguration) {
-    this._fetchOptions = {
-      retries: 3,
-      timeout: 12000,
-    };
-
     this._discoveryClient = new OIDCDiscoveryClient(serviceConfiguration.authority);
     this._configuration = serviceConfiguration;
   }
@@ -67,7 +61,7 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
         /* eslint-enable @typescript-eslint/naming-convention */
       },
       body: new URLSearchParams(body),
-    }, this._fetchOptions);
+    });
 
     if (!response.ok)
       throw new Error("Failed to retrieve service authorization token");
