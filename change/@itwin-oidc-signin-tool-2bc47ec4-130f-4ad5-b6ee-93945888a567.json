@@ -1,6 +1,6 @@
 {
   "type": "patch",
-  "comment": "fix: resolve high severity audit vulnerabilities via dependency updates",
+  "comment": "Bumped direct dependencies",
   "packageName": "@itwin/oidc-signin-tool",
   "email": "anmolshres98@users.noreply.github.com",
   "dependentChangeType": "patch"
