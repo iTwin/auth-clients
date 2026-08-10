@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { assert } from "chai";
 import * as sinon from "sinon";
-import type { User } from "oidc-client-ts";
 import { BrowserAuthorizationClient } from "../Client";
 import { getImsAuthority } from "../utils";
 import type { BrowserAuthorizationClientConfiguration } from "../types";
@@ -161,7 +160,7 @@ describe("BrowserAuthorizationClient", () => {
 
     it("calls signinSilent on the underlying user manager", async () => {
       const client = new BrowserAuthorizationClient(TEST_CONFIG);
-      const signinSilent = sinon.stub().resolves({ expired: false } as User);
+      const signinSilent = sinon.stub().resolves({ expired: false });
       sinon
         .stub(client as any, "getUserManager")
         .resolves({ signinSilent } as any);
@@ -173,7 +172,7 @@ describe("BrowserAuthorizationClient", () => {
 
     it("throws when silent renew does not return an active user", async () => {
       const client = new BrowserAuthorizationClient(TEST_CONFIG);
-      const signinSilent = sinon.stub().resolves({ expired: true } as User);
+      const signinSilent = sinon.stub().resolves({ expired: true });
       sinon
         .stub(client as any, "getUserManager")
         .resolves({ signinSilent } as any);
