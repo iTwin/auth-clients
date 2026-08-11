@@ -1,6 +1,6 @@
 {
   "type": "patch",
-  "comment": "Bumped direct dependencies",
+  "comment": "",
   "packageName": "@itwin/node-cli-authorization",
   "email": "anmolshres98@users.noreply.github.com",
   "dependentChangeType": "patch"
