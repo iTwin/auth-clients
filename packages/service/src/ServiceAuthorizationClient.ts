@@ -8,9 +8,7 @@
 
 import type { AuthorizationClient } from "@itwin/core-common";
 import type { ServiceAuthorizationClientConfiguration } from "./ServiceAuthorizationClientConfiguration";
-// this is a type-only import, it won't break the resulting .js file.
-// It also won't show up in the resulting .d.ts file because we don't re-export this type.
-import type { Options as GotOptions } from "got" with { "resolution-mode": "import" };
+import { fetchWithRetry } from "./FetchUtils";
 import { OIDCDiscoveryClient } from "./OIDCDiscoveryClient";
 
 /**
@@ -27,26 +25,11 @@ import { OIDCDiscoveryClient } from "./OIDCDiscoveryClient";
 export class ServiceAuthorizationClient implements AuthorizationClient {
   protected _configuration: ServiceAuthorizationClientConfiguration;
   private _discoveryClient: OIDCDiscoveryClient;
-  private _gotOptions: Pick<GotOptions, "retry" | "timeout">;
 
   private _accessToken: string = "";
   private _expiresAt?: Date;
 
   constructor(serviceConfiguration: ServiceAuthorizationClientConfiguration) {
-    this._gotOptions = {
-      retry: {
-        limit: 3,
-        methods: ["GET", "POST"],
-      },
-      timeout: {
-        lookup: 1000, // DNS
-        connect: 1000, // socket connected
-        send: 1000, // writing data to socket
-        response: 10000, // starts when request has been flushed, ends when the headers are received.
-        request: 12000, // global timeout
-      },
-    };
-
     this._discoveryClient = new OIDCDiscoveryClient(serviceConfiguration.authority);
     this._configuration = serviceConfiguration;
   }
@@ -68,8 +51,8 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
     const encoded = `${encodeURIComponent(this._configuration.clientId)}:${encodeURIComponent(this._configuration.clientSecret)}`.replace("%20", "+");
     const authHeader = `Basic ${Buffer.from(encoded).toString("base64")}`;
 
-    const tokenSet = await (await import("got")).default.post(issuer.token_endpoint, {
-      ...this._gotOptions,
+    const response = await fetchWithRetry(issuer.token_endpoint, {
+      method: "POST",
       headers: {
         /* eslint-disable @typescript-eslint/naming-convention */
         "Content-Type": "application/x-www-form-urlencoded",
@@ -77,8 +60,15 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
         ...additionalHeaders,
         /* eslint-enable @typescript-eslint/naming-convention */
       },
-      form: body,
-    }).json<any>();
+      body: new URLSearchParams(body),
+    });
+
+    if (!response.ok) {
+      await response.body?.cancel();
+      throw new Error(`Failed to retrieve service authorization token (status ${response.status})`);
+    }
+
+    const tokenSet = await response.json();
 
     this._accessToken = `${tokenSet.token_type} ${tokenSet.access_token}`;
     if (tokenSet.expires_in)
