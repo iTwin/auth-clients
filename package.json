@@ -15,7 +15,9 @@
     "change": "beachball change",
     "check": "beachball check",
     "version-bump": "beachball bump",
-    "publish-packages": "beachball publish --access public"
+    "publish-packages": "beachball publish --access public",
+    "cache:prune": "lage cache --prune 30",
+    "postinstall": "pnpm cache:prune"
   },
   "keywords": [
     "Bentley",
