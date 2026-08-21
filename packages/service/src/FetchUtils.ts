@@ -59,6 +59,20 @@ async function delay(milliseconds: number): Promise<void> {
   await new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
 
+function isRetryableError(error: unknown, callerSignal: AbortSignal | null | undefined): boolean {
+  // A caller-initiated abort should surface immediately, never retried.
+  if (callerSignal?.aborted)
+    return false;
+
+  // Our own per-attempt timeout aborts the request; treat that like a transient network timeout.
+  if ((error as { name?: string })?.name === "AbortError")
+    return true;
+
+  // undici reports network failures as a TypeError with an underlying `cause`. Programming
+  // errors (e.g. an invalid URL) throw a TypeError without one and should not be retried.
+  return error instanceof TypeError && error.cause !== undefined;
+}
+
 /**
  * A minimal `fetch` wrapper adding retries with exponential backoff on network/timeout errors and
  * retryable status codes, a bounded `Retry-After`, and a per-attempt timeout covering headers and
@@ -81,8 +95,14 @@ export async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit
       const response = await fetch(input, { ...init, signal });
 
       // Return without clearing the timer so it keeps bounding the caller's body read.
-      if (attempt === retries || !retryStatusCodes.has(response.status))
+      if (attempt === retries || !retryStatusCodes.has(response.status)) {
+        // Drain the body of a non-ok response the caller won't read, so the socket is released.
+        if (!response.ok) {
+          await response.body?.cancel();
+          clearTimeout(timer);
+        }
         return response;
+      }
 
       // Discard the body before retrying so the underlying socket can be reused/released.
       retryableResponse = response;
@@ -91,7 +111,7 @@ export async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit
     } catch (error) {
       clearTimeout(timer);
       lastError = error;
-      if (attempt === retries)
+      if (attempt === retries || !isRetryableError(error, init.signal))
         throw error;
     }
 

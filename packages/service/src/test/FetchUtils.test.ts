@@ -129,18 +129,35 @@ describe("fetchWithRetry", () => {
     expect(fetchStub.callCount).to.equal(3);
   });
 
+  it("drains the body of a non-ok response before returning it", async () => {
+    sinon.stub(globalThis, "fetch").resolves(new Response("nope", { status: 400 }));
+
+    const result = await fetchWithRetry("https://test.example.com");
+
+    expect(result.status).to.equal(400);
+    expect(result.bodyUsed).to.equal(true);
+  });
+
   it("retries network errors and throws the last error when exhausted", async () => {
     const clock = sinon.useFakeTimers();
     const fetchStub = sinon.stub(globalThis, "fetch");
-    fetchStub.onFirstCall().rejects(new Error("temporary failure"));
-    fetchStub.onSecondCall().rejects(new Error("still failing"));
+    fetchStub.onFirstCall().rejects(new TypeError("fetch failed", { cause: new Error("ECONNRESET") }));
+    fetchStub.onSecondCall().rejects(new TypeError("fetch failed", { cause: new Error("ENOTFOUND") }));
 
     const request = fetchWithRetry("https://test.example.com", {}, { retries: 1, retryDelay: 10 });
 
-    const assertion = expect(request).to.be.rejectedWith("still failing");
+    const assertion = expect(request).to.be.rejectedWith("fetch failed");
     await clock.runAllAsync();
     await assertion;
     expect(fetchStub.callCount).to.equal(2);
+  });
+
+  it("does not retry a non-network error", async () => {
+    const fetchStub = sinon.stub(globalThis, "fetch").rejects(new TypeError("Failed to parse URL from bad"));
+
+    await expect(fetchWithRetry("https://test.example.com", {}, { retries: 3, retryDelay: 10 }))
+      .to.be.rejectedWith("Failed to parse URL");
+    expect(fetchStub.callCount).to.equal(1);
   });
 
   it("aborts a request that goes past the timeout", async () => {
@@ -221,6 +238,23 @@ describe("fetchWithRetry", () => {
     fetchStub.onFirstCall().resolves(new Response("busy", {
       status: 503,
       headers: { "Retry-After": "0" },
+    }));
+    fetchStub.onSecondCall().resolves(new Response("ok", { status: 200 }));
+
+    const request = fetchWithRetry("https://test.example.com", {}, { retries: 1, retryDelay: 50 });
+
+    await clock.tickAsync(0);
+    const result = await request;
+    expect(result.status).to.equal(200);
+    expect(fetchStub.callCount).to.equal(2);
+  });
+
+  it("treats a negative Retry-After as immediate", async () => {
+    const clock = sinon.useFakeTimers();
+    const fetchStub = sinon.stub(globalThis, "fetch");
+    fetchStub.onFirstCall().resolves(new Response("busy", {
+      status: 503,
+      headers: { "Retry-After": "-5" },
     }));
     fetchStub.onSecondCall().resolves(new Response("ok", { status: 200 }));
 

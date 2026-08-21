@@ -85,8 +85,6 @@ export class OIDCDiscoveryClient {
     let text = "";
     if (response.ok)
       text = await response.text();
-    else
-      await response.body?.cancel();
 
     if (!text)
       throw new Error("Failed to retrieve OpenID configuration from authority");

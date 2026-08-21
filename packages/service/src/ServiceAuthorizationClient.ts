@@ -63,10 +63,8 @@ export class ServiceAuthorizationClient implements AuthorizationClient {
       body: new URLSearchParams(body),
     });
 
-    if (!response.ok) {
-      await response.body?.cancel();
+    if (!response.ok)
       throw new Error(`Failed to retrieve service authorization token (status ${response.status})`);
-    }
 
     const tokenSet = await response.json();
 
