@@ -7,7 +7,7 @@
 interface FetchWithRetryOptions {
   /** Maximum number of retries attempted after the initial request. Defaults to 3. */
   retries?: number;
-  /** Per-attempt timeout in milliseconds, after which the request is aborted. Defaults to 12000. */
+  /** Per-attempt timeout in milliseconds covering both the response headers and body, after which the request is aborted. Defaults to 12000. */
   timeout?: number;
   /** Base delay in milliseconds used for exponential backoff between retries. Defaults to 1000. */
   retryDelay?: number;
@@ -28,15 +28,21 @@ function parseRetryAfter(value: string | null): number | undefined {
   if (!value)
     return undefined;
 
+  // Upper bound in milliseconds for a server-supplied `Retry-After` delay.
+  const maxRetryAfter = 12000;
+
+  let milliseconds: number;
   const seconds = Number(value);
-  if (Number.isFinite(seconds))
-    return Math.max(seconds * 1000, 0);
+  if (Number.isFinite(seconds)) {
+    milliseconds = seconds * 1000;
+  } else {
+    const date = Date.parse(value);
+    if (Number.isNaN(date))
+      return undefined;
+    milliseconds = date - Date.now();
+  }
 
-  const date = Date.parse(value);
-  if (!Number.isNaN(date))
-    return Math.max(date - Date.now(), 0);
-
-  return undefined;
+  return Math.min(Math.max(milliseconds, 0), maxRetryAfter);
 }
 
 function computeDelay(response: Response | undefined, attempt: number, retryDelay: number): number {
@@ -54,8 +60,9 @@ async function delay(milliseconds: number): Promise<void> {
 }
 
 /**
- * A minimal `fetch` wrapper that adds retries (on network/timeout errors and retryable status
- * codes) with exponential backoff, honoring `Retry-After`, and a per-request timeout.
+ * A minimal `fetch` wrapper adding retries with exponential backoff on network/timeout errors and
+ * retryable status codes, a bounded `Retry-After`, and a per-attempt timeout covering headers and
+ * body. Any caller-supplied `init.signal` is composed with the timeout signal.
  * @internal
  */
 export async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit = {}, options: FetchWithRetryOptions = {}): Promise<Response> {
@@ -65,23 +72,27 @@ export async function fetchWithRetry(input: RequestInfo | URL, init: RequestInit
   for (let attempt = 0; attempt <= retries; attempt++) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeout);
+    // Don't keep the event loop alive solely for this timeout timer.
+    timer.unref();
+    const signal = init.signal ? AbortSignal.any([init.signal, controller.signal]) : controller.signal;
     let retryableResponse: Response | undefined;
 
     try {
-      const response = await fetch(input, { ...init, signal: controller.signal });
+      const response = await fetch(input, { ...init, signal });
 
+      // Return without clearing the timer so it keeps bounding the caller's body read.
       if (attempt === retries || !retryStatusCodes.has(response.status))
         return response;
 
-      // Discard the body before retrying so the underlying socket can be reused/released
+      // Discard the body before retrying so the underlying socket can be reused/released.
       retryableResponse = response;
       await response.body?.cancel();
+      clearTimeout(timer);
     } catch (error) {
+      clearTimeout(timer);
       lastError = error;
       if (attempt === retries)
         throw error;
-    } finally {
-      clearTimeout(timer);
     }
 
     await delay(computeDelay(retryableResponse, attempt, retryDelay));

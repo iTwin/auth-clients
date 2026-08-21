@@ -158,4 +158,77 @@ describe("fetchWithRetry", () => {
     await assertion;
     expect(fetchStub.callCount).to.equal(1);
   });
+
+  it("honors a caller-supplied AbortSignal instead of dropping it", async () => {
+    const controller = new AbortController();
+    const fetchStub = sinon.stub(globalThis, "fetch").callsFake(async (_input, init) => {
+      return new Promise((_resolve, reject) => {
+        (init?.signal)?.addEventListener("abort", () => reject(new Error("caller aborted")));
+      });
+    });
+
+    const request = fetchWithRetry("https://test.example.com", { signal: controller.signal }, { retries: 0 });
+    const assertion = expect(request).to.be.rejectedWith("caller aborted");
+
+    controller.abort();
+    await assertion;
+    expect(fetchStub.callCount).to.equal(1);
+  });
+
+  it("keeps the timeout active through a stalled response body", async () => {
+    const clock = sinon.useFakeTimers();
+    // Simulate real fetch: headers resolve immediately, but the body stalls until the signal aborts.
+    sinon.stub(globalThis, "fetch").callsFake(async (_input, init) => {
+      const body = new ReadableStream({
+        start(bodyController) {
+          (init?.signal)?.addEventListener("abort", () => bodyController.error(new Error("body aborted")));
+        },
+      });
+      return new Response(body, { status: 200 });
+    });
+
+    const response = await fetchWithRetry("https://test.example.com", {}, { retries: 0, timeout: 500 });
+    const read = expect(response.text()).to.be.rejectedWith("body aborted");
+
+    await clock.tickAsync(500);
+    await read;
+  });
+
+  it("caps a large Retry-After at the maximum", async () => {
+    const clock = sinon.useFakeTimers();
+    const fetchStub = sinon.stub(globalThis, "fetch");
+    fetchStub.onFirstCall().resolves(new Response("busy", {
+      status: 503,
+      headers: { "Retry-After": "86400" },
+    }));
+    fetchStub.onSecondCall().resolves(new Response("ok", { status: 200 }));
+
+    const request = fetchWithRetry("https://test.example.com", {}, { retries: 1, retryDelay: 10 });
+
+    // 86400s is clamped to the 12000ms cap.
+    await clock.tickAsync(11999);
+    expect(fetchStub.callCount).to.equal(1);
+
+    await clock.tickAsync(1);
+    const result = await request;
+    expect(result.status).to.equal(200);
+    expect(fetchStub.callCount).to.equal(2);
+  });
+
+  it("retries immediately on a zero Retry-After", async () => {
+    const clock = sinon.useFakeTimers();
+    const fetchStub = sinon.stub(globalThis, "fetch");
+    fetchStub.onFirstCall().resolves(new Response("busy", {
+      status: 503,
+      headers: { "Retry-After": "0" },
+    }));
+    fetchStub.onSecondCall().resolves(new Response("ok", { status: 200 }));
+
+    const request = fetchWithRetry("https://test.example.com", {}, { retries: 1, retryDelay: 50 });
+
+    await clock.tickAsync(0);
+    const result = await request;
+    expect(result.status).to.equal(200);
+    expect(fetchStub.callCount).to.equal(2);
+  });
 });
