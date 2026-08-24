@@ -4,11 +4,18 @@
 *--------------------------------------------------------------------------------------------*/
 
 import * as chai from "chai";
+import * as chaiAsPromised from "chai-as-promised";
+import * as sinon from "sinon";
 import type { OIDCConfig } from "../OIDCDiscoveryClient";
 import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
+chai.use(chaiAsPromised);
 
 describe("BaseOpenidClient", () => {
   const testAuthority = "https://test.authority.com";
+
+  afterEach(() => {
+    sinon.restore();
+  });
 
   it("should use config authority without prefix", async () => {
     process.env.IMJS_URL_PREFIX = "";
@@ -49,5 +56,19 @@ describe("BaseOpenidClient", () => {
     process.env.IMJS_URL_PREFIX = "dev-";
     const client = new OIDCDiscoveryClient();
     chai.expect(client.url).equals("https://qa-ims.bentley.com");
+  });
+
+  it("should throw when discovery responds with an error status", async () => {
+    process.env.IMJS_URL_PREFIX = "";
+    sinon.stub(globalThis, "fetch").resolves(new Response("nope", { status: 404 }));
+    const client = new OIDCDiscoveryClient(testAuthority);
+    await chai.expect(client.getConfig()).to.be.rejectedWith("Failed to retrieve OpenID configuration from authority");
+  });
+
+  it("should throw when discovery returns an empty body", async () => {
+    process.env.IMJS_URL_PREFIX = "";
+    sinon.stub(globalThis, "fetch").resolves(new Response("", { status: 200 }));
+    const client = new OIDCDiscoveryClient(testAuthority);
+    await chai.expect(client.getConfig()).to.be.rejectedWith("Failed to retrieve OpenID configuration from authority");
   });
 });
