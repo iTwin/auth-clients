@@ -79,3 +79,19 @@ describe("NodeCliAuthorizationConfiguration Config Scope Logic", () => {
   });
 });
 
+/**
+ * This package is compiled to CommonJS, so every dependency it imports must be loadable via require().
+ * @openid/appauth switched to ESM in 1.4.0.
+ * These tests guard against accidentally pulling in an ESM release of @openid/appauth.
+ */
+describe("@openid/appauth CommonJS compatibility", () => {
+  it("should be loadable via require() from CommonJS code", () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    chai.expect(() => require("@openid/appauth")).to.not.throw();
+  });
+
+  it("should expose the node_support entry point used by Client.ts", () => {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    chai.expect(() => require("@openid/appauth/built/node_support")).to.not.throw();
+  });
+});
