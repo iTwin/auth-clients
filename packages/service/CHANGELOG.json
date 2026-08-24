@@ -2,6 +2,33 @@
   "name": "@itwin/service-authorization",
   "entries": [
     {
+      "date": "Mon, 24 Aug 2026 17:27:26 GMT",
+      "version": "2.1.3",
+      "tag": "@itwin/service-authorization_v2.1.3",
+      "comments": {
+        "patch": [
+          {
+            "author": "anmolshres98@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "995382b3033218793a4cf629820847885b4d66e5",
+            "comment": ""
+          },
+          {
+            "author": "223556219+Copilot@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "995382b3033218793a4cf629820847885b4d66e5",
+            "comment": "Pin got to 12.6.1 and cacheable-request to 13.0.19 to prevent consumers from receiving compromised cacheable-request@13.0.20."
+          },
+          {
+            "author": "anmolshres98@users.noreply.github.com",
+            "package": "@itwin/service-authorization",
+            "commit": "995382b3033218793a4cf629820847885b4d66e5",
+            "comment": "Replaced `got` dependency with `fetch`"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 23 Jun 2026 16:38:48 GMT",
       "version": "2.1.2",
       "tag": "@itwin/service-authorization_v2.1.2",

@@ -1,8 +1,18 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Wed, 01 Jul 2026 14:13:02 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 24 Aug 2026 17:27:26 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.23.2
+
+Mon, 24 Aug 2026 17:27:26 GMT
+
+### Patches
+
+-  (anmolshres98@users.noreply.github.com)
+- Pinned @openid/appauth to version 1.3.x which is the last supported CJS version. (anmolshres98@users.noreply.github.com)
+- Cache OIDC configuration (alex.dunae@bentley.com)
 
 ## 0.23.1
 

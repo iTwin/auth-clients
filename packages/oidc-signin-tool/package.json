@@ -1,6 +1,6 @@
 {
   "name": "@itwin/oidc-signin-tool",
-  "version": "6.1.0",
+  "version": "6.1.1",
   "description": "OIDC Signin Helper",
   "main": "lib/cjs/index.js",
   "typings": "lib/cjs/index",
@@ -62,6 +62,6 @@
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^5.0.0",
-    "@itwin/service-authorization": "^2.1.2"
+    "@itwin/service-authorization": "^2.1.3"
   }
 }

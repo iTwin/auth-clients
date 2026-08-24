@@ -1,8 +1,18 @@
 # Change Log - @itwin/node-cli-authorization
 
-<!-- This log was last generated on Wed, 22 Jul 2026 17:07:42 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 24 Aug 2026 17:27:26 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 3.1.1
+
+Mon, 24 Aug 2026 17:27:26 GMT
+
+### Patches
+
+-  (anmolshres98@users.noreply.github.com)
+- Cache OIDC configuration (alex.dunae@bentley.com)
+- Pinned @openid/appauth to version 1.3.x which is the last supported CJS version. (111407262+RohitPtnkr1996@users.noreply.github.com)
 
 ## 3.1.0
 
