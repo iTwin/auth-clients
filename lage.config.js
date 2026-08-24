@@ -1,17 +1,41 @@
 module.exports = {
   "pipeline": {
-    "build": [
-      "^build"
-    ],
-    "clean": [],
-    "docs": [],
-    "lint": [],
-    "lint:fix": [],
-    "test": [
-      "build"
-    ],
-    "test:integration": [],
-    "cover": ["build"]
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "lib/**/*",
+        "dist/**/*"
+      ]
+    },
+    "clean": {
+      "cache": false
+    },
+    "docs": {
+      "cache": false
+    },
+    "lint": {
+      "cache": false
+    },
+    "lint:fix": {
+      "cache": false
+    },
+    "test": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    },
+    "test:integration": {
+      "cache": false
+    },
+    "cover": {
+      "dependsOn": [
+        "build"
+      ],
+      "cache": false
+    }
   },
   "npmClient": "pnpm"
 };
