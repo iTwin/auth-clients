@@ -118,3 +118,7 @@ or use `.mocharc`
 }
 ```
 
+## Migrating Certa tests
+
+See [Migrating Certa tests](./MIGRATING_TO_V7.md#migrating-certa-tests) for the version 7
+changes.

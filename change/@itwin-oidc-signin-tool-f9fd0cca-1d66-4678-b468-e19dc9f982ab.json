@@ -1,0 +1,7 @@
+{
+  "type": "major",
+  "comment": "Remove the Certa integration helpers, callback-name exports, and certaCommon/certaBackend deep modules. Certa test suites must use @itwin/certa callback utilities and own their backendInitModule setup, including environment loading. Follow the [Certa migration guide](https://github.com/iTwin/auth-clients/blob/main/packages/oidc-signin-tool/MIGRATING_TO_V7.md#migrating-certa-tests). Non-Certa browser exports remain available from lib/cjs/frontend.",
+  "packageName": "@itwin/oidc-signin-tool",
+  "email": "50554904+hl662@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
