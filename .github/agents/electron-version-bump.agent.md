@@ -129,17 +129,19 @@ Find the section for the new major version (e.g., "Planned Breaking Changes (X.0
 
 | Module | File(s) using it |
 | --- | --- |
-| `BrowserWindow` | `packages/electron/src/main/ElectronMainAuthorizationRequestHandler.ts`, `packages/electron/src/main/Client.ts` |
-| `contextBridge`, `ipcRenderer` | `packages/electron/src/renderer/ElectronPreload.ts` |
-| `session` (cookies) | `packages/electron/src/main/Client.ts` |
-| `safeStorage` | `packages/electron/src/main/TokenStore.ts` |
-| `app`, `net` | `packages/electron/src/main/Client.ts` |
+| `BrowserWindow`, `ipcMain`, `shell` | `packages/electron/src/main/Client.ts` |
+| `shell` | `packages/electron/src/main/ElectronMainAuthorizationRequestHandler.ts` |
+| `safeStorage` | `packages/electron/src/main/TokenStore.ts`, `packages/electron/src/main/OidcDiscoveryCache.ts` |
+| `contextBridge`, `ipcRenderer`, `IpcRendererEvent` | `packages/electron/src/renderer/ElectronPreload.ts` |
+| `ipcRenderer` (via `require("electron")`) | `packages/electron/src/renderer/Client.ts` |
+| `app`, `BrowserWindow` | `packages/electron/src/integration-test/test-app/index.ts` |
+| `app` (via `require("electron")`) | `packages/electron/scripts/verify-flow.cjs` |
 
-Also search for any additional usage:
+Also search for any additional usage. Include `.cjs`/`.mjs` — scripts such as `verify-flow.cjs` import Electron too and are missed by a `.ts`/`.js`-only search:
 
 ```bash
-grep -r "from \"electron\"" --include='*.ts' --include='*.js' -l packages/
-grep -r "require(\"electron\")" --include='*.ts' --include='*.js' -l packages/
+grep -r "from \"electron\"" --include='*.ts' --include='*.js' --include='*.cjs' --include='*.mjs' -l packages/
+grep -r "require(\"electron\")" --include='*.ts' --include='*.js' --include='*.cjs' --include='*.mjs' -l packages/
 ```
 
 For each breaking change listed in the Electron docs for the new major version:
@@ -153,8 +155,9 @@ For each breaking change listed in the Electron docs for the new major version:
 - Changed default values (e.g., `contextIsolation`, `sandbox`, `nodeIntegration` defaults)
 - IPC protocol changes
 - Changes to `contextBridge` behavior
-- Changes to `session`/cookie APIs
 - Changes to `safeStorage` API
+- Changes to `shell.openExternal` behavior
+- Changes to `ipcMain`/`ipcRenderer` channels or invoke semantics
 - New required permissions or security policy changes
 - Deprecated APIs that are now removed
 
