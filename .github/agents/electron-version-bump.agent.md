@@ -135,12 +135,13 @@ Find the section for the new major version (e.g., "Planned Breaking Changes (X.0
 | `contextBridge`, `ipcRenderer`, `IpcRendererEvent` | `packages/electron/src/renderer/ElectronPreload.ts` |
 | `ipcRenderer` (via `require("electron")`) | `packages/electron/src/renderer/Client.ts` |
 | `app`, `BrowserWindow` | `packages/electron/src/integration-test/test-app/index.ts` |
+| `app` (via `require("electron")`) | `packages/electron/scripts/verify-flow.cjs` |
 
-Also search for any additional usage:
+Also search for any additional usage. Include `.cjs`/`.mjs` — scripts such as `verify-flow.cjs` import Electron too and are missed by a `.ts`/`.js`-only search:
 
 ```bash
-grep -r "from \"electron\"" --include='*.ts' --include='*.js' -l packages/
-grep -r "require(\"electron\")" --include='*.ts' --include='*.js' -l packages/
+grep -r "from \"electron\"" --include='*.ts' --include='*.js' --include='*.cjs' --include='*.mjs' -l packages/
+grep -r "require(\"electron\")" --include='*.ts' --include='*.js' --include='*.cjs' --include='*.mjs' -l packages/
 ```
 
 For each breaking change listed in the Electron docs for the new major version:
