@@ -9,6 +9,7 @@ import { join } from "node:path";
 import { assert } from "chai";
 import * as sinon from "sinon";
 import { OidcDiscoveryCache } from "../main/OidcDiscoveryCache.js";
+const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-require-imports, @typescript-eslint/naming-convention
 
 const issuer = "https://qa-ims.bentley.com";
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -30,25 +31,25 @@ type TestDiscoveryDocument = Omit<
 
 describe("OidcDiscoveryCache", () => {
   let cacheDirectory: string;
-  let decryptStub: sinon.SinonStub;
 
   beforeEach(async () => {
     sinon.restore();
     cacheDirectory = await mkdtemp(join(tmpdir(), "electron-oidc-discovery-"));
-    sinon
-      .stub(OidcDiscoveryCache.prototype, "encrypt" as any)
-      .callsFake(async (...args: unknown[]) => Buffer.from(args[0] as string));
-    decryptStub = sinon
-      .stub(OidcDiscoveryCache.prototype, "decrypt" as any)
-      .callsFake(async (...args: unknown[]) =>
-        Buffer.from(args[0] as Buffer).toString(),
-      );
   });
 
   afterEach(async () => {
     sinon.restore();
     await rm(cacheDirectory, { recursive: true, force: true });
   });
+
+  function writeCacheEntry(value: unknown) {
+    const store = new Store({
+      name: "iTwinJs_oidcDiscoveryCache",
+      encryptionKey: "iTwin",
+      cwd: cacheDirectory,
+    });
+    store.set(Buffer.from(issuer, "utf8").toString("base64url"), value);
+  }
 
   function stubDiscovery(
     cacheControl = "max-age=86400",
@@ -66,7 +67,7 @@ describe("OidcDiscoveryCache", () => {
     } as Response);
   }
 
-  it("reuses a fresh encrypted configuration across instances", async () => {
+  it("reuses a fresh cached configuration across instances", async () => {
     const fetchStub = stubDiscovery();
 
     await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
@@ -123,11 +124,22 @@ describe("OidcDiscoveryCache", () => {
     await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
   });
 
-  it("treats an undecryptable cache entry as a miss", async () => {
+  it("treats a malformed cache entry as a miss", async () => {
     const fetchStub = stubDiscovery();
     await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
 
-    decryptStub.rejects(new Error("tampered"));
+    writeCacheEntry("not a cached configuration");
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
+
+    sinon.assert.calledTwice(fetchStub);
+  });
+
+  it("treats a legacy encrypted cache entry as a miss", async () => {
+    const fetchStub = stubDiscovery();
+    await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
+
+    // Entries written by 0.23.2/0.23.3 were safeStorage encrypted buffers.
+    writeCacheEntry(Buffer.from("encrypted bytes"));
     await new OidcDiscoveryCache(issuer, cacheDirectory).getConfiguration();
 
     sinon.assert.calledTwice(fetchStub);
