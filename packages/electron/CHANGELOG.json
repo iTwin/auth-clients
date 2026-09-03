@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Thu, 03 Sep 2026 07:07:38 GMT",
+      "version": "0.23.4",
+      "tag": "@itwin/electron-authorization_v0.23.4",
+      "comments": {
+        "patch": [
+          {
+            "author": "98940208+GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "eb40a8a021984c853c1b2b6323d95c25a9202af2",
+            "comment": "Store the OIDC discovery document as plain JSON instead of using safeStorage, which could block indefinitely on a macOS Keychain prompt"
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 27 Aug 2026 12:51:18 GMT",
       "version": "0.23.3",
       "tag": "@itwin/electron-authorization_v0.23.3",

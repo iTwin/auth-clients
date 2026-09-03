@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Thu, 27 Aug 2026 12:51:18 GMT and should not be manually modified. -->
+<!-- This log was last generated on Thu, 03 Sep 2026 07:07:38 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.23.4
+
+Thu, 03 Sep 2026 07:07:38 GMT
+
+### Patches
+
+- Store the OIDC discovery document as plain JSON instead of using safeStorage, which could block indefinitely on a macOS Keychain prompt (98940208+GytisCepk@users.noreply.github.com)
 
 ## 0.23.3
 
