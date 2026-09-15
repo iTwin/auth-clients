@@ -165,12 +165,12 @@ export class ElectronMainAuthorization implements AuthorizationClient {
    * @deprecated in 0.22.0. Please use the onUserStateChanged instance event instead.
    */
   public static readonly onUserStateChanged = new BeEvent<
-  (token: AccessToken) => void
+    (token: AccessToken) => void
   >();
 
   /** Event raised whenever the access token changes in this instance of ElectronMainAuthorization */
   public readonly onUserStateChanged = new BeEvent<
-  (token: AccessToken) => void
+    (token: AccessToken) => void
   >();
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
@@ -263,6 +263,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     this.handleIpcMessage(this._ipcChannelNames.getAccessToken, async () => {
       const accessToken = await this.getAccessToken();
+      this.notifyFrontendAccessTokenExpirationChange(this._expiresAt);
       return accessToken;
     });
 
@@ -279,7 +280,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
     this.sendIpcMessage(this._ipcChannelNames.onAccessTokenChanged, token);
   }
 
-  private notifyFrontendAccessTokenExpirationChange(expiresAt: Date): void {
+  private notifyFrontendAccessTokenExpirationChange(expiresAt: Date | undefined): void {
     this.sendIpcMessage(
       this._ipcChannelNames.onAccessTokenExpirationChanged,
       expiresAt,
@@ -315,6 +316,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
     this._accessToken = token;
     this.notifyFrontendAccessTokenChange(this._accessToken);
+    this.notifyFrontendAccessTokenExpirationChange(this._expiresAt);
     // eslint-disable-next-line @typescript-eslint/no-deprecated
     ElectronMainAuthorization.onUserStateChanged.raiseEvent(this._accessToken);
     this.onUserStateChanged.raiseEvent(this._accessToken);

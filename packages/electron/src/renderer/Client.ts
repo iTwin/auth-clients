@@ -38,7 +38,7 @@ class ElectronAuthIPC {
     this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenChanged, callback);
   }
 
-  public addAccessTokenExpirationChangeListener(callback: (event: any, expiresAt: Date) => void) {
+  public addAccessTokenExpirationChangeListener(callback: (event: any, expiresAt: Date | undefined) => void) {
     this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenExpirationChanged, callback);
   }
 
@@ -118,7 +118,7 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     this._ipcAuthAPI.addAccessTokenChangeListener((_event: any, token: AccessToken) => {
       this.onAccessTokenChanged.raiseEvent(token);
     });
-    this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date) => {
+    this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date | undefined) => {
       this._expiresAt = expiration;
     });
 
@@ -173,7 +173,7 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
 
   private get _hasExpired(): boolean {
     if (!this._expiresAt)
-      return false;
+      return true;
 
     return this._expiresAt.getTime() - Date.now() <= this._expiryBuffer * 1000; // Consider this.expireSafety's amount of time early as expired
   }

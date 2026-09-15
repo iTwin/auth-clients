@@ -177,6 +177,60 @@ describe("ElectronMainAuthorization Token Logic", () => {
     assert.isTrue(decryptSpy.calledOnce);
   });
 
+  it("should notify the frontend of both the token and its expiry whenever the token changes", async () => {
+    const config = getConfig();
+    const client = new ElectronMainAuthorization(config);
+    const clientAny = client as any;
+
+    const tokenSpy = clientAny.notifyFrontendAccessTokenChange as sinon.SinonStub;
+    const expirySpy = clientAny.notifyFrontendAccessTokenExpirationChange as sinon.SinonStub;
+    tokenSpy.resetHistory();
+    expirySpy.resetHistory();
+
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+    clientAny._expiresAt = expiresAt;
+
+    clientAny.setAccessToken("bearer newToken");
+
+    sinon.assert.calledOnceWithExactly(tokenSpy, "bearer newToken");
+    sinon.assert.calledOnceWithExactly(expirySpy, expiresAt);
+  });
+
+  it("should re-emit the expiry from the getAccessToken IPC handler so a pull re-syncs the renderer", async () => {
+    // setupIPCHandlers is stubbed in beforeEach; capture the handlers registered
+    // by the real implementation instead.
+    sinon.restore();
+    const handlers = new Map<string, (...args: any[]) => Promise<any>>();
+    sinon.stub(ElectronMainAuthorization.prototype, "handleIpcMessage" as any).callsFake(
+      (...args: unknown[]) => {
+        const [channel, handler] = args as [string, (...handlerArgs: any[]) => Promise<any>];
+        handlers.set(channel, handler);
+      },
+    );
+    sinon.stub(ElectronMainAuthorization.prototype, "notifyFrontendAccessTokenChange" as any);
+    const expirySpy = sinon.stub(
+      ElectronMainAuthorization.prototype,
+      "notifyFrontendAccessTokenExpirationChange" as any,
+    );
+
+    const config = getConfig();
+    const client = new ElectronMainAuthorization(config);
+    const clientAny = client as any;
+
+    // Simulate the cached-return path: a token and expiry are already known.
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+    clientAny._accessToken = "bearer cachedToken";
+    clientAny._expiresAt = expiresAt;
+    expirySpy.resetHistory();
+
+    const getAccessTokenHandler = handlers.get(clientAny._ipcChannelNames.getAccessToken);
+    assert.isDefined(getAccessTokenHandler);
+
+    const returnedToken = await getAccessTokenHandler!();
+    assert.equal(returnedToken, "bearer cachedToken");
+    sinon.assert.calledOnceWithExactly(expirySpy, expiresAt);
+  });
+
   it("should fire onUserStateChanged events", async () => {
     const staticEvents: AccessToken[] = [];
     const instanceEvents1: AccessToken[] = [];
