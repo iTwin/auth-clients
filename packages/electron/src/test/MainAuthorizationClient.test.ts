@@ -226,6 +226,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
     const getAccessTokenHandler = handlers.get(clientAny._ipcChannelNames.getAccessToken);
     assert.isDefined(getAccessTokenHandler);
 
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const returnedToken = await getAccessTokenHandler!();
     assert.equal(returnedToken, "bearer cachedToken");
     sinon.assert.calledOnceWithExactly(expirySpy, expiresAt);
