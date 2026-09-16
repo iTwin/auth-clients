@@ -170,7 +170,7 @@ export class ElectronMainAuthorization implements AuthorizationClient {
 
   /** Event raised whenever the access token changes in this instance of ElectronMainAuthorization */
   public readonly onUserStateChanged = new BeEvent<
-    (token: AccessToken) => void
+  (token: AccessToken) => void
   >();
 
   public constructor(config: ElectronMainAuthorizationConfiguration) {
