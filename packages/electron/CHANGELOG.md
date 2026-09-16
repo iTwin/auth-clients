@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Thu, 03 Sep 2026 07:07:38 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 16 Sep 2026 06:48:35 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.23.5
+
+Wed, 16 Sep 2026 06:48:35 GMT
+
+### Patches
+
+- Fix renderer treating access token as valid forever when its expiry is unknown. (64415995+DanishMehmood-bit@users.noreply.github.com)
 
 ## 0.23.4
 

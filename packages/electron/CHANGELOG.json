@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Wed, 16 Sep 2026 06:48:35 GMT",
+      "version": "0.23.5",
+      "tag": "@itwin/electron-authorization_v0.23.5",
+      "comments": {
+        "patch": [
+          {
+            "author": "64415995+DanishMehmood-bit@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "aa9c589ece7f1a59913c1719ebfff44e977bca04",
+            "comment": "Fix renderer treating access token as valid forever when its expiry is unknown."
+          }
+        ]
+      }
+    },
+    {
       "date": "Thu, 03 Sep 2026 07:07:38 GMT",
       "version": "0.23.4",
       "tag": "@itwin/electron-authorization_v0.23.4",
