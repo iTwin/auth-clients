@@ -34,6 +34,10 @@ class ElectronAuthIPC {
     return this._ipcSocket.invoke(this._ipcChannelNames.getAccessToken);
   }
 
+  public async getAccessTokenExpiry(): Promise<Date | undefined> {
+    return this._ipcSocket.invoke(this._ipcChannelNames.getAccessTokenExpiry);
+  }
+
   public addAccessTokenChangeListener(callback: (event: any, token: string) => void) {
     this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenChanged, callback);
   }
@@ -121,6 +125,17 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date | undefined) => {
       this._expiresAt = expiration;
     });
+
+    // Bootstrap the current expiry via a reliable request/response. The main process only broadcasts the
+    // expiry, so a renderer created after the token was issued would otherwise never learn it and would
+    // treat the token as expired, pulling on every request.
+    void this._ipcAuthAPI
+      .getAccessTokenExpiry()
+      .then((expiration) => {
+        if (expiration && !this._expiresAt)
+          this._expiresAt = expiration;
+      })
+      .catch(() => { });
 
     if (config.expiryBuffer)
       this._expiryBuffer = config.expiryBuffer;

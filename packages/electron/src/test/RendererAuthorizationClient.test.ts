@@ -15,6 +15,7 @@ describe("ElectronRendererAuthorization channelClientPrefix", () => {
     "signIn",
     "signOut",
     "getAccessToken",
+    "getAccessTokenExpiry",
     "onAccessTokenChanged",
     "onAccessTokenExpirationChanged",
     "signInSilent",
@@ -56,10 +57,22 @@ describe("ElectronRendererAuthorization channelClientPrefix", () => {
 describe("ElectronRendererAuthorization token expiry", () => {
   const clientId = "test-client";
 
-  function setup(getAccessTokenResult: string = "backend token") {
+  /** Counts only token pulls, ignoring the startup expiry bootstrap invoke. */
+  function tokenPullCount(invoke: sinon.SinonStub): number {
+    return invoke.getCalls().filter((call) => (call.args[0] as string).includes("getAccessToken-")).length;
+  }
+
+  /** Lets the startup expiry bootstrap invoke (and its `.then`) settle. */
+  async function flushMicrotasks(): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+  }
+
+  function setup(getAccessTokenResult: string = "backend token", expiryResult?: Date) {
     const listeners = new Map<string, (event: any, ...args: any[]) => void>();
     const invoke = sinon.stub();
     invoke.callsFake(async (channel: string) => {
+      if (channel.includes("getAccessTokenExpiry"))
+        return expiryResult;
       if (channel.includes("getAccessToken"))
         return getAccessTokenResult;
       return undefined;
@@ -97,8 +110,7 @@ describe("ElectronRendererAuthorization token expiry", () => {
     expect(authClient.isAuthorized).to.eq(false);
 
     const token = await authClient.getAccessToken();
-    sinon.assert.calledOnce(invoke);
-    expect(invoke.firstCall.args[0]).to.contain("getAccessToken");
+    expect(tokenPullCount(invoke)).to.eq(1);
     expect(token).to.eq("backend token");
   });
 
@@ -110,7 +122,7 @@ describe("ElectronRendererAuthorization token expiry", () => {
 
     expect(authClient.isAuthorized).to.eq(true);
     const token = await authClient.getAccessToken();
-    sinon.assert.notCalled(invoke);
+    expect(tokenPullCount(invoke)).to.eq(0);
     expect(token).to.eq("cached token");
   });
 
@@ -123,8 +135,38 @@ describe("ElectronRendererAuthorization token expiry", () => {
 
     expect(authClient.isAuthorized).to.eq(false);
     const token = await authClient.getAccessToken();
-    sinon.assert.calledOnce(invoke);
+    expect(tokenPullCount(invoke)).to.eq(1);
     expect(token).to.eq("backend token");
+  });
+
+  it("should bootstrap the current expiry on startup so a valid token is trusted without pulling", async () => {
+    const future = new Date(Date.now() + 60 * 60 * 1000);
+    // The main process signed in before this renderer existed, so only the request/response
+    // bootstrap - not the missed broadcast - can deliver the expiry.
+    const { authClient, invoke, raise } = setup("backend token", future);
+
+    // A token arrives (e.g. via a later change broadcast) but the expiry broadcast was missed.
+    raise("onAccessTokenChanged", "cached token");
+    await flushMicrotasks();
+
+    expect(authClient.isAuthorized).to.eq(true);
+    const token = await authClient.getAccessToken();
+    expect(tokenPullCount(invoke)).to.eq(0);
+    expect(token).to.eq("cached token");
+  });
+
+  it("should not overwrite an expiry delivered by broadcast with the startup bootstrap value", async () => {
+    const stale = new Date(Date.now() + 1000);
+    const fresh = new Date(Date.now() + 60 * 60 * 1000);
+    const { authClient, raise } = setup("backend token", stale);
+
+    // A fresh expiry arrives by broadcast before the bootstrap invoke resolves.
+    raise("onAccessTokenChanged", "cached token");
+    raise("onAccessTokenExpirationChanged", fresh);
+    await flushMicrotasks();
+
+    // The broadcast value must win; the older bootstrapped expiry must not clobber it.
+    expect(authClient.isAuthorized).to.eq(true);
   });
 });
 
