@@ -1,7 +1,0 @@
-{
-  "type": "patch",
-  "comment": "Bootstrap the renderer's access token expiry via request/response on startup so a renderer created after sign-in learns the expiry instead of treating the token as expired.",
-  "packageName": "@itwin/electron-authorization",
-  "email": "64415995+DanishMehmood-bit@users.noreply.github.com",
-  "dependentChangeType": "patch"
-}

@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Wed, 16 Sep 2026 06:48:35 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 22 Sep 2026 05:40:44 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.23.6
+
+Tue, 22 Sep 2026 05:40:44 GMT
+
+### Patches
+
+- Bootstrap the renderer's access token expiry via request/response on startup so a renderer created after sign-in learns the expiry instead of treating the token as expired. (64415995+DanishMehmood-bit@users.noreply.github.com)
 
 ## 0.23.5
 

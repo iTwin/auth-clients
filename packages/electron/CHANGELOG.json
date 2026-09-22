@@ -2,6 +2,21 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Tue, 22 Sep 2026 05:40:44 GMT",
+      "version": "0.23.6",
+      "tag": "@itwin/electron-authorization_v0.23.6",
+      "comments": {
+        "patch": [
+          {
+            "author": "64415995+DanishMehmood-bit@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "968815aae986a49a0e556ba12445aa56688d182b",
+            "comment": "Bootstrap the renderer's access token expiry via request/response on startup so a renderer created after sign-in learns the expiry instead of treating the token as expired."
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 16 Sep 2026 06:48:35 GMT",
       "version": "0.23.5",
       "tag": "@itwin/electron-authorization_v0.23.5",
