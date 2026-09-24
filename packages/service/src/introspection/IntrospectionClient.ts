@@ -10,15 +10,45 @@ import * as jwks from "jwks-rsa";
 import * as jwt from "jsonwebtoken";
 import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 
-/**
- * @alpha
- * @param issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
- * @param audience The audience this resource server expects. If defined, a
- * token is active only when its `aud` claim contains one of these values.
- */
+/** @alpha */
 export interface IntrospectionClientConfiguration {
+  /** The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined. */
   issuerUrl?: string;
+  /**
+   * The `iss` values to accept. Each value must match the claim exactly.
+   * If undefined, the client accepts the issuer from the OIDC discovery
+   * document. For Bentley IMS, it also accepts the matching `ims` or
+   * `imsoidc` host, because both hosts sign tokens with the same keys.
+   */
+  issuer?: string | string[];
+  /**
+   * The audience this resource server expects. If defined, a token is
+   * active only when its `aud` claim contains one of these values.
+   */
   audience?: string | string[];
+}
+
+function assertNotEmpty(name: string, value: string | string[] | undefined): void {
+  if (value === undefined)
+    return;
+
+  const values = Array.isArray(value) ? value : [value];
+  if (values.length === 0 || values.some((entry) => typeof entry !== "string" || entry === ""))
+    throw new Error(`IntrospectionClient ${name} must not be empty`);
+}
+
+// IMS publishes the same signing keys at `{prefix}ims.bentley.com` and
+// `{prefix}imsoidc.bentley.com`, but each host has its own issuer. A token
+// from either host is signed by IMS, so the default accepts both.
+const imsIssuerPattern = /^https:\/\/([a-z0-9]+-)?ims(oidc)?\.bentley\.com$/;
+
+function getImsTwinIssuer(issuer: string): string | undefined {
+  const match = imsIssuerPattern.exec(issuer);
+  if (!match)
+    return undefined;
+
+  const [, prefix = "", oidc] = match;
+  return `https://${prefix}${oidc ? "ims" : "imsoidc"}.bentley.com`;
 }
 
 function removeAccessTokenPrefix(accessToken: string): string {
@@ -30,8 +60,8 @@ function removeAccessTokenPrefix(accessToken: string): string {
 
 const signingKeyCacheMaxAgeMs = 10 * 60 * 1000; // 10 Min
 
-// Only asymmetric RSA algorithms can be verified with a JWKS public key.
-// This list stops `none` and HMAC tokens from being accepted.
+// IMS signs access tokens with RSA keys. Allow only RSA algorithms, so
+// that `none`, HMAC, and other key types are rejected.
 const allowedAlgorithms: jwt.Algorithm[] = ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512"];
 
 /** @alpha */
@@ -39,9 +69,22 @@ export class IntrospectionClient {
   private _discoveryClient: OIDCDiscoveryClient;
 
   public constructor(protected _config: IntrospectionClientConfiguration = {}) {
+    assertNotEmpty("issuer", _config.issuer);
+    assertNotEmpty("audience", _config.audience);
     this._discoveryClient = new OIDCDiscoveryClient(_config.issuerUrl);
-    if (Array.isArray(_config.audience) && _config.audience.length === 0)
-      throw new Error("IntrospectionClient audience must not be empty");
+  }
+
+  private async getAcceptedIssuers(): Promise<string | string[]> {
+    if (this._config.issuer !== undefined)
+      return this._config.issuer;
+
+    // jsonwebtoken skips the issuer check for an empty value, so fail closed.
+    const { issuer } = await this._discoveryClient.getConfig();
+    if (!issuer)
+      throw new Error("Issuer is missing from the OIDC discovery document");
+
+    const twinIssuer = getImsTwinIssuer(issuer);
+    return twinIssuer ? [issuer, twinIssuer] : issuer;
   }
 
   private _jwks?: jwks.JwksClient;
@@ -84,7 +127,7 @@ export class IntrospectionClient {
       throw new Error("Invalid scope");
 
     const key = await this.getSigningKey(header);
-    const { issuer } = await this._discoveryClient.getConfig();
+    const issuer = await this.getAcceptedIssuers();
     let active = true;
     try {
       // since we already called decode, we can ignore the result of verify and just check if it throws.

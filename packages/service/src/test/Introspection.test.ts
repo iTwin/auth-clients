@@ -22,21 +22,18 @@ function generateSigningKey(kid: string) {
   const privateKeyPem = privateKey.export({ format: "pem", type: "pkcs8" }).toString();
   const publicKeyPem = publicKey.export({ format: "pem", type: "spki" }).toString();
   const jwk = { ...publicKey.export({ format: "jwk" }), kid, use: "sig", alg: "RS256" };
-  const sign = (claims: object = {}, options: jwt.SignOptions = {}) => {
-    const signOptions: jwt.SignOptions = { algorithm: "RS256", keyid: kid, issuer, expiresIn: "1h", ...options };
-    // jsonwebtoken rejects options that are present but undefined.
-    for (const [name, value] of Object.entries(signOptions)) {
-      if (value === undefined)
-        delete signOptions[name as keyof jwt.SignOptions];
-    }
-    return jwt.sign({ scope: ["scope1"], ...claims }, privateKeyPem, signOptions);
-  };
+  // Claims set to undefined are left out of the token.
+  const sign = (claims: object = {}) => jwt.sign(
+    { scope: ["scope1"], iss: issuer, exp: Math.floor(Date.now() / 1000) + 3600, ...claims },
+    privateKeyPem,
+    { algorithm: "RS256", keyid: kid },
+  );
   return { jwk, publicKeyPem, sign };
 }
 
-function stubIssuer(signingKey: ReturnType<typeof generateSigningKey>) {
+function stubIssuer(signingKey: ReturnType<typeof generateSigningKey>, discoveredIssuer = issuer) {
   sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
-    issuer,
+    issuer: discoveredIssuer,
     jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
   } as OIDCConfig);
   sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
@@ -170,7 +167,7 @@ describe("IntrospectionClient", () => {
   it("should return active:false if token is expired", async () => {
     const signingKey = generateSigningKey("kid1");
     stubIssuer(signingKey);
-    const token = signingKey.sign({ exp: Math.floor(Date.now() / 1000) - 60 }, { expiresIn: undefined });
+    const token = signingKey.sign({ exp: Math.floor(Date.now() / 1000) - 60 });
 
     const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
     expect(response.active).to.be.false;
@@ -189,7 +186,7 @@ describe("IntrospectionClient", () => {
   it("should return active:false if token has a different issuer", async () => {
     const signingKey = generateSigningKey("kid1");
     stubIssuer(signingKey);
-    const token = signingKey.sign({}, { issuer: "https://attacker.example.com" });
+    const token = signingKey.sign({ iss: "https://attacker.example.com" });
 
     const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
     expect(response.active).to.be.false;
@@ -198,10 +195,74 @@ describe("IntrospectionClient", () => {
   it("should return active:false if token has no issuer", async () => {
     const signingKey = generateSigningKey("kid1");
     stubIssuer(signingKey);
-    const token = signingKey.sign({}, { issuer: undefined });
+    const token = signingKey.sign({ iss: undefined });
 
     const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
     expect(response.active).to.be.false;
+  });
+
+  const imsTwinIssuers = [
+    ["https://ims.bentley.com", "https://imsoidc.bentley.com"],
+    ["https://imsoidc.bentley.com", "https://ims.bentley.com"],
+    ["https://qa-ims.bentley.com", "https://qa-imsoidc.bentley.com"],
+    ["https://qa-imsoidc.bentley.com", "https://qa-ims.bentley.com"],
+  ];
+  for (const [discoveredIssuer, twinIssuer] of imsTwinIssuers) {
+    it(`should accept ${twinIssuer} tokens if the discovered issuer is ${discoveredIssuer}`, async () => {
+      const signingKey = generateSigningKey("kid1");
+      stubIssuer(signingKey, discoveredIssuer);
+      const client = new IntrospectionClient();
+
+      const discoveredToken = signingKey.sign({ iss: discoveredIssuer });
+      expect((await client.introspect(`Bearer ${discoveredToken}`)).active).to.be.true;
+
+      const twinToken = signingKey.sign({ iss: twinIssuer });
+      expect((await client.introspect(`Bearer ${twinToken}`)).active).to.be.true;
+    });
+  }
+
+  it("should return active:false if token is from an IMS host with a different prefix", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey, "https://ims.bentley.com");
+    const token = signingKey.sign({ iss: "https://qa-imsoidc.bentley.com" });
+
+    const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should not accept a twin issuer if the discovered issuer is not IMS", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey, "https://ims.example.com");
+    const token = signingKey.sign({ iss: "https://imsoidc.example.com" });
+
+    const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should accept only the configured issuers if issuer is set", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const client = new IntrospectionClient({ issuer: ["https://a.example.com", "https://b.example.com"] });
+
+    const configuredToken = signingKey.sign({ iss: "https://b.example.com" });
+    expect((await client.introspect(`Bearer ${configuredToken}`)).active).to.be.true;
+
+    const discoveredToken = signingKey.sign({ iss: issuer });
+    expect((await client.introspect(`Bearer ${discoveredToken}`)).active).to.be.false;
+  });
+
+  it("should throw if the discovery document has no issuer", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey, "");
+    sinon.stub(Logger, "logError");
+
+    await expect(new IntrospectionClient().introspect(`Bearer ${signingKey.sign()}`))
+      .to.be.rejectedWith("Issuer is missing from the OIDC discovery document");
+  });
+
+  it("should throw if configured issuer is empty", () => {
+    for (const emptyIssuer of ["", [], ["https://a.example.com", ""]])
+      expect(() => new IntrospectionClient({ issuer: emptyIssuer })).to.throw("IntrospectionClient issuer must not be empty");
   });
 
   it("should return active:false if token uses an HMAC algorithm", async () => {
@@ -215,6 +276,17 @@ describe("IntrospectionClient", () => {
     );
 
     const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should return active:false if token is unsigned", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString("base64url");
+    const header = encode({ alg: "none", typ: "JWT", kid: "kid1" });
+    const payload = encode({ scope: ["scope1"], iss: issuer, exp: Math.floor(Date.now() / 1000) + 3600 });
+
+    const response = await new IntrospectionClient().introspect(`Bearer ${header}.${payload}.`);
     expect(response.active).to.be.false;
   });
 
@@ -257,6 +329,7 @@ describe("IntrospectionClient", () => {
   });
 
   it("should throw if configured audience is empty", () => {
-    expect(() => new IntrospectionClient({ audience: [] })).to.throw("IntrospectionClient audience must not be empty");
+    for (const emptyAudience of ["", [], ["resource-a", ""]])
+      expect(() => new IntrospectionClient({ audience: emptyAudience })).to.throw("IntrospectionClient audience must not be empty");
   });
 });
