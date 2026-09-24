@@ -25,7 +25,7 @@ function removeAccessTokenPrefix(accessToken: string): string {
   return splitAccessToken[1];
 }
 
-const signingKeyCacheMaxAgeMs = 10 * 60 * 1000;
+const signingKeyCacheMaxAgeMs = 10 * 60 * 1000; // 10 Min
 
 /** @alpha */
 export class IntrospectionClient {
