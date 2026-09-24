@@ -1,0 +1,7 @@
+{
+  "type": "patch",
+  "comment": "IntrospectionClient no longer caches JWKS signing keys forever. Keys now use a bounded, rate-limited cache, so a key removed from the issuer's JWKS stops being trusted within 10 minutes.",
+  "packageName": "@itwin/service-authorization",
+  "email": "78756012+ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
