@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "IntrospectionClient now checks that the token issuer matches the discovered issuer and allows only RSA signing algorithms. Add an optional audience setting: when set, tokens must have a matching aud claim.",
+  "packageName": "@itwin/service-authorization",
+  "email": "78756012+ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
