@@ -3,10 +3,9 @@
 * See LICENSE.md in the project root for license terms and full copyright notice.
 *--------------------------------------------------------------------------------------------*/
 
-/* eslint-disable @typescript-eslint/dot-notation */
-
+import { generateKeyPairSync } from "crypto";
 import { Logger } from "@itwin/core-bentley";
-import { assert, use as chaiUse, expect } from "chai";
+import { use as chaiUse, expect } from "chai";
 import * as chaiAsPromised from "chai-as-promised";
 import * as jwt from "jsonwebtoken";
 import * as jwks from "jwks-rsa";
@@ -15,6 +14,18 @@ import { IntrospectionClient } from "../introspection/IntrospectionClient";
 import type { OIDCConfig } from "../OIDCDiscoveryClient";
 import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 chaiUse(chaiAsPromised);
+
+function generateSigningKey(kid: string) {
+  const { privateKey, publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
+  const privateKeyPem = privateKey.export({ format: "pem", type: "pkcs8" }).toString();
+  const jwk = { ...publicKey.export({ format: "jwk" }), kid, use: "sig", alg: "RS256" };
+  const sign = () => jwt.sign(
+    { scope: ["scope1"] },
+    privateKeyPem,
+    { algorithm: "RS256", keyid: kid, expiresIn: "1h" },
+  );
+  return { jwk, sign };
+}
 
 describe("IntrospectionClient", () => {
   afterEach(() => {
@@ -80,70 +91,49 @@ describe("IntrospectionClient", () => {
     expect(logStub.firstCall.lastArg().message).to.equal("Error: Invalid scope");
   });
 
-  it("should cache signing key", async () => {
+  it("should configure a bounded, rate-limited JWKS cache", async () => {
     sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
       jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
     } as OIDCConfig);
-    const fakeKey1 = { getPublicKey: () => "fake key1" };
-    const fakeKey2 = { getPublicKey: () => "fake key2" };
-    const payload = { scope: ["scope1", "scope2"] };
-
-    const keyStub = sinon.stub(jwks.JwksClient.prototype, "getSigningKey").callsFake(async (kid) => {
-      if (kid === "kid1")
-        return fakeKey1;
-      if (kid === "kid2")
-        return fakeKey2;
-      if (kid === undefined)
-        return { getPublicKey: () => "fake key" };
-      assert.fail("unexpected key id");
-    });
-
-    sinon.stub(jwt, "verify");
-
-    const token1 = jwt.sign(payload, "very secret", { header: { kid: "kid1", alg: "none" } });
-    const token2 = jwt.sign(payload, "very secret", { header: { kid: "kid2", alg: "none" } });
-    const token3 = jwt.sign(payload, "very secret", { header: { kid: "kid2", alg: "none" } });
-    const token4 = jwt.sign(payload, "very secret");
-    const token5 = jwt.sign(payload, "very secret");
 
     const client = new IntrospectionClient();
+    const jwksClient = await client["getJwks"]() as unknown as { options: jwks.Options };
 
-    // call with kid1 - added to cache
-    await client.introspect(`fake ${token1}`);
-    expect(client["_signingKeyCache"].size).to.equal(1);
-    expect(client["_signingKeyCache"].has("kid1")).to.be.true;
-    expect(client["_signingKeyCache"].get("kid1")).to.equal(fakeKey1);
-    expect(keyStub.callCount).to.equal(1);
-    expect(keyStub.lastCall.firstArg).to.equal("kid1");
+    expect(jwksClient.options.cache).to.be.true;
+    expect(jwksClient.options.cacheMaxAge).to.equal(10 * 60 * 1000);
+    expect(jwksClient.options.rateLimit).to.be.true;
+    expect(jwksClient.options.jwksRequestsPerMinute).to.equal(10);
+  });
 
-    // this is ugly, but not remotely as ugly as the spaghetti monster that hides inside jwks-rsa. I'm fighting fire with fire here.
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    client["_jwks"]!.getSigningKey = jwks.JwksClient.prototype.getSigningKey.bind(client["_jwks"]);
+  it("should stop trusting a signing key once the issuer removes it and the cache expires", async () => {
+    const clock = sinon.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
+    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+    } as OIDCConfig);
+    sinon.stub(Logger, "logError");
 
-    // call with kid2 - added to cache
-    await client.introspect(`fake ${token2}`);
-    expect(client["_signingKeyCache"].size).to.equal(2);
-    expect(client["_signingKeyCache"].has("kid2")).to.be.true;
-    expect(client["_signingKeyCache"].get("kid2")).to.equal(fakeKey2);
-    expect(keyStub.callCount).to.equal(2);
-    expect(keyStub.lastCall.firstArg).to.equal("kid2");
+    const retiredKey = generateSigningKey("retired-key");
+    const currentKey = generateSigningKey("current-key");
+    const getKeysStub = sinon.stub(jwks.JwksClient.prototype, "getKeys");
+    getKeysStub.resolves([retiredKey.jwk]);
 
-    // call with kid2 - already in cache, nothing changes
-    await client.introspect(`fake ${token3}`);
-    expect(client["_signingKeyCache"].size).to.equal(2);
-    expect(keyStub.callCount).to.equal(2);
+    const client = new IntrospectionClient();
+    const tokenBeforeRemoval = retiredKey.sign();
+    expect((await client.introspect(`Bearer ${tokenBeforeRemoval}`)).active).to.be.true;
 
-    // call without kid - new key retrieved, cache not affected
-    await client.introspect(`fake ${token4}`);
-    expect(client["_signingKeyCache"].size).to.equal(2);
-    expect(keyStub.callCount).to.equal(3);
-    expect(keyStub.lastCall.firstArg).to.be.undefined;
+    // The issuer removes the retired key from its JWKS.
+    getKeysStub.resolves([currentKey.jwk]);
 
-    // call without kid - new key retrieved, cache not affected
-    await client.introspect(`fake ${token5}`);
-    expect(client["_signingKeyCache"].size).to.equal(2);
-    expect(keyStub.callCount).to.equal(4);
-    expect(keyStub.lastCall.firstArg).to.be.undefined;
+    // An attacker who holds the retired private key mints a new token.
+    const tokenAfterRemoval = retiredKey.sign();
+
+    // Trust in the cached key lasts only until its cache entry expires.
+    clock.tick(10 * 60 * 1000 + 1);
+    await expect(client.introspect(`Bearer ${tokenAfterRemoval}`))
+      .to.be.rejectedWith(jwks.SigningKeyNotFoundError);
+
+    // Tokens signed with the current key are still accepted.
+    expect((await client.introspect(`Bearer ${currentKey.sign()}`)).active).to.be.true;
   });
 
   it("should return active:false if token is expired", async () => {

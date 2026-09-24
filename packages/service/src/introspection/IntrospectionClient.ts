@@ -25,6 +25,8 @@ function removeAccessTokenPrefix(accessToken: string): string {
   return splitAccessToken[1];
 }
 
+const signingKeyCacheMaxAgeMs = 10 * 60 * 1000; // 10 Min
+
 /** @alpha */
 export class IntrospectionClient {
   private _discoveryClient: OIDCDiscoveryClient;
@@ -43,22 +45,23 @@ export class IntrospectionClient {
       Logger.logError(ServiceClientLoggerCategory.Introspection, "Issuer does not support JWKS");
       throw new Error("Issuer does not support JWKS");
     }
-    this._jwks = jwks({ jwksUri });
+    // Keys are cached for a bounded time only, so a key the issuer removes
+    // from its JWKS stops being trusted once its cache entry expires.
+    // Rate limiting stops tokens with unknown `kid` values from flooding
+    // the issuer with JWKS requests.
+    this._jwks = jwks({
+      jwksUri,
+      cache: true,
+      cacheMaxAge: signingKeyCacheMaxAgeMs,
+      rateLimit: true,
+      jwksRequestsPerMinute: 10,
+    });
     return this._jwks;
   }
 
-  private _signingKeyCache = new Map<string, jwks.SigningKey>();
   private async getSigningKey(header: jwt.JwtHeader): Promise<jwks.SigningKey> {
     const jwksClient = await this.getJwks();
-    if (header.kid) { // if `kid` is undefined, always get a new signing key
-      if (!this._signingKeyCache.has(header.kid))
-        this._signingKeyCache.set(header.kid, await jwksClient.getSigningKey(header.kid));
-      const signingKey = this._signingKeyCache.get(header.kid);
-      if (!signingKey)
-        throw new Error(`Signing key ${header.kid} not found in cache`);
-      return signingKey;
-    }
-    return jwksClient.getSigningKey();
+    return jwksClient.getSigningKey(header.kid);
   }
 
   private async validateToken(accessToken: string): Promise<IntrospectionResponse> {
