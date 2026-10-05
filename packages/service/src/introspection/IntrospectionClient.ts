@@ -47,14 +47,13 @@ export class IntrospectionClient {
     }
     // Keys are cached for a bounded time only, so a key the issuer removes
     // from its JWKS stops being trusted once its cache entry expires.
-    // Rate limiting stops tokens with unknown `kid` values from flooding
-    // the issuer with JWKS requests.
+    // Do not enable `rateLimit`: jwks-rsa does not cache failed lookups, so
+    // tokens with unknown `kid` values would use up the limit and block the
+    // refresh of real keys when their cache entries expire.
     this._jwks = jwks({
       jwksUri,
       cache: true,
       cacheMaxAge: signingKeyCacheMaxAgeMs,
-      rateLimit: true,
-      jwksRequestsPerMinute: 10,
     });
     return this._jwks;
   }
