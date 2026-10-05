@@ -91,18 +91,31 @@ describe("IntrospectionClient", () => {
     expect(logStub.firstCall.lastArg().message).to.equal("Error: Invalid scope");
   });
 
-  it("should configure a bounded, rate-limited JWKS cache", async () => {
+  it("should keep refreshing real signing keys while tokens with unknown kid values arrive", async () => {
+    const clock = sinon.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
     sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
       jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
     } as OIDCConfig);
+    sinon.stub(Logger, "logError");
+
+    const realKey = generateSigningKey("real-key");
+    const getKeysStub = sinon.stub(jwks.JwksClient.prototype, "getKeys").resolves([realKey.jwk]);
 
     const client = new IntrospectionClient();
-    const jwksClient = await client["getJwks"]() as unknown as { options: jwks.Options };
+    expect((await client.introspect(`Bearer ${realKey.sign()}`)).active).to.be.true;
 
-    expect(jwksClient.options.cache).to.be.true;
-    expect(jwksClient.options.cacheMaxAge).to.equal(10 * 60 * 1000);
-    expect(jwksClient.options.rateLimit).to.be.true;
-    expect(jwksClient.options.jwksRequestsPerMinute).to.equal(10);
+    // Anyone can send tokens with made-up `kid` values. The key is looked up
+    // before the signature is checked, so these tokens need no valid signature.
+    for (let i = 0; i < 20; i++) {
+      const junkToken = jwt.sign({ scope: ["scope1"] }, "not the issuer's key", { keyid: `unknown-kid-${i}` });
+      await expect(client.introspect(`Bearer ${junkToken}`)).to.be.rejected;
+    }
+
+    // Once the real key's cache entry expires, it must still be fetched again.
+    clock.tick(10 * 60 * 1000 + 1);
+    const fetchesBefore = getKeysStub.callCount;
+    expect((await client.introspect(`Bearer ${realKey.sign()}`)).active).to.be.true;
+    expect(getKeysStub.callCount).to.equal(fetchesBefore + 1);
   });
 
   it("should stop trusting a signing key once the issuer removes it and the cache expires", async () => {
