@@ -1,6 +1,6 @@
 {
   "type": "minor",
-  "comment": "IntrospectionClient now checks the token issuer and allows only RSA signing algorithms. By default it accepts the discovered issuer and, for Bentley IMS, the matching ims or imsoidc host. Add optional issuer and audience settings.",
+  "comment": "IntrospectionClient now allows only RSA signing algorithms. Add optional issuer and audience settings: when set, a token is active only when its iss or aud claim matches.",
   "packageName": "@itwin/service-authorization",
   "email": "78756012+ben-polinsky@users.noreply.github.com",
   "dependentChangeType": "patch"

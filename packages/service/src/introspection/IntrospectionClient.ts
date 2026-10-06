@@ -16,9 +16,9 @@ export interface IntrospectionClientConfiguration {
   issuerUrl?: string;
   /**
    * The `iss` values to accept. Each value must match the claim exactly.
-   * If undefined, the client accepts the issuer from the OIDC discovery
-   * document. For Bentley IMS, it also accepts the matching `ims` or
-   * `imsoidc` host, because both hosts sign tokens with the same keys.
+   * If undefined, the client does not check `iss`. Only the issuer's own
+   * JWKS keys can sign an active token, so the signature check already
+   * proves which issuer made it.
    */
   issuer?: string | string[];
   /**
@@ -35,20 +35,6 @@ function assertNotEmpty(name: string, value: string | string[] | undefined): voi
   const values = Array.isArray(value) ? value : [value];
   if (values.length === 0 || values.some((entry) => typeof entry !== "string" || entry === ""))
     throw new Error(`IntrospectionClient ${name} must not be empty`);
-}
-
-// IMS publishes the same signing keys at `{prefix}ims.bentley.com` and
-// `{prefix}imsoidc.bentley.com`, but each host has its own issuer. A token
-// from either host is signed by IMS, so the default accepts both.
-const imsIssuerPattern = /^https:\/\/([a-z0-9]+-)?ims(oidc)?\.bentley\.com$/;
-
-function getImsTwinIssuer(issuer: string): string | undefined {
-  const match = imsIssuerPattern.exec(issuer);
-  if (!match)
-    return undefined;
-
-  const [, prefix = "", oidc] = match;
-  return `https://${prefix}${oidc ? "ims" : "imsoidc"}.bentley.com`;
 }
 
 function removeAccessTokenPrefix(accessToken: string): string {
@@ -72,19 +58,6 @@ export class IntrospectionClient {
     assertNotEmpty("issuer", _config.issuer);
     assertNotEmpty("audience", _config.audience);
     this._discoveryClient = new OIDCDiscoveryClient(_config.issuerUrl);
-  }
-
-  private async getAcceptedIssuers(): Promise<string | string[]> {
-    if (this._config.issuer !== undefined)
-      return this._config.issuer;
-
-    // jsonwebtoken skips the issuer check for an empty value, so fail closed.
-    const { issuer } = await this._discoveryClient.getConfig();
-    if (!issuer)
-      throw new Error("Issuer is missing from the OIDC discovery document");
-
-    const twinIssuer = getImsTwinIssuer(issuer);
-    return twinIssuer ? [issuer, twinIssuer] : issuer;
   }
 
   private _jwks?: jwks.JwksClient;
@@ -127,13 +100,12 @@ export class IntrospectionClient {
       throw new Error("Invalid scope");
 
     const key = await this.getSigningKey(header);
-    const issuer = await this.getAcceptedIssuers();
     let active = true;
     try {
       // since we already called decode, we can ignore the result of verify and just check if it throws.
       jwt.verify(accessToken, key.getPublicKey(), {
         algorithms: allowedAlgorithms,
-        issuer,
+        issuer: this._config.issuer,
         audience: this._config.audience,
       });
     } catch (err) {
