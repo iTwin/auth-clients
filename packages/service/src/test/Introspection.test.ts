@@ -108,6 +108,7 @@ describe("IntrospectionClient", () => {
   it("should keep refreshing real signing keys while tokens with unknown kid values arrive", async () => {
     const clock = sinon.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
     sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      issuer,
       jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
     } as OIDCConfig);
     sinon.stub(Logger, "logError");
