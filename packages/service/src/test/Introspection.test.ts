@@ -15,16 +15,30 @@ import type { OIDCConfig } from "../OIDCDiscoveryClient";
 import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 chaiUse(chaiAsPromised);
 
+const issuer = "https://ims.example.com";
+
 function generateSigningKey(kid: string) {
   const { privateKey, publicKey } = generateKeyPairSync("rsa", { modulusLength: 2048 });
   const privateKeyPem = privateKey.export({ format: "pem", type: "pkcs8" }).toString();
+  const publicKeyPem = publicKey.export({ format: "pem", type: "spki" }).toString();
   const jwk = { ...publicKey.export({ format: "jwk" }), kid, use: "sig", alg: "RS256" };
-  const sign = () => jwt.sign(
-    { scope: ["scope1"] },
+  // Claims set to undefined are left out of the token.
+  const sign = (claims: object = {}) => jwt.sign(
+    { scope: ["scope1"], iss: issuer, exp: Math.floor(Date.now() / 1000) + 3600, ...claims },
     privateKeyPem,
-    { algorithm: "RS256", keyid: kid, expiresIn: "1h" },
+    { algorithm: "RS256", keyid: kid },
   );
-  return { jwk, sign };
+  return { jwk, publicKeyPem, sign };
+}
+
+function stubIssuer(signingKey: ReturnType<typeof generateSigningKey>) {
+  sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+    issuer,
+    jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
+  } as OIDCConfig);
+  sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
+    getPublicKey: () => signingKey.publicKeyPem,
+  });
 }
 
 describe("IntrospectionClient", () => {
@@ -94,6 +108,7 @@ describe("IntrospectionClient", () => {
   it("should keep refreshing real signing keys while tokens with unknown kid values arrive", async () => {
     const clock = sinon.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
     sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      issuer,
       jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
     } as OIDCConfig);
     sinon.stub(Logger, "logError");
@@ -121,6 +136,7 @@ describe("IntrospectionClient", () => {
   it("should stop trusting a signing key once the issuer removes it and the cache expires", async () => {
     const clock = sinon.useFakeTimers({ now: Date.now(), toFake: ["Date"] });
     sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
+      issuer,
       jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
     } as OIDCConfig);
     sinon.stub(Logger, "logError");
@@ -150,32 +166,133 @@ describe("IntrospectionClient", () => {
   });
 
   it("should return active:false if token is expired", async () => {
-    // this token expired in 2018
-    const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwic2NvcGUiOlsic2NvcGUxIiwic2NvcGUyIl0sImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxNTE2MjQyNjIyfQ.YZAIAcRq6vwTB3jjAMQogxfRzwDv4RoKzqaKlzFucNg";
-    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
-      jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
-    } as OIDCConfig);
-    sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
-      getPublicKey: () => ")H@McQfThWmZq4t7w!z%C*F-JaNdRgUk",
-    });
-    const client = new IntrospectionClient();
-    const response = await client.introspect(token);
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const token = signingKey.sign({ exp: Math.floor(Date.now() / 1000) - 60 });
+
+    const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
     expect(response.active).to.be.false;
-    expect(response.scope).to.equal("scope1 scope2");
+    expect(response.scope).to.equal("scope1");
   });
 
-  it("should return active:true if token is not expired", async () => {
-    // this token will expire on Wed Apr 01 2303 21:30:22 GMT+0300
-    const token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwic2NvcGUiOlsic2NvcGUxIiwic2NvcGUyIl0sImlhdCI6MTUxNjIzOTAyMiwiZXhwIjoxMDUxNjI0MjYyMn0.yYZvLAlx2zwTufGHsTg4GeOlWe35XTWfHeR8W_gTwzM";
-    sinon.stub(OIDCDiscoveryClient.prototype, "getConfig").resolves({
-      jwks_uri: "fake uri", // eslint-disable-line @typescript-eslint/naming-convention
-    } as OIDCConfig);
-    sinon.stub(jwks.JwksClient.prototype, "getSigningKey").resolves({
-      getPublicKey: () => ")H@McQfThWmZq4t7w!z%C*F-JaNdRgUk",
-    });
-    const client = new IntrospectionClient();
-    const response = await client.introspect(token);
+  it("should return active:true if token is valid", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+
+    const response = await new IntrospectionClient().introspect(`Bearer ${signingKey.sign()}`);
     expect(response.active).to.be.true;
-    expect(response.scope).to.equal("scope1 scope2");
+    expect(response.scope).to.equal("scope1");
+  });
+
+  it("should not check issuer if none is configured", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const client = new IntrospectionClient();
+
+    const otherIssuerToken = signingKey.sign({ iss: "https://imsoidc.example.com" });
+    expect((await client.introspect(`Bearer ${otherIssuerToken}`)).active).to.be.true;
+
+    const noIssuerToken = signingKey.sign({ iss: undefined });
+    expect((await client.introspect(`Bearer ${noIssuerToken}`)).active).to.be.true;
+  });
+
+  it("should return active:true if token issuer matches the configured issuer", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const client = new IntrospectionClient({ issuer: ["https://a.example.com", "https://b.example.com"] });
+
+    const token = signingKey.sign({ iss: "https://b.example.com" });
+    expect((await client.introspect(`Bearer ${token}`)).active).to.be.true;
+  });
+
+  it("should return active:false if token has a different issuer than the configured issuer", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const token = signingKey.sign({ iss: "https://attacker.example.com" });
+
+    const response = await new IntrospectionClient({ issuer }).introspect(`Bearer ${token}`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should return active:false if token has no issuer but one is configured", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const token = signingKey.sign({ iss: undefined });
+
+    const response = await new IntrospectionClient({ issuer }).introspect(`Bearer ${token}`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should throw if configured issuer is empty", () => {
+    for (const emptyIssuer of ["", [], ["https://a.example.com", ""]])
+      expect(() => new IntrospectionClient({ issuer: emptyIssuer })).to.throw("IntrospectionClient issuer must not be empty");
+  });
+
+  it("should return active:false if token uses an HMAC algorithm", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    // Sign with the public key as an HMAC secret: the classic algorithm confusion attack.
+    const token = jwt.sign(
+      { scope: ["scope1"] },
+      signingKey.publicKeyPem,
+      { algorithm: "HS256", keyid: "kid1", issuer, expiresIn: "1h" },
+    );
+
+    const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should return active:false if token is unsigned", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const encode = (value: object) => Buffer.from(JSON.stringify(value)).toString("base64url");
+    const header = encode({ alg: "none", typ: "JWT", kid: "kid1" });
+    const payload = encode({ scope: ["scope1"], iss: issuer, exp: Math.floor(Date.now() / 1000) + 3600 });
+
+    const response = await new IntrospectionClient().introspect(`Bearer ${header}.${payload}.`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should not check audience if none is configured", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const token = signingKey.sign({ aud: "resource-a" });
+
+    const response = await new IntrospectionClient().introspect(`Bearer ${token}`);
+    expect(response.active).to.be.true;
+  });
+
+  it("should return active:true if token audience matches the configured audience", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const client = new IntrospectionClient({ audience: ["resource-b", "resource-c"] });
+
+    const singleAudience = signingKey.sign({ aud: "resource-b" });
+    expect((await client.introspect(`Bearer ${singleAudience}`)).active).to.be.true;
+
+    const manyAudiences = signingKey.sign({ aud: ["resource-a", "resource-c"] });
+    expect((await client.introspect(`Bearer ${manyAudiences}`)).active).to.be.true;
+  });
+
+  it("should return active:false if token was issued for a different audience", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+    const token = signingKey.sign({ aud: "resource-a" });
+
+    const response = await new IntrospectionClient({ audience: "resource-b" }).introspect(`Bearer ${token}`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should return active:false if token has no audience but one is configured", async () => {
+    const signingKey = generateSigningKey("kid1");
+    stubIssuer(signingKey);
+
+    const response = await new IntrospectionClient({ audience: "resource-b" }).introspect(`Bearer ${signingKey.sign()}`);
+    expect(response.active).to.be.false;
+  });
+
+  it("should throw if configured audience is empty", () => {
+    for (const emptyAudience of ["", [], ["resource-a", ""]])
+      expect(() => new IntrospectionClient({ audience: emptyAudience })).to.throw("IntrospectionClient audience must not be empty");
   });
 });

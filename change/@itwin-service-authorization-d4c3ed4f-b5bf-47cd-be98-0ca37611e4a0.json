@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "IntrospectionClient now allows only RSA signing algorithms. Add optional issuer and audience settings: when set, a token is active only when its iss or aud claim matches.",
+  "packageName": "@itwin/service-authorization",
+  "email": "78756012+ben-polinsky@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}

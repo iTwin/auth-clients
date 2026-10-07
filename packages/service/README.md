@@ -33,3 +33,20 @@ const token = await client.getAccessToken()
 | isAuthorized   | boolean                 | Returns true if there's a current authorized client Set to true if signed in and the access token has not expired, and false otherwise. |
 
 For information about the service authorization workflow please visit the [Authorization Overview Page](https://developer.bentley.com/apis/overview/authorization/#authorizingservicemachinetomachine).
+
+### IntrospectionClient
+
+`IntrospectionClient` validates an access token locally with the issuer's JWKS. Always check `active` before you trust any other field of the response.
+
+```ts
+const client = new IntrospectionClient({ audience: "my-api" });
+const response = await client.introspect(`Bearer ${accessToken}`);
+if (!response.active)
+  throw new Error("Invalid token");
+```
+
+| Property   | Type               | Description                                                                                                                                                          | Required | Default               |
+| ---------- | ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | --------------------- |
+| issuerUrl? | string             | The URL of the OIDC/OAuth2 provider.                                                                                                                                 | false    | "ims.bentley.com"     |
+| issuer?    | string \| string[] | If set, a token is active only when its `iss` claim exactly matches one of these values.                                                                               | false    | No issuer check       |
+| audience?  | string \| string[] | If set, a token is active only when its `aud` claim contains one of these values. Set this, so that a token issued for another service is not accepted.              | false    | No audience check     |
