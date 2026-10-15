@@ -2,6 +2,21 @@
   "name": "@itwin/browser-authorization",
   "entries": [
     {
+      "date": "Mon, 24 Aug 2026 17:27:26 GMT",
+      "version": "2.0.4",
+      "tag": "@itwin/browser-authorization_v2.0.4",
+      "comments": {
+        "patch": [
+          {
+            "author": "anmolshres98@users.noreply.github.com",
+            "package": "@itwin/browser-authorization",
+            "commit": "995382b3033218793a4cf629820847885b4d66e5",
+            "comment": ""
+          }
+        ]
+      }
+    },
+    {
       "date": "Wed, 01 Jul 2026 14:13:02 GMT",
       "version": "2.0.3",
       "tag": "@itwin/browser-authorization_v2.0.3",

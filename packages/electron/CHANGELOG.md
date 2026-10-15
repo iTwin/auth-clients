@@ -1,8 +1,50 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Wed, 01 Jul 2026 14:13:02 GMT and should not be manually modified. -->
+<!-- This log was last generated on Tue, 22 Sep 2026 05:40:44 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.23.6
+
+Tue, 22 Sep 2026 05:40:44 GMT
+
+### Patches
+
+- Bootstrap the renderer's access token expiry via request/response on startup so a renderer created after sign-in learns the expiry instead of treating the token as expired. (64415995+DanishMehmood-bit@users.noreply.github.com)
+
+## 0.23.5
+
+Wed, 16 Sep 2026 06:48:35 GMT
+
+### Patches
+
+- Fix renderer treating access token as valid forever when its expiry is unknown. (64415995+DanishMehmood-bit@users.noreply.github.com)
+
+## 0.23.4
+
+Thu, 03 Sep 2026 07:07:38 GMT
+
+### Patches
+
+- Store the OIDC discovery document as plain JSON instead of using safeStorage, which could block indefinitely on a macOS Keychain prompt (98940208+GytisCepk@users.noreply.github.com)
+
+## 0.23.3
+
+Thu, 27 Aug 2026 12:51:18 GMT
+
+### Patches
+
+- Add support for Electron 44 (98940208+GytisCepk@users.noreply.github.com)
+
+## 0.23.2
+
+Mon, 24 Aug 2026 17:27:26 GMT
+
+### Patches
+
+-  (anmolshres98@users.noreply.github.com)
+- Pinned @openid/appauth to version 1.3.x which is the last supported CJS version. (anmolshres98@users.noreply.github.com)
+- Cache OIDC configuration (alex.dunae@bentley.com)
 
 ## 0.23.1
 

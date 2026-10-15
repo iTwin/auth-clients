@@ -10,7 +10,6 @@
 import { Logger } from "@itwin/core-bentley";
 import type { AuthorizationServiceConfigurationJson } from "@openid/appauth";
 import { AuthorizationServiceConfiguration } from "@openid/appauth";
-import { safeStorage } from "electron";
 import { electronAuthLoggerCategory } from "../common/constants.js";
 const Store = require("electron-store"); // eslint-disable-line @typescript-eslint/no-require-imports, @typescript-eslint/naming-convention
 
@@ -31,7 +30,11 @@ interface DiscoveryDocument extends AuthorizationServiceConfigurationJson {
   issuer: string;
 }
 
-/** Persistently caches validated OIDC discovery metadata. */
+/**
+ * Persistently caches validated OIDC discovery metadata.
+ *
+ * @note The discovery document is public, unauthenticated data, so it is stored as plain JSON.
+ */
 export class OidcDiscoveryCache {
   private readonly _issuer: string;
   private readonly _store: typeof Store;
@@ -84,9 +87,8 @@ export class OidcDiscoveryCache {
     if (!this._store.has(this._cacheKey)) return undefined;
 
     try {
-      const encrypted = this._store.get(this._cacheKey) as Buffer;
-      const cached = JSON.parse(
-        await this.decrypt(encrypted),
+      const cached = this._store.get(
+        this._cacheKey,
       ) as CachedDiscoveryConfiguration;
       if (cached.version !== cacheVersion) {
         this._store.delete(this._cacheKey);
@@ -117,10 +119,7 @@ export class OidcDiscoveryCache {
 
   private async save(cached: CachedDiscoveryConfiguration): Promise<void> {
     try {
-      this._store.set(
-        this._cacheKey,
-        await this.encrypt(JSON.stringify(cached)),
-      );
+      this._store.set(this._cacheKey, cached);
     } catch {
       // Discovery caching is an optimization; failure to persist must not prevent authorization.
     }
@@ -149,14 +148,6 @@ export class OidcDiscoveryCache {
 
     validateEndpoints(requiredEndpoints, issuer, false);
     validateEndpoints(optionalEndpoints, issuer, true);
-  }
-
-  private async encrypt(value: string): Promise<Buffer> {
-    return safeStorage.encryptString(value);
-  }
-
-  private async decrypt(value: Buffer): Promise<string> {
-    return safeStorage.decryptString(Buffer.from(value));
   }
 }
 

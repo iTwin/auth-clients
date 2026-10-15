@@ -34,11 +34,15 @@ class ElectronAuthIPC {
     return this._ipcSocket.invoke(this._ipcChannelNames.getAccessToken);
   }
 
+  public async getAccessTokenExpiry(): Promise<Date | undefined> {
+    return this._ipcSocket.invoke(this._ipcChannelNames.getAccessTokenExpiry);
+  }
+
   public addAccessTokenChangeListener(callback: (event: any, token: string) => void) {
     this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenChanged, callback);
   }
 
-  public addAccessTokenExpirationChangeListener(callback: (event: any, expiresAt: Date) => void) {
+  public addAccessTokenExpirationChangeListener(callback: (event: any, expiresAt: Date | undefined) => void) {
     this._ipcSocket.addListener(this._ipcChannelNames.onAccessTokenExpirationChanged, callback);
   }
 
@@ -118,9 +122,20 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
     this._ipcAuthAPI.addAccessTokenChangeListener((_event: any, token: AccessToken) => {
       this.onAccessTokenChanged.raiseEvent(token);
     });
-    this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date) => {
+    this._ipcAuthAPI.addAccessTokenExpirationChangeListener((_event: any, expiration: Date | undefined) => {
       this._expiresAt = expiration;
     });
+
+    // Bootstrap the current expiry via a reliable request/response. The main process only broadcasts the
+    // expiry, so a renderer created after the token was issued would otherwise never learn it and would
+    // treat the token as expired, pulling on every request.
+    void this._ipcAuthAPI
+      .getAccessTokenExpiry()
+      .then((expiration) => {
+        if (expiration && !this._expiresAt)
+          this._expiresAt = expiration;
+      })
+      .catch(() => { });
 
     if (config.expiryBuffer)
       this._expiryBuffer = config.expiryBuffer;
@@ -173,7 +188,7 @@ export class ElectronRendererAuthorization implements AuthorizationClient {
 
   private get _hasExpired(): boolean {
     if (!this._expiresAt)
-      return false;
+      return true;
 
     return this._expiresAt.getTime() - Date.now() <= this._expiryBuffer * 1000; // Consider this.expireSafety's amount of time early as expired
   }

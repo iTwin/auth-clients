@@ -1,8 +1,18 @@
 # Change Log - @itwin/service-authorization
 
-<!-- This log was last generated on Tue, 23 Jun 2026 16:38:48 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 24 Aug 2026 17:27:26 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 2.1.3
+
+Mon, 24 Aug 2026 17:27:26 GMT
+
+### Patches
+
+-  (anmolshres98@users.noreply.github.com)
+- Pin got to 12.6.1 and cacheable-request to 13.0.19 to prevent consumers from receiving compromised cacheable-request@13.0.20. (223556219+Copilot@users.noreply.github.com)
+- Replaced `got` dependency with `fetch` (anmolshres98@users.noreply.github.com)
 
 ## 2.1.2
 

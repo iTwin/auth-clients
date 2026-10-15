@@ -1,8 +1,17 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Wed, 22 Jul 2026 17:07:42 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 24 Aug 2026 17:27:26 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 6.1.1
+
+Mon, 24 Aug 2026 17:27:26 GMT
+
+### Patches
+
+-  (anmolshres98@users.noreply.github.com)
+- Bump @itwin/service-authorization to v2.1.3
 
 ## 6.1.0
 
