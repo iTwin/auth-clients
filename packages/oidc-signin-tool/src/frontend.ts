@@ -5,4 +5,3 @@
 
 export * from "./TestUsers";
 export * from "./TestFrontendAuthorizationClient";
-export * from "./certa/certaCommon";

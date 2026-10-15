@@ -8,6 +8,14 @@ The tool automates the sign-in UI when given a user credentials for the iTwin Pl
 
 > Warning: This is not meant to be used in a production application. It is not a secure way to handle any sort of authentication for purposes other than testing.
 
+## Entry points
+
+| Entry point | Use it for |
+|---|---|
+| `@itwin/oidc-signin-tool` | Node test code that signs in a test user: `TestBrowserAuthorizationClient`, `getTestAccessToken`, `TestUtility`, and `TestUsers`. |
+| `@itwin/oidc-signin-tool/frontend` | Browser test code: `TestUsers` and `TestFrontendAuthorizationClient`, which wraps an existing token as an `AuthorizationClient`. |
+| `@itwin/oidc-signin-tool/electron` | Playwright tests that sign in through an Electron app's main process: `loginElectronMainAuthClient`, `logoutElectronMainAuthClient`, and their `PlaywrightElectronContext` and `AutomatedSignInConfig` parameter types. |
+
 ## Usage
 
 ```typescript
@@ -118,3 +126,7 @@ or use `.mocharc`
 }
 ```
 
+## Migrating to version 7
+
+See [Migrating to version 7](./MIGRATING_TO_V7.md) to replace the removed Certa helpers
+and `lib/cjs` deep imports.
