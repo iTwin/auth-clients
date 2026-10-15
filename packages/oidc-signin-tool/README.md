@@ -16,8 +16,6 @@ The tool automates the sign-in UI when given a user credentials for the iTwin Pl
 | `@itwin/oidc-signin-tool/frontend` | Browser test code: `TestUsers` and `TestFrontendAuthorizationClient`, which wraps an existing token as an `AuthorizationClient`. |
 | `@itwin/oidc-signin-tool/electron` | Playwright tests that sign in through an Electron app's main process: `loginElectronMainAuthClient`, `logoutElectronMainAuthClient`, and their `PlaywrightElectronContext` and `AutomatedSignInConfig` parameter types. |
 
-The package does not export files under `lib/cjs`.
-
 ## Usage
 
 ```typescript
