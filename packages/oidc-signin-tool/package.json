@@ -14,13 +14,8 @@
       "default": "./lib/cjs/frontend.js"
     },
     "./electron": {
-      "types": "./lib/cjs/loginElectronMainAuthClient.d.ts",
-      "default": "./lib/cjs/loginElectronMainAuthClient.js"
-    },
-    "./lib/cjs/*.js": "./lib/cjs/*.js",
-    "./lib/cjs/*": {
-      "types": "./lib/cjs/*.d.ts",
-      "default": "./lib/cjs/*.js"
+      "types": "./lib/cjs/electron.d.ts",
+      "default": "./lib/cjs/electron.js"
     },
     "./package.json": "./package.json"
   },
@@ -30,7 +25,7 @@
         "lib/cjs/frontend.d.ts"
       ],
       "electron": [
-        "lib/cjs/loginElectronMainAuthClient.d.ts"
+        "lib/cjs/electron.d.ts"
       ]
     }
   },

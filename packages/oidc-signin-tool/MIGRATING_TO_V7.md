@@ -3,7 +3,7 @@
 Version 7 makes two changes:
 
 - It removes the Certa helpers. Test suites that run on Certa now register and invoke their own callbacks.
-- It adds package entry points, so consumers no longer need `lib/cjs` deep imports.
+- It adds package entry points and stops exporting `lib/cjs` files.
 
 ## Migrating Certa tests
 
@@ -111,18 +111,26 @@ const serviceToken = await getTokenFromBackend("getServiceAuthToken", serviceCon
 `executeBackendCallback` returns an untyped value, so the helper checks the result before
 tests use it as a token.
 
-## Using package entry points
+## Replacing `lib/cjs` imports
 
-Version 7 declares these entry points:
+Version 7 declares package entry points and no longer exports files under `lib/cjs`.
+Imports such as `@itwin/oidc-signin-tool/lib/cjs/frontend` fail with
+`ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Entry point | Use it for |
 |---|---|
 | `@itwin/oidc-signin-tool` | Node test code that signs in a test user: `TestBrowserAuthorizationClient`, `getTestAccessToken`, `TestUtility`, and `TestUsers`. |
 | `@itwin/oidc-signin-tool/frontend` | Browser test code: `TestUsers` and `TestFrontendAuthorizationClient`. It does not load Playwright, Node built-ins, or Certa. |
-| `@itwin/oidc-signin-tool/electron` | Playwright tests that sign in through an Electron app's main process: `loginElectronMainAuthClient` and `logoutElectronMainAuthClient`. |
+| `@itwin/oidc-signin-tool/electron` | Playwright tests that sign in through an Electron app's main process: `loginElectronMainAuthClient`, `logoutElectronMainAuthClient`, and their `PlaywrightElectronContext` and `AutomatedSignInConfig` parameter types. |
 
-`lib/cjs/*` deep imports still resolve in version 7, but they are not supported entry
-points and may stop resolving in a later major version. Replace them as follows.
+| Removed import | Replacement |
+|---|---|
+| `lib/cjs/frontend` | `@itwin/oidc-signin-tool/frontend` |
+| `lib/cjs/TestUsers` | `@itwin/oidc-signin-tool/frontend`, or the package root in Node code |
+| `lib/cjs/TestFrontendAuthorizationClient` | `@itwin/oidc-signin-tool/frontend` |
+| `lib/cjs/TestBrowserAuthorizationClient` | `@itwin/oidc-signin-tool` |
+| `lib/cjs/loginElectronMainAuthClient` | `@itwin/oidc-signin-tool/electron` |
+| `AutomatedSignInConfig` from `lib/cjs/SignInAutomation` | `@itwin/oidc-signin-tool/electron` |
 
 Before:
 
@@ -133,6 +141,7 @@ import {
   loginElectronMainAuthClient,
   logoutElectronMainAuthClient,
 } from "@itwin/oidc-signin-tool/lib/cjs/loginElectronMainAuthClient";
+import type { AutomatedSignInConfig } from "@itwin/oidc-signin-tool/lib/cjs/SignInAutomation";
 ```
 
 After:
@@ -140,10 +149,17 @@ After:
 ```typescript
 import { TestFrontendAuthorizationClient, TestUsers } from "@itwin/oidc-signin-tool/frontend";
 import {
+  type AutomatedSignInConfig,
   loginElectronMainAuthClient,
   logoutElectronMainAuthClient,
 } from "@itwin/oidc-signin-tool/electron";
 ```
 
-Node test code can import `TestUsers` from the package root instead. The entry points
-resolve with TypeScript's `node`, `node16`, `nodenext`, and `bundler` module resolution.
+The sign-in automation functions in `SignInAutomation`, such as `automatedSignIn`, are
+internal and have no entry point. To sign in with your own Playwright page, pass it as
+the `page` option to `getAccessToken` on a `TestBrowserAuthorizationClient`, or to
+`getTestAccessToken(config, user, { page })`.
+
+The entry points resolve with TypeScript's `node`, `node16`, `nodenext`, and `bundler`
+module resolution. TypeScript's `node` resolution ignores package exports, so it still
+type-checks a leftover `lib/cjs` import; Node and bundlers reject it when the test loads.

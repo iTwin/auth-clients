@@ -24,14 +24,17 @@ describe("package exports", () => {
     });
   }
 
-  it("keeps resolving existing lib/cjs deep imports", () => {
-    expect(load("@itwin/oidc-signin-tool/lib/cjs/TestUsers")).to.have.property("TestUsers");
-    expect(load("@itwin/oidc-signin-tool/lib/cjs/frontend.js")).to.have.property("TestFrontendAuthorizationClient");
-    expect(load("@itwin/oidc-signin-tool/lib/cjs/loginElectronMainAuthClient")).to.have.property("loginElectronMainAuthClient");
+  it("does not export lib/cjs deep imports", () => {
+    for (const specifier of [
+      "@itwin/oidc-signin-tool/lib/cjs/frontend",
+      "@itwin/oidc-signin-tool/lib/cjs/TestUsers",
+      "@itwin/oidc-signin-tool/lib/cjs/loginElectronMainAuthClient",
+      "@itwin/oidc-signin-tool/lib/cjs/SignInAutomation.js",
+    ])
+      expect(() => load(specifier), specifier).to.throw().with.property("code", "ERR_PACKAGE_PATH_NOT_EXPORTED");
   });
 
   it("does not expose Certa helpers", () => {
     expect(load("@itwin/oidc-signin-tool/frontend")).to.not.have.any.keys("getAccessTokenFromBackend", "getServiceAuthTokenFromBackend");
-    expect(() => load("@itwin/oidc-signin-tool/lib/cjs/certa/certaBackend")).to.throw(/Cannot find module/);
   });
 });
