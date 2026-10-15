@@ -1,5 +1,10 @@
 # Migration guide
 
+Version 7 makes two changes:
+
+- It removes the Certa helpers. Test suites that run on Certa now register and invoke their own callbacks.
+- It adds package entry points, so consumers no longer need `lib/cjs` deep imports.
+
 ## Migrating Certa tests
 
 Version 7 removes these Certa-specific APIs from `@itwin/oidc-signin-tool`:
@@ -15,9 +20,11 @@ Certa test packages must declare `@itwin/certa` directly and own their callback
 registration and execution. Packages using service authorization must also declare
 `@itwin/service-authorization` directly.
 
-The examples use Certa's callback utilities. Test suites on another runner register the
-same backend functions with that runner's callback mechanism; only the `TestUtility` and
-`ServiceAuthorizationClient` calls come from these packages.
+The examples import from `@itwin/certa/callbacks`, which Certa 5.15 and later export.
+On earlier Certa versions, import the same functions from
+`@itwin/certa/lib/utils/CallbackUtils`. Test suites on another runner register the
+same backend functions with that runner's callback mechanism; only the `TestUtility`
+and `ServiceAuthorizationClient` calls come from these packages.
 
 ### Register backend callbacks
 
@@ -30,7 +37,7 @@ import "@itwin/oidc-signin-tool/lib/cjs/certa/certaBackend";
 After:
 
 ```typescript
-import { registerBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
+import { registerBackendCallback } from "@itwin/certa/callbacks";
 import {
   TestUtility,
   type TestBrowserAuthorizationClientConfiguration,
@@ -88,7 +95,7 @@ const serviceToken = await getServiceAuthTokenFromBackend(serviceConfig);
 After:
 
 ```typescript
-import { executeBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
+import { executeBackendCallback } from "@itwin/certa/callbacks";
 
 async function getTokenFromBackend(name: string, ...args: unknown[]): Promise<string> {
   const token: unknown = await executeBackendCallback(name, ...args);
@@ -104,5 +111,39 @@ const serviceToken = await getTokenFromBackend("getServiceAuthToken", serviceCon
 `executeBackendCallback` returns an untyped value, so the helper checks the result before
 tests use it as a token.
 
-The `lib/cjs/frontend` entrypoint still exports the non-Certa `TestUsers` and
-`TestFrontendAuthorizationClient` browser APIs.
+## Using package entry points
+
+Version 7 declares these entry points:
+
+| Entry point | Use it for |
+|---|---|
+| `@itwin/oidc-signin-tool` | Node test code that signs in a test user: `TestBrowserAuthorizationClient`, `getTestAccessToken`, `TestUtility`, and `TestUsers`. |
+| `@itwin/oidc-signin-tool/frontend` | Browser test code: `TestUsers` and `TestFrontendAuthorizationClient`. It does not load Playwright, Node built-ins, or Certa. |
+| `@itwin/oidc-signin-tool/electron` | Playwright tests that sign in through an Electron app's main process: `loginElectronMainAuthClient` and `logoutElectronMainAuthClient`. |
+
+`lib/cjs/*` deep imports still resolve in version 7, but they are not supported entry
+points and may stop resolving in a later major version. Replace them as follows.
+
+Before:
+
+```typescript
+import { TestUsers } from "@itwin/oidc-signin-tool/lib/cjs/TestUsers";
+import { TestFrontendAuthorizationClient } from "@itwin/oidc-signin-tool/lib/cjs/frontend";
+import {
+  loginElectronMainAuthClient,
+  logoutElectronMainAuthClient,
+} from "@itwin/oidc-signin-tool/lib/cjs/loginElectronMainAuthClient";
+```
+
+After:
+
+```typescript
+import { TestFrontendAuthorizationClient, TestUsers } from "@itwin/oidc-signin-tool/frontend";
+import {
+  loginElectronMainAuthClient,
+  logoutElectronMainAuthClient,
+} from "@itwin/oidc-signin-tool/electron";
+```
+
+Node test code can import `TestUsers` from the package root instead. The entry points
+resolve with TypeScript's `node`, `node16`, `nodenext`, and `bundler` module resolution.

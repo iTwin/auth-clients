@@ -4,6 +4,36 @@
   "description": "OIDC Signin Helper",
   "main": "lib/cjs/index.js",
   "typings": "lib/cjs/index",
+  "exports": {
+    ".": {
+      "types": "./lib/cjs/index.d.ts",
+      "default": "./lib/cjs/index.js"
+    },
+    "./frontend": {
+      "types": "./lib/cjs/frontend.d.ts",
+      "default": "./lib/cjs/frontend.js"
+    },
+    "./electron": {
+      "types": "./lib/cjs/loginElectronMainAuthClient.d.ts",
+      "default": "./lib/cjs/loginElectronMainAuthClient.js"
+    },
+    "./lib/cjs/*.js": "./lib/cjs/*.js",
+    "./lib/cjs/*": {
+      "types": "./lib/cjs/*.d.ts",
+      "default": "./lib/cjs/*.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "frontend": [
+        "lib/cjs/frontend.d.ts"
+      ],
+      "electron": [
+        "lib/cjs/loginElectronMainAuthClient.d.ts"
+      ]
+    }
+  },
   "license": "MIT",
   "repository": {
     "type": "git",
