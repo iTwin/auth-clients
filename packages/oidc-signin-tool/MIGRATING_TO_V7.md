@@ -15,6 +15,10 @@ Certa test packages must declare `@itwin/certa` directly and own their callback
 registration and execution. Packages using service authorization must also declare
 `@itwin/service-authorization` directly.
 
+The examples use Certa's callback utilities. Test suites on another runner register the
+same backend functions with that runner's callback mechanism; only the `TestUtility` and
+`ServiceAuthorizationClient` calls come from these packages.
+
 ### Register backend callbacks
 
 Before:
@@ -86,12 +90,19 @@ After:
 ```typescript
 import { executeBackendCallback } from "@itwin/certa/lib/utils/CallbackUtils";
 
-const accessToken = await executeBackendCallback("getToken", user, oidcConfig);
-const serviceToken = await executeBackendCallback(
-  "getServiceAuthToken",
-  serviceConfig,
-);
+async function getTokenFromBackend(name: string, ...args: unknown[]): Promise<string> {
+  const token: unknown = await executeBackendCallback(name, ...args);
+  if (typeof token !== "string")
+    throw new Error(`Expected callback "${name}" to return a token string, got ${typeof token}.`);
+  return token;
+}
+
+const accessToken = await getTokenFromBackend("getToken", user, oidcConfig);
+const serviceToken = await getTokenFromBackend("getServiceAuthToken", serviceConfig);
 ```
+
+`executeBackendCallback` returns an untyped value, so the helper checks the result before
+tests use it as a token.
 
 The `lib/cjs/frontend` entrypoint still exports the non-Certa `TestUsers` and
 `TestFrontendAuthorizationClient` browser APIs.
