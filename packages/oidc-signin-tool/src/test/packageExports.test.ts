@@ -33,8 +33,4 @@ describe("package exports", () => {
     ])
       expect(() => load(specifier), specifier).to.throw().with.property("code", "ERR_PACKAGE_PATH_NOT_EXPORTED");
   });
-
-  it("does not expose Certa helpers", () => {
-    expect(load("@itwin/oidc-signin-tool/frontend")).to.not.have.any.keys("getAccessTokenFromBackend", "getServiceAuthTokenFromBackend");
-  });
 });

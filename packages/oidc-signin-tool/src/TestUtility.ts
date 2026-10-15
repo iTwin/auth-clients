@@ -11,7 +11,7 @@ import { TestUsers } from "./TestUsers";
 /**
  * A set of convenience methods to get an Access Token, AuthorizationClient or an AuthorizedClientRequestContext for a given TestUserCredential.
  *
- * @internal
+ * @alpha
  */
 export class TestUtility {
   private static _clients = new Map<string, TestBrowserAuthorizationClient>();
@@ -28,7 +28,7 @@ export class TestUtility {
    * - Uses the default iModel.js internal OIDC SPA client registration by default.
    * @param user Test user credentials
    * @param oidcConfig Test oidc configuration to use for the provided user
-   * @internal
+   * @alpha
    */
   public static getAuthorizationClient(user: TestUserCredentials, oidcConfig?: TestBrowserAuthorizationClientConfiguration): TestBrowserAuthorizationClient {
     const hash = this.getAuthClientHash(user, oidcConfig);
@@ -50,7 +50,7 @@ export class TestUtility {
    * @param user Test user credentials
    * @param options Optionally supply your a Playwright `page` to avoid
    * importing a second copy of `@playwright/test`
-   * @internal
+   * @alpha
    */
   public static async getAccessToken(user: TestUserCredentials, options?: GetAccessTokenOptions): Promise<AccessToken> {
     const client = this.getAuthorizationClient(user);

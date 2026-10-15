@@ -113,15 +113,9 @@ tests use it as a token.
 
 ## Replacing `lib/cjs` imports
 
-Version 7 declares package entry points and no longer exports files under `lib/cjs`.
-Imports such as `@itwin/oidc-signin-tool/lib/cjs/frontend` fail with
-`ERR_PACKAGE_PATH_NOT_EXPORTED`.
-
-| Entry point | Use it for |
-|---|---|
-| `@itwin/oidc-signin-tool` | Node test code that signs in a test user: `TestBrowserAuthorizationClient`, `getTestAccessToken`, `TestUtility`, and `TestUsers`. |
-| `@itwin/oidc-signin-tool/frontend` | Browser test code: `TestUsers` and `TestFrontendAuthorizationClient`. It does not load Playwright, Node built-ins, or Certa. |
-| `@itwin/oidc-signin-tool/electron` | Playwright tests that sign in through an Electron app's main process: `loginElectronMainAuthClient`, `logoutElectronMainAuthClient`, and their `PlaywrightElectronContext` and `AutomatedSignInConfig` parameter types. |
+Version 7 declares [package entry points](./README.md#entry-points) and no longer exports
+files under `lib/cjs`. Imports such as `@itwin/oidc-signin-tool/lib/cjs/frontend` fail
+with `ERR_PACKAGE_PATH_NOT_EXPORTED`.
 
 | Removed import | Replacement |
 |---|---|

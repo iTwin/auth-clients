@@ -7,7 +7,7 @@
 
 /**
  * Interface for test user credentials
- * @internal
+ * @alpha
  */
 export interface TestUserCredentials {
   email: string;
@@ -17,7 +17,7 @@ export interface TestUserCredentials {
 
 /**
  * Configuration used by [[TestBrowserAuthorizationClient]]
- * @internal
+ * @alpha
  */
 export interface TestBrowserAuthorizationClientConfiguration {
   clientId: string;
@@ -29,7 +29,7 @@ export interface TestBrowserAuthorizationClientConfiguration {
 
 /**
  * Test users with various permissions for the iModel.js integration tests
- * @internal
+ * @alpha
  */
 export class TestUsers {
   /** User with the typical permissions of the regular/average user - Co-Admin: No, Connect-Services-Admin: No */

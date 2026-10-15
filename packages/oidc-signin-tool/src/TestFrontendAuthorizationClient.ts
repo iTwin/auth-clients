@@ -9,7 +9,7 @@ import type { AuthorizationClient } from "@itwin/core-common";
 
 /**
  * Basic FrontendAuthorizationClient to use with an already created access token.
- * @internal
+ * @alpha
  */
 export class TestFrontendAuthorizationClient implements AuthorizationClient {
   private _activeToken: AccessToken = "";

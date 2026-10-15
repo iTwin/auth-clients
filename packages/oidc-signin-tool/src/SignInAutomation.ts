@@ -71,7 +71,9 @@ export interface PageLike {
   waitForRequest(urlOrPredicate: (request: RequestLike) => boolean): Promise<RequestLike>;
 }
 
-/** @internal configuration for automated sign in */
+/** Configuration for automated sign in.
+ * @alpha
+ */
 export interface AutomatedSignInConfig {
   issuer: string;
   /** optional endpoint configuration to verify when handling ping login page */
