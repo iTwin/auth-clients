@@ -28,8 +28,13 @@ test.describe("Sign in with a caller-provided page (#integration)", () => {
       expect(page.isClosed()).toBe(false);
       expect(browser.isConnected()).toBe(true);
 
-      // the provided page is still usable afterwards
-      expect(await page.evaluate(() => 1 + 1)).toBe(2);
+      // the provided page is still usable afterwards. The redirect that completed sign-in may still be
+      // committing and destroy the first evaluation context, so poll past only that error.
+      await expect.poll(async () => page.evaluate(() => 1 + 1).catch((error: unknown) => {
+        if (error instanceof Error && error.message.includes("Execution context was destroyed"))
+          return undefined;
+        throw error;
+      })).toBe(2);
     } finally {
       await page.close();
     }
