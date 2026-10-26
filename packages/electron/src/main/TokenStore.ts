@@ -88,11 +88,16 @@ export class RefreshTokenStore {
 
   // Note: this is intentionally made async in case this code doesn't run in electron's main process and safeStorage must be polyfilled with async function
   private async encryptRefreshToken(token: string): Promise<Buffer> {
+    // TODO: migrate to safeStorage.encryptStringAsync before Electron 46 removes the synchronous API.
+    // Not done yet because the async API is unavailable across the whole supported peer range (>=35.0.0).
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     return safeStorage.encryptString(token);
   }
 
   // Note: this is intentionally made async in case this code doesn't run in electron's main process and safeStorage must be polyfilled with async function
   private async decryptRefreshToken(encryptedToken: Buffer): Promise<string> {
+    // TODO: migrate to safeStorage.decryptStringAsync before Electron 46 removes the synchronous API.
+    // eslint-disable-next-line @typescript-eslint/no-deprecated
     return safeStorage.decryptString(Buffer.from(encryptedToken));
   }
 
