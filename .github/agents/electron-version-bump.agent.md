@@ -108,7 +108,7 @@ Update the pinned `electron` dev dependency version to `^<NEW_MAJOR>.0.0` in:
 **Important:** Before editing, run a workspace-wide search to find ALL `package.json` files containing `"electron":` to ensure none are missed:
 
 ```bash
-grep -r '"electron":' --include='package.json' -l . | grep -v node_modules
+grep -rn '"electron":' --include='package.json' . | grep -v node_modules
 ```
 
 Compare the results with the list above and include any additional files found.
@@ -123,25 +123,37 @@ Fetch the Electron breaking changes documentation. Use the raw URL to avoid GitH
 https://raw.githubusercontent.com/electron/electron/main/docs/breaking-changes.md
 ```
 
-Find the section for the new major version (e.g., "Planned Breaking Changes (X.0)") and review every listed change against the codebase.
+The section headings in this document have changed format over time, so **do not assume a heading string**. List the headings first, then slice out the section for the new major:
 
-**Electron APIs used in this package** (search the workspace to verify this list is current):
+```bash
+# 1. Discover the actual heading format and line numbers
+curl -s https://raw.githubusercontent.com/electron/electron/main/docs/breaking-changes.md | grep -n '^## '
+
+# 2. Extract the new major's section (headings are currently "## Breaking API Changes (<MAJOR>.0)")
+curl -s https://raw.githubusercontent.com/electron/electron/main/docs/breaking-changes.md \
+  | sed -n '/^## Breaking API Changes (<NEW_MAJOR>\.0)/,/^## Breaking API Changes (<PREVIOUS_MAJOR>\.0)/p'
+```
+
+If the `sed` range prints nothing, the heading format changed — go back to the `grep -n '^## '` output and slice by line number instead. Review every listed change against the codebase.
+
+**Electron APIs used in this package** — this table is a **starting hint only and goes stale**; always re-derive it with the searches below and correct any drift you find:
 
 | Module | File(s) using it |
 | --- | --- |
 | `BrowserWindow`, `ipcMain`, `shell` | `packages/electron/src/main/Client.ts` |
 | `shell` | `packages/electron/src/main/ElectronMainAuthorizationRequestHandler.ts` |
-| `safeStorage` | `packages/electron/src/main/TokenStore.ts`, `packages/electron/src/main/OidcDiscoveryCache.ts` |
+| `safeStorage` | `packages/electron/src/main/TokenStore.ts` |
 | `contextBridge`, `ipcRenderer`, `IpcRendererEvent` | `packages/electron/src/renderer/ElectronPreload.ts` |
 | `ipcRenderer` (via `require("electron")`) | `packages/electron/src/renderer/Client.ts` |
 | `app`, `BrowserWindow` | `packages/electron/src/integration-test/test-app/index.ts` |
 | `app` (via `require("electron")`) | `packages/electron/scripts/verify-flow.cjs` |
 
-Also search for any additional usage. Include `.cjs`/`.mjs` — scripts such as `verify-flow.cjs` import Electron too and are missed by a `.ts`/`.js`-only search:
+Also search for any additional usage. Include `.cjs`/`.mjs` — scripts such as `verify-flow.cjs` import Electron too and are missed by a `.ts`/`.js`-only search. Exclude build output: `packages/electron/dist/` contains compiled copies and bundled assets that otherwise drown out the source results:
 
 ```bash
-grep -r "from \"electron\"" --include='*.ts' --include='*.js' --include='*.cjs' --include='*.mjs' -l packages/
-grep -r "require(\"electron\")" --include='*.ts' --include='*.js' --include='*.cjs' --include='*.mjs' -l packages/
+grep -rn 'from "electron"\|require("electron")' \
+  --include='*.ts' --include='*.js' --include='*.cjs' --include='*.mjs' packages/ \
+  | grep -v node_modules | grep -v '/dist/' | grep -v '/lib/'
 ```
 
 For each breaking change listed in the Electron docs for the new major version:
@@ -200,6 +212,8 @@ npx beachball change --package @itwin/electron-authorization --type patch --mess
 ```
 
 This avoids interactive prompts and creates the change file with the correct metadata (including the git user's email from git config). **Do not manually create change files** — always use the `beachball change` CLI to ensure proper formatting and email population.
+
+> **Note:** `beachball change` does not just write a file — it immediately `git commit`s the change file on its own (a commit titled "Change files"). The change file will therefore **not** appear in `git status`, and it does not need to be staged in the later commit step. Verify the protected-branch guard has already been satisfied before running this command, since it commits on your behalf.
 
 ### Step 6: Validate
 
