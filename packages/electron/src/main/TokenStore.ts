@@ -86,14 +86,13 @@ export class RefreshTokenStore {
     return this._userName;
   }
 
-  // Note: this is intentionally made async in case this code doesn't run in electron's main process and safeStorage must be polyfilled with async function
   private async encryptRefreshToken(token: string): Promise<Buffer> {
-    return safeStorage.encryptString(token);
+    return safeStorage.encryptStringAsync(token);
   }
 
-  // Note: this is intentionally made async in case this code doesn't run in electron's main process and safeStorage must be polyfilled with async function
   private async decryptRefreshToken(encryptedToken: Buffer): Promise<string> {
-    return safeStorage.decryptString(Buffer.from(encryptedToken));
+    const { result } = await safeStorage.decryptStringAsync(Buffer.from(encryptedToken));
+    return result;
   }
 
   private async getKey(): Promise<string> {

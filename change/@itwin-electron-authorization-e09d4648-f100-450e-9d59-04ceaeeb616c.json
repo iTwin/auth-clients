@@ -1,0 +1,7 @@
+{
+  "type": "minor",
+  "comment": "Drop support for Electron <42 and migrate to asynchronous safeStorage API",
+  "packageName": "@itwin/electron-authorization",
+  "email": "98940208+GytisCepk@users.noreply.github.com",
+  "dependentChangeType": "patch"
+}
