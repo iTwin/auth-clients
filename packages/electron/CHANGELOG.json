@@ -2,6 +2,29 @@
   "name": "@itwin/electron-authorization",
   "entries": [
     {
+      "date": "Mon, 26 Oct 2026 14:34:46 GMT",
+      "version": "0.24.0",
+      "tag": "@itwin/electron-authorization_v0.24.0",
+      "comments": {
+        "patch": [
+          {
+            "author": "98940208+GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "d8d1776c5ae55d4fdce72b66fadbdd2bdb26b946",
+            "comment": "Add support for Electron 45"
+          }
+        ],
+        "minor": [
+          {
+            "author": "98940208+GytisCepk@users.noreply.github.com",
+            "package": "@itwin/electron-authorization",
+            "commit": "d8d1776c5ae55d4fdce72b66fadbdd2bdb26b946",
+            "comment": "Drop support for Electron <42 and migrate to asynchronous safeStorage API"
+          }
+        ]
+      }
+    },
+    {
       "date": "Tue, 22 Sep 2026 05:40:44 GMT",
       "version": "0.23.6",
       "tag": "@itwin/electron-authorization_v0.23.6",

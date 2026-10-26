@@ -1,8 +1,20 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Tue, 22 Sep 2026 05:40:44 GMT and should not be manually modified. -->
+<!-- This log was last generated on Mon, 26 Oct 2026 14:34:46 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.24.0
+
+Mon, 26 Oct 2026 14:34:46 GMT
+
+### Minor changes
+
+- Drop support for Electron \<42 and migrate to asynchronous safeStorage API (98940208+GytisCepk@users.noreply.github.com)
+
+### Patches
+
+- Add support for Electron 45 (98940208+GytisCepk@users.noreply.github.com)
 
 ## 0.23.6
 
