@@ -76,6 +76,6 @@
   },
   "peerDependencies": {
     "@itwin/core-bentley": "^5.0.0",
-    "electron": ">=35.0.0 <46.0.0"
+    "electron": ">=42.0.0 <46.0.0"
   }
 }
