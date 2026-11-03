@@ -65,27 +65,48 @@ function getTokenStoreFileName(channelClientPrefix?: string): string {
   return `iTwinJs_${clientIdWithPrefix}`;
 }
 
-async function getUrl(app: ElectronApplication): Promise<string> {
-  // evaluates in the context of the main process
-  // TODO: consider writing a helper to make this easier
-  return app.evaluate<string>(async ({ shell }) => {
-    return new Promise((resolve) => {
-      shell.openExternal = async (url: string) => {
-        return resolve(url);
-      };
-    });
+declare global {
+  var capturedSignInUrls: string[] | undefined;
+}
+
+/**
+ * Replaces `shell.openExternal` in the main process so that sign in URLs are recorded
+ * instead of opening a real browser. This must complete before anything triggers a sign
+ * in, otherwise the URL can be opened before the override is installed and would never
+ * be captured.
+ */
+async function captureSignInUrls(app: ElectronApplication): Promise<void> {
+  await app.evaluate(async ({ shell }) => {
+    globalThis.capturedSignInUrls = [];
+    shell.openExternal = async (url: string) => {
+      globalThis.capturedSignInUrls?.push(url);
+    };
   });
 }
 
-test.beforeEach(async () => {
-  try {
-    await Promise.all(tokenStores.map(async (store) => store.delete()));
-    electronApp = await electron.launch({
-      args: ["./dist/integration-test/test-app/index.js"],
-    });
-    electronPage = await electronApp.firstWindow();
-  } catch {
+/** Waits for the next URL recorded by {@link captureSignInUrls} and consumes it. */
+async function waitForSignInUrl(app: ElectronApplication, timeoutMs = 15000): Promise<string> {
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    const url = await app.evaluate(async () => globalThis.capturedSignInUrls?.shift());
+    if (undefined !== url)
+      return url;
+    if (Date.now() >= deadline)
+      throw new Error(
+        "Timed out waiting for the app to open an external sign in URL. The app may have "
+        + "signed in silently using a cached token, or never attempted to sign in at all.",
+      );
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
+}
+
+test.beforeEach(async () => {
+  await Promise.all(tokenStores.map(async (store) => store.delete()));
+  electronApp = await electron.launch({
+    args: ["./dist/integration-test/test-app/index.js"],
+  });
+  electronPage = await electronApp.firstWindow();
+  await captureSignInUrls(electronApp);
 });
 
 test.afterEach(async () => {
@@ -104,18 +125,16 @@ test("buttons exist", async () => {
 test("sign in successful", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.checkStatus(electronPage, false);
-  const urlPromise = getUrl(electronApp);
   await testHelper.clickSignIn(electronPage);
-  await testHelper.signIn(page, await urlPromise);
+  await testHelper.signIn(page, await waitForSignInUrl(electronApp));
   await testHelper.checkStatus(electronPage, true);
   await page.close();
 });
 
 test("sign out successful", async ({ browser }) => {
   const page = await browser.newPage();
-  const urlPromise = getUrl(electronApp);
   await testHelper.clickSignIn(electronPage);
-  await testHelper.signIn(page, await urlPromise);
+  await testHelper.signIn(page, await waitForSignInUrl(electronApp));
   await testHelper.checkStatus(electronPage, true);
   await testHelper.clickSignOut(electronPage);
   await testHelper.checkStatus(electronPage, false);
@@ -124,9 +143,8 @@ test("sign out successful", async ({ browser }) => {
 
 test("when scopes change, sign in is required", async ({ browser }) => {
   const page = await browser.newPage();
-  const urlPromise = getUrl(electronApp);
   await testHelper.clickSignIn(electronPage);
-  await testHelper.signIn(page, await urlPromise);
+  await testHelper.signIn(page, await waitForSignInUrl(electronApp));
   await testHelper.checkStatus(electronPage, true);
 
   // Admittedly this is cheating: no user would interact
@@ -144,9 +162,8 @@ test("handles multiple instances with different channelClientPrefix", async ({
   await testHelper.checkStatus(electronPage, false);
   await testHelper.checkOtherStatus(electronPage, false);
 
-  const urlPromise = getUrl(electronApp);
   await testHelper.clickSignIn(electronPage);
-  await testHelper.signIn(page, await urlPromise);
+  await testHelper.signIn(page, await waitForSignInUrl(electronApp));
   await page.close();
 
   // only the default auth client should be signed in
@@ -155,9 +172,8 @@ test("handles multiple instances with different channelClientPrefix", async ({
 
   // Now sign in with the other auth client
   const otherPage = await browser.newPage();
-  const otherUrlPromise = getUrl(electronApp);
   await testHelper.clickOtherSignIn(electronPage);
-  await testHelper.signIn(otherPage, await otherUrlPromise);
+  await testHelper.signIn(otherPage, await waitForSignInUrl(electronApp));
   await otherPage.close();
 
   // both auth clients should be signed in
