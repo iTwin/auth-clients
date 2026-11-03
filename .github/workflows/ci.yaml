@@ -13,7 +13,10 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        # ubuntu is pinned to 24.04 because @itwin/certa depends on playwright ~1.56,
+        # whose postinstall browser download fails on ubuntu 26.04. Revert to
+        # ubuntu-latest once certa bumps playwright to >=1.61.
+        os: [ubuntu-24.04, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
 
     steps:

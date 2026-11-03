@@ -20,7 +20,10 @@ jobs:
     strategy:
       matrix:
         linux:
-          imageName: "ubuntu-latest"
+          # pinned to 24.04 because @itwin/certa depends on playwright ~1.56, whose
+          # postinstall browser download fails on ubuntu 26.04. Revert to ubuntu-latest
+          # once certa bumps playwright to >=1.61.
+          imageName: "ubuntu-24.04"
         mac:
           imageName: "macos-latest"
         windows:
