@@ -67,46 +67,92 @@ function getTokenStoreKey(issuerUrl?: string, channelClientPrefix?: string): str
   return `${getTokenStoreFileName(channelClientPrefix)}:${issuerUrl}`;
 }
 
+/** Host of the identity provider the test app signs in against. */
+function getIssuerHostname(): string {
+  const authority = new URL("https://ims.bentley.com");
+  if (envPrefix)
+    authority.hostname = envPrefix + authority.hostname;
+  return authority.hostname;
+}
+
 function getTokenStoreFileName(channelClientPrefix?: string): string {
   const clientIdWithPrefix = getPrefixedClientId(clientId, channelClientPrefix);
   return `iTwinJs_${clientIdWithPrefix}`;
 }
 
 declare global {
-  var capturedSignInUrls: string[] | undefined;
+  var capturedExternalUrls: string[] | undefined;
 }
 
+type ExternalUrlKind = "signIn" | "signOut";
+
 /**
- * Replaces `shell.openExternal` in the main process so that sign in URLs are recorded
- * instead of opening a real browser. This must complete before anything triggers a sign
- * in, otherwise the URL can be opened before the override is installed and would never
- * be captured.
+ * Replaces `shell.openExternal` in the main process so that the URLs the app would open
+ * in a real browser are recorded instead. This must complete before anything triggers a
+ * sign in, otherwise the URL can be opened before the override is installed and would
+ * never be captured.
  */
-async function captureSignInUrls(app: ElectronApplication): Promise<void> {
+async function captureExternalUrls(app: ElectronApplication): Promise<void> {
   await app.evaluate(async ({ shell }) => {
-    globalThis.capturedSignInUrls = [];
+    globalThis.capturedExternalUrls = [];
     shell.openExternal = async (url: string) => {
-      globalThis.capturedSignInUrls?.push(url);
+      globalThis.capturedExternalUrls?.push(url);
     };
   });
 }
 
-/** Waits for the next URL recorded by {@link captureSignInUrls} and consumes it. */
-async function waitForSignInUrl(app: ElectronApplication, timeoutMs = 15000): Promise<string> {
+/**
+ * Consumes the first captured URL of the given kind, leaving the rest in place. Signing
+ * in and signing out both go through `shell.openExternal`, so taking URLs in arrival
+ * order would let a leftover end session URL be mistaken for a sign in URL.
+ */
+async function takeExternalUrl(
+  app: ElectronApplication,
+  kind: ExternalUrlKind,
+): Promise<string | undefined> {
+  return app.evaluate(async (_electron, requestedKind) => {
+    const urls = globalThis.capturedExternalUrls ?? [];
+    // Only an authorization request carries a response_type, the end session endpoint is opened bare.
+    const index = urls.findIndex((url) => {
+      const isSignIn = new URL(url).searchParams.has("response_type");
+      return "signIn" === requestedKind ? isSignIn : !isSignIn;
+    });
+    return 0 > index ? undefined : urls.splice(index, 1)[0];
+  }, kind);
+}
+
+/** Waits for a URL recorded by {@link captureExternalUrls} and consumes it. */
+async function waitForExternalUrl(
+  app: ElectronApplication,
+  kind: ExternalUrlKind,
+  timeoutMs = 15000,
+): Promise<string> {
   const deadline = Date.now() + timeoutMs;
   for (;;) {
-    const url = await app.evaluate(async () => globalThis.capturedSignInUrls?.shift());
+    const url = await takeExternalUrl(app, kind);
     if (undefined !== url)
       return url;
     if (Date.now() >= deadline) {
       const appError = await electronPage.locator("#error").textContent();
-      const cause = appError
-        ? `The app reported: ${appError}`
-        : "The app may have signed in silently using a cached token, or never attempted to sign in at all.";
-      throw new Error(`Timed out waiting for the app to open an external sign in URL. ${cause}`);
+      const action = "signIn" === kind
+        ? "open an external sign in URL"
+        : "open the end session endpoint";
+      const fallback = "signIn" === kind
+        ? "The app may have signed in silently using a cached token, or never attempted to sign in at all."
+        : "The app may not have reached the end session step of signing out.";
+      const cause = appError ? `The app reported: ${appError}` : fallback;
+      throw new Error(`Timed out waiting for the app to ${action}. ${cause}`);
     }
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
+}
+
+async function waitForSignInUrl(app: ElectronApplication): Promise<string> {
+  return waitForExternalUrl(app, "signIn");
+}
+
+async function waitForSignOutUrl(app: ElectronApplication): Promise<string> {
+  return waitForExternalUrl(app, "signOut");
 }
 
 /** Resolves once nothing is listening on the sign in redirect port used by the test app. */
@@ -137,7 +183,7 @@ test.beforeEach(async () => {
     args: ["./dist/integration-test/test-app/index.js"],
   });
   electronPage = await electronApp.firstWindow();
-  await captureSignInUrls(electronApp);
+  await captureExternalUrls(electronApp);
 
   // The app must start signed out. If a refresh token survives the deletion above, the
   // app signs in silently and never opens an external URL, which makes every sign in
@@ -178,6 +224,11 @@ test("sign out successful", async ({ browser }) => {
   await testHelper.signIn(page, await waitForSignInUrl(electronApp));
   await testHelper.checkStatus(electronPage, true);
   await testHelper.clickSignOut(electronPage);
+
+  // Signing out must also end the session with the identity provider, not just drop the
+  // local token. Nothing opens this URL, so only the request itself can be checked.
+  expect(new URL(await waitForSignOutUrl(electronApp)).hostname).toBe(getIssuerHostname());
+
   await testHelper.checkStatus(electronPage, false);
   await page.close();
 });
