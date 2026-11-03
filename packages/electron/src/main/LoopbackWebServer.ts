@@ -56,11 +56,15 @@ interface OidcUrlSearchParams {
  */
 export class LoopbackWebServer {
   private static _httpServer?: Http.Server;
+  private static _closing?: Promise<void>;
   private static _authState: AuthorizationState = new AuthorizationState();
   private static _redirectUri: string;
 
   /** Start a web server to listen to the browser requests */
   public static async start(this: void, redirectUri: string): Promise<void> {
+    // A previous sign in may still be releasing the port, which would make this bind fail.
+    if (LoopbackWebServer._closing)
+      await LoopbackWebServer._closing;
     if (LoopbackWebServer._httpServer)
       return;
     LoopbackWebServer._redirectUri = redirectUri;
@@ -86,13 +90,22 @@ export class LoopbackWebServer {
 
   /** Stop the web server after the authorization was completed */
   private static stop() {
-    if (!LoopbackWebServer._httpServer)
+    const server = LoopbackWebServer._httpServer;
+    if (!server)
       return;
-    LoopbackWebServer._httpServer.close((err) => {
-      if (err)
-        Logger.logWarning(loggerCategory, "Could not close the loopback server", () => err);
-      else
-        LoopbackWebServer._httpServer = undefined;
+
+    // Clear the reference before closing: close() only completes once existing
+    // connections end, and until then start() would return without listening again,
+    // leaving the next sign in with no server to receive its redirect.
+    LoopbackWebServer._httpServer = undefined;
+    server.closeAllConnections();
+    LoopbackWebServer._closing = new Promise<void>((resolve) => {
+      server.close((err) => {
+        if (err)
+          Logger.logWarning(loggerCategory, "Could not close the loopback server", () => err);
+        LoopbackWebServer._closing = undefined;
+        resolve();
+      });
     });
   }
 
