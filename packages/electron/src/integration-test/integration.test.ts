@@ -11,6 +11,7 @@ import { TestHelper } from "./helpers/TestHelper.js";
 import { RefreshTokenStore } from "../main/TokenStore.js";
 import { getPrefixedClientId } from "../common/IpcChannelNames.js";
 import { redirectUri } from "./redirectUri.js";
+import { join } from "node:path";
 
 const { clientId, envPrefix, email, password } = loadConfig();
 
@@ -22,24 +23,21 @@ const signInOptions: SignInOptions = {
 };
 
 // Get the user data path that would be returned in app.getPath('userData') if ran in main electron process.
-const getElectronUserDataPath = (): string | undefined => {
+const getElectronUserDataPath = (): string => {
+  const fromEnv = (variable: string): string => {
+    const value = process.env[variable];
+    if (!value)
+      throw new Error(`${variable} environment variable not set on ${process.platform}`);
+    return value;
+  };
+
   switch (process.platform) {
     case "darwin": // For MacOS
-      return `${process.env.HOME}/Library/Application Support/Electron`;
-    case "win32": { // For Windows
-      const appData = process.env.APPDATA;
-      if (!appData)
-        throw new Error("APPDATA environment variable not set on Windows");
-      return `${appData}/Electron`;
-    }
-    case "linux": { // For Linux
-      const configHome = process.env.XDG_CONFIG_HOME;
-      if (configHome)
-        return `${configHome}/Electron`;
-      if (!process.env.HOME)
-        throw new Error("HOME environment variable not set on Linux");
-      return `${process.env.HOME}/.config/Electron`;
-    }
+      return join(fromEnv("HOME"), "Library", "Application Support", "Electron");
+    case "win32": // For Windows
+      return join(fromEnv("APPDATA"), "Electron");
+    case "linux": // For Linux
+      return join(process.env.XDG_CONFIG_HOME ?? join(fromEnv("HOME"), ".config"), "Electron");
     default:
       return process.cwd();
   }
