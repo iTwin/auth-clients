@@ -125,7 +125,7 @@ async function takeExternalUrl(
 async function waitForExternalUrl(
   app: ElectronApplication,
   kind: ExternalUrlKind,
-  timeoutMs = 15000,
+  timeoutMs = 10000,
 ): Promise<string> {
   const deadline = Date.now() + timeoutMs;
   for (;;) {
@@ -133,7 +133,11 @@ async function waitForExternalUrl(
     if (undefined !== url)
       return url;
     if (Date.now() >= deadline) {
-      const appError = await electronPage.locator("#error").textContent();
+      // Never let a failure to read the app's error replace the timeout being reported.
+      const appError = await electronPage
+        .locator("#error")
+        .textContent()
+        .catch(() => undefined);
       const action = "signIn" === kind
         ? "open an external sign in URL"
         : "open the end session endpoint";
@@ -158,16 +162,24 @@ async function waitForSignOutUrl(app: ElectronApplication): Promise<string> {
 /** Resolves once nothing is listening on the sign in redirect port used by the test app. */
 async function waitForRedirectPortRelease(timeoutMs = 10000): Promise<void> {
   const { connect } = await import("node:net");
-  const port = Number(new URL(redirectUri).port);
+  const { port, hostname } = new URL(redirectUri);
   const deadline = Date.now() + timeoutMs;
   for (;;) {
+    // Probe the hostname the app binds rather than a fixed address: "localhost" resolves
+    // to ::1 on a dual stack host, where a probe of 127.0.0.1 is refused even though the
+    // previous app is still listening.
     const inUse = await new Promise<boolean>((resolve) => {
-      const socket = connect({ port, host: "127.0.0.1" })
+      const socket = connect({ port: Number(port), host: hostname })
         .on("connect", () => {
           socket.destroy();
           resolve(true);
         })
         .on("error", () => resolve(false));
+      // A dropped SYN would otherwise leave this pending well past the deadline below.
+      socket.setTimeout(1000, () => {
+        socket.destroy();
+        resolve(true);
+      });
     });
     if (!inUse)
       return;
@@ -185,11 +197,11 @@ test.beforeEach(async () => {
   electronPage = await electronApp.firstWindow();
   await captureExternalUrls(electronApp);
 
-  // The app must start signed out. If a refresh token survives the deletion above, the
-  // app signs in silently and never opens an external URL, which makes every sign in
-  // based test below hang instead of reporting the leaked credentials.
-  await testHelper.checkStatus(electronPage, false);
-  await testHelper.checkOtherStatus(electronPage, false);
+  // The deletion above is only effective if the tests write to the same place the app
+  // does. When these drift the app keeps a token the tests believe they removed, and the
+  // next sign in stalls decrypting it rather than failing here.
+  const appUserDataPath = await electronApp.evaluate(async ({ app }) => app.getPath("userData"));
+  expect(appUserDataPath).toBe(userDataPath);
 });
 
 test.afterEach(async () => {

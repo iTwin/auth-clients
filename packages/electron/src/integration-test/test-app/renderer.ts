@@ -25,7 +25,15 @@ function reportError(error: unknown) {
     message.textContent = `${error instanceof Error ? error.message : String(error)}`;
 }
 
+/** Drops any error from an earlier action so it cannot be reported against this one. */
+function clearError() {
+  const message: HTMLElement | null = document.getElementById("error");
+  if (message)
+    message.textContent = "";
+}
+
 signOutButton?.addEventListener("click", async () => {
+  clearError();
   try {
     await auth.signOut();
   } catch (error) {
@@ -34,6 +42,7 @@ signOutButton?.addEventListener("click", async () => {
 });
 
 signInButton?.addEventListener("click", async () => {
+  clearError();
   try {
     await auth.signIn();
   } catch (error) {
@@ -42,6 +51,7 @@ signInButton?.addEventListener("click", async () => {
 });
 
 otherSignInButton?.addEventListener("click", async () => {
+  clearError();
   try {
     await otherAuth.signIn();
   } catch (error) {
