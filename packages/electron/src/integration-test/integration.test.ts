@@ -10,6 +10,7 @@ import { loadConfig } from "./helpers/loadConfig.js";
 import { TestHelper } from "./helpers/TestHelper.js";
 import { RefreshTokenStore } from "../main/TokenStore.js";
 import { getPrefixedClientId } from "../common/IpcChannelNames.js";
+import { redirectUri } from "./redirectUri.js";
 
 const { clientId, envPrefix, email, password } = loadConfig();
 
@@ -91,11 +92,35 @@ async function waitForSignInUrl(app: ElectronApplication, timeoutMs = 15000): Pr
     const url = await app.evaluate(async () => globalThis.capturedSignInUrls?.shift());
     if (undefined !== url)
       return url;
+    if (Date.now() >= deadline) {
+      const appError = await electronPage.locator("#error").textContent();
+      const cause = appError
+        ? `The app reported: ${appError}`
+        : "The app may have signed in silently using a cached token, or never attempted to sign in at all.";
+      throw new Error(`Timed out waiting for the app to open an external sign in URL. ${cause}`);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+}
+
+/** Resolves once nothing is listening on the sign in redirect port used by the test app. */
+async function waitForRedirectPortRelease(timeoutMs = 10000): Promise<void> {
+  const { connect } = await import("node:net");
+  const port = Number(new URL(redirectUri).port);
+  const deadline = Date.now() + timeoutMs;
+  for (;;) {
+    const inUse = await new Promise<boolean>((resolve) => {
+      const socket = connect({ port, host: "127.0.0.1" })
+        .on("connect", () => {
+          socket.destroy();
+          resolve(true);
+        })
+        .on("error", () => resolve(false));
+    });
+    if (!inUse)
+      return;
     if (Date.now() >= deadline)
-      throw new Error(
-        "Timed out waiting for the app to open an external sign in URL. The app may have "
-        + "signed in silently using a cached token, or never attempted to sign in at all.",
-      );
+      throw new Error(`Port ${port} is still in use, the next sign in attempt would fail to bind it.`);
     await new Promise((resolve) => setTimeout(resolve, 100));
   }
 }
@@ -117,6 +142,10 @@ test.beforeEach(async () => {
 
 test.afterEach(async () => {
   await electronApp.close();
+  // The app binds a fixed port for the sign in redirect URI. Playwright resolves close()
+  // before the OS has released the listening socket, so the next app can fail to bind it
+  // and never gets as far as opening a sign in URL.
+  await waitForRedirectPortRelease();
 });
 
 test("buttons exist", async () => {

@@ -18,27 +18,34 @@ const getStatusButton = document.getElementById("getStatus");
 const otherSignInButton = document.getElementById("otherSignIn");
 const otherGetStatusButton = document.getElementById("otherGetStatus");
 
+/** Reports failures to the tests, which otherwise only see a sign in that never happens. */
+function reportError(error: unknown) {
+  const message: HTMLElement | null = document.getElementById("error");
+  if (message)
+    message.textContent = `${error instanceof Error ? error.message : String(error)}`;
+}
+
 signOutButton?.addEventListener("click", async () => {
   try {
     await auth.signOut();
-  } catch {
-
+  } catch (error) {
+    reportError(error);
   }
 });
 
 signInButton?.addEventListener("click", async () => {
   try {
     await auth.signIn();
-  } catch {
-
+  } catch (error) {
+    reportError(error);
   }
 });
 
 otherSignInButton?.addEventListener("click", async () => {
   try {
     await otherAuth.signIn();
-  } catch {
-
+  } catch (error) {
+    reportError(error);
   }
 });
 
