@@ -176,7 +176,13 @@ test("sign out successful", async ({ browser }) => {
   await page.close();
 });
 
-test("when scopes change, sign in is required", async ({ browser }) => {
+// FIXME: this test has never verified anything. It "cheats" by calling
+// `tokenStores[0].load()` with changed scopes, but `load` is a pure read: on a scope
+// mismatch it returns undefined and leaves the store untouched, so it cannot sign the
+// app out, and `isAuthorized` reflects the live in-memory token regardless. The status
+// check below used to assert nothing, which hid the failure. Verifying this properly
+// requires relaunching the app with different scopes.
+test.fixme("when scopes change, sign in is required", async ({ browser }) => {
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await waitForSignInUrl(electronApp));
