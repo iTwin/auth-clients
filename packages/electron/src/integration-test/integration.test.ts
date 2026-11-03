@@ -32,8 +32,14 @@ const getElectronUserDataPath = (): string | undefined => {
         throw new Error("APPDATA environment variable not set on Windows");
       return `${appData}/Electron`;
     }
-    case "linux": // For Linux
-      return undefined; // Linux uses the same path for both main and renderer processes, no need to manually resolve path.
+    case "linux": { // For Linux
+      const configHome = process.env.XDG_CONFIG_HOME;
+      if (configHome)
+        return `${configHome}/Electron`;
+      if (!process.env.HOME)
+        throw new Error("HOME environment variable not set on Linux");
+      return `${process.env.HOME}/.config/Electron`;
+    }
     default:
       return process.cwd();
   }
