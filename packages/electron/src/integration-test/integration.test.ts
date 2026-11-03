@@ -107,6 +107,12 @@ test.beforeEach(async () => {
   });
   electronPage = await electronApp.firstWindow();
   await captureSignInUrls(electronApp);
+
+  // The app must start signed out. If a refresh token survives the deletion above, the
+  // app signs in silently and never opens an external URL, which makes every sign in
+  // based test below hang instead of reporting the leaked credentials.
+  await testHelper.checkStatus(electronPage, false);
+  await testHelper.checkOtherStatus(electronPage, false);
 });
 
 test.afterEach(async () => {

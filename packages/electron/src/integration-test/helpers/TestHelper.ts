@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import type { Page } from "@playwright/test";
+import { expect } from "@playwright/test";
 import type { SignInOptions } from "../types.js";
 
 /**
@@ -38,16 +39,38 @@ export class TestHelper {
   }
   public async checkStatus(electronPage: Page, expectedStatus: boolean) {
     await electronPage.waitForSelector("button#getStatus");
-    const button = electronPage.getByTestId("getStatus");
-    await button.click();
-    electronPage.getByText(expectedStatus ? "signed in" : "signed out");
+    await this.expectStatusText(
+      electronPage,
+      "getStatus",
+      "#status",
+      `Status: signed ${expectedStatus ? "in" : "out"}`,
+    );
   }
 
   public async checkOtherStatus(electronPage: Page, expectedStatus: boolean) {
     await electronPage.waitForSelector("button#otherGetStatus");
-    const button = electronPage.getByTestId("otherGetStatus");
-    await button.click();
-    electronPage.getByText(expectedStatus ? "signed in" : "signed out");
+    await this.expectStatusText(
+      electronPage,
+      "otherGetStatus",
+      "#otherStatus",
+      `Other Status: signed ${expectedStatus ? "in" : "out"}`,
+    );
+  }
+
+  /**
+   * The status text is only refreshed when the button is clicked, so re-click on every
+   * poll to pick up authorization changes that complete asynchronously.
+   */
+  private async expectStatusText(
+    electronPage: Page,
+    buttonTestId: string,
+    statusSelector: string,
+    expectedText: string,
+  ) {
+    await expect.poll(async () => {
+      await electronPage.getByTestId(buttonTestId).click();
+      return electronPage.locator(statusSelector).textContent();
+    }).toBe(expectedText);
   }
 
   public async signIn(page: Page, url: string) {
