@@ -187,17 +187,46 @@ async function waitForRedirectPortRelease(timeoutMs = 10000): Promise<void> {
   }
 }
 
-test.beforeEach(async () => {
-  await Promise.all(tokenStores.map(async (store) => store.delete()));
+/**
+ * Launches the test app and makes it the one the hooks and helpers act on. `scopes`
+ * overrides the scopes the app requests, everything else comes from the environment.
+ */
+async function launchApp(scopes?: string): Promise<void> {
   electronApp = await electron.launch({
     args: ["./dist/integration-test/test-app/index.js"],
+    env: scopes ? { ...process.env, IMJS_TEST_ELECTRON_SCOPES: scopes } : undefined, // eslint-disable-line @typescript-eslint/naming-convention
   });
   electronPage = await electronApp.firstWindow();
   await captureExternalUrls(electronApp);
+}
+
+/**
+ * Closes the app while leaving its refresh token on disk, then launches a fresh one, as
+ * a user restarting the app would.
+ */
+async function relaunchApp(scopes?: string): Promise<void> {
+  await electronApp.close();
+  await waitForRedirectPortRelease();
+  await launchApp(scopes);
+}
+
+/** A scope set the test app's stored token is guaranteed not to match. */
+function getDifferentScopes(): string {
+  const scopes = (process.env.IMJS_TEST_ELECTRON_SCOPES ?? "").split(" ").filter((scope) => scope && scope !== "offline_access");
+  if (1 < scopes.length)
+    return scopes.slice(0, -1).join(" ");
+  const extraScope = ["profile", "email", "openid"].find((scope) => !scopes.includes(scope));
+  return [...scopes, extraScope].join(" ");
+}
+
+test.beforeEach(async () => {
+  await Promise.all(tokenStores.map(async (store) => store.delete()));
+  await launchApp();
 
   // The deletion above is only effective if the tests write to the same place the app
-  // does. When these drift the app keeps a token the tests believe they removed, and the
-  // next sign in stalls decrypting it rather than failing here.
+  // does. When these drift a token the tests believe they removed is left behind, so the
+  // next app signs in silently with its refresh token, never opens a sign in URL, and
+  // the wait for that URL times out rather than failing here.
   const appUserDataPath = await electronApp.evaluate(async ({ app }) => app.getPath("userData"));
   expect(appUserDataPath).toBe(userDataPath);
 });
@@ -243,22 +272,42 @@ test("sign out successful", async ({ browser }) => {
   await page.close();
 });
 
-// FIXME: this test has never verified anything. It "cheats" by calling
-// `tokenStores[0].load()` with changed scopes, but `load` is a pure read: on a scope
-// mismatch it returns undefined and leaves the store untouched, so it cannot sign the
-// app out, and `isAuthorized` reflects the live in-memory token regardless. The status
-// check below used to assert nothing, which hid the failure. Verifying this properly
-// requires relaunching the app with different scopes.
-test.fixme("when scopes change, sign in is required", async ({ browser }) => {
+test("signs in silently with a token from a previous session", async ({ browser }) => {
+  test.slow();
   const page = await browser.newPage();
   await testHelper.clickSignIn(electronPage);
   await testHelper.signIn(page, await waitForSignInUrl(electronApp));
   await testHelper.checkStatus(electronPage, true);
+  await page.close();
 
-  // Admittedly this is cheating: no user would interact
-  // with the tokenStore directly, but this is a tough
-  // case to test otherwise.
-  await tokenStores[0].load("itwin-platform realitydata:read");
+  await relaunchApp();
+  await testHelper.checkStatus(electronPage, false);
+  await testHelper.clickSignIn(electronPage);
+  await testHelper.checkStatus(electronPage, true);
+
+  // Signing in from the stored refresh token must not involve the browser.
+  expect(await takeExternalUrl(electronApp, "signIn")).toBeUndefined();
+  await expect(electronPage.locator("#error")).toBeEmpty();
+});
+
+test("when scopes change, sign in is required", async ({ browser }) => {
+  test.slow();
+  const page = await browser.newPage();
+  await testHelper.clickSignIn(electronPage);
+  await testHelper.signIn(page, await waitForSignInUrl(electronApp));
+  await testHelper.checkStatus(electronPage, true);
+  await page.close();
+
+  // The stored token was granted for the original scopes, so it must not be reused.
+  const differentScopes = getDifferentScopes();
+  await relaunchApp(differentScopes);
+  await testHelper.clickSignIn(electronPage);
+  const signInUrl = new URL(await waitForSignInUrl(electronApp));
+  // Confirms the relaunched app really asked for the new scopes. That the same token is
+  // otherwise reused is covered by the silent sign in test.
+  expect(signInUrl.searchParams.get("scope")?.split(" ").sort()).toEqual(
+    `${differentScopes} offline_access`.split(" ").sort(),
+  );
   await testHelper.checkStatus(electronPage, false);
 });
 

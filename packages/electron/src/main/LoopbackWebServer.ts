@@ -111,19 +111,25 @@ export class LoopbackWebServer {
 
   /** Listen/Handle browser events */
   private static onBrowserRequest(this: void, httpRequest: Http.IncomingMessage, httpResponse: Http.ServerResponse): void {
+    // Irrelevant requests (e.g. favicon.ico) still need a response, otherwise the browser
+    // keeps waiting on them.
+    const ignoreRequest = () => {
+      httpResponse.writeHead(404);
+      httpResponse.end();
+    };
+
     if (!httpRequest.url)
-      return;
+      return ignoreRequest();
 
     const { state, code, error, errorUri, errorDescription } = LoopbackWebServer.parseUrlSearchParams(httpRequest.url);
 
-    // ignore irrelevant requests (e.g. favicon.ico)
     if (!state)
-      return;
+      return ignoreRequest();
 
     // Look up context for the corresponding outgoing request
     const authorizationEvents = LoopbackWebServer._authState.getEvents(state);
     if (!authorizationEvents)
-      return;
+      return ignoreRequest();
 
     // Notify listeners of the code response or error
     let authorizationResponse: AuthorizationResponseJson | null = null;
