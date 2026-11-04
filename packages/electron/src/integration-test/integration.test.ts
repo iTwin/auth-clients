@@ -187,19 +187,107 @@ async function waitForRedirectPortRelease(timeoutMs = 10000): Promise<void> {
   }
 }
 
-test.beforeEach(async () => {
-  await Promise.all(tokenStores.map(async (store) => store.delete()));
+// DIAG: ciphertext produced by the previous app process, so the next process can try to
+// decrypt something it did not encrypt itself. This is exactly what a stored refresh
+// token is on the second sign in.
+let previousProbeCiphertext: string | undefined;
+
+interface SafeStorageProbe {
+  platform: string;
+  backend: string;
+  encryptionAvailable: boolean;
+  previous?: { status: "ok" | "rejected" | "timeout"; elapsedMs: number; message?: string; roundTripMatches?: boolean };
+  encrypt: { status: "ok" | "rejected" | "timeout"; elapsedMs: number; message?: string };
+  ciphertext?: string;
+}
+
+/** DIAG: measures whether a fresh app can use safeStorage, and decrypt the previous app's secret. */
+async function probeSafeStorage(app: ElectronApplication): Promise<SafeStorageProbe> {
+  const probe = await app.evaluate(async ({ safeStorage }, previous) => {
+    const race = async <T>(promise: Promise<T>, ms: number): Promise<{ status: "ok" | "rejected" | "timeout"; value?: T; message?: string; elapsedMs: number }> => {
+      const started = Date.now();
+      let timer: NodeJS.Timeout | undefined;
+      const timeout = new Promise<"timeout">((resolve) => { timer = setTimeout(() => resolve("timeout"), ms); });
+      try {
+        const outcome = await Promise.race([promise.then((value) => ({ value })), timeout]);
+        if (outcome === "timeout")
+          return { status: "timeout", elapsedMs: Date.now() - started };
+        return { status: "ok", value: outcome.value, elapsedMs: Date.now() - started };
+      } catch (error) {
+        return { status: "rejected", message: error instanceof Error ? error.message : String(error), elapsedMs: Date.now() - started };
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+
+    const result: any = {
+      platform: process.platform,
+      backend: process.platform === "linux" ? safeStorage.getSelectedStorageBackend() : "n/a",
+      encryptionAvailable: safeStorage.isEncryptionAvailable(), // eslint-disable-line @typescript-eslint/no-deprecated
+    };
+
+    if (previous) {
+      const decrypted = await race(safeStorage.decryptStringAsync(Buffer.from(previous, "base64")), 5000);
+      result.previous = {
+        status: decrypted.status,
+        elapsedMs: decrypted.elapsedMs,
+        message: decrypted.message,
+        roundTripMatches: decrypted.status === "ok" ? decrypted.value?.result === "probe" : undefined,
+      };
+    }
+
+    const encrypted = await race(safeStorage.encryptStringAsync("probe"), 5000);
+    result.encrypt = { status: encrypted.status, elapsedMs: encrypted.elapsedMs, message: encrypted.message };
+    if (encrypted.status === "ok" && encrypted.value)
+      result.ciphertext = Buffer.from(encrypted.value).toString("base64");
+    return result as SafeStorageProbe;
+  }, previousProbeCiphertext);
+
+  if (probe.ciphertext)
+    previousProbeCiphertext = probe.ciphertext;
+  return probe;
+}
+
+/** DIAG: lists the token store files the app can see, so a leaked token is visible in the log. */
+async function listTokenStoreFiles(app: ElectronApplication): Promise<string[]> {
+  return app.evaluate(async ({ app: electronApp_ }) => {
+    const fs = process.getBuiltinModule("node:fs");
+    const path = process.getBuiltinModule("node:path");
+    const dir = electronApp_.getPath("userData");
+    try {
+      return fs.readdirSync(dir)
+        .filter((name) => name.startsWith("iTwinJs_"))
+        .map((name) => `${name} (${fs.statSync(path.join(dir, name)).size}B)`);
+    } catch (error) {
+      return [`<unreadable ${dir}: ${error instanceof Error ? error.message : String(error)}>`];
+    }
+  });
+}
+
+function diag(label: string, data: unknown): void {
+  console.log(`[DIAG] ${label}: ${JSON.stringify(data)}`); // eslint-disable-line no-console
+}
+
+async function launchApp(): Promise<void> {
   electronApp = await electron.launch({
     args: ["./dist/integration-test/test-app/index.js"],
   });
   electronPage = await electronApp.firstWindow();
   await captureExternalUrls(electronApp);
+}
+
+test.beforeEach(async ({}, testInfo) => {
+  await Promise.all(tokenStores.map(async (store) => store.delete()));
+  await launchApp();
 
   // The deletion above is only effective if the tests write to the same place the app
   // does. When these drift the app keeps a token the tests believe they removed, and the
   // next sign in stalls decrypting it rather than failing here.
   const appUserDataPath = await electronApp.evaluate(async ({ app }) => app.getPath("userData"));
   expect(appUserDataPath).toBe(userDataPath);
+
+  diag(`beforeEach "${testInfo.title}" tokenFiles`, await listTokenStoreFiles(electronApp));
+  diag(`beforeEach "${testInfo.title}" safeStorage`, await probeSafeStorage(electronApp));
 });
 
 test.afterEach(async () => {
@@ -241,6 +329,65 @@ test("sign out successful", async ({ browser }) => {
 
   await testHelper.checkStatus(electronPage, false);
   await page.close();
+});
+
+// DIAG: reproduces what happened on Linux before the user data path fix — a token from a
+// previous app process is still on disk when a fresh app's signIn() runs. Records the
+// outcome instead of asserting, so every platform reports what it does.
+test("DIAG: sign in with a token left by a previous app process", async ({ browser }) => {
+  test.setTimeout(90000);
+  const page = await browser.newPage();
+  await testHelper.clickSignIn(electronPage);
+  await testHelper.signIn(page, await waitForSignInUrl(electronApp));
+  await testHelper.checkStatus(electronPage, true);
+  await page.close();
+
+  // Relaunch WITHOUT deleting the token stores.
+  await electronApp.close();
+  await waitForRedirectPortRelease();
+  await launchApp();
+  diag("relaunch tokenFiles", await listTokenStoreFiles(electronApp));
+  diag("relaunch safeStorage", await probeSafeStorage(electronApp));
+
+  const started = Date.now();
+  await testHelper.clickSignIn(electronPage);
+
+  let urlOpened: string | undefined;
+  let status: string | null = null;
+  let appError: string | null = null;
+  const deadline = started + 30000;
+  for (;;) {
+    urlOpened = await takeExternalUrl(electronApp, "signIn");
+    await electronPage.getByTestId("getStatus").click();
+    status = await electronPage.locator("#status").textContent();
+    appError = await electronPage.locator("#error").textContent();
+    if (urlOpened || status === "Status: signed in" || appError)
+      break;
+    if (Date.now() >= deadline)
+      break;
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  const elapsedMs = Date.now() - started;
+
+  let outcome: string;
+  if (urlOpened)
+    outcome = "INTERACTIVE: app opened a sign in URL, cached token was NOT used";
+  else if (status === "Status: signed in")
+    outcome = "SILENT: app signed in from the cached token without opening a URL";
+  else if (appError)
+    outcome = "ERROR: signIn() rejected";
+  else
+    outcome = "STALL: no URL, not signed in, no error within 30s";
+
+  diag("relaunch signIn outcome", { outcome, elapsedMs, status, appError, urlOpened: urlOpened ? new URL(urlOpened).origin : undefined });
+
+  // Let the app finish whatever it started so afterEach can close it cleanly.
+  if (urlOpened) {
+    const page2 = await browser.newPage();
+    await testHelper.signIn(page2, urlOpened);
+    await testHelper.checkStatus(electronPage, true);
+    await page2.close();
+  }
 });
 
 // FIXME: this test has never verified anything. It "cheats" by calling
