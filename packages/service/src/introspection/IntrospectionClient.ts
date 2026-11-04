@@ -10,12 +10,31 @@ import * as jwks from "jwks-rsa";
 import * as jwt from "jsonwebtoken";
 import { OIDCDiscoveryClient } from "../OIDCDiscoveryClient";
 
-/**
- * @alpha
- * @param issuerUrl The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined.
- */
+/** @alpha */
 export interface IntrospectionClientConfiguration {
+  /** The OAuth token issuer URL. Defaults to Bentley's auth URL if undefined. */
   issuerUrl?: string;
+  /**
+   * The `iss` values to accept. Each value must match the claim exactly.
+   * If undefined, the client does not check `iss`. Only the issuer's own
+   * JWKS keys can sign an active token, so the signature check already
+   * proves which issuer made it.
+   */
+  issuer?: string | string[];
+  /**
+   * The audience this resource server expects. If defined, a token is
+   * active only when its `aud` claim contains one of these values.
+   */
+  audience?: string | string[];
+}
+
+function assertNotEmpty(name: string, value: string | string[] | undefined): void {
+  if (value === undefined)
+    return;
+
+  const values = Array.isArray(value) ? value : [value];
+  if (values.length === 0 || values.some((entry) => typeof entry !== "string" || entry === ""))
+    throw new Error(`IntrospectionClient ${name} must not be empty`);
 }
 
 function removeAccessTokenPrefix(accessToken: string): string {
@@ -27,11 +46,17 @@ function removeAccessTokenPrefix(accessToken: string): string {
 
 const signingKeyCacheMaxAgeMs = 10 * 60 * 1000; // 10 Min
 
+// IMS signs access tokens with RSA keys. Allow only RSA algorithms, so
+// that `none`, HMAC, and other key types are rejected.
+const allowedAlgorithms: jwt.Algorithm[] = ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512"];
+
 /** @alpha */
 export class IntrospectionClient {
   private _discoveryClient: OIDCDiscoveryClient;
 
   public constructor(protected _config: IntrospectionClientConfiguration = {}) {
+    assertNotEmpty("issuer", _config.issuer);
+    assertNotEmpty("audience", _config.audience);
     this._discoveryClient = new OIDCDiscoveryClient(_config.issuerUrl);
   }
 
@@ -78,7 +103,11 @@ export class IntrospectionClient {
     let active = true;
     try {
       // since we already called decode, we can ignore the result of verify and just check if it throws.
-      jwt.verify(accessToken, key.getPublicKey());
+      jwt.verify(accessToken, key.getPublicKey(), {
+        algorithms: allowedAlgorithms,
+        issuer: this._config.issuer,
+        audience: this._config.audience,
+      });
     } catch (err) {
       Logger.logInfo(ServiceClientLoggerCategory.Introspection, "Client token marked inactive", () => BentleyError.getErrorProps(err));
       active = false;
