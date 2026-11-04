@@ -8,7 +8,8 @@ on:
 
 jobs:
   create-release:
-    runs-on: ubuntu-latest
+    # Pinned until Playwright is bumped to a version supporting Ubuntu 26.04, see #377
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout tag

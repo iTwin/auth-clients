@@ -56,11 +56,15 @@ interface OidcUrlSearchParams {
  */
 export class LoopbackWebServer {
   private static _httpServer?: Http.Server;
+  private static _closing?: Promise<void>;
   private static _authState: AuthorizationState = new AuthorizationState();
   private static _redirectUri: string;
 
   /** Start a web server to listen to the browser requests */
   public static async start(this: void, redirectUri: string): Promise<void> {
+    // A previous sign in may still be releasing the port, which would make this bind fail.
+    if (LoopbackWebServer._closing)
+      await LoopbackWebServer._closing;
     if (LoopbackWebServer._httpServer)
       return;
     LoopbackWebServer._redirectUri = redirectUri;
@@ -86,31 +90,47 @@ export class LoopbackWebServer {
 
   /** Stop the web server after the authorization was completed */
   private static stop() {
-    if (!LoopbackWebServer._httpServer)
+    const server = LoopbackWebServer._httpServer;
+    if (!server)
       return;
-    LoopbackWebServer._httpServer.close((err) => {
-      if (err)
-        Logger.logWarning(loggerCategory, "Could not close the loopback server", () => err);
-      else
-        LoopbackWebServer._httpServer = undefined;
+
+    // Clear the reference before closing: close() only completes once existing
+    // connections end, and until then start() would return without listening again,
+    // leaving the next sign in with no server to receive its redirect. The browser keeps
+    // its connection alive after the redirect, so drop idle ones to let close() finish.
+    LoopbackWebServer._httpServer = undefined;
+    server.closeIdleConnections();
+    LoopbackWebServer._closing = new Promise<void>((resolve) => {
+      server.close((err) => {
+        if (err)
+          Logger.logWarning(loggerCategory, "Could not close the loopback server", () => err);
+        LoopbackWebServer._closing = undefined;
+        resolve();
+      });
     });
   }
 
   /** Listen/Handle browser events */
   private static onBrowserRequest(this: void, httpRequest: Http.IncomingMessage, httpResponse: Http.ServerResponse): void {
+    // Irrelevant requests (e.g. favicon.ico) still need a response, otherwise the browser
+    // keeps waiting on them.
+    const ignoreRequest = () => {
+      httpResponse.writeHead(404);
+      httpResponse.end();
+    };
+
     if (!httpRequest.url)
-      return;
+      return ignoreRequest();
 
     const { state, code, error, errorUri, errorDescription } = LoopbackWebServer.parseUrlSearchParams(httpRequest.url);
 
-    // ignore irrelevant requests (e.g. favicon.ico)
     if (!state)
-      return;
+      return ignoreRequest();
 
     // Look up context for the corresponding outgoing request
     const authorizationEvents = LoopbackWebServer._authState.getEvents(state);
     if (!authorizationEvents)
-      return;
+      return ignoreRequest();
 
     // Notify listeners of the code response or error
     let authorizationResponse: AuthorizationResponseJson | null = null;
