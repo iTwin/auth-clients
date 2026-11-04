@@ -1,0 +1,7 @@
+{
+  "type": "none",
+  "comment": "Bump @playwright/test dev dependency to ~1.64.1",
+  "packageName": "@itwin/electron-authorization",
+  "email": "98940208+GytisCepk@users.noreply.github.com",
+  "dependentChangeType": "none"
+}
