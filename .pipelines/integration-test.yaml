@@ -20,7 +20,8 @@ jobs:
     strategy:
       matrix:
         linux:
-          imageName: "ubuntu-latest"
+          # Pinned until Playwright is bumped to a version supporting Ubuntu 26.04, see #377
+          imageName: "ubuntu-24.04"
         mac:
           imageName: "macos-latest"
         windows:
