@@ -1,8 +1,16 @@
 # Change Log - @itwin/oidc-signin-tool
 
-<!-- This log was last generated on Mon, 24 Aug 2026 17:27:26 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 04 Nov 2026 13:58:43 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 6.2.0
+
+Wed, 04 Nov 2026 13:58:43 GMT
+
+### Minor changes
+
+- Bump @playwright/test to ~1.64.1 to support Ubuntu 26.04 (98940208+GytisCepk@users.noreply.github.com)
 
 ## 6.1.1
 

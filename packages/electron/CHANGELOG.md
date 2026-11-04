@@ -1,8 +1,16 @@
 # Change Log - @itwin/electron-authorization
 
-<!-- This log was last generated on Mon, 26 Oct 2026 14:34:46 GMT and should not be manually modified. -->
+<!-- This log was last generated on Wed, 04 Nov 2026 13:58:43 GMT and should not be manually modified. -->
 
 <!-- Start content -->
+
+## 0.24.1
+
+Wed, 04 Nov 2026 13:58:43 GMT
+
+### Patches
+
+- Fix a second sign in failing to complete when the loopback server from a previous sign in is still closing, and respond to unrelated requests to the loopback server instead of leaving them pending (98940208+GytisCepk@users.noreply.github.com)
 
 ## 0.24.0
 
