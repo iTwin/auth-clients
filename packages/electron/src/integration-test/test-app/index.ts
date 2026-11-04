@@ -1,6 +1,7 @@
 import { ElectronMainAuthorization } from "../../main/Client.js";
 import { app, BrowserWindow } from "electron";
 import { config } from "dotenv";
+import { redirectUri } from "../redirectUri.js";
 
 config();
 
@@ -28,14 +29,14 @@ void app.whenReady().then(async () => {
   new ElectronMainAuthorization({
     clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
     scopes: process.env.IMJS_TEST_ELECTRON_SCOPES,
-    redirectUris: ["http://localhost:3000/signin-callback"],
+    redirectUris: [redirectUri],
   });
 
   new ElectronMainAuthorization({
     clientId: process.env.IMJS_TEST_ELECTRON_CLIENT_ID,
     scopes: process.env.IMJS_TEST_ELECTRON_SCOPES,
     // it's ok to use the same port since sign-ins are sequential, not concurrent
-    redirectUris: ["http://localhost:3000/signin-callback"],
+    redirectUris: [redirectUri],
     channelClientPrefix: "prefixed",
   });
 

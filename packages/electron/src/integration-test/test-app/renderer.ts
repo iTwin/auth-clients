@@ -18,27 +18,44 @@ const getStatusButton = document.getElementById("getStatus");
 const otherSignInButton = document.getElementById("otherSignIn");
 const otherGetStatusButton = document.getElementById("otherGetStatus");
 
+/** Reports failures to the tests, which otherwise only see a sign in that never happens. */
+function reportError(error: unknown) {
+  const message: HTMLElement | null = document.getElementById("error");
+  if (message)
+    message.textContent = `${error instanceof Error ? error.message : String(error)}`;
+}
+
+/** Drops any error from an earlier action so it cannot be reported against this one. */
+function clearError() {
+  const message: HTMLElement | null = document.getElementById("error");
+  if (message)
+    message.textContent = "";
+}
+
 signOutButton?.addEventListener("click", async () => {
+  clearError();
   try {
     await auth.signOut();
-  } catch {
-
+  } catch (error) {
+    reportError(error);
   }
 });
 
 signInButton?.addEventListener("click", async () => {
+  clearError();
   try {
     await auth.signIn();
-  } catch {
-
+  } catch (error) {
+    reportError(error);
   }
 });
 
 otherSignInButton?.addEventListener("click", async () => {
+  clearError();
   try {
     await otherAuth.signIn();
-  } catch {
-
+  } catch (error) {
+    reportError(error);
   }
 });
 

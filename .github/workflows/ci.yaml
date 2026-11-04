@@ -13,10 +13,17 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # ubuntu is pinned to 24.04 because @itwin/certa depends on playwright ~1.56,
-        # whose postinstall browser download fails on ubuntu 26.04. Revert to
-        # ubuntu-latest once certa bumps playwright to >=1.61.
-        os: [ubuntu-24.04, macos-latest, windows-latest]
+        include:
+          # Branch protection requires a check named "Auth-Clients-CI (ubuntu-latest)", so the
+          # job keeps that name while the image is pinned to ubuntu-24.04: Playwright does not
+          # yet support Ubuntu 26.04, which ubuntu-latest now resolves to, see #377.
+          - name: ubuntu-latest
+            os: ubuntu-24.04
+          - name: macos-latest
+            os: macos-latest
+          - name: windows-latest
+            os: windows-latest
+    name: Auth-Clients-CI (${{ matrix.name }})
     runs-on: ${{ matrix.os }}
 
     steps:
