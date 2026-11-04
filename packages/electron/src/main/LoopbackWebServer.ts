@@ -96,9 +96,10 @@ export class LoopbackWebServer {
 
     // Clear the reference before closing: close() only completes once existing
     // connections end, and until then start() would return without listening again,
-    // leaving the next sign in with no server to receive its redirect.
+    // leaving the next sign in with no server to receive its redirect. The browser keeps
+    // its connection alive after the redirect, so drop idle ones to let close() finish.
     LoopbackWebServer._httpServer = undefined;
-    server.closeAllConnections();
+    server.closeIdleConnections();
     LoopbackWebServer._closing = new Promise<void>((resolve) => {
       server.close((err) => {
         if (err)

@@ -7,6 +7,7 @@ import * as Http from "http";
 import type { AddressInfo } from "net";
 import type { AuthorizationResponseJson } from "@openid/appauth";
 import * as chai from "chai";
+import * as sinon from "sinon";
 import { ElectronAuthorizationEvents } from "../main/Events.js";
 import { LoopbackWebServer } from "../main/LoopbackWebServer.js";
 
@@ -43,6 +44,8 @@ describe("LoopbackWebServer", () => {
   }
 
   beforeEach(async () => {
+    // Other suites stub LoopbackWebServer.start; make sure the real one is under test.
+    sinon.restore();
     redirectUri = `http://localhost:${await getFreePort()}/signin-callback`;
   });
 

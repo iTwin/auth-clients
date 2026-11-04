@@ -56,21 +56,23 @@ const tokenStores = [
   ),
 ];
 
+/** The issuer the app derives from the environment, mirroring `ElectronMainAuthorization`, which has no dev IMS. */
+function getDefaultIssuer(): URL {
+  const authority = new URL("https://ims.bentley.com");
+  if (envPrefix)
+    authority.hostname = ("dev-" === envPrefix ? "qa-" : envPrefix) + authority.hostname;
+  return authority;
+}
+
 function getTokenStoreKey(issuerUrl?: string, channelClientPrefix?: string): string {
-  const authority = new URL(issuerUrl ?? "https://ims.bentley.com");
-  if (envPrefix && !issuerUrl) {
-    authority.hostname = envPrefix + authority.hostname;
-  }
+  const authority = issuerUrl ? new URL(issuerUrl) : getDefaultIssuer();
   issuerUrl = authority.href.replace(/\/$/, "");
   return `${getTokenStoreFileName(channelClientPrefix)}:${issuerUrl}`;
 }
 
 /** Host of the identity provider the test app signs in against. */
 function getIssuerHostname(): string {
-  const authority = new URL("https://ims.bentley.com");
-  if (envPrefix)
-    authority.hostname = envPrefix + authority.hostname;
-  return authority.hostname;
+  return getDefaultIssuer().hostname;
 }
 
 function getTokenStoreFileName(channelClientPrefix?: string): string {

@@ -46,6 +46,7 @@ describe("ElectronMainAuthorization Token Logic", () => {
   });
 
   afterEach(function () {
+    sinon.restore();
     // eslint-disable-next-line @typescript-eslint/no-deprecated
     ElectronMainAuthorization.onUserStateChanged.clear();
   });
@@ -277,6 +278,10 @@ describe("ElectronMainAuthorization Authority URL Logic", () => {
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
   });
 
+  afterEach(() => {
+    sinon.restore();
+  });
+
   describe("channelClientPrefix option", () => {
     const channelPrefix = `itwin.electron.auth`;
     const channelNames = [
@@ -353,6 +358,10 @@ describe("ElectronMainAuthorization Config Scope Logic", () => {
   beforeEach(() => {
     sinon.restore();
     sinon.stub(ElectronMainAuthorization.prototype, "setupIPCHandlers" as any);
+  });
+
+  afterEach(() => {
+    sinon.restore();
   });
 
   it("Should add offline_access scope", async () => {
